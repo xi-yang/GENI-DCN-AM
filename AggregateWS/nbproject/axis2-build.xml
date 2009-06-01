@@ -13,7 +13,7 @@
             </fileset>
         </copy>
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-            <arg line="-uri file:/usr/local/aggregate/wsdl/agregate.wsdl"/>
+            <arg line="-uri file:/usr/local/aggregate/AggregateAttic/wsdl/aggregate.wsdl"/>
             <arg line="-ss -sd"/>
             <arg line="-s"/>
             <arg line="-ssi"/>
