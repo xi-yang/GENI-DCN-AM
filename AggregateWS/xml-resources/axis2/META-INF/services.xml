@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serviceGroup>
-    <service name="AggregateGENI">
+    <service name="AggregateGENI" scope="application">
         <messageReceivers>
             <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="net.geni.aggregate.services.api.AggregateGENIMessageReceiverInOut"/>
         </messageReceivers>
