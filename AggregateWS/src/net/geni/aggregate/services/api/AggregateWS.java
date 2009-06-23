@@ -2,15 +2,78 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package net.geni.aggregate.services.api;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import net.geni.aggregate.services.core.AggregateException;
+import net.geni.aggregate.services.core.AggregateSlicerCore;
+import net.geni.aggregate.services.core.AggregateSQLStatements;
+import net.geni.aggregate.services.core.AggregateState;
+import net.geni.aggregate.services.core.AggregateUtils;
+import org.apache.axis2.context.ServiceContext;
 
 /**
  *
  * @author jflidr
  */
-public class AggregateWS implements AggregateGENISkeletonInterface {
+public class AggregateWS implements AggregateGENISkeletonInterface
+{
+
+    private AggregateSlicerCore aggregateGENICore;
+    private Thread aggregateServerThread;
+
+    public void init(ServiceContext serviceContext) {
+        // initialize preferences
+        AggregateState.init();
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return;
+        }
+        Connection aggregateDB;
+        try {
+            String sqlURL = "jdbc:mysql://" + "127.0.0.1" +
+                    "/" + AggregateState.getAggregateDB() +
+                    "?user=" + AggregateState.getDbUser() +
+                    "&password=" + AggregateState.getDbPwd() +
+                    "&connectTimeout=10000&socketTimeout=5000";
+            aggregateDB = DriverManager.getConnection(sqlURL);
+            AggregateState.setAggregateDBConnection(aggregateDB);
+        } catch(SQLException ex) {
+            System.err.println("mysql connection failed...");
+            ex.printStackTrace();
+            return;
+        }
+        try {
+            //init the vendor database - 1 row per job
+            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getCoreTab() + " ( " +
+                    "requestID VARCHAR(255) NOT NULL, " + // job ID 1
+                    "status VARCHAR(255) NOT NULL DEFAULT 'no such job', " + // job status
+                    "statusMsg VARCHAR(255) NOT NULL DEFAULT '', " + // status message if any
+                    "PRIMARY KEY (requestID)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
+        } catch(AggregateException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        // get all the mysql statements
+        AggregateState.setSqlStatements(new AggregateSQLStatements());
+
+        aggregateGENICore = new AggregateSlicerCore();
+        aggregateServerThread = new Thread(aggregateGENICore);
+        aggregateServerThread.start();
+    }
+
+    /**
+     * terminates running cores
+     * @param serviceContext
+     */
+    public void destroy(ServiceContext serviceContext) {
+        aggregateGENICore.stopCore();
+    }
 
     public ListCapabilitiesResponse ListCapabilities(net.geni.aggregate.services.api.ListCapabilities listCapabilities) throws AggregateFaultMessage {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -47,7 +110,4 @@ public class AggregateWS implements AggregateGENISkeletonInterface {
     public QuerySliceResponse QuerySlice(net.geni.aggregate.services.api.QuerySlice querySlice) throws AggregateFaultMessage {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-   
-
 }
