@@ -10,6 +10,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import net.geni.aggregate.services.api.AggregateFault;
 import net.geni.aggregate.services.api.AggregateFaultMessage;
+import net.geni.aggregate.services.api.AggregateFaultMessageExt;
 
 /**
  *
@@ -48,10 +49,10 @@ public class AggregateUtils
 
     public static AggregateFaultMessage makeAggregateFault(int type, String s) {
         AggregateFault f = new AggregateFault();
-        AggregateFaultMessage msg = new AggregateFaultMessage();
-        if(type == AggregateFaultMessage.INTERNAL) {
+        AggregateFaultMessage msg = new AggregateFaultMessageExt();
+        if(type == AggregateFaultMessageExt.INTERNAL) {
             f.setMsg("FATAL: Broker Internal Error" + ((s.length() > 0)?": " + s:""));
-        } else if(type == AggregateFaultMessage.SENDER) {
+        } else if(type == AggregateFaultMessageExt.SENDER) {
             f.setMsg("ERROR: Sender Error" + ((s.length() > 0)?": " + s:""));
         }
         msg.setFaultMessage(f);

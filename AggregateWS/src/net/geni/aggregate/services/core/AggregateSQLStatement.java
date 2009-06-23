@@ -39,7 +39,7 @@ public class AggregateSQLStatement {
 
     // for SELECT/INSERT
     public AggregateSQLStatement(String conn, String t, AggregateSQLColumns c) throws IllegalArgumentException {
-        if(conn.matches(AggregateState.sqlAggregateDB)) {
+        if(conn.matches(AggregateState.getAggregateDB())) {
             this.conn = AggregateState.getAggregateDBConnection();
         }
         tab = t;
@@ -77,7 +77,7 @@ public class AggregateSQLStatement {
 
     // for UPDATE and INSERT
     public AggregateSQLStatement(String conn, String t, AggregateSQLColumns c, AggregateSQLValues v) throws IllegalArgumentException {
-        if(conn.matches(AggregateState.sqlAggregateDB)) {
+        if(conn.matches(AggregateState.getAggregateDB())) {
             this.conn = AggregateState.getAggregateDBConnection();
         }
         tab = t;
@@ -118,7 +118,7 @@ public class AggregateSQLStatement {
 
     // for DELETE
     public AggregateSQLStatement(String conn, String t) throws IllegalArgumentException {
-        if(conn.matches(AggregateState.sqlAggregateDB)) {
+        if(conn.matches(AggregateState.getAggregateDB())) {
             this.conn = AggregateState.getAggregateDBConnection();
         }
         tab = t;
