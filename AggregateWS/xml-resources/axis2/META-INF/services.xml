@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file was auto-generated from WSDL -->
+<!-- by the Apache Axis2 version: 1.4  Built on : Apr 26, 2008 (06:24:30 EDT) -->
+<serviceGroup>
+    <service name="AggregateGENI" scope="application">
+        <messageReceivers>
+            <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="net.geni.aggregate.services.api.AggregateGENIMessageReceiverInOut"/>
+        </messageReceivers>
+        <parameter name="ServiceClass">net.geni.aggregate.services.api.AggregateWS</parameter>
+        <parameter name="useOriginalwsdl">true</parameter>
+        <parameter name="modifyUserWSDLPortAddress">true</parameter>
+        <operation name="UpdateSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>UpdateSlice</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/UpdateSliceResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/UpdateSlice/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:UpdateSliceAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="QuerySlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>QuerySlice</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/QuerySliceResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/QuerySlice/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:QuerySliceAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="StopSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>StopSlice</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/StopSliceResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/StopSlice/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:StopSliceAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="ListNodes" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>ListNodes</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/ListNodesResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/ListNodes/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:ListNodesAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="StartSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>StartSlice</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/StartSliceResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/StartSlice/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:StartSliceAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="CreateSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>CreateSlice</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/CreateSliceResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/CreateSlice/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:CreateSliceAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="DeleteSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>DeleteSlice</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/DeleteSliceResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/DeleteSlice/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:DeleteSliceAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="ListCapabilities" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>ListCapabilities</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/ListCapabilitiesResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/ListCapabilities/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:ListCapabilitiesAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="ResetSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>ResetSlice</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/ResetSliceResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/ResetSlice/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:ResetSliceAggregateFaultMessage</faultActionMapping>
+        </operation>
+    </service>
+</serviceGroup>
