@@ -7,6 +7,10 @@ package net.geni.aggregate.services.api;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateException;
 import net.geni.aggregate.services.core.AggregateSlicerCore;
 import net.geni.aggregate.services.core.AggregateSQLStatements;
@@ -49,7 +53,34 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             return;
         }
         try {
-            //init the vendor database - 1 row per job
+            //init the capabilities table
+            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getCapsTab() + " ( " +
+                    "name VARCHAR(255) NOT NULL, " +
+                    "urn VARCHAR(255) NOT NULL, " +
+                    "id INT NOT NULL AUTO_INCREMENT, " +
+                    "description TEXT NOT NULL, " +
+                    "controllerURL VARCHAR(255) NOT NULL, " +
+                    "PRIMARY KEY (id, urn)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
+        } catch(AggregateException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        try {
+            //init the nodes table
+            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getNodesTab() + " ( " +
+                    "urn VARCHAR(255) NOT NULL, " +
+                    "id INT NOT NULL AUTO_INCREMENT, " +
+                    "description TEXT NOT NULL, " +
+                    "capabilities TEXT, " +
+                    "PRIMARY KEY (id, urn)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
+        } catch(AggregateException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        try {
+            //init the database 
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getCoreTab() + " ( " +
                     "requestID VARCHAR(255) NOT NULL, " + // job ID 1
                     "status VARCHAR(255) NOT NULL DEFAULT 'no such job', " + // job status
@@ -60,9 +91,28 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             ex.printStackTrace();
             return;
         }
-        // get all the mysql statements
+        // init all the mysql statements
         AggregateState.setSqlStatements(new AggregateSQLStatements());
+        AggregateSQLStatements sql = AggregateState.getSqlStatements();
+        boolean dummy = true;
+        try {
+            sql.aggCaps_Stmt.select();
+            // load aggregate configuration
+            while(dummy) {
+                AggregateState.getAggregateCaps().add(new AggregateCapability(
+                        sql.aggCaps_Stmt.getNextString("name"),
+                        sql.aggCaps_Stmt.getString("urn"),
+                        sql.aggCaps_Stmt.getInt("id"),
+                        sql.aggCaps_Stmt.getString("description"),
+                        sql.aggCaps_Stmt.getString("controllerURL")));
 
+            }
+        } catch(AggregateException ex) {
+            if(ex.getType() == AggregateException.FATAL) {
+                AggregateState.logger.log(Level.SEVERE, "FATAL error: terminating ...", ex);
+                return;
+            }
+        }
         aggregateSlicerCore = new AggregateSlicerCore();
         aggregateServerThread = new Thread(aggregateSlicerCore);
         aggregateServerThread.start();
@@ -77,7 +127,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     }
 
     public ListCapabilitiesResponse ListCapabilities(net.geni.aggregate.services.api.ListCapabilities listCapabilities) throws AggregateFaultMessage {
-                return AggregateState.getSkeletonAPI().ListCapabilities(listCapabilities);
+        return AggregateState.getSkeletonAPI().ListCapabilities(listCapabilities);
     }
 
     public ListNodesResponse ListNodes(net.geni.aggregate.services.api.ListNodes listNodes) throws AggregateFaultMessage {

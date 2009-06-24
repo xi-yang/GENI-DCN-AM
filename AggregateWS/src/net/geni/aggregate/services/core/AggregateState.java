@@ -23,13 +23,13 @@ public class AggregateState
     private static Preferences AMPrefs = null;
     private static Preferences dbPrefs = null;
     private static Preferences aggregatePrefs = null;
-    private static Preferences dragonCapsPrefs = null;
-    private static Preferences PLCapsPrefs = null;
     private static String dbPwd;
     private static String dbUser;
     private static String aggregateDB = null;
     private static String coreTab = null;
     private static String slicerTab = null;
+    private static final String capsTab = "capabilities";
+    private static final String nodesTab = "nodes";
     private static AggregateCapabilities aggregateCaps = new AggregateCapabilities();
     // global state
     private static AggregateSQLStatements sqlStatements = null;
@@ -43,8 +43,6 @@ public class AggregateState
         AMPrefs = Preferences.systemNodeForPackage(AggregateWS.class);
         dbPrefs = AMPrefs.node("database");
         aggregatePrefs = AMPrefs.node("aggregate");
-        dragonCapsPrefs = aggregatePrefs.node("capabilities/DRAGON");
-        PLCapsPrefs = aggregatePrefs.node("capabilities/PlanetLab");
 
         //initPrefs(); //NOTE: this is a shortcut saving me some typing
         // database prefs
@@ -53,17 +51,6 @@ public class AggregateState
         aggregateDB = dbPrefs.get("aggregateDB", null);
         coreTab = dbPrefs.get("frontEndTab", null);
         slicerTab = dbPrefs.get("aggregateTab", null);
-        //aggregate prefs
-        aggregateCaps.add(new AggregateCapability(
-                dragonCapsPrefs.get("name", null),
-                dragonCapsPrefs.get("id", null),
-                dragonCapsPrefs.get("description", null),
-                dragonCapsPrefs.get("controllerURL", null)));
-        aggregateCaps.add(new AggregateCapability(
-                PLCapsPrefs.get("name", null),
-                PLCapsPrefs.get("id", null),
-                PLCapsPrefs.get("description", null),
-                PLCapsPrefs.get("controllerURL", null)));
 
         if((dbPwd == null) ||
                 (dbUser == null) ||
@@ -151,5 +138,13 @@ public class AggregateState
 
     public static String getCoreTab() {
         return coreTab;
+    }
+
+    public static String getCapsTab() {
+        return capsTab;
+    }
+
+    public static String getNodesTab() {
+        return nodesTab;
     }
 }

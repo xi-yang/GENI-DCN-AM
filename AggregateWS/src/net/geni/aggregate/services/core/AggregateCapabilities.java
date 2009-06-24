@@ -15,7 +15,7 @@ public class AggregateCapabilities extends Vector<AggregateCapability>
 
     @Override
     public synchronized boolean add(AggregateCapability c) {
-        if(!((c.getName() == null) || (c.getControllerURL() == null) || (c.getDescription() == null) || (c.getId() == null))) {
+        if(!((c.getName() == null) || (c.getUrn() == null) || (c.getControllerURL() == null) || (c.getDescription() == null))) {
             super.add(c);
         }
         else

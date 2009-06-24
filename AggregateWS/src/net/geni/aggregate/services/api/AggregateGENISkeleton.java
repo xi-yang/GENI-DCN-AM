@@ -127,6 +127,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface
             CapabilityType capDesc = new CapabilityType();
             ListCapabilitiesResponseTypeSequence listCapResponseTypeSeq = new ListCapabilitiesResponseTypeSequence();
             capDesc.setName(caps.get(i).getName());
+            capDesc.setUrn(caps.get(i).getUrn());
             capDesc.setId(caps.get(i).getId());
             capDesc.setDescription(caps.get(i).getDescription());
             capDesc.setControllerURL(caps.get(i).getControllerURL());

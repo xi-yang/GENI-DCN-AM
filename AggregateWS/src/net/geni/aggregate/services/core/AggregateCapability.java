@@ -11,12 +11,14 @@ package net.geni.aggregate.services.core;
  */
 public class AggregateCapability {
     private String name;
-    private String id;
+    private int id;
     private String description;
     private String controllerURL;
+    private String urn;
 
-    AggregateCapability(String n, String i, String d, String c) {
+    public AggregateCapability(String n, String u, int i, String d, String c) {
         name = n;
+        urn = u;
         id = i;
         description = d;
         controllerURL = c;
@@ -30,12 +32,16 @@ public class AggregateCapability {
         return description;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getUrn() {
+        return urn;
     }
 
 }
