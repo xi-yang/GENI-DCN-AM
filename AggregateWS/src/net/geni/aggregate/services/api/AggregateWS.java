@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateException;
+import net.geni.aggregate.services.core.AggregateNode;
 import net.geni.aggregate.services.core.AggregateSlicerCore;
 import net.geni.aggregate.services.core.AggregateSQLStatements;
 import net.geni.aggregate.services.core.AggregateState;
@@ -95,9 +96,10 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         AggregateState.setSqlStatements(new AggregateSQLStatements());
         AggregateSQLStatements sql = AggregateState.getSqlStatements();
         boolean dummy = true;
+        // load aggregate configuration
+        // caps
         try {
             sql.aggCaps_Stmt.select();
-            // load aggregate configuration
             while(dummy) {
                 AggregateState.getAggregateCaps().add(new AggregateCapability(
                         sql.aggCaps_Stmt.getNextString("name"),
@@ -113,6 +115,23 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                 return;
             }
         }
+        // nodes
+        try {
+            sql.aggNodes_Stmt.select();
+            while(dummy) {
+                AggregateState.getAggregateNodes().add(new AggregateNode(
+                        sql.aggNodes_Stmt.getNextString("urn"),
+                        sql.aggNodes_Stmt.getInt("id"),
+                        sql.aggNodes_Stmt.getString("description"),
+                        sql.aggNodes_Stmt.getString("capabilities")));
+            }
+        } catch(AggregateException ex) {
+            if(ex.getType() == AggregateException.FATAL) {
+                AggregateState.logger.log(Level.SEVERE, "FATAL error: terminating ...", ex);
+                return;
+            }
+        }
+
         aggregateSlicerCore = new AggregateSlicerCore();
         aggregateServerThread = new Thread(aggregateSlicerCore);
         aggregateServerThread.start();
@@ -131,7 +150,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     }
 
     public ListNodesResponse ListNodes(net.geni.aggregate.services.api.ListNodes listNodes) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return AggregateState.getSkeletonAPI().ListNodes(listNodes);
     }
 
     public CreateSliceResponse CreateSlice(net.geni.aggregate.services.api.CreateSlice createSlice) throws AggregateFaultMessage {

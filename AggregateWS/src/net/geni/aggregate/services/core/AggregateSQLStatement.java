@@ -431,7 +431,7 @@ public class AggregateSQLStatement {
         }
     }
 
-    void addConstraint(String s, AggregateSQLConstraint c) {
+    public void addConstraint(String s, AggregateSQLConstraint c) {
         constraints.add(c, s);
     }
 

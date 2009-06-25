@@ -8,6 +8,7 @@ package net.geni.aggregate.services.api;
 
 import java.util.Vector;
 import net.geni.aggregate.services.core.AggregateCapabilities;
+import net.geni.aggregate.services.core.AggregateNode;
 import net.geni.aggregate.services.core.AggregateState;
 
 /**
@@ -64,8 +65,35 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface
     public net.geni.aggregate.services.api.ListNodesResponse ListNodes(
             net.geni.aggregate.services.api.ListNodes listNodes6)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#ListNodes");
+        ListNodesType listNodes = listNodes6.getListNodes();
+        ListNodesTypeSequence[] listNodesSeq = listNodes.getListNodesTypeSequence();
+
+        ListNodesResponse listNodesResponse = new ListNodesResponse();
+        ListNodesResponseType listNodesResponseType = new ListNodesResponseType();
+
+        Vector<String> capURNs = new Vector<String>();
+        for(int i = 0; i < listNodesSeq.length; i++) {
+            ListNodesTypeSequence listNodesTypeSeq = listNodesSeq[i];
+            String nodeCapURN = listNodesTypeSeq.getCapabilityURN();
+            if(nodeCapURN != null) {
+                capURNs.add(nodeCapURN);
+            } 
+        }
+        Vector<AggregateNode> filtNodes = AggregateState.getAggregateNodes().get(capURNs);
+        Vector<ListNodesResponseTypeSequence> lnrtsV = new Vector<ListNodesResponseTypeSequence>();
+        for(int i = 0; i < filtNodes.size(); i++) {
+            NodeDescriptorType nd = new NodeDescriptorType();
+            nd.setUrn(filtNodes.get(i).getUrn());
+            nd.setId(filtNodes.get(i).getId());
+            nd.setDescription(filtNodes.get(i).getDescription());
+            nd.setNodeDescriptorTypeSequence_type0(filtNodes.get(i).getCapTypeSeq());
+            ListNodesResponseTypeSequence l = new ListNodesResponseTypeSequence();
+            l.setNode(nd);
+            lnrtsV.add(l);
+        }
+        listNodesResponseType.setListNodesResponseTypeSequence((ListNodesResponseTypeSequence[]) lnrtsV.toArray(new ListNodesResponseTypeSequence[]{}));
+        listNodesResponse.setListNodesResponse(listNodesResponseType);
+        return listNodesResponse;
     }
 
     /**

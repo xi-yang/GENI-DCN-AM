@@ -11,8 +11,9 @@ package net.geni.aggregate.services.core;
 public class AggregateSQLStatements
 {
 
-    private AggregateSQLConstraint instIDC = new AggregateSQLConstraint("instanceId", "?");
+    private AggregateSQLConstraint nodeCapC = new AggregateSQLConstraint("capabilities", "?");
     public AggregateSQLStatement aggCaps_Stmt;
+    public AggregateSQLStatement aggNodes_Stmt;
 
     // statements devinitions
     public AggregateSQLStatements() {
@@ -20,5 +21,9 @@ public class AggregateSQLStatements
                 AggregateState.getAggregateDB(),
                 AggregateState.getCapsTab(),
                 new AggregateSQLColumns("name", "urn", "id", "description", "controllerURL"));
+        aggNodes_Stmt = new AggregateSQLStatement(
+                AggregateState.getAggregateDB(),
+                AggregateState.getNodesTab(),
+                new AggregateSQLColumns("urn", "id", "description", "capabilities"));
     }
 }

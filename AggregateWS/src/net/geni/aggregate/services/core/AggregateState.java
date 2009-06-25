@@ -31,6 +31,7 @@ public class AggregateState
     private static final String capsTab = "capabilities";
     private static final String nodesTab = "nodes";
     private static AggregateCapabilities aggregateCaps = new AggregateCapabilities();
+    private static AggregateNodes aggregateNodes = new AggregateNodes();
     // global state
     private static AggregateSQLStatements sqlStatements = null;
     private static AggregateGENISkeleton skeletonAPI = null;
@@ -118,6 +119,10 @@ public class AggregateState
 
     public static AggregateCapabilities getAggregateCaps() {
         return aggregateCaps;
+    }
+
+    public static AggregateNodes getAggregateNodes() {
+        return aggregateNodes;
     }
 
     public static String getAggregateDB() {

@@ -22,4 +22,22 @@ public class AggregateCapabilities extends Vector<AggregateCapability>
             throw new IllegalArgumentException("all the fields in the capability object must be specified");
         return true;
     }
+
+    public AggregateCapability getCap(String u) {
+        for(int i = 0; i < size(); i++) {
+            AggregateCapability c = get(i);
+            if(c.getUrn().matches(u)) {
+                return c;
+            }
+        }
+        return null;
+    }
+     public String getUrn(int i) {
+         for(int j = 0; j < size(); j++) {
+            if(get(j).getId()==i) {
+                return get(j).getUrn();
+            }
+         }
+         return null;
+     }
 }
