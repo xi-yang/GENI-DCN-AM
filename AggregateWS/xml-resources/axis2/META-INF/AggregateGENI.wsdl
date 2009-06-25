@@ -59,15 +59,15 @@
 			<!-- ListCapabilities request definitions -->
 			<xs:element name="ListCapabilities" type="tns:ListCapabilitiesType"/>
 			<xs:complexType name="ListCapabilitiesType">
-				<xs:sequence minOccurs="0">
-					<xs:element name="filter" type="xs:string"/>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="filter" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
 			<!-- ListCapabilities response definitions -->
 			<xs:element name="ListCapabilitiesResponse" type="tns:ListCapabilitiesResponseType"/>
 			<xs:complexType name="ListCapabilitiesResponseType">
-				<xs:sequence maxOccurs="unbounded">
+				<xs:sequence maxOccurs="unbounded" minOccurs="0">
 					<xs:element name="capability" type="tns:CapabilityType"/>
 				</xs:sequence>
 			</xs:complexType>
@@ -75,15 +75,15 @@
 			<!-- ListNodes request definitions -->
 			<xs:element name="ListNodes" type="tns:ListNodesType"/>
 			<xs:complexType name="ListNodesType">
-				<xs:sequence maxOccurs="unbounded">
-					<xs:element name="capability" type="tns:CapabilityType"/>
+				<xs:sequence maxOccurs="unbounded" minOccurs="0">
+					<xs:element name="capabilityURN" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
 			<!-- ListNodes response definitions -->
 			<xs:element name="ListNodesResponse" type="tns:ListNodesResponseType"/>
 			<xs:complexType name="ListNodesResponseType">
-				<xs:sequence maxOccurs="unbounded">
+				<xs:sequence maxOccurs="unbounded" minOccurs="0">
 					<xs:element name="node" type="tns:NodeDescriptorType"/>
 				</xs:sequence>
 			</xs:complexType>
@@ -475,7 +475,7 @@
   </binding>
   <service name="AggregateGENI">
     <port name="AggregateGENIPort" binding="tns:AggregateGENIBinding">
-      <soap:address location="http://geni.dragon.maxgigapop.net:8080/"/>
+      <soap:address location="http://206.196.176.170:8080/"/>
     </port>
   </service>
 </definitions>
