@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS aggregate;
+USE aggregate;
+
 --
 -- Table structure for table `capabilities`
 --
