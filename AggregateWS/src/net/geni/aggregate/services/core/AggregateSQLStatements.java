@@ -11,19 +11,26 @@ package net.geni.aggregate.services.core;
 public class AggregateSQLStatements
 {
 
-    private AggregateSQLConstraint nodeCapC = new AggregateSQLConstraint("capabilities", "?");
-    public AggregateSQLStatement aggCaps_Stmt;
-    public AggregateSQLStatement aggNodes_Stmt;
+    public AggregateSQLStatement aggCaps_SelStmt;
+    public AggregateSQLStatement aggNodes_SelStmt;
+    public AggregateSQLStatement coreCreate_Slice_InsStmt;
 
     // statements devinitions
     public AggregateSQLStatements() {
-        aggCaps_Stmt = new AggregateSQLStatement(
+        // load aggregate config statemets
+        aggCaps_SelStmt = new AggregateSQLStatement(
                 AggregateState.getAggregateDB(),
                 AggregateState.getCapsTab(),
                 new AggregateSQLColumns("name", "urn", "id", "description", "controllerURL"));
-        aggNodes_Stmt = new AggregateSQLStatement(
+        aggNodes_SelStmt = new AggregateSQLStatement(
                 AggregateState.getAggregateDB(),
                 AggregateState.getNodesTab(),
                 new AggregateSQLColumns("urn", "id", "description", "capabilities"));
+        // core table statements
+        coreCreate_Slice_InsStmt = new AggregateSQLStatement(
+                AggregateState.getAggregateDB(),
+                AggregateState.getNodesTab(),
+                new AggregateSQLColumns("sliceID", "startTime", "endTime", "createTime", "status", "statusMsg"),
+                new AggregateSQLValues("?", "?", "?", "?", "?", "?"));
     }
 }

@@ -81,12 +81,15 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             return;
         }
         try {
-            //init the database 
+            //init the core management table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getCoreTab() + " ( " +
-                    "requestID VARCHAR(255) NOT NULL, " + // job ID 1
-                    "status VARCHAR(255) NOT NULL DEFAULT 'no such job', " + // job status
-                    "statusMsg VARCHAR(255) NOT NULL DEFAULT '', " + // status message if any
-                    "PRIMARY KEY (requestID)" +
+                    "sliceID VARCHAR(255) NOT NULL, " +
+                    "startTime INT NOT NULL, " + 
+                    "endTime INT NOT NULL, " +
+                    "createTime INT NOT NULL, " +   //local time stamp
+                    "status VARCHAR(255) NOT NULL DEFAULT 'no such job', " +
+                    "statusMsg VARCHAR(255) NOT NULL DEFAULT '', " +
+                    "PRIMARY KEY (sliceID, start)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
         } catch(AggregateException ex) {
             ex.printStackTrace();
@@ -99,14 +102,14 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         // load aggregate configuration
         // caps
         try {
-            sql.aggCaps_Stmt.select();
+            sql.aggCaps_SelStmt.select();
             while(dummy) {
                 AggregateState.getAggregateCaps().add(new AggregateCapability(
-                        sql.aggCaps_Stmt.getNextString("name"),
-                        sql.aggCaps_Stmt.getString("urn"),
-                        sql.aggCaps_Stmt.getInt("id"),
-                        sql.aggCaps_Stmt.getString("description"),
-                        sql.aggCaps_Stmt.getString("controllerURL")));
+                        sql.aggCaps_SelStmt.getNextString("name"),
+                        sql.aggCaps_SelStmt.getString("urn"),
+                        sql.aggCaps_SelStmt.getInt("id"),
+                        sql.aggCaps_SelStmt.getString("description"),
+                        sql.aggCaps_SelStmt.getString("controllerURL")));
 
             }
         } catch(AggregateException ex) {
@@ -117,13 +120,13 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         }
         // nodes
         try {
-            sql.aggNodes_Stmt.select();
+            sql.aggNodes_SelStmt.select();
             while(dummy) {
                 AggregateState.getAggregateNodes().add(new AggregateNode(
-                        sql.aggNodes_Stmt.getNextString("urn"),
-                        sql.aggNodes_Stmt.getInt("id"),
-                        sql.aggNodes_Stmt.getString("description"),
-                        sql.aggNodes_Stmt.getString("capabilities")));
+                        sql.aggNodes_SelStmt.getNextString("urn"),
+                        sql.aggNodes_SelStmt.getInt("id"),
+                        sql.aggNodes_SelStmt.getString("description"),
+                        sql.aggNodes_SelStmt.getString("capabilities")));
             }
         } catch(AggregateException ex) {
             if(ex.getType() == AggregateException.FATAL) {
@@ -154,7 +157,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     }
 
     public CreateSliceResponse CreateSlice(net.geni.aggregate.services.api.CreateSlice createSlice) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return AggregateState.getSkeletonAPI().CreateSlice(createSlice);
     }
 
     public DeleteSliceResponse DeleteSlice(net.geni.aggregate.services.api.DeleteSlice deleteSlice) throws AggregateFaultMessage {

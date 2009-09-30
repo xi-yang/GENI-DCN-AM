@@ -14,6 +14,20 @@
 <!--  ***************** common types ********************************* -->
 <!--  **************************************************************** -->
 
+			<!-- SliceStatusType: slice status -->
+			<xs:simpleType name="SliceStatusType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="no slice"/> <!-- unknown, never submitted -->
+					<xs:enumeration value="scheduled"/>  <!-- waiting for execution -->
+					<xs:enumeration value="pending"/><!-- starting up -->
+					<xs:enumeration value="executing"/>   <!-- running -->
+					<xs:enumeration value="paused"/>    <!-- paused but available -->
+					<xs:enumeration value="stopped"/>   <!-- user requested termination -->
+					<xs:enumeration value="finished"/>    <!-- finished and exited cleanly -->
+					<xs:enumeration value="terminated"/>  <!-- unattended termination -->
+					<xs:enumeration value="deleted"/>   <!-- user deleted -->
+				</xs:restriction>
+			</xs:simpleType>
 
 			<xs:complexType name="CapabilityType">
 				<xs:sequence>
@@ -33,13 +47,6 @@
 					<xs:sequence>
 						<xs:element maxOccurs="unbounded" name="capability" type="tns:CapabilityType"/>
 					</xs:sequence>
-				</xs:sequence>
-			</xs:complexType>
-
-			<xs:complexType name="SliceStatusType">
-				<xs:sequence>
-					<xs:element name="id" type="xs:string"/>
-					<xs:element name="status" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -107,6 +114,7 @@
 			<xs:complexType name="CreateSliceResponseType">
 				<xs:sequence>
 					<xs:element name="sliceID" type="xs:string"/>
+					<xs:element name="status" type="tns:SliceStatusType"/>
 				</xs:sequence>
 			</xs:complexType>
 
