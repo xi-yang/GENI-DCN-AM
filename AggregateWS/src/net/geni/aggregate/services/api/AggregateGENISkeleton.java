@@ -77,7 +77,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface
             String nodeCapURN = listNodesTypeSeq.getCapabilityURN();
             if(nodeCapURN != null) {
                 capURNs.add(nodeCapURN);
-            }
+            } 
         }
         Vector<AggregateNode> filtNodes = AggregateState.getAggregateNodes().get(capURNs);
         Vector<ListNodesResponseTypeSequence> lnrtsV = new Vector<ListNodesResponseTypeSequence>();
@@ -118,16 +118,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface
     public net.geni.aggregate.services.api.CreateSliceResponse CreateSlice(
             net.geni.aggregate.services.api.CreateSlice createSlice10)
             throws AggregateFaultMessage {
-        CreateSliceType createSlice = createSlice10.getCreateSlice();
-        NodeDescriptorType[] nodes = createSlice.getNode();
-        int startTime = createSlice.getStart();
-        int endTime = createSlice.getEnd();
-        // enter the request to the DB
-        for(int i = 0; i < nodes.length; i++) {
-            NodeDescriptorType nodeDescriptorType = nodes[i];
-
-        }
-        return null;
+        //TODO : fill this with the necessary business logic
+        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#CreateSlice");
     }
 
     /**
