@@ -45,7 +45,7 @@ public class AggregateState
         dbPrefs = AMPrefs.node("database");
         aggregatePrefs = AMPrefs.node("aggregate");
 
-        //initPrefs(); //NOTE: this is a shortcut saving me some typing
+        initPrefs(); //NOTE: this is a shortcut saving me some typing
         // database prefs
         dbPwd = dbPrefs.get("password", null);
         dbUser = dbPrefs.get("user", null);
@@ -68,12 +68,12 @@ public class AggregateState
     }
 
     // initializer
-//    private static void initPrefs() {
-//        dbPrefs.put("password", "flame");
-//        dbPrefs.put("user", "dragon");
-//        dbPrefs.put("aggregateDB", "aggregate");
-//        dbPrefs.put("frontEndTab", "front_end");
-//        dbPrefs.put("aggregateTab", "slicer");
+    private static void initPrefs() {
+        dbPrefs.put("password", "genipass");
+        dbPrefs.put("user", "geniuser");
+        dbPrefs.put("aggregateDB", "aggregate");
+        dbPrefs.put("frontEndTab", "front_end");
+        dbPrefs.put("aggregateTab", "slicer");
     //aggregate prefs
 //        dragonCapsPrefs.put("name", "");
 //        dragonCapsPrefs.put("id", "");
@@ -83,7 +83,7 @@ public class AggregateState
 //        PLCapsPrefs.put("id", "");
 //        PLCapsPrefs.put("description", "");
 //        PLCapsPrefs.put("controllerURL", "");
-//    }
+    }
     // sql
     public static void setAggregateDBConnection(Connection aggregateDB) {
         aggregateDBConnection = aggregateDB;
