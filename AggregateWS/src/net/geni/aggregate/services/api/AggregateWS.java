@@ -31,6 +31,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
 
     public void init(ServiceContext serviceContext) {
 
+        System.err.println("AggregateWS init...");
         // initialize preferences
         AggregateState.init();
         try {
