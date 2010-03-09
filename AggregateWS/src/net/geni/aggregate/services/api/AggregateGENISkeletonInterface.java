@@ -3,7 +3,7 @@
  * AggregateGENISkeletonInterface.java
  *
  * This file was auto-generated from WSDL
- * by the Apache Axis2 version: 1.4  Built on : Apr 26, 2008 (06:24:30 EDT)
+ * by the Apache Axis2 version: 1.4.1  Built on : Aug 13, 2008 (05:03:35 LKT)
  */
     package net.geni.aggregate.services.api;
     /**
@@ -30,6 +30,36 @@
         /**
          * Auto generated method signature
          * 
+                                    * @param stopSlice
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.StopSliceResponse StopSlice
+                (
+                  net.geni.aggregate.services.api.StopSlice stopSlice
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
+                                    * @param deleteSliceNetwork
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.DeleteSliceNetworkResponse DeleteSliceNetwork
+                (
+                  net.geni.aggregate.services.api.DeleteSliceNetwork deleteSliceNetwork
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
                                     * @param querySlice
              * @throws AggregateFaultMessage : 
          */
@@ -45,14 +75,14 @@
         /**
          * Auto generated method signature
          * 
-                                    * @param stopSlice
+                                    * @param createSliceNetwork
              * @throws AggregateFaultMessage : 
          */
 
         
-                public net.geni.aggregate.services.api.StopSliceResponse StopSlice
+                public net.geni.aggregate.services.api.CreateSliceNetworkResponse CreateSliceNetwork
                 (
-                  net.geni.aggregate.services.api.StopSlice stopSlice
+                  net.geni.aggregate.services.api.CreateSliceNetwork createSliceNetwork
                  )
             throws AggregateFaultMessage;
         
@@ -105,6 +135,21 @@
         /**
          * Auto generated method signature
          * 
+                                    * @param listSlices
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.ListSlicesResponse ListSlices
+                (
+                  net.geni.aggregate.services.api.ListSlices listSlices
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
                                     * @param deleteSlice
              * @throws AggregateFaultMessage : 
          */
@@ -143,6 +188,66 @@
                 public net.geni.aggregate.services.api.ResetSliceResponse ResetSlice
                 (
                   net.geni.aggregate.services.api.ResetSlice resetSlice
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
+                                    * @param querySliceNetwork
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.QuerySliceNetworkResponse QuerySliceNetwork
+                (
+                  net.geni.aggregate.services.api.QuerySliceNetwork querySliceNetwork
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
+                                    * @param querySliceVlan
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.QuerySliceVlanResponse QuerySliceVlan
+                (
+                  net.geni.aggregate.services.api.QuerySliceVlan querySliceVlan
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
+                                    * @param deleteSliceVlan
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.DeleteSliceVlanResponse DeleteSliceVlan
+                (
+                  net.geni.aggregate.services.api.DeleteSliceVlan deleteSliceVlan
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
+                                    * @param createSliceVlan
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.CreateSliceVlanResponse CreateSliceVlan
+                (
+                  net.geni.aggregate.services.api.CreateSliceVlan createSliceVlan
                  )
             throws AggregateFaultMessage;
         

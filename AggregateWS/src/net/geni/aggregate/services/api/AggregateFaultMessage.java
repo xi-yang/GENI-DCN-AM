@@ -3,7 +3,7 @@
  * AggregateFaultMessage.java
  *
  * This file was auto-generated from WSDL
- * by the Apache Axis2 version: 1.4  Built on : Apr 26, 2008 (06:24:30 EDT)
+ * by the Apache Axis2 version: 1.4.1  Built on : Aug 13, 2008 (05:03:35 LKT)
  */
 
 package net.geni.aggregate.services.api;

@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateException;
 import net.geni.aggregate.services.core.AggregateNode;
+import net.geni.aggregate.services.core.AggregateSlice;
 import net.geni.aggregate.services.core.AggregateSlicerCore;
 import net.geni.aggregate.services.core.AggregateSQLStatements;
 import net.geni.aggregate.services.core.AggregateState;
@@ -28,7 +29,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
 
     private AggregateSlicerCore aggregateSlicerCore;
     private Thread aggregateServerThread;
-
+    
     public void init(ServiceContext serviceContext) {
 
         System.err.println("AggregateWS init...");
@@ -76,6 +77,22 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "description TEXT NOT NULL, " +
                     "capabilities TEXT, " +
                     "PRIMARY KEY (id, urn)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
+        } catch(AggregateException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        try {
+            //init the slices table
+            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getSlicesTab() + " ( " +
+                    "sliceName VARCHAR(255), " + // slice Name
+                    "id int(11) NOT NULL auto_increment, " + // slice ID
+                    "url TEXT NOT NULL, " + // slice URL
+                    "description TEXT NOT NULL, " + // slice description
+                    "creatorId INT(11) NOT NULL, " + // user who created the slice
+                    "createdTime BIGINT(20), " + // launch timestamp
+                    "expiredTime BIGINT(20), " + // expire timestamp
+                    "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
         } catch(AggregateException ex) {
             ex.printStackTrace();
@@ -132,6 +149,25 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                 return;
             }
         }
+        // slices
+        try {
+            sql.aggSlices_Stmt.select();
+            while(dummy) {
+                AggregateState.getAggregateSlices().add(new AggregateSlice(
+                        sql.aggSlices_Stmt.getNextString("sliceName"),
+                        sql.aggSlices_Stmt.getInt("id"),
+                        sql.aggSlices_Stmt.getString("url"),
+                        sql.aggSlices_Stmt.getString("description"),
+                        sql.aggSlices_Stmt.getInt("creatorId"),
+                        sql.aggSlices_Stmt.getLong("createdTime"),
+                        sql.aggSlices_Stmt.getLong("expiredTime")));
+            }
+        } catch(AggregateException ex) {
+            if(ex.getType() == AggregateException.FATAL) {
+                AggregateState.logger.log(Level.SEVERE, "FATAL error: terminating ...", ex);
+                return;
+            }
+        }
 
         aggregateSlicerCore = new AggregateSlicerCore();
         aggregateServerThread = new Thread(aggregateSlicerCore);
@@ -152,6 +188,10 @@ public class AggregateWS implements AggregateGENISkeletonInterface
 
     public ListNodesResponse ListNodes(net.geni.aggregate.services.api.ListNodes listNodes) throws AggregateFaultMessage {
         return AggregateState.getSkeletonAPI().ListNodes(listNodes);
+    }
+
+    public ListSlicesResponse ListSlices(net.geni.aggregate.services.api.ListSlices listSlices) throws AggregateFaultMessage {
+        return AggregateState.getSkeletonAPI().ListSlices(listSlices);
     }
 
     public CreateSliceResponse CreateSlice(net.geni.aggregate.services.api.CreateSlice createSlice) throws AggregateFaultMessage {
@@ -179,6 +219,30 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     }
 
     public QuerySliceResponse QuerySlice(net.geni.aggregate.services.api.QuerySlice querySlice) throws AggregateFaultMessage {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public CreateSliceVlanResponse CreateSliceVlan(net.geni.aggregate.services.api.CreateSliceVlan createSliceVlan) throws AggregateFaultMessage {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public DeleteSliceVlanResponse DeleteSliceVlan(net.geni.aggregate.services.api.DeleteSliceVlan deleteSliceVlan) throws AggregateFaultMessage {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public QuerySliceVlanResponse QuerySliceVlan(net.geni.aggregate.services.api.QuerySliceVlan querySliceVlan) throws AggregateFaultMessage {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public CreateSliceNetworkResponse CreateSliceNetwork(net.geni.aggregate.services.api.CreateSliceNetwork createSliceNetwork) throws AggregateFaultMessage {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public DeleteSliceNetworkResponse DeleteSliceNetwork(net.geni.aggregate.services.api.DeleteSliceNetwork deleteSliceNetwork) throws AggregateFaultMessage {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public QuerySliceNetworkResponse QuerySliceNetwork(net.geni.aggregate.services.api.QuerySliceNetwork querySliceNetwork) throws AggregateFaultMessage {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
