@@ -1,0 +1,11 @@
+Addition of new services
+ListSlies -- done
+Vlan and Netework provisioning ervices -- skeleton only!
+
+--This line, and those below, will be ignored--
+
+M    api/AggregateGENISkeletonInterface.java
+M    api/AggregateWS.java
+M    api/AggregateGENIMessageReceiverInOut.java
+M    api/AggregateFaultMessage.java
+R    api/AggregateGENISkeleton.java

@@ -41,13 +41,18 @@ CREATE TABLE `nodes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Table structure for table `slicer`
+-- Table structure for table `slices`
 --
 
-DROP TABLE IF EXISTS `slicer`;
-CREATE TABLE `slicer` (
-  `sliceID` varchar(255) NOT NULL default '',
-  `launchTime` bigint(20) default NULL,
-  PRIMARY KEY  (`sliceID`)
+DROP TABLE IF EXISTS `slices`;
+CREATE TABLE `slices` (
+  `sliceName` varchar(255) NOT NULL default '',
+  `id` int(11) NOT NULL auto_increment,
+  `url` text NOT NULL,
+  `description` text NOT NULL,
+  `creatorId` int(11) NOT NULL,
+  `createdTime` bigint(20) default NULL,
+  `expiredTime` bigint(20) default NULL,
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

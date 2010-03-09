@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions targetNamespace="http://aggregate.geni.net/services/api/" xmlns:tns="http://aggregate.geni.net/services/api/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+<definitions targetNamespace="http://aggregate.geni.net/services/api/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://aggregate.geni.net/services/api/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
   <types>
     <xs:schema elementFormDefault="qualified" targetNamespace="http://aggregate.geni.net/services/api/" xmlns:tns="http://aggregate.geni.net/services/api/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
@@ -14,6 +14,20 @@
 <!--  ***************** common types ********************************* -->
 <!--  **************************************************************** -->
 
+			<!-- SliceStatusType: slice status -->
+			<xs:simpleType name="SliceStatusType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="no slice"/> <!-- unknown, never submitted -->
+					<xs:enumeration value="scheduled"/>  <!-- waiting for execution -->
+					<xs:enumeration value="pending"/><!-- starting up -->
+					<xs:enumeration value="executing"/>   <!-- running -->
+					<xs:enumeration value="paused"/>    <!-- paused but available -->
+					<xs:enumeration value="stopped"/>   <!-- user requested termination -->
+					<xs:enumeration value="finished"/>    <!-- finished and exited cleanly -->
+					<xs:enumeration value="terminated"/>  <!-- unattended termination -->
+					<xs:enumeration value="deleted"/>   <!-- user deleted -->
+				</xs:restriction>
+			</xs:simpleType>
 
 			<xs:complexType name="CapabilityType">
 				<xs:sequence>
@@ -36,10 +50,52 @@
 				</xs:sequence>
 			</xs:complexType>
 
-			<xs:complexType name="SliceStatusType">
+			<xs:complexType name="SliceDescriptorType">
 				<xs:sequence>
-					<xs:element name="id" type="xs:string"/>
-					<xs:element name="status" type="xs:string"/>
+					<xs:element name="name" type="xs:string"/>
+					<xs:element name="url" type="xs:string"/>
+					<xs:element name="description" type="xs:string"/>
+					<xs:element name="creator" type="xs:string"/>
+					<xs:element name="createdTime" type="xs:long"/>
+					<xs:element name="expiredTime" type="xs:long"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:complexType name="VlanReservationDescriptorType">
+				<xs:sequence>
+					<xs:element name="vlan" type="xs:int"/>
+					<xs:element name="sourceNode" type="xs:string"/>
+					<xs:element name="destinationNode" type="xs:string"/>
+					<xs:element name="bandwidth" type="xs:float"/>
+					<xs:element name="description" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:complexType name="VlanRangeType">
+				<xs:sequence>
+					<xs:element name="vlanRangeFrom" type="xs:int"/>
+					<xs:element name="vlanRangeTo" type="xs:int"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:simpleType name="VlanReservationStatusType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="pending"/>
+					<xs:enumeration value="insetup"/>
+					<xs:enumeration value="active"/>
+					<xs:enumeration value="inteardown"/>
+					<xs:enumeration value="finished"/>
+					<xs:enumeration value="cancelled"/>
+					<xs:enumeration value="failed"/>
+				</xs:restriction>
+			</xs:simpleType>
+
+			<xs:complexType name="VlanReservationResultType">
+				<xs:sequence>
+					<xs:element name="reservation" type="tns:VlanReservationDescriptorType"/>
+					<xs:element minOccurs="0" name="globalReservationId" type="xs:string"/>
+					<xs:element name="status" type="tns:VlanReservationStatusType"/>
+					<xs:element minOccurs="0" name="message" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -53,7 +109,7 @@
 			</xs:element>
 
 <!--  **************************************************************** -->
-<!--  ************************ nodes and capabilities **************** -->
+<!--  **************** nodes, capabilities and slices **************** -->
 <!--  **************************************************************** -->
 
 			<!-- ListCapabilities request definitions -->
@@ -88,6 +144,22 @@
 				</xs:sequence>
 			</xs:complexType>
 
+			<!-- ListSlices request definitions -->
+			<xs:element name="ListSlices" type="tns:ListSlicesType"/>
+			<xs:complexType name="ListSlicesType">
+				<xs:sequence maxOccurs="unbounded" minOccurs="0">
+					<xs:element minOccurs="0" name="filter" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- ListSlices response definitions -->
+			<xs:element name="ListSlicesResponse" type="tns:ListSlicesResponseType"/>
+			<xs:complexType name="ListSlicesResponseType">
+				<xs:sequence maxOccurs="unbounded" minOccurs="0">
+					<xs:element name="slice" type="tns:SliceDescriptorType"/>
+				</xs:sequence>
+			</xs:complexType>
+
 <!--  **************************************************************** -->
 <!--  ************************ slice manipulation ******************** -->
 <!--  **************************************************************** -->
@@ -107,6 +179,7 @@
 			<xs:complexType name="CreateSliceResponseType">
 				<xs:sequence>
 					<xs:element name="sliceID" type="xs:string"/>
+					<xs:element name="status" type="tns:SliceStatusType"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -210,82 +283,248 @@
 					<xs:element name="status" type="tns:SliceStatusType"/>
 				</xs:sequence>
 			</xs:complexType>
+
+
+<!--  **************************************************************** -->
+<!--  ********************** network provisioning ******************** -->
+<!--  **************************************************************** -->
+
+			<!-- CreateSliceVlan request definitions -->
+			<xs:element name="CreateSliceVlan" type="tns:CreateSliceVlanType"/>
+			<xs:complexType name="CreateSliceVlanType">
+				<xs:sequence>
+					<xs:element name="sliceID" type="xs:string"/>
+					<xs:element name="vlanReservation" type="tns:VlanReservationDescriptorType"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- CreateSliceVlan response definitions -->
+			<xs:element name="CreateSliceVlanResponse" type="tns:CreateSliceVlanResponseType"/>
+			<xs:complexType name="CreateSliceVlanResponseType">
+				<xs:sequence>
+					<xs:element name="status" type="tns:VlanReservationStatusType"/>
+					<xs:element minOccurs="0" name="message" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- DeleteSliceVlan request definitions -->
+			<xs:element name="DeleteSliceVlan" type="tns:DeleteSliceVlanType"/>
+			<xs:complexType name="DeleteSliceVlanType">
+				<xs:sequence>
+					<xs:element name="sliceID" type="xs:string"/>
+					<xs:element name="vlan" type="tns:int"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- DeleteSliceVlan response definitions -->
+			<xs:element name="DeleteSliceVlanResponse" type="tns:DeleteSliceVlanResponseType"/>
+			<xs:complexType name="DeleteSliceVlanResponseType">
+				<xs:sequence>
+					<xs:element name="status" type="tns:VlanReservationStatusType"/>
+					<xs:element minOccurs="0" name="message" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- QuerySliceVlan request definitions -->
+			<xs:element name="QuerySliceVlan" type="tns:QuerySliceVlanType"/>
+			<xs:complexType name="QuerySliceVlanType">
+				<xs:sequence>
+					<xs:element name="sliceID" type="xs:string"/>
+					<xs:element name="vlan" type="tns:int"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- QuerySliceVlan response definitions -->
+			<xs:element name="QuerySliceVlanResponse" type="tns:QuerySliceVlanResponseType"/>
+			<xs:complexType name="QuerySliceVlanResponseType">
+				<xs:sequence>
+					<xs:element name="status" type="tns:VlanReservationStatusType"/>
+					<xs:element minOccurs="0" name="message" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+
+
+			<!-- CreateSliceNetwork request definitions -->
+			<xs:element name="CreateSliceNetwork" type="tns:CreateSliceNetworkType"/>
+			<xs:complexType name="CreateSliceNetworkType">
+				<xs:sequence>
+					<xs:element name="sliceID" type="xs:string"/>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="vlanRange" type="tns:VlanRangeType"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- CreateSliceNetwork response definitions -->
+			<xs:element name="CreateSliceNetworkResponse" type="tns:CreateSliceNetworkResponseType"/>
+			<xs:complexType name="CreateSliceNetworkResponseType">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" name="result" type="tns:VlanReservationResultType"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- DeleteSliceNetwork request definitions -->
+			<xs:element name="DeleteSliceNetwork" type="tns:DeleteSliceNetworkType"/>
+			<xs:complexType name="DeleteSliceNetworkType">
+				<xs:sequence>
+					<xs:element name="sliceID" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- DeleteSliceNetwork response definitions -->
+			<xs:element name="DeleteSliceNetworkResponse" type="tns:DeleteSliceNetworkResponseType"/>
+			<xs:complexType name="DeleteSliceNetworkResponseType">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" name="result" type="tns:VlanReservationResultType"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- QuerySliceNetwork request definitions -->
+			<xs:element name="QuerySliceNetwork" type="tns:QuerySliceNetworkType"/>
+			<xs:complexType name="QuerySliceNetworkType">
+				<xs:sequence>
+					<xs:element name="sliceID" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- QuerySliceNetwork response definitions -->
+			<xs:element name="QuerySliceNetworkResponse" type="tns:QuerySliceNetworkResponseType"/>
+			<xs:complexType name="QuerySliceNetworkResponseType">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" name="result" type="tns:VlanReservationResultType"/>
+				</xs:sequence>
+			</xs:complexType>
+
 		</xs:schema>
   </types>
-  <message name="ListNodesResponseMsg">
-    <part name="ListNodesMsgResp" element="tns:ListNodesResponse">
-    </part>
-  </message>
-  <message name="CreateSliceRequestMsg">
-    <part name="CreateSliceMsgReq" element="tns:CreateSlice">
-    </part>
-  </message>
-  <message name="UpdateSliceRequestMsg">
-    <part name="UpdateSliceMsgReq" element="tns:UpdateSlice">
-    </part>
-  </message>
-  <message name="StartSliceRequestMsg">
-    <part name="StartSliceMsgReq" element="tns:StartSlice">
-    </part>
-  </message>
-  <message name="ListCapabilitiesResponseMsg">
-    <part name="ListCapabilitiesMsgResp" element="tns:ListCapabilitiesResponse">
-    </part>
-  </message>
-  <message name="ResetSliceResponseMsg">
-    <part name="ResetSliceMsgResp" element="tns:ResetSliceResponse">
-    </part>
-  </message>
-  <message name="ListNodesRequestMsg">
-    <part name="ListNodesMsgReq" element="tns:ListNodes">
-    </part>
-  </message>
-  <message name="DeleteSliceResponseMsg">
-    <part name="DeleteSliceMsgResp" element="tns:DeleteSliceResponse">
-    </part>
-  </message>
   <message name="QuerySliceRequestMsg">
     <part name="QuerySliceMsgReq" element="tns:QuerySlice">
     </part>
   </message>
-  <message name="StopSliceResponseMsg">
-    <part name="StopSliceMsgResp" element="tns:StopSliceResponse">
+  <message name="DeleteSliceVlanRequestMsg">
+    <part name="DeleteSliceVlanMsgReq" element="tns:DeleteSliceVlan">
     </part>
   </message>
-  <message name="ListCapabilitiesRequestMsg">
-    <part name="ListCapabilitiesMsgReq" element="tns:ListCapabilities">
-    </part>
-  </message>
-  <message name="StopSliceRequestMsg">
-    <part name="StopSliceMsgReq" element="tns:StopSlice">
-    </part>
-  </message>
-  <message name="CreateSliceResponseMsg">
-    <part name="CreateSliceMsgResp" element="tns:CreateSliceResponse">
-    </part>
-  </message>
-  <message name="QuerySliceResponseMsg">
-    <part name="QuerySliceMsgResp" element="tns:QuerySliceResponse">
+  <message name="CreateSliceVlanRequestMsg">
+    <part name="CreateSliceVlanMsgReq" element="tns:CreateSliceVlan">
     </part>
   </message>
   <message name="StartSliceResponseMsg">
     <part name="StartSliceMsgResp" element="tns:StartSliceResponse">
     </part>
   </message>
-  <message name="AggregateFaultMessage">
-    <part name="fault" element="tns:AggregateFault">
+  <message name="UpdateSliceResponseMsg">
+    <part name="UpdateSliceMsgResp" element="tns:UpdateSliceResponse">
+    </part>
+  </message>
+  <message name="ListNodesResponseMsg">
+    <part name="ListNodesMsgResp" element="tns:ListNodesResponse">
+    </part>
+  </message>
+  <message name="StopSliceResponseMsg">
+    <part name="StopSliceMsgResp" element="tns:StopSliceResponse">
     </part>
   </message>
   <message name="DeleteSliceRequestMsg">
     <part name="DeleteSliceMsgReq" element="tns:DeleteSlice">
     </part>
   </message>
+  <message name="ResetSliceResponseMsg">
+    <part name="ResetSliceMsgResp" element="tns:ResetSliceResponse">
+    </part>
+  </message>
+  <message name="UpdateSliceRequestMsg">
+    <part name="UpdateSliceMsgReq" element="tns:UpdateSlice">
+    </part>
+  </message>
   <message name="ResetSliceRequestMsg">
     <part name="ResetSliceMsgReq" element="tns:ResetSlice">
     </part>
   </message>
-  <message name="UpdateSliceResponseMsg">
-    <part name="UpdateSliceMsgResp" element="tns:UpdateSliceResponse">
+  <message name="StopSliceRequestMsg">
+    <part name="StopSliceMsgReq" element="tns:StopSlice">
+    </part>
+  </message>
+  <message name="ListNodesRequestMsg">
+    <part name="ListNodesMsgReq" element="tns:ListNodes">
+    </part>
+  </message>
+  <message name="QuerySliceResponseMsg">
+    <part name="QuerySliceMsgResp" element="tns:QuerySliceResponse">
+    </part>
+  </message>
+  <message name="QuerySliceVlanRequestMsg">
+    <part name="QuerySliceVlanMsgReq" element="tns:QuerySliceVlan">
+    </part>
+  </message>
+  <message name="QuerySliceNetworkResponseMsg">
+    <part name="QuerySliceNetworkMsgResp" element="tns:QuerySliceNetworkResponse">
+    </part>
+  </message>
+  <message name="CreateSliceNetworkResponseMsg">
+    <part name="CreateSliceNetworkMsgResp" element="tns:CreateSliceNetworkResponse">
+    </part>
+  </message>
+  <message name="CreateSliceResponseMsg">
+    <part name="CreateSliceMsgResp" element="tns:CreateSliceResponse">
+    </part>
+  </message>
+  <message name="CreateSliceRequestMsg">
+    <part name="CreateSliceMsgReq" element="tns:CreateSlice">
+    </part>
+  </message>
+  <message name="QuerySliceNetworkRequestMsg">
+    <part name="QuerySliceNetworkMsgReq" element="tns:QuerySliceNetwork">
+    </part>
+  </message>
+  <message name="CreateSliceNetworkRequestMsg">
+    <part name="CreateSliceNetworkMsgResp" element="tns:CreateSliceNetwork">
+    </part>
+  </message>
+  <message name="DeleteSliceResponseMsg">
+    <part name="DeleteSliceMsgResp" element="tns:DeleteSliceResponse">
+    </part>
+  </message>
+  <message name="AggregateFaultMessage">
+    <part name="fault" element="tns:AggregateFault">
+    </part>
+  </message>
+  <message name="StartSliceRequestMsg">
+    <part name="StartSliceMsgReq" element="tns:StartSlice">
+    </part>
+  </message>
+  <message name="CreateSliceVlanResponseMsg">
+    <part name="CreateSliceVlanMsgResp" element="tns:CreateSliceVlanResponse">
+    </part>
+  </message>
+  <message name="ListSlicesResponseMsg">
+    <part name="ListSlicesMsgResp" element="tns:ListSlicesResponse">
+    </part>
+  </message>
+  <message name="QuerySliceVlanResponseMsg">
+    <part name="QuerySliceVlanMsgResp" element="tns:QuerySliceVlanResponse">
+    </part>
+  </message>
+  <message name="DeleteSliceVlanResponseMsg">
+    <part name="DeleteSliceVlanMsgResp" element="tns:DeleteSliceVlanResponse">
+    </part>
+  </message>
+  <message name="ListCapabilitiesResponseMsg">
+    <part name="ListCapabilitiesMsgResp" element="tns:ListCapabilitiesResponse">
+    </part>
+  </message>
+  <message name="ListSlicesRequestMsg">
+    <part name="ListSlicesMsgReq" element="tns:ListSlices">
+    </part>
+  </message>
+  <message name="ListCapabilitiesRequestMsg">
+    <part name="ListCapabilitiesMsgReq" element="tns:ListCapabilities">
+    </part>
+  </message>
+  <message name="DeleteSliceNetworkRequestMsg">
+    <part name="DeleteSliceNetworkMsgReq" element="tns:DeleteSliceNetwork">
+    </part>
+  </message>
+  <message name="DeleteSliceNetworkResponseMsg">
+    <part name="DeleteSliceNetworkMsgResp" element="tns:DeleteSliceNetworkResponse">
     </part>
   </message>
   <portType name="AggregateGENIPortType">
@@ -301,6 +540,14 @@
       <input message="tns:ListNodesRequestMsg">
     </input>
       <output message="tns:ListNodesResponseMsg">
+    </output>
+      <fault name="AggregateException" message="tns:AggregateFaultMessage">
+    </fault>
+    </operation>
+    <operation name="ListSlices">
+      <input message="tns:ListSlicesRequestMsg">
+    </input>
+      <output message="tns:ListSlicesResponseMsg">
     </output>
       <fault name="AggregateException" message="tns:AggregateFaultMessage">
     </fault>
@@ -361,6 +608,54 @@
       <fault name="AggregateException" message="tns:AggregateFaultMessage">
     </fault>
     </operation>
+    <operation name="CreateSliceVlan">
+      <input message="tns:CreateSliceVlanRequestMsg">
+    </input>
+      <output message="tns:CreateSliceVlanResponseMsg">
+    </output>
+      <fault name="AggregateException" message="tns:AggregateFaultMessage">
+    </fault>
+    </operation>
+    <operation name="DeleteSliceVlan">
+      <input message="tns:DeleteSliceVlanRequestMsg">
+    </input>
+      <output message="tns:DeleteSliceVlanResponseMsg">
+    </output>
+      <fault name="AggregateException" message="tns:AggregateFaultMessage">
+    </fault>
+    </operation>
+    <operation name="QuerySliceVlan">
+      <input message="tns:QuerySliceVlanRequestMsg">
+    </input>
+      <output message="tns:QuerySliceVlanResponseMsg">
+    </output>
+      <fault name="AggregateException" message="tns:AggregateFaultMessage">
+    </fault>
+    </operation>
+    <operation name="CreateSliceNetwork">
+      <input message="tns:CreateSliceNetworkRequestMsg">
+    </input>
+      <output message="tns:CreateSliceNetworkResponseMsg">
+    </output>
+      <fault name="AggregateException" message="tns:AggregateFaultMessage">
+    </fault>
+    </operation>
+    <operation name="DeleteSliceNetwork">
+      <input message="tns:DeleteSliceNetworkRequestMsg">
+    </input>
+      <output message="tns:DeleteSliceNetworkResponseMsg">
+    </output>
+      <fault name="AggregateException" message="tns:AggregateFaultMessage">
+    </fault>
+    </operation>
+    <operation name="QuerySliceNetwork">
+      <input message="tns:QuerySliceNetworkRequestMsg">
+    </input>
+      <output message="tns:QuerySliceNetworkResponseMsg">
+    </output>
+      <fault name="AggregateException" message="tns:AggregateFaultMessage">
+    </fault>
+    </operation>
   </portType>
   <binding name="AggregateGENIBinding" type="tns:AggregateGENIPortType">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -378,6 +673,18 @@
     </operation>
     <operation name="ListNodes">
       <soap:operation soapAction="ListNodes"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AggregateException">
+        <soap:fault name="AggregateException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="ListSlices">
+      <soap:operation soapAction="ListSlices"/>
       <input>
         <soap:body use="literal"/>
       </input>
@@ -462,6 +769,78 @@
     </operation>
     <operation name="QuerySlice">
       <soap:operation soapAction="QuerySlice"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AggregateException">
+        <soap:fault name="AggregateException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="CreateSliceVlan">
+      <soap:operation soapAction="CreateSliceVlan"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AggregateException">
+        <soap:fault name="AggregateException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="DeleteSliceVlan">
+      <soap:operation soapAction="DeleteSliceVlan"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AggregateException">
+        <soap:fault name="AggregateException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="QuerySliceVlan">
+      <soap:operation soapAction="QuerySliceVlan"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AggregateException">
+        <soap:fault name="AggregateException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="CreateSliceNetwork">
+      <soap:operation soapAction="CreateSliceNetwork"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AggregateException">
+        <soap:fault name="AggregateException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="DeleteSliceNetwork">
+      <soap:operation soapAction="DeleteSliceNetwork"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="AggregateException">
+        <soap:fault name="AggregateException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="QuerySliceNetwork">
+      <soap:operation soapAction="QuerySliceNetwork"/>
       <input>
         <soap:body use="literal"/>
       </input>

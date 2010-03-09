@@ -72,3 +72,13 @@ INSERT INTO `nodes` VALUES ('urn:ogf:geni:domain=dragon.maxgigapop.net:node=PAST
 INSERT INTO `nodes` VALUES ('urn:ogf:geni:domain=dragon.maxgigapop.net:node=PASTA_SENSOR49',60,'demo node to demonstrate the ease of adding new components','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=pasta');
 INSERT INTO `nodes` VALUES ('urn:ogf:geni:domain=dragon.maxgigapop.net:node=PASTA_SENSOR50',61,'demo node to demonstrate the ease of adding new components','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=pasta');
 INSERT INTO `nodes` VALUES ('urn:ogf:geni:domain=dragon.maxgigapop.net:node=DEMO2',62,'demo node to demonstrate the ease of adding new components','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=openflow');
+
+
+--
+-- Dumping data for table `slices`
+--
+
+INSERT INTO `slices` VALUES ('max-gec7-demo-slice1', 1, 'http://geni.maxgigapop.net', 'Planetlab Slice#1 for MAX-GENI demo at GEC7', 100, UNIX_TIMESTAMP('2010-03-10 16:14:53'), UNIX_TIMESTAMP('2010-03-25 00:14:54'));
+INSERT INTO `slices` VALUES ('max-gec7-demo-slice2', 2, 'http://geni.maxgigapop.net', 'Planetlab Slice#2 for MAX-GENI demo at GEC7', 100, UNIX_TIMESTAMP('2010-03-15 01:49:32'), UNIX_TIMESTAMP('2010-03-30 17:49:33'));
+
+

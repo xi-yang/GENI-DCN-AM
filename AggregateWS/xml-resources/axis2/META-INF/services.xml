@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This file was auto-generated from WSDL -->
-<!-- by the Apache Axis2 version: 1.4  Built on : Apr 26, 2008 (06:24:30 EDT) -->
+<!-- by the Apache Axis2 version: 1.4.1  Built on : Aug 13, 2008 (05:03:35 LKT) -->
 <serviceGroup>
     <service name="AggregateGENI" scope="application">
         <messageReceivers>
@@ -44,6 +44,12 @@
             <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/CreateSliceResponse</outputActionMapping>
             <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/CreateSlice/Fault/AggregateException</faultActionMapping>
             <faultActionMapping faultName="AggregateFaultMessage">urn:CreateSliceAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="ListSlices" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>ListSlices</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/ListSlicesResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/ListSlices/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:ListSlicesAggregateFaultMessage</faultActionMapping>
         </operation>
         <operation name="DeleteSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <actionMapping>DeleteSlice</actionMapping>

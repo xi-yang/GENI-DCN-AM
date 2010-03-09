@@ -18,18 +18,7 @@ public class AggregateSlicerCore implements Runnable
     private AggregateSQLStatements sql;
 
     public AggregateSlicerCore() {
-        try {
-            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + 
-                    AggregateState.getSlicerTab() + " ( " +
-                    "sliceID VARCHAR(255), " + // job ID 1
-                    "launchTime BIGINT, " + // launch timestamp
-                    "PRIMARY KEY (sliceID)" +
-                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
-        } catch(AggregateException ex) {
-            ex.printStackTrace();
-            return;
-        }
-
+    
         //initialize the interface
         AggregateState.setSkeletonAPI(new AggregateGENISkeleton());
 

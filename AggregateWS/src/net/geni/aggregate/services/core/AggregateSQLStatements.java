@@ -14,6 +14,7 @@ public class AggregateSQLStatements
     private AggregateSQLConstraint nodeCapC = new AggregateSQLConstraint("capabilities", "?");
     public AggregateSQLStatement aggCaps_Stmt;
     public AggregateSQLStatement aggNodes_Stmt;
+    public AggregateSQLStatement aggSlices_Stmt;
 
     // statements devinitions
     public AggregateSQLStatements() {
@@ -25,5 +26,9 @@ public class AggregateSQLStatements
                 AggregateState.getAggregateDB(),
                 AggregateState.getNodesTab(),
                 new AggregateSQLColumns("urn", "id", "description", "capabilities"));
+        aggSlices_Stmt = new AggregateSQLStatement(
+                AggregateState.getAggregateDB(),
+                AggregateState.getSlicesTab(),
+                new AggregateSQLColumns("sliceName", "id", "url", "description", "creatorId", "createdTime", "expiredTime"));
     }
 }

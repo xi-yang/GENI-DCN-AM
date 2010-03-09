@@ -27,11 +27,13 @@ public class AggregateState
     private static String dbUser;
     private static String aggregateDB = null;
     private static String coreTab = null;
-    private static String slicerTab = null;
+    private static String slicerTab = "slicer";
     private static final String capsTab = "capabilities";
     private static final String nodesTab = "nodes";
+    private static final String slicesTab = "slices";
     private static AggregateCapabilities aggregateCaps = new AggregateCapabilities();
     private static AggregateNodes aggregateNodes = new AggregateNodes();
+    private static AggregateSlices aggregateSlices = new AggregateSlices();
     // global state
     private static AggregateSQLStatements sqlStatements = null;
     private static AggregateGENISkeleton skeletonAPI = null;
@@ -125,6 +127,10 @@ public class AggregateState
         return aggregateNodes;
     }
 
+    public static AggregateSlices getAggregateSlices() {
+        return aggregateSlices;
+    }
+
     public static String getAggregateDB() {
         return aggregateDB;
     }
@@ -152,4 +158,9 @@ public class AggregateState
     public static String getNodesTab() {
         return nodesTab;
     }
+
+    public static String getSlicesTab() {
+        return slicesTab;
+    }
+
 }
