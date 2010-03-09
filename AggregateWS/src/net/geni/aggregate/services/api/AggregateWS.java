@@ -22,7 +22,7 @@ import org.apache.axis2.context.ServiceContext;
 
 /**
  *
- * @author jflidr
+ * @author jflidr, xyang
  */
 public class AggregateWS implements AggregateGENISkeletonInterface
 {
