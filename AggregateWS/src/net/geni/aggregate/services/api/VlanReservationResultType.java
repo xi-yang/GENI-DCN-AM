@@ -110,14 +110,14 @@
                         */
 
                         
-                                    protected net.geni.aggregate.services.api.VlanReservationStatusType localStatus ;
+                                    protected java.lang.String localStatus ;
                                 
 
                            /**
                            * Auto generated getter method
-                           * @return net.geni.aggregate.services.api.VlanReservationStatusType
+                           * @return java.lang.String
                            */
-                           public  net.geni.aggregate.services.api.VlanReservationStatusType getStatus(){
+                           public  java.lang.String getStatus(){
                                return localStatus;
                            }
 
@@ -127,7 +127,7 @@
                                * Auto generated setter method
                                * @param param Status
                                */
-                               public void setStatus(net.geni.aggregate.services.api.VlanReservationStatusType param){
+                               public void setStatus(java.lang.String param){
                             
                                             this.localStatus=param;
                                     
@@ -316,12 +316,40 @@
                                     
                                    xmlWriter.writeEndElement();
                              }
-                                            if (localStatus==null){
-                                                 throw new org.apache.axis2.databinding.ADBException("status cannot be null!!");
-                                            }
-                                           localStatus.serialize(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","status"),
-                                               factory,xmlWriter);
-                                         if (localMessageTracker){
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
+                                            xmlWriter.writeStartElement(prefix,"status", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"status");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("status");
+                                    }
+                                
+
+                                          if (localStatus==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("status cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localStatus);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                              if (localMessageTracker){
                                     namespace = "http://aggregate.geni.net/services/api/";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -536,15 +564,15 @@
                                            throw new org.apache.axis2.databinding.ADBException("globalReservationId cannot be null!!");
                                         }
                                     }
-                            elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "status"));
-                            
-                            
-                                    if (localStatus==null){
-                                         throw new org.apache.axis2.databinding.ADBException("status cannot be null!!");
-                                    }
-                                    elementList.add(localStatus);
-                                 if (localMessageTracker){
+                                 
+                                        if (localStatus != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localStatus));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("status cannot be null!!");
+                                        }
+                                     if (localMessageTracker){
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "message"));
                                  
@@ -668,7 +696,10 @@
                                 
                                     if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","status").equals(reader.getName())){
                                 
-                                                object.setStatus(net.geni.aggregate.services.api.VlanReservationStatusType.Factory.parse(reader));
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setStatus(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
                                               
                                         reader.next();
                                     

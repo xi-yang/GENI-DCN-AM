@@ -15,6 +15,8 @@ public class AggregateSQLStatements
     public AggregateSQLStatement aggCaps_Stmt;
     public AggregateSQLStatement aggNodes_Stmt;
     public AggregateSQLStatement aggSlices_Stmt;
+    public AggregateSQLStatement aggUsers_Stmt;
+    public AggregateSQLStatement aggP2PVlans_Stmt;
 
     // statements devinitions
     public AggregateSQLStatements() {
@@ -30,5 +32,13 @@ public class AggregateSQLStatements
                 AggregateState.getAggregateDB(),
                 AggregateState.getSlicesTab(),
                 new AggregateSQLColumns("sliceName", "id", "url", "description", "creatorId", "createdTime", "expiredTime"));
+        aggUsers_Stmt = new AggregateSQLStatement(
+                AggregateState.getAggregateDB(),
+                AggregateState.getSlicesTab(),
+                new AggregateSQLColumns("id", "name", "firstName", "lastName", "email", "description"));
+        aggP2PVlans_Stmt = new AggregateSQLStatement(
+                AggregateState.getAggregateDB(),
+                AggregateState.getSlicesTab(),
+                new AggregateSQLColumns("id", "vlanTag", "sliceId", "source", "destination", "bandwidth", "globalReservationId", "status"));
     }
 }

@@ -85,23 +85,11 @@
 				</xs:sequence>
 			</xs:complexType >
 
-			<xs:simpleType name="VlanReservationStatusType">
-				<xs:restriction base="xs:string">
-					<xs:enumeration value="pending" />
-					<xs:enumeration value="insetup" />
-					<xs:enumeration value="active" />
-					<xs:enumeration value="inteardown" />
-					<xs:enumeration value="finished" />
-					<xs:enumeration value="cancelled" />
-					<xs:enumeration value="failed" />
-				</xs:restriction>
-			</xs:simpleType>
-
 			<xs:complexType name="VlanReservationResultType">
 				<xs:sequence>
 					<xs:element name="reservation" type="tns:VlanReservationDescriptorType"/>
 					<xs:element name="globalReservationId" type="xs:string" minOccurs="0"/>
-					<xs:element name="status" type="tns:VlanReservationStatusType"/>
+					<xs:element name="status" type="xs:string"/>
 					<xs:element name="message" type="xs:string" minOccurs="0"/>
 				</xs:sequence>
 			</xs:complexType >
@@ -309,7 +297,7 @@
 			<xs:element name="CreateSliceVlanResponse" type="tns:CreateSliceVlanResponseType"/>
 			<xs:complexType name="CreateSliceVlanResponseType">
 				<xs:sequence>
-					<xs:element name="status" type="tns:VlanReservationStatusType"/>
+					<xs:element name="status" type="xs:string"/>
 					<xs:element name="message" type="xs:string" minOccurs="0"/>
 				</xs:sequence>
 			</xs:complexType>
@@ -319,7 +307,7 @@
 			<xs:complexType name="DeleteSliceVlanType">
 				<xs:sequence>
 					<xs:element name="sliceID" type="xs:string"/>
-					<xs:element name="vlan" type="tns:int"/>
+					<xs:element name="vlan" type="xs:int"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -327,7 +315,7 @@
 			<xs:element name="DeleteSliceVlanResponse" type="tns:DeleteSliceVlanResponseType"/>
 			<xs:complexType name="DeleteSliceVlanResponseType">
 				<xs:sequence>
-					<xs:element name="status" type="tns:VlanReservationStatusType"/>
+					<xs:element name="status" type="xs:string"/>
 					<xs:element name="message" type="xs:string" minOccurs="0"/>
 				</xs:sequence>
 			</xs:complexType>
@@ -337,7 +325,7 @@
 			<xs:complexType name="QuerySliceVlanType">
 				<xs:sequence>
 					<xs:element name="sliceID" type="xs:string"/>
-					<xs:element name="vlan" type="tns:int"/>
+					<xs:element name="vlan" type="xs:int"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -345,7 +333,7 @@
 			<xs:element name="QuerySliceVlanResponse" type="tns:QuerySliceVlanResponseType"/>
 			<xs:complexType name="QuerySliceVlanResponseType">
 				<xs:sequence>
-					<xs:element name="status" type="tns:VlanReservationStatusType"/>
+					<xs:element name="status" type="xs:string"/>
 					<xs:element name="message" type="xs:string" minOccurs="0"/>
 				</xs:sequence>
 			</xs:complexType>

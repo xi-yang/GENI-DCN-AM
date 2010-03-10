@@ -82,3 +82,11 @@ INSERT INTO `slices` VALUES ('max-gec7-demo-slice1', 1, 'http://geni.maxgigapop.
 INSERT INTO `slices` VALUES ('max-gec7-demo-slice2', 2, 'http://geni.maxgigapop.net', 'Planetlab Slice#2 for MAX-GENI demo at GEC7', 100, UNIX_TIMESTAMP('2010-03-15 01:49:32'), UNIX_TIMESTAMP('2010-03-30 17:49:33'));
 
 
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` VALUES (98, 'TomLehman', 'Tom', 'Lehman', 'tlehman@east.isi.edu', 'Project Leader at USC/ISI East');
+INSERT INTO `users` VALUES (100, 'xyang', 'Xi', 'Yang', 'xyang@east.isi.edu', 'Computer Scientist at USC/ISI East');
+
+

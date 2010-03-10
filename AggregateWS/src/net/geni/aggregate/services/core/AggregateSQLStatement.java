@@ -562,6 +562,24 @@ public class AggregateSQLStatement {
         return ret;
     }
 
+
+    public int getNextInt(String s) throws AggregateException {
+        String msg = "";
+
+        if(res != null) {
+            try {
+                if(!res.next()) {
+                    throw new AggregateException(msg, AggregateException.FLOW);
+                }
+            } catch(SQLException ex) {
+                msg = "back store failure";
+                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                throw new AggregateException(ex, AggregateException.FATAL);
+            }
+        }
+        return getInt(s);
+    }
+
     public int getInt(String s) throws AggregateException {
         int ret = 0;
         String msg = "";

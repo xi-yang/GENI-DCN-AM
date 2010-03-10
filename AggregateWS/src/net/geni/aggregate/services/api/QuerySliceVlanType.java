@@ -66,14 +66,14 @@
                         */
 
                         
-                                    protected org.apache.axiom.om.OMElement localVlan ;
+                                    protected int localVlan ;
                                 
 
                            /**
                            * Auto generated getter method
-                           * @return org.apache.axiom.om.OMElement
+                           * @return int
                            */
-                           public  org.apache.axiom.om.OMElement getVlan(){
+                           public  int getVlan(){
                                return localVlan;
                            }
 
@@ -83,7 +83,7 @@
                                * Auto generated setter method
                                * @param param Vlan
                                */
-                               public void setVlan(org.apache.axiom.om.OMElement param){
+                               public void setVlan(int param){
                             
                                             this.localVlan=param;
                                     
@@ -241,17 +241,13 @@
                                         xmlWriter.writeStartElement("vlan");
                                     }
                                 
-
-                                          if (localVlan==null){
-                                              // write the nil attribute
-                                              
-                                                     throw new org.apache.axis2.databinding.ADBException("vlan cannot be null!!");
-                                                  
-                                          }else{
-
-                                        localVlan.serialize(xmlWriter);
-                                            
-                                          }
+                                               if (localVlan==java.lang.Integer.MIN_VALUE) {
+                                           
+                                                         throw new org.apache.axis2.databinding.ADBException("vlan cannot be null!!");
+                                                      
+                                               } else {
+                                                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localVlan));
+                                               }
                                     
                                    xmlWriter.writeEndElement();
                              
@@ -429,12 +425,9 @@
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "vlan"));
                                  
-                                        if (localVlan != null){
-                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localVlan));
-                                        } else {
-                                           throw new org.apache.axis2.databinding.ADBException("vlan cannot be null!!");
-                                        }
-                                    
+                                elementList.add(
+                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localVlan));
+                            
 
                 return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
             
@@ -532,15 +525,12 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                   if (reader.isStartElement()){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","vlan").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
-                                                org.apache.axiom.om.OMFactory fac = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
-                                                org.apache.axiom.om.OMNamespace omNs = fac.createOMNamespace("http://aggregate.geni.net/services/api/", "");
-                                                org.apache.axiom.om.OMElement _valueVlan = fac.createOMElement("vlan", omNs);
-                                                _valueVlan.addChild(fac.createOMText(_valueVlan, content));
-                                                object.setVlan(_valueVlan);
+                                              object.setVlan(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(content));
                                               
                                         reader.next();
                                     

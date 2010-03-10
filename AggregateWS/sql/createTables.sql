@@ -56,3 +56,50 @@ CREATE TABLE `slices` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+--
+-- Table structure for table `p2pvlans`
+--
+
+DROP TABLE IF EXISTS `p2pvlans`;
+CREATE TABLE `p2pvlans` (
+  `id` int(11) NOT NULL auto_increment,
+  `vlanTag` int(11) NOT NULL,
+  `sliceId` int(11) NOT NULL,
+  `source` varchar(255) NOT NULL default '',
+  `destination` varchar(255) NOT NULL default '',
+  `bandwidth` float NOT NULL,
+  `globalReservationId` varchar(255) NOT NULL default '',
+  `status` varchar(20) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `networks`
+--
+
+DROP TABLE IF EXISTS `networks`;
+CREATE TABLE `networks` (
+  `id` int(11) NOT NULL auto_increment,
+  `sliceId` int(11) NOT NULL,
+  `vlanPool` text NOT NULL default '',
+  `status` varchar(20) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL,
+  `firstName` varchar(40) NOT NULL default '',
+  `lastName` varchar(40) NOT NULL default '',
+  `email` varchar(40) NOT NULL default '',
+  `description` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+

@@ -4,6 +4,8 @@
  */
 package net.geni.aggregate.services.core;
 
+
+import java.util.Vector;
 import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +36,9 @@ public class AggregateState
     private static AggregateCapabilities aggregateCaps = new AggregateCapabilities();
     private static AggregateNodes aggregateNodes = new AggregateNodes();
     private static AggregateSlices aggregateSlices = new AggregateSlices();
+    private static String idcURL = "https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS";
+    private static String idcRepo = "/usr/local/aggregate/idc_client/repo";
+    private static Vector<AggregateP2PVlan> aggregateP2PVlans = new Vector<AggregateP2PVlan>();
     // global state
     private static AggregateSQLStatements sqlStatements = null;
     private static AggregateGENISkeleton skeletonAPI = null;
@@ -76,7 +81,7 @@ public class AggregateState
         dbPrefs.put("aggregateDB", "aggregate");
         dbPrefs.put("frontEndTab", "front_end");
         dbPrefs.put("aggregateTab", "slicer");
-    //aggregate prefs
+        //aggregate prefs
 //        dragonCapsPrefs.put("name", "");
 //        dragonCapsPrefs.put("id", "");
 //        dragonCapsPrefs.put("description", "");
@@ -131,6 +136,10 @@ public class AggregateState
         return aggregateSlices;
     }
 
+    public static Vector<AggregateP2PVlan> getAggregateP2PVlans() {
+        return aggregateP2PVlans;
+    }
+
     public static String getAggregateDB() {
         return aggregateDB;
     }
@@ -161,6 +170,14 @@ public class AggregateState
 
     public static String getSlicesTab() {
         return slicesTab;
+    }
+
+    public static String getIdcURL() {
+        return idcURL;
+    }
+
+    public static String getIdcRepo() {
+        return idcRepo;
     }
 
 }
