@@ -4,13 +4,15 @@
  */
 package net.geni.aggregate.services.core;
 
-
-import java.util.Vector;
+import java.util.*;
 import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import net.geni.aggregate.services.api.AggregateGENISkeleton;
 import net.geni.aggregate.services.api.AggregateWS;
 
@@ -20,7 +22,8 @@ import net.geni.aggregate.services.api.AggregateWS;
  */
 public class AggregateState
 {
-
+    //Properties
+    private static Properties aggregateProps = new Properties();
     // preferences
     private static Preferences AMPrefs = null;
     private static Preferences dbPrefs = null;
@@ -47,6 +50,22 @@ public class AggregateState
     public static Logger logger = Logger.getLogger("aggregate");
 
     public static void init() {
+        //init properties
+        String aggregateHome = System.getenv("AGGREGATE_HOME");
+        String propFileName = "aggregate.properties";
+        if (aggregateHome != null && !aggregateHome.equals(""))
+            propFileName = aggregateHome + "/repo" + propFileName;
+        else
+            propFileName = "/usr/local/aggregate/repo" + propFileName;
+
+        try {
+            FileInputStream in = new FileInputStream(propFileName);
+            aggregateProps.load(in);
+            in.close();
+        } catch (IOException e) {
+            //logging for exception!
+        }
+
         //create and load preferences
         AMPrefs = Preferences.systemNodeForPackage(AggregateWS.class);
         dbPrefs = AMPrefs.node("database");
@@ -90,6 +109,10 @@ public class AggregateState
 //        PLCapsPrefs.put("id", "");
 //        PLCapsPrefs.put("description", "");
 //        PLCapsPrefs.put("controllerURL", "");
+    }
+    //properties
+    public static Properties getProperties() {
+        return aggregateProps;
     }
     // sql
     public static void setAggregateDBConnection(Connection aggregateDB) {
