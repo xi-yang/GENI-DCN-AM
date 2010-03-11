@@ -686,6 +686,59 @@ public class AggregateSQLStatement {
         return ret;
     }
 
+    public float getFloat(String s) throws AggregateException {
+        float ret = 0;
+        String msg = "";
+
+        if(res == null) {
+            msg = "no result set for \"" + s + "\" query";
+            //AggregateState.logger.log(Level.SEVERE, msg);
+            throw new AggregateException(msg, AggregateException.ERROR);
+        }
+        if(columns == null) {
+            msg = "no column set";
+            //AggregateState.logger.log(Level.SEVERE, msg);
+            throw new AggregateException(msg, AggregateException.ERROR);
+        }
+        if(columns.contains(s)) {
+            try {
+                // this makes a simple (noniterative) request possible:
+                // get any number of columns from the first row
+                if(res.isBeforeFirst()) {
+                    if(!res.next()) {
+                        msg = "empty result set";
+                        //AggregateState.logger.log(Level.WARNING, msg);
+                        throw new AggregateException(msg, AggregateException.FLOW);
+                    }
+                }
+            } catch(SQLException ex) {
+                msg = "back store failure";
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
+                throw new AggregateException(ex, AggregateException.FATAL);
+            }
+            try {
+                ret = res.getFloat(s);
+                if(res.wasNull()) {
+                    msg = "column " + s + " is NULL)";
+                    res.updateString("status", "error");
+                    res.updateString("statusMsg", msg);
+                    res.updateRow();
+                    //AggregateState.logger.log(Level.WARNING, msg);
+                    throw new AggregateException(msg);
+                }
+            } catch(SQLException ex) {
+                msg = "back store failure";
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
+                throw new AggregateException(ex, AggregateException.FATAL);
+            }
+        } else {
+            msg = "\"" + s + "\" not in the column set";
+            //AggregateState.logger.log(Level.SEVERE, msg);
+            throw new AggregateException(msg, AggregateException.ERROR);
+        }
+        return ret;
+    }
+
     public String getQuery() {
         return query;
     }

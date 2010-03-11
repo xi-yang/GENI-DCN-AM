@@ -8,8 +8,6 @@ import org.apache.log4j.*;
 import java.util.Vector;
 import java.util.Properties;
 import java.sql.Connection;
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.io.FileInputStream;
@@ -40,13 +38,20 @@ public class AggregateState
     private static final String capsTab = "capabilities";
     private static final String nodesTab = "nodes";
     private static final String slicesTab = "slices";
+    private static final String usersTab = "users";
+    private static final String p2pvlansTab = "p2pvlans";
+    private static final String networksTab = "networks";
+
+    // Resrouces
     private static AggregateCapabilities aggregateCaps = new AggregateCapabilities();
     private static AggregateNodes aggregateNodes = new AggregateNodes();
     private static AggregateSlices aggregateSlices = new AggregateSlices();
     private static String idcURL = "";
     private static String idcRepo = "/usr/local/aggregate/AggregateWS/conf/repo";
     private static Vector<AggregateP2PVlan> aggregateP2PVlans = new Vector<AggregateP2PVlan>();
-    // global state
+    private static Vector<AggregateUser> aggregateUsers = new Vector<AggregateUser>();
+    
+    // Global states
     private static AggregateSQLStatements sqlStatements = null;
     private static AggregateGENISkeleton skeletonAPI = null;
     private static Connection aggregateDBConnection = null;
@@ -168,6 +173,10 @@ public class AggregateState
         return aggregateP2PVlans;
     }
 
+    public static Vector<AggregateUser> getAggregateUsers() {
+        return aggregateUsers;
+    }
+
     public static String getAggregateDB() {
         return aggregateDB;
     }
@@ -200,6 +209,18 @@ public class AggregateState
         return slicesTab;
     }
 
+    public static String getUsersTab() {
+        return usersTab;
+    }
+
+    public static String getP2PVlansTab() {
+        return p2pvlansTab;
+    }
+
+    public static String getNetworksTab() {
+        return networksTab;
+    }
+
     public static String getIdcURL() {
         return idcURL;
     }
@@ -208,4 +229,21 @@ public class AggregateState
         return idcRepo;
     }
 
+    public static String getSliceNameById(int id) {
+        for (int i = 0; i < aggregateSlices.size(); i++) {
+            if (aggregateSlices.get(i).getId() == id) {
+                return aggregateSlices.get(i).getSliceName();
+            }
+        }
+        return "";
+    }
+
+    public static int getSliceIdByName(String name) {
+        for (int i = 0; i < aggregateSlices.size(); i++) {
+            if (aggregateSlices.get(i).getSliceName().equalsIgnoreCase(name)) {
+                return aggregateSlices.get(i).getId();
+            }
+        }
+        return 0;
+    }
 }

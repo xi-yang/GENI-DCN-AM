@@ -32,13 +32,13 @@ public class AggregateSQLStatements
                 AggregateState.getAggregateDB(),
                 AggregateState.getSlicesTab(),
                 new AggregateSQLColumns("sliceName", "id", "url", "description", "creatorId", "createdTime", "expiredTime"));
-        aggUsers_Stmt = new AggregateSQLStatement(
-                AggregateState.getAggregateDB(),
-                AggregateState.getSlicesTab(),
-                new AggregateSQLColumns("id", "name", "firstName", "lastName", "email", "description"));
         aggP2PVlans_Stmt = new AggregateSQLStatement(
                 AggregateState.getAggregateDB(),
-                AggregateState.getSlicesTab(),
+                AggregateState.getP2PVlansTab(),
                 new AggregateSQLColumns("id", "vlanTag", "sliceId", "source", "destination", "bandwidth", "globalReservationId", "status"));
+        aggUsers_Stmt = new AggregateSQLStatement(
+                AggregateState.getAggregateDB(),
+                AggregateState.getUsersTab(),
+                new AggregateSQLColumns("id", "name", "firstName", "lastName", "email", "description"));
     }
 }

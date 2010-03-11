@@ -128,7 +128,7 @@ public class AggregateIDCClient {
      *  cancelReservation
      *
      */
-    public String cancelReservation()
+    public String cancelReservation(String aGri)
         throws AxisFault, AAAFaultMessage, BSSFaultMessage, RemoteException, Exception {
         if (gri == null)
             return "failed";
@@ -138,6 +138,8 @@ public class AggregateIDCClient {
         /* Initialize client instance */
         client.setUp(true, idcURL, idcRepo);
         /* Send Request */
+        if (!aGri.equals(""))
+            gri.setGri(aGri);
         String status = client.cancelReservation(this.gri);
         /* Extract repsponse information */
         return status;
@@ -147,7 +149,7 @@ public class AggregateIDCClient {
      * set queryReservation
      * 
      */
-    public HashMap queryReservation()
+    public HashMap queryReservation(String aGri)
         throws AxisFault, AAAFaultMessage, BSSFaultMessage, RemoteException, Exception {
 
         HashMap hmRet = new HashMap();
@@ -162,6 +164,8 @@ public class AggregateIDCClient {
         /* Initialize client instance */
         client.setUp(true, idcURL, idcRepo);
         /* Send Request */
+        if (!aGri.equals(""))
+            gri.setGri(aGri);
         ResDetails response = client.queryReservation(this.gri);
         PathInfo pathInfo = response.getPathInfo();
         Layer2Info layer2Info = pathInfo.getLayer2Info();

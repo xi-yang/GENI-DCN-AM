@@ -6,14 +6,17 @@
  */
 package net.geni.aggregate.services.api;
 
-import java.util.*;
+import org.apache.log4j.*;
+import java.util.Vector;
+import java.util.HashMap;
 import net.geni.aggregate.services.core.AggregateCapabilities;
 import net.geni.aggregate.services.core.AggregateNode;
 import net.geni.aggregate.services.core.AggregateSlices;
 import net.geni.aggregate.services.core.AggregateSlice;
 import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateP2PVlan;
-
+import net.geni.aggregate.services.core.AggregateUser;
+import net.geni.aggregate.services.core.AggregateException;
 /**
  *  AggregateGENISkeleton java skeleton for the axisService
  */
@@ -173,8 +176,14 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             sliceDesc.setName(slices.get(i).getSliceName());
             sliceDesc.setUrl(slices.get(i).getURL());
             sliceDesc.setDescription(slices.get(i).getDescription());
-            String creator = "userID=";
-            creator += Integer.toString(slices.get(i).getCreatorId(), 10);
+            int userId = slices.get(i).getCreatorId();
+            String creator = "userID=" + Integer.toString(userId, 10);
+            for (int u = 0; u < AggregateState.getAggregateUsers().size(); u++) {
+                AggregateUser user = AggregateState.getAggregateUsers().get(u);
+                if (user.getId() == userId)
+                    creator = user.getName();
+            }
+            
             sliceDesc.setCreator(creator);
             sliceDesc.setCreatedTime(slices.get(i).getCreatedTime());
             sliceDesc.setExpiredTime(slices.get(i).getExpiredTime());
@@ -279,7 +288,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         Vector<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans();
         for (int i = 0; i < p2pvlans.size(); i++) {
             p2pvlan = p2pvlans.get(i);
-            if (p2pvlan.getSliceId().equals(sliceId) && p2pvlan.getVlanTag() == vlan) {
+            if (p2pvlan.getSliceName().equals(sliceId) && p2pvlan.getVlanTag() == vlan) {
                 hm = p2pvlan.queryVlan();
                 break;
             }
@@ -319,16 +328,28 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         Vector<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans();
         for (int i = 0; i < p2pvlans.size(); i++) {
             p2pvlan = p2pvlans.get(i);
-            if (p2pvlan.getSliceId().equals(sliceId) && p2pvlan.getVlanTag() == vlan) {
-                status = p2pvlan.teardownVlan();
-                if (status.equalsIgnoreCase("FAILED")) {
-                    message = "Error=" + p2pvlan.getErrorMessage();
-                } else {
-                    message = "GRI=" + p2pvlan.getGlobalReservationId();
+            if (p2pvlan.getSliceName().equals(sliceId) && p2pvlan.getVlanTag() == vlan) {
+                if (p2pvlan.getStatus().equalsIgnoreCase("active")) {
+                    status = p2pvlan.teardownVlan();
+                    if (status.equalsIgnoreCase("FAILED")) {
+                        message = "Error=" + p2pvlan.getErrorMessage();
+                    } else {
+                        message = "GRI=" + p2pvlan.getGlobalReservationId();
+                    }
                 }
-                //AggregateState.getAggregateP2PVlans().remove(p2pvlan);
+                try {
+                    if (message.equals(""))
+                        message = "GRI=" + p2pvlan.getGlobalReservationId();
+                    p2pvlan.deleteVlanFromDB();
+                    AggregateState.getAggregateP2PVlans().remove(p2pvlan);
+                    status = "deleted";
+                } catch (AggregateException ex) {
+                    status = "failed";
+                    message += "\nAggregateException returned from deleteVlanFromDB: " +ex.getMessage();
+                }
                 break;
             }
+            p2pvlan = null;
         }
         if (p2pvlan == null) {
             throw new AggregateFaultMessage("Unkown SliceVLAN: " + sliceId + Integer.toString(vlan));
@@ -358,7 +379,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         VlanReservationDescriptorType vlanResvDescr = createSliceVlan.getVlanReservation();
         String source = vlanResvDescr.getSourceNode();
         String destination = vlanResvDescr.getDestinationNode();
-        int vtag = vlanResvDescr.getVlan();
+        int vlan = vlanResvDescr.getVlan();
         float bw = vlanResvDescr.getBandwidth();
         String description = vlanResvDescr.getDescription();
 
@@ -367,31 +388,47 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         long startTime = System.currentTimeMillis()/1000;
         long endTime = System.currentTimeMillis()/1000;
 
-        // look for slice
-        AggregateSlices slices = AggregateState.getAggregateSlices();
-        for (int i = 0; i < slices.size(); i++) {
-            if (slices.get(i).getSliceName().equals(sliceId)) {
-                if (slices.get(i).getCreatedTime() > startTime)
-                    startTime = slices.get(i).getCreatedTime();
-                if (slices.get(i).getExpiredTime() > endTime)
-                    endTime = slices.get(i).getExpiredTime();
-                else {//the slice has already expired
-                    status = "failed";
-                    message = "Slice=" + sliceId +" has already expired. No VLAN created.";
-                }
+        // look for existing sliceVlan
+        AggregateP2PVlan p2pvlan = null;
+        Vector<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans();
+        for (int i = 0; i < p2pvlans.size(); i++) {
+            p2pvlan = p2pvlans.get(i);
+            if (p2pvlan.getSliceName().equals(sliceId) && p2pvlan.getVlanTag() == vlan) {
+                status = "failed";
+                message = "GRI=" + p2pvlan.getGlobalReservationId() + ", Status=" + p2pvlan.getStatus() +
+                        "\nNote: You may delete the VLAN and re-create.";
                 break;
             }
+            p2pvlan = null;
         }
-        if (!status.matches("failed")) {
-            AggregateP2PVlan p2pvlan = new AggregateP2PVlan(sliceId, source, destination, vtag, bw, description, startTime, endTime);
-            status = p2pvlan.setupVlan();
-            if (status.equalsIgnoreCase("failed"))
-                message = "Error=" + p2pvlan.getErrorMessage();
-            else
-                message = "GRI=" + p2pvlan.getGlobalReservationId();
-            AggregateState.getAggregateP2PVlans().add(p2pvlan);
+        // look for slice
+        if (p2pvlan == null) {
+            AggregateSlices slices = AggregateState.getAggregateSlices();
+            for (int i = 0; i < slices.size(); i++) {
+                if (slices.get(i).getSliceName().equals(sliceId)) {
+                    if (slices.get(i).getCreatedTime() > startTime) {
+                        startTime = slices.get(i).getCreatedTime();
+                    }
+                    if (slices.get(i).getExpiredTime() > endTime) {
+                        endTime = slices.get(i).getExpiredTime();
+                    } else {//the slice has already expired
+                        status = "failed";
+                        message = "Slice=" + sliceId + " has already expired. No VLAN created.";
+                    }
+                    break;
+                }
+            }
+            if (!status.matches("failed")) {
+                p2pvlan = new AggregateP2PVlan(sliceId, source, destination, vlan, bw, description, startTime, endTime);
+                status = p2pvlan.setupVlan();
+                if (status.equalsIgnoreCase("failed")) {
+                    message = "Error=" + p2pvlan.getErrorMessage();
+                } else {
+                    message = "GRI=" + p2pvlan.getGlobalReservationId();
+                }
+                AggregateState.getAggregateP2PVlans().add(p2pvlan);
+            }
         }
-
         //form response
         CreateSliceVlanResponseType createSliceVlanResponseType = new CreateSliceVlanResponseType();
         CreateSliceVlanResponse createSliceVlanResponse = new CreateSliceVlanResponse();
