@@ -40,7 +40,7 @@ public class AggregateState
     private static AggregateNodes aggregateNodes = new AggregateNodes();
     private static AggregateSlices aggregateSlices = new AggregateSlices();
     private static String idcURL = "https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS";
-    private static String idcRepo = "/usr/local/aggregate/idc_client/repo";
+    private static String idcRepo = "/usr/local/aggregate/AggregateWS/conf/repo";
     private static Vector<AggregateP2PVlan> aggregateP2PVlans = new Vector<AggregateP2PVlan>();
     // global state
     private static AggregateSQLStatements sqlStatements = null;
@@ -54,9 +54,9 @@ public class AggregateState
         String aggregateHome = System.getenv("AGGREGATE_HOME");
         String propFileName = "aggregate.properties";
         if (aggregateHome != null && !aggregateHome.equals(""))
-            propFileName = aggregateHome + "/repo" + propFileName;
+            propFileName = aggregateHome + "/AggregateWS/conf/" + propFileName;
         else
-            propFileName = "/usr/local/aggregate/repo" + propFileName;
+            propFileName = "/usr/local/aggregate/AggregateWS/conf/" + propFileName;
 
         try {
             FileInputStream in = new FileInputStream(propFileName);
