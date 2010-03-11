@@ -37,7 +37,7 @@ public class AggregateSlicerCore implements Runnable
 
                 Thread.sleep(AggregateState.getPollInterval());
             } catch(InterruptedException ex) {
-                AggregateState.logger.log(Level.INFO, "user interrupt: terminating ...", ex);
+                //AggregateState.logger.log(Level.INFO, "user interrupt: terminating ...", ex);
                 axisRunning = false;
             }
 //            } catch(AggregateException ex) {

@@ -5,9 +5,10 @@
 
 package net.geni.aggregate.services.core;
 
-import java.util.*;
+import java.util.HashMap;
 import java.rmi.RemoteException;
 import org.apache.axis2.AxisFault;
+import org.apache.log4j.*;
 import net.es.oscars.oscars.AAAFaultMessage;
 import net.es.oscars.oscars.BSSFaultMessage;
 import net.es.oscars.wsdlTypes.*;
@@ -23,6 +24,7 @@ public class AggregateP2PVlan {
     //IDCAPIClient
     AggregateIDCClient apiClient;
     //Reservation parameters
+    String sliceId;
     String source;
     String destination;
     int vtag;
@@ -30,13 +32,15 @@ public class AggregateP2PVlan {
     String description;
     long startTime;
     long endTime;
-
     String errMessage;
+
+    private Logger log;
     /**
     * constructor
     */
-    public AggregateP2PVlan(String s, String d, int v, float b, String desc, long st, long et) {
+    public AggregateP2PVlan(String sl, String s, String d, int v, float b, String desc, long st, long et) {
         apiClient = null;
+        sliceId = sl;
         source = s;
         destination = d;
         vtag = v;
@@ -45,12 +49,20 @@ public class AggregateP2PVlan {
         startTime = st;
         endTime = et;
         errMessage = "";
+        log = Logger.getLogger("net.geni.aggregate");
     }
 
+    public String getSliceId() {
+        return sliceId;
+    }
     public String getGlobalReservationId() {
         if (apiClient == null)
             return "";
         return apiClient.getGlobalReservationId();
+    }
+
+    public int getVlanTag() {
+        return vtag;
     }
 
     public String getErrorMessage() {
@@ -117,6 +129,9 @@ public class AggregateP2PVlan {
      * @return
      */
      public HashMap queryVlan() {
+
+        this.log.info("querying vlan circuit!");
+
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         HashMap hmRet = new HashMap();

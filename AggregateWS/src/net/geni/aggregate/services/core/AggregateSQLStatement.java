@@ -200,7 +200,7 @@ public class AggregateSQLStatement {
                 initStatement(l);
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                ////AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
         }
@@ -216,7 +216,7 @@ public class AggregateSQLStatement {
             }
         } catch(SQLException ex) {
             msg = "back store failure";
-            AggregateState.logger.log(Level.SEVERE, msg, ex);
+            //AggregateState.logger.log(Level.SEVERE, msg, ex);
             throw new AggregateException(ex, AggregateException.FATAL);
         }
     }
@@ -269,7 +269,7 @@ public class AggregateSQLStatement {
                 initStatement(l);
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
         }
@@ -285,7 +285,7 @@ public class AggregateSQLStatement {
             }
         } catch(SQLException ex) {
             msg = "back store failure";
-            AggregateState.logger.log(Level.SEVERE, msg, ex);
+            //AggregateState.logger.log(Level.SEVERE, msg, ex);
             throw new AggregateException(ex, AggregateException.FATAL);
         }
     }
@@ -316,7 +316,7 @@ public class AggregateSQLStatement {
             }
         } catch(SQLException ex) {
             msg = "back store failure";
-            AggregateState.logger.log(Level.SEVERE, msg, ex);
+            //AggregateState.logger.log(Level.SEVERE, msg, ex);
             throw new AggregateException(ex, AggregateException.FATAL);
         }
 
@@ -362,7 +362,7 @@ public class AggregateSQLStatement {
                 initStatement(l);
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
         }
@@ -378,7 +378,7 @@ public class AggregateSQLStatement {
             }
         } catch(SQLException ex) {
             msg = "back store failure";
-            AggregateState.logger.log(Level.SEVERE, msg, ex);
+            //AggregateState.logger.log(Level.SEVERE, msg, ex);
             throw new AggregateException(ex, AggregateException.FATAL);
         }
     }
@@ -404,7 +404,7 @@ public class AggregateSQLStatement {
                 initStatement(l);
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
         }
@@ -420,7 +420,7 @@ public class AggregateSQLStatement {
             }
         } catch(SQLException ex) {
             msg = "back store failure";
-            AggregateState.logger.log(Level.SEVERE, msg, ex);
+            //AggregateState.logger.log(Level.SEVERE, msg, ex);
             throw new AggregateException(ex, AggregateException.FATAL);
         }
     }
@@ -486,7 +486,7 @@ public class AggregateSQLStatement {
                 }
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
         }
@@ -503,7 +503,7 @@ public class AggregateSQLStatement {
                 }
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
         }
@@ -516,12 +516,12 @@ public class AggregateSQLStatement {
 
         if(res == null) {
             msg = "no result set for \"" + s + "\" query";
-            AggregateState.logger.log(Level.SEVERE, msg);
+            //AggregateState.logger.log(Level.SEVERE, msg);
             throw new AggregateException(msg, AggregateException.ERROR);
         }
         if(columns == null) {
             msg = "no column set";
-            AggregateState.logger.log(Level.SEVERE, msg);
+            //AggregateState.logger.log(Level.SEVERE, msg);
             throw new AggregateException(msg, AggregateException.ERROR);
         }
         if(columns.contains(s)) {
@@ -536,7 +536,7 @@ public class AggregateSQLStatement {
                 }
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
             try {
@@ -546,17 +546,17 @@ public class AggregateSQLStatement {
                     res.updateString("status", "error");
                     res.updateString("statusMsg", msg);
                     res.updateRow();
-                    AggregateState.logger.log(Level.WARNING, msg);
+                    //AggregateState.logger.log(Level.WARNING, msg);
                     throw new AggregateException(msg);
                 }
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
         } else {
             msg = "\"" + s + "\" not in the column set";
-            AggregateState.logger.log(Level.SEVERE, msg);
+            //AggregateState.logger.log(Level.SEVERE, msg);
             throw new IllegalArgumentException(msg);
         }
         return ret;
@@ -573,7 +573,7 @@ public class AggregateSQLStatement {
                 }
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
         }
@@ -586,12 +586,12 @@ public class AggregateSQLStatement {
 
         if(res == null) {
             msg = "no result set for \"" + s + "\" query";
-            AggregateState.logger.log(Level.SEVERE, msg);
+            //AggregateState.logger.log(Level.SEVERE, msg);
             throw new AggregateException(msg, AggregateException.ERROR);
         }
         if(columns == null) {
             msg = "no column set";
-            AggregateState.logger.log(Level.SEVERE, msg);
+            //AggregateState.logger.log(Level.SEVERE, msg);
             throw new AggregateException(msg, AggregateException.ERROR);
         }
         if(columns.contains(s)) {
@@ -601,13 +601,13 @@ public class AggregateSQLStatement {
                 if(res.isBeforeFirst()) {
                     if(!res.next()) {
                         msg = "empty result set";
-                        AggregateState.logger.log(Level.WARNING, msg);
+                        //AggregateState.logger.log(Level.WARNING, msg);
                         throw new AggregateException(msg, AggregateException.FLOW);
                     }
                 }
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
             try {
@@ -617,17 +617,17 @@ public class AggregateSQLStatement {
                     res.updateString("status", "error");
                     res.updateString("statusMsg", msg);
                     res.updateRow();
-                    AggregateState.logger.log(Level.WARNING, msg);
+                    //AggregateState.logger.log(Level.WARNING, msg);
                     throw new AggregateException(msg);
                 }
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
         } else {
             msg = "\"" + s + "\" not in the column set";
-            AggregateState.logger.log(Level.SEVERE, msg);
+            //AggregateState.logger.log(Level.SEVERE, msg);
             throw new AggregateException(msg, AggregateException.ERROR);
         }
         return ret;
@@ -639,12 +639,12 @@ public class AggregateSQLStatement {
 
         if(res == null) {
             msg = "no result set for \"" + s + "\" query";
-            AggregateState.logger.log(Level.SEVERE, msg);
+            //AggregateState.logger.log(Level.SEVERE, msg);
             throw new AggregateException(msg, AggregateException.ERROR);
         }
         if(columns == null) {
             msg = "no column set";
-            AggregateState.logger.log(Level.SEVERE, msg);
+            //AggregateState.logger.log(Level.SEVERE, msg);
             throw new AggregateException(msg, AggregateException.ERROR);
         }
         if(columns.contains(s)) {
@@ -654,13 +654,13 @@ public class AggregateSQLStatement {
                 if(res.isBeforeFirst()) {
                     if(!res.next()) {
                         msg = "empty result set";
-                        AggregateState.logger.log(Level.WARNING, msg);
+                        //AggregateState.logger.log(Level.WARNING, msg);
                         throw new AggregateException(msg, AggregateException.FLOW);
                     }
                 }
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
             try {
@@ -670,17 +670,17 @@ public class AggregateSQLStatement {
                     res.updateString("status", "error");
                     res.updateString("statusMsg", msg);
                     res.updateRow();
-                    AggregateState.logger.log(Level.WARNING, msg);
+                    //AggregateState.logger.log(Level.WARNING, msg);
                     throw new AggregateException(msg);
                 }
             } catch(SQLException ex) {
                 msg = "back store failure";
-                AggregateState.logger.log(Level.SEVERE, msg, ex);
+                //AggregateState.logger.log(Level.SEVERE, msg, ex);
                 throw new AggregateException(ex, AggregateException.FATAL);
             }
         } else {
             msg = "\"" + s + "\" not in the column set";
-            AggregateState.logger.log(Level.SEVERE, msg);
+            //AggregateState.logger.log(Level.SEVERE, msg);
             throw new AggregateException(msg, AggregateException.ERROR);
         }
         return ret;
@@ -705,7 +705,7 @@ public class AggregateSQLStatement {
                 res.updateString(columns.get(i), String.class.cast(o[i]));
             } else {
                 String msg = "unknown object class: " + o[i].getClass().getName() + "at position " + i;
-                AggregateState.logger.log(Level.WARNING, msg);
+                //AggregateState.logger.log(Level.WARNING, msg);
             }
         }
         res.updateRow();

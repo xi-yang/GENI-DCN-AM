@@ -5,7 +5,9 @@
 
 package net.geni.aggregate.services.core;
 
-import java.util.*;
+import org.apache.log4j.*;
+import java.util.Vector;
+import java.util.HashMap;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.io.BufferedReader;
@@ -18,7 +20,11 @@ import net.es.oscars.oscars.AAAFaultMessage;
 import net.es.oscars.oscars.BSSFaultMessage;
 import net.es.oscars.wsdlTypes.*;
 import net.es.oscars.client.Client;
-import net.es.oscars.PropHandler;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlanePathContent;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneHopContent;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneLinkContent;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapContent;
+import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfo;
 
 /**
  *
@@ -32,13 +38,14 @@ public class AggregateIDCClient {
     private String idcURL;
     private String idcRepo;
     private GlobalReservationId gri;
+    private Logger log;
 
     AggregateIDCClient(String url, String repo) {
         idcURL = url;
         idcRepo = repo;
         gri = new GlobalReservationId();
+        log = Logger.getLogger("net.geni.aggregate");
     }
-
     /**
      * get an IDCCLient instance
      */
@@ -142,6 +149,7 @@ public class AggregateIDCClient {
      */
     public HashMap queryReservation()
         throws AxisFault, AAAFaultMessage, BSSFaultMessage, RemoteException, Exception {
+
         HashMap hmRet = new HashMap();
         if (gri == null) {
             hmRet.put("GRI","unknown");
@@ -168,6 +176,26 @@ public class AggregateIDCClient {
         hmRet.put("description", response.getDescription());
         hmRet.put("source", layer2Info.getSrcEndpoint());
         hmRet.put("destination", layer2Info.getDestEndpoint());
+        /* Get path ERO */
+        String ero = "\n";
+        CtrlPlanePathContent path = pathInfo.getPath();
+        for (CtrlPlaneHopContent hop : path.getHop()) {
+            CtrlPlaneLinkContent link = hop.getLink();
+            if (link == null) {
+                //should not happen
+                ero += "no link";
+                continue;
+            }
+            ero += "\t" + link.getId();
+            CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors();
+            CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = swcap.getSwitchingCapabilitySpecificInfo();
+            ero += ", " + swcap.getEncodingType();
+            if ("ethernet".equals(swcap.getEncodingType())) {
+                ero += ", " + swcapInfo.getVlanRangeAvailability();
+            }
+            ero += "\n";
+        }
+        hmRet.put("ERO", ero);
         return hmRet;
     }
 }

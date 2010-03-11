@@ -6,7 +6,7 @@
  */
 package net.geni.aggregate.services.api;
 
-import java.util.Vector;
+import java.util.*;
 import net.geni.aggregate.services.core.AggregateCapabilities;
 import net.geni.aggregate.services.core.AggregateNode;
 import net.geni.aggregate.services.core.AggregateSlices;
@@ -268,8 +268,33 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     public net.geni.aggregate.services.api.QuerySliceVlanResponse QuerySliceVlan(
             net.geni.aggregate.services.api.QuerySliceVlan querySliceVlan26)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#QuerySliceVlan");
+
+        QuerySliceVlanType deleteSliceVlan = querySliceVlan26.getQuerySliceVlan();
+        String sliceId = deleteSliceVlan.getSliceID();
+        int vlan = deleteSliceVlan.getVlan();
+
+        HashMap hm = new HashMap();
+        // look for slice
+        AggregateP2PVlan p2pvlan = null;
+        Vector<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans();
+        for (int i = 0; i < p2pvlans.size(); i++) {
+            p2pvlan = p2pvlans.get(i);
+            if (p2pvlan.getSliceId().equals(sliceId) && p2pvlan.getVlanTag() == vlan) {
+                hm = p2pvlan.queryVlan();
+                break;
+            }
+        }
+        if (p2pvlan == null) {
+            throw new AggregateFaultMessage("Unkown SliceVLAN: " + sliceId + Integer.toString(vlan));
+        }
+
+        //form response
+        QuerySliceVlanResponseType querySliceVlanResponseType = new QuerySliceVlanResponseType();
+        QuerySliceVlanResponse querySliceVlanResponse = new QuerySliceVlanResponse();
+        querySliceVlanResponseType.setStatus(hm.get("status").toString());
+        querySliceVlanResponseType.setMessage("Query Result: " + hm.toString());
+        querySliceVlanResponse.setQuerySliceVlanResponse(querySliceVlanResponseType);
+        return querySliceVlanResponse;
     }
 
     /**
@@ -281,8 +306,41 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     public net.geni.aggregate.services.api.DeleteSliceVlanResponse DeleteSliceVlan(
             net.geni.aggregate.services.api.DeleteSliceVlan deleteSliceVlan28)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#DeleteSliceVlan");
+
+        DeleteSliceVlanType deleteSliceVlan = deleteSliceVlan28.getDeleteSliceVlan();
+        String sliceId = deleteSliceVlan.getSliceID();
+        int vlan = deleteSliceVlan.getVlan();
+
+
+        String status = "";
+        String message = "";
+        // look for slice
+        AggregateP2PVlan p2pvlan = null;
+        Vector<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans();
+        for (int i = 0; i < p2pvlans.size(); i++) {
+            p2pvlan = p2pvlans.get(i);
+            if (p2pvlan.getSliceId().equals(sliceId) && p2pvlan.getVlanTag() == vlan) {
+                status = p2pvlan.teardownVlan();
+                if (status.equalsIgnoreCase("FAILED")) {
+                    message = "Error=" + p2pvlan.getErrorMessage();
+                } else {
+                    message = "GRI=" + p2pvlan.getGlobalReservationId();
+                }
+                //AggregateState.getAggregateP2PVlans().remove(p2pvlan);
+                break;
+            }
+        }
+        if (p2pvlan == null) {
+            throw new AggregateFaultMessage("Unkown SliceVLAN: " + sliceId + Integer.toString(vlan));
+        }
+
+        //form response
+        DeleteSliceVlanResponseType deleteSliceVlanResponseType = new DeleteSliceVlanResponseType();
+        DeleteSliceVlanResponse deleteSliceVlanResponse = new DeleteSliceVlanResponse();
+        deleteSliceVlanResponseType.setStatus(status);
+        deleteSliceVlanResponseType.setMessage(message);
+        deleteSliceVlanResponse.setDeleteSliceVlanResponse(deleteSliceVlanResponseType);
+        return deleteSliceVlanResponse;
     }
 
     /**
@@ -312,7 +370,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         // look for slice
         AggregateSlices slices = AggregateState.getAggregateSlices();
         for (int i = 0; i < slices.size(); i++) {
-            if (slices.get(i).getSliceName().matches(sliceId)) {
+            if (slices.get(i).getSliceName().equals(sliceId)) {
                 if (slices.get(i).getCreatedTime() > startTime)
                     startTime = slices.get(i).getCreatedTime();
                 if (slices.get(i).getExpiredTime() > endTime)
@@ -325,7 +383,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             }
         }
         if (!status.matches("failed")) {
-            AggregateP2PVlan p2pvlan = new AggregateP2PVlan(source, destination, vtag, bw, description, startTime, endTime);
+            AggregateP2PVlan p2pvlan = new AggregateP2PVlan(sliceId, source, destination, vtag, bw, description, startTime, endTime);
             status = p2pvlan.setupVlan();
             if (status.equalsIgnoreCase("failed"))
                 message = "Error=" + p2pvlan.getErrorMessage();

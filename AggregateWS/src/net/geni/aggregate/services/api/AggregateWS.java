@@ -4,12 +4,11 @@
  */
 package net.geni.aggregate.services.api;
 
+import org.apache.log4j.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateException;
 import net.geni.aggregate.services.core.AggregateNode;
@@ -26,6 +25,7 @@ import org.apache.axis2.context.ServiceContext;
  */
 public class AggregateWS implements AggregateGENISkeletonInterface
 {
+    public static Logger log = Logger.getLogger("net.geni.aggregate");
 
     private AggregateSlicerCore aggregateSlicerCore;
     private Thread aggregateServerThread;
@@ -129,7 +129,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             }
         } catch(AggregateException ex) {
             if(ex.getType() == AggregateException.FATAL) {
-                AggregateState.logger.log(Level.SEVERE, "FATAL error: terminating ...", ex);
+                this.log.error("FATAL error: terminating ..." + ex.getMessage());
                 return;
             }
         }
@@ -145,7 +145,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             }
         } catch(AggregateException ex) {
             if(ex.getType() == AggregateException.FATAL) {
-                AggregateState.logger.log(Level.SEVERE, "FATAL error: terminating ...", ex);
+                this.log.error("FATAL error: terminating ..." + ex.getMessage());
                 return;
             }
         }
@@ -164,7 +164,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             }
         } catch(AggregateException ex) {
             if(ex.getType() == AggregateException.FATAL) {
-                AggregateState.logger.log(Level.SEVERE, "FATAL error: terminating ...", ex);
+                this.log.error("FATAL error: terminating ..." + ex.getMessage());
                 return;
             }
         }
@@ -227,11 +227,11 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     }
 
     public DeleteSliceVlanResponse DeleteSliceVlan(net.geni.aggregate.services.api.DeleteSliceVlan deleteSliceVlan) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return AggregateState.getSkeletonAPI().DeleteSliceVlan(deleteSliceVlan);
     }
 
     public QuerySliceVlanResponse QuerySliceVlan(net.geni.aggregate.services.api.QuerySliceVlan querySliceVlan) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return AggregateState.getSkeletonAPI().QuerySliceVlan(querySliceVlan);
     }
 
     public CreateSliceNetworkResponse CreateSliceNetwork(net.geni.aggregate.services.api.CreateSliceNetwork createSliceNetwork) throws AggregateFaultMessage {

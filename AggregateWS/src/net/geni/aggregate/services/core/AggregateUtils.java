@@ -26,7 +26,7 @@ public class AggregateUtils
             stmt.execute(sql);
         } catch(SQLException ex) {
             String msg = "nimbis DB off line";
-            AggregateState.logger.log(Level.SEVERE, msg, ex);
+            //AggregateState.logger.log(Level.SEVERE, msg, ex);
             throw new AggregateException(ex, AggregateException.FATAL);
         } finally {
             if(stmt != null) {
@@ -34,7 +34,7 @@ public class AggregateUtils
                     stmt.close();
                 } catch(SQLException ex) {
                     String msg = "nimbis DB error";
-                    AggregateState.logger.log(Level.SEVERE, msg, ex);
+                    //AggregateState.logger.log(Level.SEVERE, msg, ex);
                     throw new AggregateException(ex, AggregateException.ERROR);
                 } finally {
                     stmt = null;
@@ -66,7 +66,7 @@ public class AggregateUtils
         for(int i = 0; i < o.length; i++) {
             cN = o[i].getClass().getName();
             if(o[i] == null) {
-                AggregateState.logger.log(Level.WARNING, "attempting to pass a null object (pos " + i + ") as a value");
+                //AggregateState.logger.log(Level.WARNING, "attempting to pass a null object (pos " + i + ") as a value");
                 continue;
             }
             if(cN.equals(Boolean.class.getName())) {
@@ -85,7 +85,7 @@ public class AggregateUtils
                     v.add("'" + s + "'");
                 }
             } else {
-                AggregateState.logger.log(Level.WARNING, "unknown object type: " + o.toString());
+                //AggregateState.logger.log(Level.WARNING, "unknown object type: " + o.toString());
             }
         }
         return paramsCnt;
@@ -98,7 +98,7 @@ public class AggregateUtils
         for(int i = 0; i < o.length; i += 2) {
             cN = o[i + 1].getClass().getName();
             if(o[i + 1] == null) {
-                AggregateState.logger.log(Level.WARNING, "attempting to pass a null object as a constraint (key: " + o[i].toString() + ")");
+                //AggregateState.logger.log(Level.WARNING, "attempting to pass a null object as a constraint (key: " + o[i].toString() + ")");
                 continue;
             }
             v.add(String.class.cast(o[i])); // always a String
@@ -118,7 +118,7 @@ public class AggregateUtils
                     v.add("'" + s + "'");
                 }
             } else {
-                AggregateState.logger.log(Level.WARNING, "unknown object type: " + cN);
+                //AggregateState.logger.log(Level.WARNING, "unknown object type: " + cN);
             }
         }
         return paramsCnt;

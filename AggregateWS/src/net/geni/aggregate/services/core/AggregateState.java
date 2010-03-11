@@ -4,10 +4,12 @@
  */
 package net.geni.aggregate.services.core;
 
-import java.util.*;
+import org.apache.log4j.*;
+import java.util.Vector;
+import java.util.Properties;
 import java.sql.Connection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.io.FileInputStream;
@@ -22,9 +24,11 @@ import net.geni.aggregate.services.api.AggregateWS;
  */
 public class AggregateState
 {
+    //Logger
+    public static Logger log = Logger.getLogger("net.geni.aggregate");
     //Properties
     private static Properties aggregateProps = new Properties();
-    // preferences
+    // Preferences
     private static Preferences AMPrefs = null;
     private static Preferences dbPrefs = null;
     private static Preferences aggregatePrefs = null;
@@ -39,7 +43,7 @@ public class AggregateState
     private static AggregateCapabilities aggregateCaps = new AggregateCapabilities();
     private static AggregateNodes aggregateNodes = new AggregateNodes();
     private static AggregateSlices aggregateSlices = new AggregateSlices();
-    private static String idcURL = "https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS";
+    private static String idcURL = "";
     private static String idcRepo = "/usr/local/aggregate/AggregateWS/conf/repo";
     private static Vector<AggregateP2PVlan> aggregateP2PVlans = new Vector<AggregateP2PVlan>();
     // global state
@@ -47,7 +51,6 @@ public class AggregateState
     private static AggregateGENISkeleton skeletonAPI = null;
     private static Connection aggregateDBConnection = null;
     private static final long pollInterval = 5000;
-    public static Logger logger = Logger.getLogger("aggregate");
 
     public static void init() {
         //init properties
@@ -65,7 +68,9 @@ public class AggregateState
         } catch (IOException e) {
             //logging for exception!
         }
-
+        idcURL = aggregateProps.getProperty("aggregate.idc.url", "https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS");
+        idcRepo = aggregateProps.getProperty("aggregate.idc.repo", "/usr/local/aggregate/AggregateWS/conf/repo");
+        log.info("aggregate.idc.rep set to " + idcRepo);
         //create and load preferences
         AMPrefs = Preferences.systemNodeForPackage(AggregateWS.class);
         dbPrefs = AMPrefs.node("database");
@@ -89,7 +94,7 @@ public class AggregateState
         try {
             AMPrefs.sync();
         } catch(BackingStoreException ex) {
-            Logger.getLogger(AggregateState.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("BackingStoreException ..." + ex.getMessage());
         }
     }
 
