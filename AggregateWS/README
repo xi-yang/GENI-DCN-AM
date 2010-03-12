@@ -1,0 +1,86 @@
+AggregateWS version 0.1
+========================
+
+DATA: March 12, 2010
+
+---------------------------------
+For users who deploy from scrach
+---------------------------------
+
+1. Prepare System for Installation
+-- Install JDK-1.5 or higher 
+
+-- Set $JAVA_HOME to jdk directory, for example
+   export JAVA_HOME /usr/local/jdk-xxx 
+
+-- Install apache-tomcat-5.5 or higher
+
+-- set $CATALINA_HOME to tomcat directory, for example
+   export CATALINA_HOME /usr/local/tomcat
+
+-- Install axis2 under $CATALINA_HOME/webapps
+   download axi2-1.4.1 or higher and unpack it
+   extract axis2.war and place it under $CATALINA_HOME/webapps
+
+-- Set $AXIS2_HOME to axis2 directory, for example
+   export AXIS2_HOME /usr/local/axis2-1.4.1
+
+-- Install MySQL server
+
+-- Intall apache-ant-1.7.1 or higher
+   download  pache-ant-1.7.1.bin.tar.gz or higher and unpack it
+   if you have an existing lower version at /usr/bin/ant, do
+      mv /usr/bin/ant /usr/bin/ant-1xx
+      ln -s /usr/local/apache-ant-1.7.1/bin/ant /usr/bin/ant
+
+2. Install the GENI AggregateWS 
+
+-- svn export svn://svn.maxgigapop.net/geni-aggregate /usr/local/aggregate
+
+-- set $AGGREGATE_HOME to /usr/local/aggregate
+
+-- cd $AGGREGATE_HOME/AggregateWS
+
+-- ant axis2-deploy-local
+
+3. Configure the GENI AggregateWS
+
+-- configure $AGGREGATE_HOME/AggregateWS/conf/aggregate.properties
+   set aggregate.mysql.user and pggregate.mysql.pass
+   set aggregate.idc.url to your OSCARS IDC server
+
+-- if you choose a AGGREGATE_HOME different than /usr/local/aggregate
+   update aggregate.properties: aggregate.idc.repo path
+   update $AGGREGATE_HOME/AggregateWS/conf/repo/rampConfig.xml to set 
+   absolute path to the OSCARS.jks file
+
+-- initiate MySQL database
+   create tables and import sample data using the sql files under
+   $AGGREGATE_HOME/AggregateWS/sql
+
+-- configure authentication for IDC/OSCARS 
+   generate a certificate signing request
+
+      cd $AGGREGATE_HOME/AggregateWS/conf/repo/
+      keytool -genkey -alias yourkeyname -keystore OSCARS.jks -keyalg rsa
+      keytool -certreq -alias yourkeyname -keystore OSCARS.jks -file ~/yourkeyname.csr
+
+   send the .csr file to IDC/OSCARS server admin for signing and ask for a user account 
+   being created and associated with this certificate. The admin will send back a signed
+   x509 key. Import that into your keystore.
+
+      keytool -import -keystore OSCARS.jks -alias yourkeyname -file ~/yourkeyname.x509.cer 
+
+   update <ramp:user> value to 'yourkeyname' in $AGGREGATE_HOME/AggregateWS/conf/repo/rampConfig.xml
+
+4. Start GENI AggregateWS Services
+
+-- cd $CATALINA_HOME/bin
+
+-- ./catalina.sh stop
+
+-- ./catalina.sh start
+
+-- see logging output in $CATALINA_HOME/logs/catalina.out
+   tail -f $CATALINA_HOME/logs/catalina.out
+
