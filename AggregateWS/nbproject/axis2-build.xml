@@ -55,6 +55,7 @@
         </copy>
     </target>
     <target name="wsdl2java-refresh-AggregateGENI" depends="init">
+	<property environment="env"/>
         <delete dir="${build.dir}/axis2"/>
         <copy toDir="/tmp" overwrite="true">
             <fileset dir="${src.dir}/net/geni/aggregate/services/api">
@@ -62,7 +63,7 @@
             </fileset>
         </copy>
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-            <arg line="-uri file:/usr/local/aggregate/AggregateAttic/wsdl/aggregate.wsdl"/>
+            <arg line="-uri file:${env.AGGREGATE_HOME}/AggregateAttic/wsdl/aggregate.wsdl"/>
             <arg line="-ss -sd"/>
             <arg line="-s"/>
             <arg line="-ssi"/>
@@ -105,7 +106,7 @@
             </fileset>
         </jar>
     </target>
-    <target name="axis2-deploy-local" depends="axis2-aar">
+    <target name="axis2-deploy-local" depends="wsdl2java-AggregateGENI, axis2-aar">
 	    <property environment="env"/>
 	    <copy file="${build.dir}/axis2/WEB-INF/services/AggregateWS.aar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/services/AggregateWS.aar"/>
 	    <copy file="${basedir}/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
