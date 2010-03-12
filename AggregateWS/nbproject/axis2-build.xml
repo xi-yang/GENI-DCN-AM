@@ -6,6 +6,7 @@
                 ===================
             -->
     <target name="wsdl2java-AggregateGENI" depends="init">
+	<property environment="env"/>
         <delete dir="${build.dir}/axis2"/>
         <copy toDir="/tmp" overwrite="true">
             <fileset dir="${src.dir}/net/geni/aggregate/services/api">
@@ -13,7 +14,7 @@
             </fileset>
         </copy>
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-            <arg line="-uri file:/usr/local/aggregate/AggregateAttic/wsdl/aggregate.wsdl"/>
+		<arg line="-uri file:${env.AGGREGATE_HOME}/AggregateAttic/wsdl/aggregate.wsdl"/>
             <arg line="-ss -sd"/>
             <arg line="-s"/>
             <arg line="-ssi"/>
