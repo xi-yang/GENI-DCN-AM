@@ -59,7 +59,7 @@ For users who deploy from scrach
    $AGGREGATE_HOME/AggregateWS/sql
 
 -- configure authentication for IDC/OSCARS 
-   generate a certificate signing request
+   generate a certificate signing request (default keystore passphrase: password)
 
       cd $AGGREGATE_HOME/AggregateWS/conf/repo/
       keytool -genkey -alias yourkeyname -keystore OSCARS.jks -keyalg rsa
