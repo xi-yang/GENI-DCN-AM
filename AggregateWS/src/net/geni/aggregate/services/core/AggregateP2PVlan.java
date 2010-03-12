@@ -116,7 +116,6 @@ public class AggregateP2PVlan {
             status = apiClient.createReservation(source, destination, vtag, bandwidth, description, startTime, endTime);
             errMessage = "";
             gri = apiClient.getGlobalReservationId();
-            this.saveVlanInDB();
         }
         catch (AxisFault e) {
             errMessage = "AxisFault from createReservation: " +e.getMessage();
@@ -126,11 +125,15 @@ public class AggregateP2PVlan {
             errMessage = "BSSFaultMessage from createReservation: " +e.getFaultMessage().getMsg();
         } catch (java.rmi.RemoteException e) {
             errMessage = "RemoteException returned from createReservation: " +e.getMessage();
+        } catch (Exception e) {
+            errMessage = "OSCARSStub threw exception in createReservation: " +e.getMessage();
+        }
+
+        try {
+            this.saveVlanInDB();
         } catch (AggregateException e) {
             errMessage = "AggregateException returned from createReservation: " +e.getMessage();
             this.log.error("Error occurs in AggregateP2PVlan::saveVlanInDB: " + errMessage);
-        } catch (Exception e) {
-            errMessage = "OSCARSStub threw exception in createReservation: " +e.getMessage();
         }
 
         return status;
