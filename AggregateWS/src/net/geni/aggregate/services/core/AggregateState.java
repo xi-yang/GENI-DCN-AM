@@ -105,8 +105,8 @@ public class AggregateState
 
     // initializer
     private static void initPrefs() {
-        dbPrefs.put("password", "genipass");
-        dbPrefs.put("user", "geniuser");
+        dbPrefs.put("user", aggregateProps.getProperty("aggregate.mysql.user", "geniuser"));
+        dbPrefs.put("password", aggregateProps.getProperty("aggregate.mysql.pass", "genipass"));
         dbPrefs.put("aggregateDB", "aggregate");
         dbPrefs.put("frontEndTab", "front_end");
         dbPrefs.put("aggregateTab", "slicer");
