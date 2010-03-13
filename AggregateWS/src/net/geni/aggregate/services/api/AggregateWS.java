@@ -90,6 +90,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "id int(11) NOT NULL auto_increment, " + // slice ID
                     "url TEXT NOT NULL, " + // slice URL
                     "description TEXT NOT NULL, " + // slice description
+                    "members TEXT NOT NULL, " + // slice node members
                     "creatorId INT(11) NOT NULL, " + // user who created the slice
                     "createdTime BIGINT(20), " + // launch timestamp
                     "expiredTime BIGINT(20), " + // expire timestamp
@@ -205,6 +206,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                         sql.aggSlices_Stmt.getInt("id"),
                         sql.aggSlices_Stmt.getString("url"),
                         sql.aggSlices_Stmt.getString("description"),
+                        sql.aggSlices_Stmt.getString("members"),
                         sql.aggSlices_Stmt.getInt("creatorId"),
                         sql.aggSlices_Stmt.getLong("createdTime"),
                         sql.aggSlices_Stmt.getLong("expiredTime")));

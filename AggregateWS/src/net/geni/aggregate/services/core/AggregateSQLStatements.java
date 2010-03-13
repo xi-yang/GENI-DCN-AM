@@ -31,7 +31,7 @@ public class AggregateSQLStatements
         aggSlices_Stmt = new AggregateSQLStatement(
                 AggregateState.getAggregateDB(),
                 AggregateState.getSlicesTab(),
-                new AggregateSQLColumns("sliceName", "id", "url", "description", "creatorId", "createdTime", "expiredTime"));
+                new AggregateSQLColumns("sliceName", "id", "url", "description", "members", "creatorId", "createdTime", "expiredTime"));
         aggP2PVlans_Stmt = new AggregateSQLStatement(
                 AggregateState.getAggregateDB(),
                 AggregateState.getP2PVlansTab(),

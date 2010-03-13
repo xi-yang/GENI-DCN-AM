@@ -122,6 +122,36 @@
                             
 
                         /**
+                        * field for Members
+                        */
+
+                        
+                                    protected java.lang.String localMembers ;
+                                
+
+                           /**
+                           * Auto generated getter method
+                           * @return java.lang.String
+                           */
+                           public  java.lang.String getMembers(){
+                               return localMembers;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param Members
+                               */
+                               public void setMembers(java.lang.String param){
+                            
+                                            this.localMembers=param;
+                                    
+
+                               }
+                            
+
+                        /**
                         * field for Creator
                         */
 
@@ -417,6 +447,40 @@
                                         if (prefix == null) {
                                             prefix = generatePrefix(namespace);
 
+                                            xmlWriter.writeStartElement(prefix,"members", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"members");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("members");
+                                    }
+                                
+
+                                          if (localMembers==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("members cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localMembers);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                             
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
                                             xmlWriter.writeStartElement(prefix,"creator", namespace);
                                             xmlWriter.writeNamespace(prefix, namespace);
                                             xmlWriter.setPrefix(prefix, namespace);
@@ -692,6 +756,15 @@
                                         }
                                     
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "members"));
+                                 
+                                        if (localMembers != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localMembers));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("members cannot be null!!");
+                                        }
+                                    
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "creator"));
                                  
                                         if (localCreator != null){
@@ -833,6 +906,25 @@
                                     java.lang.String content = reader.getElementText();
                                     
                                               object.setDescription(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                else{
+                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                }
+                            
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","members").equals(reader.getName())){
+                                
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setMembers(
                                                     org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
                                               
                                         reader.next();

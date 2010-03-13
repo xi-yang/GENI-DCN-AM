@@ -113,6 +113,7 @@ public class AggregateP2PVlan {
         }
         status = "failed";
         try {
+            this.log.info("starttime=" + Long.toString(startTime) + " endtime=" + Long.toString(endTime));
             status = apiClient.createReservation(source, destination, vtag, bandwidth, description, startTime, endTime);
             errMessage = "";
             gri = apiClient.getGlobalReservationId();

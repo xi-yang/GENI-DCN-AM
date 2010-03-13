@@ -176,6 +176,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             sliceDesc.setName(slices.get(i).getSliceName());
             sliceDesc.setUrl(slices.get(i).getURL());
             sliceDesc.setDescription(slices.get(i).getDescription());
+            sliceDesc.setMembers(slices.get(i).getMembers());
             int userId = slices.get(i).getCreatorId();
             String creator = "userID=" + Integer.toString(userId, 10);
             for (int u = 0; u < AggregateState.getAggregateUsers().size(); u++) {
@@ -403,6 +404,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         }
         // look for slice
         if (p2pvlan == null) {
+            boolean haveSlice = false;
             AggregateSlices slices = AggregateState.getAggregateSlices();
             for (int i = 0; i < slices.size(); i++) {
                 if (slices.get(i).getSliceName().equals(sliceId)) {
@@ -415,8 +417,13 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
                         status = "failed";
                         message = "Slice=" + sliceId + " has already expired. No VLAN created.";
                     }
+		    haveSlice = true;
                     break;
                 }
+            }
+	    if (!haveSlice) {
+                status = "failed";
+                message = "Slice=" + sliceId + " does not exist. No VLAN created.";
             }
             if (!status.matches("failed")) {
                 p2pvlan = new AggregateP2PVlan(sliceId, source, destination, vlan, bw, description, startTime, endTime);
