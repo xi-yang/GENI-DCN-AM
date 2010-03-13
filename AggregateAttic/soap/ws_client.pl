@@ -14,7 +14,8 @@ my $ws_server;
 my $xml_f;
 
 my $filter = undef;
-my $prettier = undef;
+my $pretty = undef;
+my $noheader = undef;
 my $dump_req = undef;
 my $header_out = "";
 my $content_out = "";
@@ -23,23 +24,28 @@ my @caps = ();
 
 sub usage() {
 	print <<USG;
-usage: ws_client [-h] -x <ws call> -s <server> 
+  Usage: ws_client [-h] -x <ws call> -s <server> 
        -x <ws_call>: a file <ws_call>.xml must exist in the working directory 
        -s <server>: address:port
        -h: prints this message
   Long options:
-       --prettier: produce more palatable output
+       --pretty: produce nicely indented palatable output
+       --noheader: do not print soap header
        --dump_req: dump XML request
        --filter <string>: filters the capabilities (unimplemented)
        --caps <URN string [URN string [URN string]]>: list capability URNs
        --help: prints this message
+  Example:
+       ./ws_client.pl --pretty --noheader -s 206.196.176.170:8080 -x slices
+
 USG
 	exit;
 }
 
 if(!GetOptions ('x=s' =>		\$xml_f,
 		's=s' =>                \$ws_server,
-		'prettier' =>         	\$prettier,
+		'pretty' =>         	\$pretty,
+		'noheader' =>         	\$noheader,
 		'dump_req' =>         	\$dump_req,
 		'filter=s' =>         	\$filter,
 		'caps:s{,}' =>           \&process_opts,
@@ -58,6 +64,25 @@ sub process_opts($$) {
 	my ($n, $v) = @_;
 	if($n eq "caps") {
 		push(@caps, $v);
+	}
+}
+
+sub print_xml_pretty($$) {
+	my ($text, $noheader) = @_;
+	$text =~ s/></>\n</gs;
+	my $indent = 0;
+	for my $line (split /(?:\r?\n)+/, $text) {
+	    unless ($line =~ /^</) {
+		print ($line, "\n") unless (defined($noheader));
+		next;
+	    }
+	    if ($line =~ /^<\//) {
+		$indent--;
+	     } else {
+		$indent++;
+		$indent-- if ($line =~ /<\//);
+	    }
+	    print "\t" x $indent, $line, "\n";
 	}
 }
 
@@ -131,9 +156,10 @@ $ws_socket->shutdown(2);
 $ws_response =~ s///;
 # to take care of chunked http messages
 $ws_response =~ s/\r\n[0-9A-Fa-f]+\r\n//gs;
-# prettier format
-if(defined($prettier)) {
-	$ws_response =~ s/></>\n</gs;
+if(defined($pretty)) {
+	print_xml_pretty($ws_response, $noheader);
+} else {
+	print $ws_response;
 }
-print $ws_response;
+
 
