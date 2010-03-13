@@ -71,18 +71,38 @@ sub print_xml_pretty($$) {
 	my ($text, $noheader) = @_;
 	$text =~ s/></>\n</gs;
 	my $indent = 0;
+	my $bottom = 0;
+	my $back = 0;
 	for my $line (split /(?:\r?\n)+/, $text) {
 	    unless ($line =~ /^</) {
 		print ($line, "\n") unless (defined($noheader));
 		next;
 	    }
-	    if ($line =~ /^<\//) {
+	    if ($line =~ /^<\?/) {
+		print $line, "\n";
+		next;
+	    } elsif ($line =~ /^<\//) {
 		$indent--;
-	     } else {
+		if ($buttom == 1) {
+		    $bottom = 0;
+		    $indent--;
+		}
+		$back = 1;
+	    } else {
 		$indent++;
-		$indent-- if ($line =~ /<\//);
+		if ($line =~ /<\//){
+		    if ($bottom == 0) {
+			$bottom = 1;
+			$indent++;
+		    }
+		    $indent--;
+		} elsif ($back == 1) {
+		    $indent--;
+		    $bottom = 0;
+		}
+		$back = 0;
 	    }
-	    print "\t" x $indent, $line, "\n";
+	    print "\t" x ($indent-1), $line, "\n";
 	}
 }
 
