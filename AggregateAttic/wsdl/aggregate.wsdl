@@ -95,6 +95,13 @@
 				</xs:sequence>
 			</xs:complexType >
 
+			<!-- Placeholder: a better definition will be provided via seprate .xsd file -->
+			<xs:complexType name="RSpecTopologyType">
+				<xs:sequence>
+					<xs:element name="statement" type="xs:string" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType >
+
 			<!-- Fault -->
 			<xs:element name="AggregateFault">
 				<xs:complexType>
@@ -345,7 +352,7 @@
 			<xs:complexType name="CreateSliceNetworkType">
 				<xs:sequence>
 					<xs:element name="sliceID" type="xs:string"/>
-					<xs:element name="vlanRange" type="tns:VlanRangeType" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="rspecNetwork" type="tns:RSpecTopologyType"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -353,7 +360,8 @@
 			<xs:element name="CreateSliceNetworkResponse" type="tns:CreateSliceNetworkResponseType"/>
 			<xs:complexType name="CreateSliceNetworkResponseType">
 				<xs:sequence>
-					<xs:element name="result" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
+					<xs:element name="sliceStatus" type="tns:SliceStatusType"/>
+					<xs:element name="vlanResvResult" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -369,7 +377,8 @@
 			<xs:element name="DeleteSliceNetworkResponse" type="tns:DeleteSliceNetworkResponseType"/>
 			<xs:complexType name="DeleteSliceNetworkResponseType">
 				<xs:sequence>
-					<xs:element name="result" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
+					<xs:element name="sliceStatus" type="tns:SliceStatusType"/>
+					<xs:element name="vlanResvResult" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -385,7 +394,25 @@
 			<xs:element name="QuerySliceNetworkResponse" type="tns:QuerySliceNetworkResponseType"/>
 			<xs:complexType name="QuerySliceNetworkResponseType">
 				<xs:sequence>
-					<xs:element name="result" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
+					<xs:element name="sliceStatus" type="tns:SliceStatusType"/>
+					<xs:element name="vlanResvResult" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- GetResourceTopology request definitions -->
+			<xs:element name="GetResourceTopology" type="tns:GetResourceTopologyType"/>
+			<xs:complexType name="GetResourceTopologyType">
+				<xs:sequence>
+					<xs:element name="resourceTopoURN" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- GetResourceTopology response definitions -->
+			<xs:element name="GetResourceTopologyResponse" type="tns:GetResourceTopologyResponseType"/>
+			<xs:complexType name="GetResourceTopologyResponseType">
+				<xs:sequence>
+					<xs:element name="status" type="xs:string" minOccurs="0"/>
+					<xs:element name="resourceTopology" type="tns:RSpecTopologyType"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -522,6 +549,14 @@
 		<part name="QuerySliceNetworkMsgResp" element="tns:QuerySliceNetworkResponse" />
 	</message>
 
+	<message name="GetResourceTopologyRequestMsg">
+		<part name="GetResourceTopologyMsgReq" element="tns:GetResourceTopology" />
+	</message>
+
+	<message name="GetResourceTopologyResponseMsg">
+		<part name="GetResourceTopologyMsgResp" element="tns:GetResourceTopologyResponse" />
+	</message>
+
 	<message name="AggregateFaultMessage">
 		<part name="fault" element="tns:AggregateFault" />
 	</message>
@@ -605,6 +640,11 @@
 		<operation name="QuerySliceNetwork">
 			<input message="tns:QuerySliceNetworkRequestMsg" />
 			<output message="tns:QuerySliceNetworkResponseMsg" />
+			<fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+		</operation>
+		<operation name="GetResourceTopology">
+			<input message="tns:GetResourceTopologyRequestMsg" />
+			<output message="tns:GetResourceTopologyResponseMsg" />
 			<fault  name="AggregateException" message="tns:AggregateFaultMessage" />
 		</operation>
 	</portType>
@@ -809,6 +849,19 @@
 
 		<operation name="QuerySliceNetwork">
 			<soap:operation soapAction="QuerySliceNetwork" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+			<fault name="AggregateException">
+				<soap:fault name="AggregateException" use="literal" />
+			</fault>
+		</operation>
+
+		<operation name="GetResourceTopology">
+			<soap:operation soapAction="GetResourceTopology" />
 			<input>
 				<soap:body use="literal" />
 			</input>
