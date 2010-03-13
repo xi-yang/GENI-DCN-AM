@@ -444,5 +444,19 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         createSliceVlanResponse.setCreateSliceVlanResponse(createSliceVlanResponseType);
         return createSliceVlanResponse;
     }
+
+    /**
+     * Auto generated method signature
+     *
+     * @param getResourceTopology32
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.GetResourceTopologyResponse GetResourceTopology(
+            net.geni.aggregate.services.api.GetResourceTopology getResourceTopology32)
+            throws AggregateFaultMessage {
+        //TODO : fill this with the necessary business logic
+        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#QuerySliceNetwork");
+    }
+
 }
     

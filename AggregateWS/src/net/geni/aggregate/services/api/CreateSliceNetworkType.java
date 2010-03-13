@@ -62,86 +62,34 @@
                             
 
                         /**
-                        * field for VlanRange
-                        * This was an Array!
+                        * field for RspecNetwork
                         */
 
                         
-                                    protected net.geni.aggregate.services.api.VlanRangeType[] localVlanRange ;
+                                    protected net.geni.aggregate.services.api.RSpecTopologyType localRspecNetwork ;
                                 
-                           /*  This tracker boolean wil be used to detect whether the user called the set method
-                          *   for this attribute. It will be used to determine whether to include this field
-                           *   in the serialized XML
-                           */
-                           protected boolean localVlanRangeTracker = false ;
-                           
 
                            /**
                            * Auto generated getter method
-                           * @return net.geni.aggregate.services.api.VlanRangeType[]
+                           * @return net.geni.aggregate.services.api.RSpecTopologyType
                            */
-                           public  net.geni.aggregate.services.api.VlanRangeType[] getVlanRange(){
-                               return localVlanRange;
+                           public  net.geni.aggregate.services.api.RSpecTopologyType getRspecNetwork(){
+                               return localRspecNetwork;
                            }
 
                            
                         
-
-
-                               
-                              /**
-                               * validate the array for VlanRange
+                            /**
+                               * Auto generated setter method
+                               * @param param RspecNetwork
                                */
-                              protected void validateVlanRange(net.geni.aggregate.services.api.VlanRangeType[] param){
-                             
-                              }
-
-
-                             /**
-                              * Auto generated setter method
-                              * @param param VlanRange
-                              */
-                              public void setVlanRange(net.geni.aggregate.services.api.VlanRangeType[] param){
-                              
-                                   validateVlanRange(param);
-
-                               
-                                          if (param != null){
-                                             //update the setting tracker
-                                             localVlanRangeTracker = true;
-                                          } else {
-                                             localVlanRangeTracker = false;
-                                                 
-                                          }
-                                      
-                                      this.localVlanRange=param;
-                              }
-
-                               
-                             
-                             /**
-                             * Auto generated add method for the array for convenience
-                             * @param param net.geni.aggregate.services.api.VlanRangeType
-                             */
-                             public void addVlanRange(net.geni.aggregate.services.api.VlanRangeType param){
-                                   if (localVlanRange == null){
-                                   localVlanRange = new net.geni.aggregate.services.api.VlanRangeType[]{};
-                                   }
-
+                               public void setRspecNetwork(net.geni.aggregate.services.api.RSpecTopologyType param){
                             
-                                 //update the setting tracker
-                                localVlanRangeTracker = true;
+                                            this.localRspecNetwork=param;
+                                    
+
+                               }
                             
-
-                               java.util.List list =
-                            org.apache.axis2.databinding.utils.ConverterUtil.toList(localVlanRange);
-                               list.add(param);
-                               this.localVlanRange =
-                             (net.geni.aggregate.services.api.VlanRangeType[])list.toArray(
-                            new net.geni.aggregate.services.api.VlanRangeType[list.size()]);
-
-                             }
-                             
 
      /**
      * isReaderMTOMAware
@@ -273,25 +221,13 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                              if (localVlanRangeTracker){
-                                       if (localVlanRange!=null){
-                                            for (int i = 0;i < localVlanRange.length;i++){
-                                                if (localVlanRange[i] != null){
-                                                 localVlanRange[i].serialize(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","vlanRange"),
-                                                           factory,xmlWriter);
-                                                } else {
-                                                   
-                                                        // we don't have to do any thing since minOccures is zero
-                                                    
-                                                }
-
+                             
+                                            if (localRspecNetwork==null){
+                                                 throw new org.apache.axis2.databinding.ADBException("rspecNetwork cannot be null!!");
                                             }
-                                     } else {
+                                           localRspecNetwork.serialize(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","rspecNetwork"),
+                                               factory,xmlWriter);
                                         
-                                               throw new org.apache.axis2.databinding.ADBException("vlanRange cannot be null!!");
-                                        
-                                    }
-                                 }
                     xmlWriter.writeEndElement();
                
 
@@ -462,28 +398,16 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("sliceID cannot be null!!");
                                         }
-                                     if (localVlanRangeTracker){
-                             if (localVlanRange!=null) {
-                                 for (int i = 0;i < localVlanRange.length;i++){
-
-                                    if (localVlanRange[i] != null){
-                                         elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
-                                                                          "vlanRange"));
-                                         elementList.add(localVlanRange[i]);
-                                    } else {
-                                        
-                                                // nothing to do
-                                            
-                                    }
-
-                                 }
-                             } else {
-                                 
-                                        throw new org.apache.axis2.databinding.ADBException("vlanRange cannot be null!!");
                                     
-                             }
-
-                        }
+                            elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "rspecNetwork"));
+                            
+                            
+                                    if (localRspecNetwork==null){
+                                         throw new org.apache.axis2.databinding.ADBException("rspecNetwork cannot be null!!");
+                                    }
+                                    elementList.add(localRspecNetwork);
+                                
 
                 return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
             
@@ -559,8 +483,6 @@
                     
                     reader.next();
                 
-                        java.util.ArrayList list2 = new java.util.ArrayList();
-                    
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
@@ -583,49 +505,19 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","vlanRange").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","rspecNetwork").equals(reader.getName())){
                                 
+                                                object.setRspecNetwork(net.geni.aggregate.services.api.RSpecTopologyType.Factory.parse(reader));
+                                              
+                                        reader.next();
                                     
-                                    
-                                    // Process the array and step past its final element's end.
-                                    list2.add(net.geni.aggregate.services.api.VlanRangeType.Factory.parse(reader));
-                                                                
-                                                        //loop until we find a start element that is not part of this array
-                                                        boolean loopDone2 = false;
-                                                        while(!loopDone2){
-                                                            // We should be at the end element, but make sure
-                                                            while (!reader.isEndElement())
-                                                                reader.next();
-                                                            // Step out of this element
-                                                            reader.next();
-                                                            // Step to next element event.
-                                                            while (!reader.isStartElement() && !reader.isEndElement())
-                                                                reader.next();
-                                                            if (reader.isEndElement()){
-                                                                //two continuous end elements means we are exiting the xml structure
-                                                                loopDone2 = true;
-                                                            } else {
-                                                                if (new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","vlanRange").equals(reader.getName())){
-                                                                    list2.add(net.geni.aggregate.services.api.VlanRangeType.Factory.parse(reader));
-                                                                        
-                                                                }else{
-                                                                    loopDone2 = true;
-                                                                }
-                                                            }
-                                                        }
-                                                        // call the converter utility  to convert and set the array
-                                                        
-                                                        object.setVlanRange((net.geni.aggregate.services.api.VlanRangeType[])
-                                                            org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
-                                                                net.geni.aggregate.services.api.VlanRangeType.class,
-                                                                list2));
-                                                            
                               }  // End of if for expected property start element
                                 
-                                    else {
-                                        
-                                    }
-                                  
+                                else{
+                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                }
+                              
                             while (!reader.isStartElement() && !reader.isEndElement())
                                 reader.next();
                             

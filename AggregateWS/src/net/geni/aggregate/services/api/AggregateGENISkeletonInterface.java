@@ -75,6 +75,21 @@
         /**
          * Auto generated method signature
          * 
+                                    * @param getResourceTopology
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.GetResourceTopologyResponse GetResourceTopology
+                (
+                  net.geni.aggregate.services.api.GetResourceTopology getResourceTopology
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
                                     * @param createSliceNetwork
              * @throws AggregateFaultMessage : 
          */

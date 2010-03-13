@@ -32,20 +32,50 @@
         
 
                         /**
-                        * field for Result
+                        * field for SliceStatus
+                        */
+
+                        
+                                    protected net.geni.aggregate.services.api.SliceStatusType localSliceStatus ;
+                                
+
+                           /**
+                           * Auto generated getter method
+                           * @return net.geni.aggregate.services.api.SliceStatusType
+                           */
+                           public  net.geni.aggregate.services.api.SliceStatusType getSliceStatus(){
+                               return localSliceStatus;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param SliceStatus
+                               */
+                               public void setSliceStatus(net.geni.aggregate.services.api.SliceStatusType param){
+                            
+                                            this.localSliceStatus=param;
+                                    
+
+                               }
+                            
+
+                        /**
+                        * field for VlanResvResult
                         * This was an Array!
                         */
 
                         
-                                    protected net.geni.aggregate.services.api.VlanReservationResultType[] localResult ;
+                                    protected net.geni.aggregate.services.api.VlanReservationResultType[] localVlanResvResult ;
                                 
 
                            /**
                            * Auto generated getter method
                            * @return net.geni.aggregate.services.api.VlanReservationResultType[]
                            */
-                           public  net.geni.aggregate.services.api.VlanReservationResultType[] getResult(){
-                               return localResult;
+                           public  net.geni.aggregate.services.api.VlanReservationResultType[] getVlanResvResult(){
+                               return localVlanResvResult;
                            }
 
                            
@@ -54,9 +84,9 @@
 
                                
                               /**
-                               * validate the array for Result
+                               * validate the array for VlanResvResult
                                */
-                              protected void validateResult(net.geni.aggregate.services.api.VlanReservationResultType[] param){
+                              protected void validateVlanResvResult(net.geni.aggregate.services.api.VlanReservationResultType[] param){
                              
                               if ((param != null) && (param.length < 1)){
                                 throw new java.lang.RuntimeException();
@@ -67,14 +97,14 @@
 
                              /**
                               * Auto generated setter method
-                              * @param param Result
+                              * @param param VlanResvResult
                               */
-                              public void setResult(net.geni.aggregate.services.api.VlanReservationResultType[] param){
+                              public void setVlanResvResult(net.geni.aggregate.services.api.VlanReservationResultType[] param){
                               
-                                   validateResult(param);
+                                   validateVlanResvResult(param);
 
                                
-                                      this.localResult=param;
+                                      this.localVlanResvResult=param;
                               }
 
                                
@@ -83,17 +113,17 @@
                              * Auto generated add method for the array for convenience
                              * @param param net.geni.aggregate.services.api.VlanReservationResultType
                              */
-                             public void addResult(net.geni.aggregate.services.api.VlanReservationResultType param){
-                                   if (localResult == null){
-                                   localResult = new net.geni.aggregate.services.api.VlanReservationResultType[]{};
+                             public void addVlanResvResult(net.geni.aggregate.services.api.VlanReservationResultType param){
+                                   if (localVlanResvResult == null){
+                                   localVlanResvResult = new net.geni.aggregate.services.api.VlanReservationResultType[]{};
                                    }
 
                             
 
                                java.util.List list =
-                            org.apache.axis2.databinding.utils.ConverterUtil.toList(localResult);
+                            org.apache.axis2.databinding.utils.ConverterUtil.toList(localVlanResvResult);
                                list.add(param);
-                               this.localResult =
+                               this.localVlanResvResult =
                              (net.geni.aggregate.services.api.VlanReservationResultType[])list.toArray(
                             new net.geni.aggregate.services.api.VlanReservationResultType[list.size()]);
 
@@ -197,21 +227,27 @@
                
                    }
                
-                                       if (localResult!=null){
-                                            for (int i = 0;i < localResult.length;i++){
-                                                if (localResult[i] != null){
-                                                 localResult[i].serialize(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","result"),
+                                            if (localSliceStatus==null){
+                                                 throw new org.apache.axis2.databinding.ADBException("sliceStatus cannot be null!!");
+                                            }
+                                           localSliceStatus.serialize(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","sliceStatus"),
+                                               factory,xmlWriter);
+                                        
+                                       if (localVlanResvResult!=null){
+                                            for (int i = 0;i < localVlanResvResult.length;i++){
+                                                if (localVlanResvResult[i] != null){
+                                                 localVlanResvResult[i].serialize(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","vlanResvResult"),
                                                            factory,xmlWriter);
                                                 } else {
                                                    
-                                                           throw new org.apache.axis2.databinding.ADBException("result cannot be null!!");
+                                                           throw new org.apache.axis2.databinding.ADBException("vlanResvResult cannot be null!!");
                                                     
                                                 }
 
                                             }
                                      } else {
                                         
-                                               throw new org.apache.axis2.databinding.ADBException("result cannot be null!!");
+                                               throw new org.apache.axis2.databinding.ADBException("vlanResvResult cannot be null!!");
                                         
                                     }
                                  
@@ -377,23 +413,32 @@
                  java.util.ArrayList attribList = new java.util.ArrayList();
 
                 
-                             if (localResult!=null) {
-                                 for (int i = 0;i < localResult.length;i++){
+                            elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "sliceStatus"));
+                            
+                            
+                                    if (localSliceStatus==null){
+                                         throw new org.apache.axis2.databinding.ADBException("sliceStatus cannot be null!!");
+                                    }
+                                    elementList.add(localSliceStatus);
+                                
+                             if (localVlanResvResult!=null) {
+                                 for (int i = 0;i < localVlanResvResult.length;i++){
 
-                                    if (localResult[i] != null){
+                                    if (localVlanResvResult[i] != null){
                                          elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
-                                                                          "result"));
-                                         elementList.add(localResult[i]);
+                                                                          "vlanResvResult"));
+                                         elementList.add(localVlanResvResult[i]);
                                     } else {
                                         
-                                               throw new org.apache.axis2.databinding.ADBException("result cannot be null !!");
+                                               throw new org.apache.axis2.databinding.ADBException("vlanResvResult cannot be null !!");
                                             
                                     }
 
                                  }
                              } else {
                                  
-                                        throw new org.apache.axis2.databinding.ADBException("result cannot be null!!");
+                                        throw new org.apache.axis2.databinding.ADBException("vlanResvResult cannot be null!!");
                                     
                              }
 
@@ -473,21 +518,37 @@
                     
                     reader.next();
                 
-                        java.util.ArrayList list1 = new java.util.ArrayList();
+                        java.util.ArrayList list2 = new java.util.ArrayList();
                     
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","result").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","sliceStatus").equals(reader.getName())){
+                                
+                                                object.setSliceStatus(net.geni.aggregate.services.api.SliceStatusType.Factory.parse(reader));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                else{
+                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                }
+                            
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","vlanResvResult").equals(reader.getName())){
                                 
                                     
                                     
                                     // Process the array and step past its final element's end.
-                                    list1.add(net.geni.aggregate.services.api.VlanReservationResultType.Factory.parse(reader));
+                                    list2.add(net.geni.aggregate.services.api.VlanReservationResultType.Factory.parse(reader));
                                                                 
                                                         //loop until we find a start element that is not part of this array
-                                                        boolean loopDone1 = false;
-                                                        while(!loopDone1){
+                                                        boolean loopDone2 = false;
+                                                        while(!loopDone2){
                                                             // We should be at the end element, but make sure
                                                             while (!reader.isEndElement())
                                                                 reader.next();
@@ -498,22 +559,22 @@
                                                                 reader.next();
                                                             if (reader.isEndElement()){
                                                                 //two continuous end elements means we are exiting the xml structure
-                                                                loopDone1 = true;
+                                                                loopDone2 = true;
                                                             } else {
-                                                                if (new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","result").equals(reader.getName())){
-                                                                    list1.add(net.geni.aggregate.services.api.VlanReservationResultType.Factory.parse(reader));
+                                                                if (new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","vlanResvResult").equals(reader.getName())){
+                                                                    list2.add(net.geni.aggregate.services.api.VlanReservationResultType.Factory.parse(reader));
                                                                         
                                                                 }else{
-                                                                    loopDone1 = true;
+                                                                    loopDone2 = true;
                                                                 }
                                                             }
                                                         }
                                                         // call the converter utility  to convert and set the array
                                                         
-                                                        object.setResult((net.geni.aggregate.services.api.VlanReservationResultType[])
+                                                        object.setVlanResvResult((net.geni.aggregate.services.api.VlanReservationResultType[])
                                                             org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                                                                 net.geni.aggregate.services.api.VlanReservationResultType.class,
-                                                                list1));
+                                                                list2));
                                                             
                               }  // End of if for expected property start element
                                 

@@ -331,4 +331,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     public QuerySliceNetworkResponse QuerySliceNetwork(net.geni.aggregate.services.api.QuerySliceNetwork querySliceNetwork) throws AggregateFaultMessage {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    public GetResourceTopologyResponse  GetResourceTopology(net.geni.aggregate.services.api.GetResourceTopology getResourceTopology) throws AggregateFaultMessage {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
