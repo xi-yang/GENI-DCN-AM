@@ -19,10 +19,10 @@ public class AggregateSlice {
     private long createdTime;
     private long expiredTime;
 
-    public AggregateSlice(String n, int i, String d,  String u, int cI, long cT, long eT) {
+    public AggregateSlice(String n, int i, String u,  String d, int cI, long cT, long eT) {
         sliceName = n;
-        url = u;
         id = i;
+        url = u;
         description = d;
         creatorId = cI;
         createdTime = cT;

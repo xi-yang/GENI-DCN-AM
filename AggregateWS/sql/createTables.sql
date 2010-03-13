@@ -50,6 +50,7 @@ CREATE TABLE `slices` (
   `id` int(11) NOT NULL auto_increment,
   `url` text NOT NULL,
   `description` text NOT NULL,
+  `members` text NOT NULL,
   `creatorId` int(11) NOT NULL,
   `createdTime` bigint(20) default NULL,
   `expiredTime` bigint(20) default NULL,
