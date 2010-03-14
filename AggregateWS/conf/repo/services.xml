@@ -8,7 +8,7 @@
         </messageReceivers>
         <parameter name="ServiceClass">net.geni.aggregate.services.api.AggregateWS</parameter>
         <parameter name="useOriginalwsdl">true</parameter>
-        <parameter name="modifyUserWSDLPortAddress">true</parameter>
+        <parameter name="modifyUserWSDLPortAddress">false</parameter>
         <operation name="UpdateSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <actionMapping>UpdateSlice</actionMapping>
             <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/UpdateSliceResponse</outputActionMapping>
@@ -32,6 +32,12 @@
             <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/QuerySliceResponse</outputActionMapping>
             <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/QuerySlice/Fault/AggregateException</faultActionMapping>
             <faultActionMapping faultName="AggregateFaultMessage">urn:QuerySliceAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="GetResourceTopology" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <actionMapping>GetResourceTopology</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/GetResourceTopologyResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/GetResourceTopology/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:GetResourceTopologyAggregateFaultMessage</faultActionMapping>
         </operation>
         <operation name="CreateSliceNetwork" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <actionMapping>CreateSliceNetwork</actionMapping>
