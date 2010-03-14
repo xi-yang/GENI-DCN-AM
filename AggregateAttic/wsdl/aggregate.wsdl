@@ -877,7 +877,7 @@
 
 	<service name="AggregateGENI">
 		<port name="AggregateGENIPort" binding="tns:AggregateGENIBinding">
-			<soap:address location="http://206.196.176.170:8080/" />
+			<soap:address location="http://geni.dragon.maxgigapop.net:8080/axis2/services/AggregateGENI" />
 		</port>
 	</service>
 
