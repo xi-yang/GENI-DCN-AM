@@ -71,6 +71,9 @@ For users who deploy from scrach
 
       keytool -import -keystore OSCARS.jks -alias yourkeyname -file ~/yourkeyname.x509.cer 
 
+   update <!ENTITY rampConfig SYSTEM "/usr/local/aggregate/AggregateWS/conf/repo/rampConfig.xml"> 
+   in $AGGREGATE_HOME/AggregateWS/conf/repo/axis2.xml to point to correct rampConfig.xml path.
+
    update <ramp:user> value to 'yourkeyname' in $AGGREGATE_HOME/AggregateWS/conf/repo/rampConfig.xml
 
 4. Start GENI AggregateWS Services
