@@ -112,19 +112,21 @@
             <copy file="${build.dir}/axis2/WEB-INF/services/AggregateWS.aar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/services/AggregateWS.aar"/>
             <copy file="${basedir}/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
             <copy toDir="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/lib">
-            <fileset dir="${basedir}/lib/">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
+                <fileset dir="${basedir}/lib/">
+                    <include name="*.jar"/>
+                </fileset>
+            </copy>
+	    <copy file="conf/log4j.properties" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/classes/log4j.properties"/>
     </target>
     <target name="deploy-lib-abs-dir" unless="haveEnvDir">
 	    <copy file="${build.dir}/axis2/WEB-INF/services/AggregateWS.aar" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/services/AggregateWS.aar"/>
 	    <copy file="${basedir}/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
 	    <copy toDir="/usr/local/tomcat/webapps/axis2/WEB-INF/lib">
-            <fileset dir="${basedir}/lib/">
-                <include name="*.jar"/>
-            </fileset>
-        </copy>
+                <fileset dir="${basedir}/lib/">
+                    <include name="*.jar"/>
+                </fileset>
+            </copy>
+	    <copy file="conf/log4j.properties" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/classes/log4j.properties"/>
     </target>
     <target name="axis2-deploy-local" depends="wsdl2java-AggregateGENI, axis2-aar, deploy-lib-env-dir, deploy-lib-abs-dir">
            <!--empty-->
