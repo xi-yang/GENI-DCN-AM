@@ -1,6 +1,6 @@
 POST /axis2/services/AggregateGENI/ HTTP/1.1
 User-Agent: wsdlpull/1.23
-Host: 65.114.168.135:8080
+Host: 206.196.176.170:8080
 SOAPAction: "ListSlices"
 Content-Type: text/xml; charset=UTF-8
 Accept: text/xml;
