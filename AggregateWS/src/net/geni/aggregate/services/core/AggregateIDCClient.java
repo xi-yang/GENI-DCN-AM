@@ -87,7 +87,7 @@ public class AggregateIDCClient {
         layer2Info.setDestEndpoint(dst);
         String vlanTag = "any";
         if (vtag == 0)
-            vlanTag = "untagged";
+            vlanTag = "0";
         else if (vtag > 1 && vtag < 4096)
             vlanTag = Integer.toString(vtag);
         VlanTag srcVtag = new VlanTag();
@@ -181,7 +181,7 @@ public class AggregateIDCClient {
         hmRet.put("source", layer2Info.getSrcEndpoint());
         hmRet.put("destination", layer2Info.getDestEndpoint());
         /* Get path ERO */
-        String ero = "\n";
+        String ero = " ";
         CtrlPlanePathContent path = pathInfo.getPath();
         for (CtrlPlaneHopContent hop : path.getHop()) {
             CtrlPlaneLinkContent link = hop.getLink();
@@ -190,14 +190,13 @@ public class AggregateIDCClient {
                 ero += "no link";
                 continue;
             }
-            ero += "\t" + link.getId();
+            ero += " " + link.getId();
             CtrlPlaneSwcapContent swcap = link.getSwitchingCapabilityDescriptors();
             CtrlPlaneSwitchingCapabilitySpecificInfo swcapInfo = swcap.getSwitchingCapabilitySpecificInfo();
             ero += ", " + swcap.getEncodingType();
             if ("ethernet".equals(swcap.getEncodingType())) {
                 ero += ", " + swcapInfo.getVlanRangeAvailability();
             }
-            ero += "\n";
         }
         hmRet.put("ERO", ero);
         return hmRet;
