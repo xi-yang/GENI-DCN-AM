@@ -13,10 +13,10 @@ Content-Length: CONTENT_LENGTH
 			<sliceID>maxpl_dynamic_net</sliceID>
 			<vlanReservation>
 				<vlan>0</vlan>
-				<sourceNode>planetlab3.dragon.maxgigapop.net</sourceNode>
+				<sourceNode>urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-11:link=*</sourceNode>
 				<destinationNode>urn:ogf:network:domain=korenidc.koren.kr:node=vlsr2:port=3:link=*</destinationNode>
 				<bandwidth>100</bandwidth>
-				<description>Untagged VLAN between MAX-planetlab3 and KOREN</description>
+				<description>Untagged VLAN between MAX-sands232 and KOREN</description>
 			</vlanReservation>
 		</CreateSliceVlan>
 	</SOAP-ENV:Body>
