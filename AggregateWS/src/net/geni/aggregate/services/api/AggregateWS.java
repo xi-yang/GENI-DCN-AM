@@ -131,7 +131,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             return;
         }
 
-          try {
+        try {
             //init the users table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getUsersTab() + " ( " +
                     "id int(11) NOT NULL auto_increment, " +
@@ -158,6 +158,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             ex.printStackTrace();
             return;
         }
+
         // init all the mysql statements
         AggregateState.setSqlStatements(new AggregateSQLStatements());
         AggregateSQLStatements sql = AggregateState.getSqlStatements();

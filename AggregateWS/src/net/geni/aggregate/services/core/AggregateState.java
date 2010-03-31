@@ -46,10 +46,10 @@ public class AggregateState
     private static AggregateCapabilities aggregateCaps = new AggregateCapabilities();
     private static AggregateNodes aggregateNodes = new AggregateNodes();
     private static AggregateSlices aggregateSlices = new AggregateSlices();
+    private static AggregateP2PVlans aggregateP2PVlans = new AggregateP2PVlans();
+    private static AggregateUsers aggregateUsers = new AggregateUsers();
     private static String idcURL = "";
     private static String idcRepo = "/usr/local/aggregate/AggregateWS/conf/repo";
-    private static Vector<AggregateP2PVlan> aggregateP2PVlans = new Vector<AggregateP2PVlan>();
-    private static Vector<AggregateUser> aggregateUsers = new Vector<AggregateUser>();
     
     // Global states
     private static AggregateSQLStatements sqlStatements = null;
@@ -169,11 +169,11 @@ public class AggregateState
         return aggregateSlices;
     }
 
-    public static Vector<AggregateP2PVlan> getAggregateP2PVlans() {
+    public static AggregateP2PVlans getAggregateP2PVlans() {
         return aggregateP2PVlans;
     }
 
-    public static Vector<AggregateUser> getAggregateUsers() {
+    public static AggregateUsers getAggregateUsers() {
         return aggregateUsers;
     }
 
