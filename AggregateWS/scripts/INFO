@@ -1,0 +1,6 @@
+1. plcsh
+ -- The plcsh package is obtained by svn export http://svn.planet-lab.org/svn/plcmdline/trunk, at revision 17519.
+ -- It is part of the PlanetLab open source software suite distributed under a BSD-like license by Princeton University.
+ -- The setup.py file has been modified to install the plcsh script to /usr/bin.
+
+

@@ -5,7 +5,7 @@
                 JAX-WS WSIMPORT SECTION
                 ===================
             -->
-    <target name="wsdl2java-env-dir" if="haveEnvDir">
+    <target name="-wsdl2java-env-dir-" if="haveEnvDir">
         <delete dir="${build.dir}/axis2"/>
         <copy toDir="/tmp" overwrite="true">
             <fileset dir="${src.dir}/net/geni/aggregate/services/api">
@@ -25,7 +25,7 @@
             <classpath path="${javac.classpath}"/>
         </java>
     </target>
-    <target name="wsdl2java-abs-dir" unless="haveEnvDir">
+    <target name="-wsdl2java-abs-dir-" unless="haveEnvDir">
         <delete dir="${build.dir}/axis2"/>
         <copy toDir="/tmp" overwrite="true">
             <fileset dir="${src.dir}/net/geni/aggregate/services/api">
@@ -33,7 +33,7 @@
             </fileset>
         </copy>
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-            <arg line="-uri file:/usr/local/aggregate/AggregateAttic/wsdl/aggregate.wsdl"/>
+            <arg line="-uri file:/usr/local/geni-aggregate/AggregateAttic/wsdl/aggregate.wsdl"/>
             <arg line="-ss -sd"/>
             <arg line="-s"/>
             <arg line="-ssi"/>
@@ -45,7 +45,7 @@
             <classpath path="${javac.classpath}"/>
         </java>
     </target>
-    <target name="wsdl2java-AggregateGENI" depends="init, wsdl2java-env-dir, wsdl2java-abs-dir">
+    <target name="wsdl2java-AggregateGENI" depends="init, -wsdl2java-env-dir-, -wsdl2java-abs-dir-">
        <copy toDir="${src.dir}" overwrite="true">
             <fileset dir="${build.dir}/axis2/src">
                 <include name="**/*.java"/>
@@ -75,7 +75,7 @@
             </fileset>
         </copy>
     </target>
-    <target name="wsdl2java-refresh-AggregateGENI" depends="init, wsdl2java-env-dir, wsdl2java-abs-dir">
+    <target name="wsdl2java-refresh-AggregateGENI" depends="init, -wsdl2java-env-dir-, -wsdl2java-abs-dir-">
         <copy toDir="${src.dir}" overwrite="true">
             <fileset dir="${build.dir}/axis2/src">
                 <include name="**/*.java"/>
@@ -108,7 +108,7 @@
             </fileset>
         </jar>
     </target>
-    <target name="deploy-lib-env-dir" if="haveEnvDir">
+    <target name="-deploy-lib-env-dir-" if="haveEnvDir">
             <copy file="${build.dir}/axis2/WEB-INF/services/AggregateWS.aar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/services/AggregateWS.aar"/>
             <copy file="${basedir}/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
             <copy toDir="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/lib">
@@ -118,7 +118,7 @@
             </copy>
 	    <copy file="conf/log4j.properties" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/classes/log4j.properties"/>
     </target>
-    <target name="deploy-lib-abs-dir" unless="haveEnvDir">
+    <target name="-deploy-lib-abs-dir-" unless="haveEnvDir">
 	    <copy file="${build.dir}/axis2/WEB-INF/services/AggregateWS.aar" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/services/AggregateWS.aar"/>
 	    <copy file="${basedir}/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
 	    <copy toDir="/usr/local/tomcat/webapps/axis2/WEB-INF/lib">
@@ -128,7 +128,13 @@
             </copy>
 	    <copy file="conf/log4j.properties" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/classes/log4j.properties"/>
     </target>
-    <target name="axis2-deploy-local" depends="wsdl2java-AggregateGENI, axis2-aar, deploy-lib-env-dir, deploy-lib-abs-dir">
+    <target name="-install-plcsh-">
+        <exec dir="${basedir}/scripts/plcsh" executable="python">
+            <arg value="setup.py"/>
+            <arg value="install"/>
+        </exec>
+    </target>
+    <target name="axis2-deploy-local" depends="wsdl2java-AggregateGENI, axis2-aar, -deploy-lib-env-dir-, -deploy-lib-abs-dir-, -install-plcsh-">
            <!--empty-->
     </target>
     <target name="axis2-deploy-dir-check" depends="axis2-aar">
