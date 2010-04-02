@@ -128,13 +128,7 @@
             </copy>
 	    <copy file="conf/log4j.properties" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/classes/log4j.properties"/>
     </target>
-    <target name="-install-plcsh-">
-        <exec dir="${basedir}/scripts/plcsh" executable="python">
-            <arg value="setup.py"/>
-            <arg value="install"/>
-        </exec>
-    </target>
-    <target name="axis2-deploy-local" depends="wsdl2java-AggregateGENI, axis2-aar, -deploy-lib-env-dir-, -deploy-lib-abs-dir-, -install-plcsh-">
+    <target name="axis2-deploy-local" depends="wsdl2java-AggregateGENI, axis2-aar, -deploy-lib-env-dir-, -deploy-lib-abs-dir-">
            <!--empty-->
     </target>
     <target name="axis2-deploy-dir-check" depends="axis2-aar">

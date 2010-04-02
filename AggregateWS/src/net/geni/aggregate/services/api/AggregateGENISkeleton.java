@@ -16,6 +16,7 @@ import net.geni.aggregate.services.core.AggregateSlice;
 import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateP2PVlan;
 import net.geni.aggregate.services.core.AggregateP2PVlans;
+import net.geni.aggregate.services.core.AggregatePLCClient;
 import net.geni.aggregate.services.core.AggregateUser;
 import net.geni.aggregate.services.core.AggregateUsers;
 import net.geni.aggregate.services.core.AggregateException;
@@ -72,8 +73,24 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     public net.geni.aggregate.services.api.QuerySliceResponse QuerySlice(
             net.geni.aggregate.services.api.QuerySlice querySlice6)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#QuerySlice");
+        QuerySliceType querySlice = querySlice6.getQuerySlice();
+        String[] sliceNames = querySlice.getSliceID();
+        //The below logic wil be moved into AggregateSlices
+        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        HashMap hmResult = new HashMap();
+        plcClient.querySlice(sliceNames[0], hmResult);
+        if (hmResult.isEmpty()) {
+            throw new AggregateFaultMessage("Unkown Slice '" + sliceNames[0] + "' or Failure in retrieve slice data from PLC");
+        }
+
+        //form response
+        QuerySliceResponseType querySliceResponseType = new QuerySliceResponseType();
+        QuerySliceResponse querySliceResponse = new QuerySliceResponse();
+        querySliceResponseType.setStatus(sliceNames[0]);
+        querySliceResponseType.setMessage(hmResult.toString());
+        querySliceResponse.setQuerySliceResponse(querySliceResponseType);
+        return querySliceResponse;
+        
     }
 
     /**

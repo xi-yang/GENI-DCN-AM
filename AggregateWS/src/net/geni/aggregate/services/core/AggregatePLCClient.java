@@ -10,57 +10,157 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.regex.Pattern;
+import java.util.Vector;
+import java.util.HashMap;
 import org.apache.log4j.*;
+import expect4j.*;
 
 /**
  *
  * @author root
  */
 public class AggregatePLCClient {
-
+    protected String plcUrl;
+    protected String piEmail;
+    protected String password;
     protected Process proc;
     protected BufferedReader in;
     protected PrintStream out;
     protected String errorMsg;
     protected String promptPattern;
-    protected String passwordPromptPattern;
     protected String buffer;
     private int timeout;
     private Logger log;
-    final private int DEFAULT_TIMEOUT = 5; //seconds?
+    private final int DEFAULT_TIMEOUT = 15000; //miliseconds == 15 seconds
 
-    public AggregatePLCClient() {
+    private String loginCmd = "import xmlrpclib;"
+        + "api_server = xmlrpclib.ServerProxy('<_url_>',allow_none=True);"
+        + "auth={};"
+        + "auth['AuthMethod']='password';"
+        + "auth['Username']='<_user_>';"
+        + "auth['AuthString']='<_pass_>';"
+        + "authorized = api_server.AuthCheck(auth);"
+        + "print authorized;";
+
+    private String createSliceCmd = "slice_data = {};"
+        + "slice_data['name'] = '<_name_>';"
+        + "slice_data['url'] = '<_url_>';"
+        + "slice_data['description'] = '<_descr_>';"
+        + "slice_data['instantiation'] = 'plc-instantiated';"
+        + "slice_id = api_server.AddSlice(auth, slice_data);"
+        + "ret1 = api_server.AddPersonToSlice(auth, auth['Username'], slice_id);"
+        + "oldnodes =api_server.GetNodes(api.auth, slice_id);"
+        + "newnodes = [<_node_list_>];"
+        + "deleted_nodes = list(set(newnodes).difference(oldnodes));"
+        + "added_nodes = list(set(oldnodes).difference(newnodes));"
+        + "ret2 = print api_server.AddSliceToNodes('<_name_>', added_nodes);"
+        + "ret3 = print api_server.DeleteSliceFromNodes('<_name_>', deleted_nodes);"
+        + "print ret1, ret2, ret3;"; //success pattern: "1 1 1"
+
+    private String updateSliceCmd = "slice_data = {};"
+        + "slice_data['name'] = '<_name_>';"
+        + "slice_data['url'] = '<_url_>';"
+        + "slice_data['description'] = '<_descr_>';"
+        + "slice_data['instantiation'] = 'plc-instantiated';"
+        + "slice_id = api_server.AddSlice(auth, slice_data);"
+        + "ret1 = api_server.AddPersonToSlice(auth, auth['Username'], slice_id);"
+        + "oldnodes =api_server.GetNodes(api.auth, slice_id);"
+        + "newnodes = [<_node_list_>];"
+        + "deleted_nodes = list(set(newnodes).difference(oldnodes));"
+        + "added_nodes = list(set(oldnodes).difference(newnodes));"
+        + "ret2 = print api_server.AddSliceToNodes('<_name_>', added_nodes);"
+        + "ret3 = print api_server.DeleteSliceFromNodes('<_name_>', deleted_nodes);"
+        + "print ret1, ret2, ret3;"; //success pattern: "1 1 1"
+
+    private AggregatePLCClient() {}
+
+    public AggregatePLCClient(String url, String pi, String pass) {
+        plcUrl = url;
+        piEmail = pi;
+        password = pass;
+        proc = null;
         in = null;
         out = null;
         promptPattern = ">>> ";
-        passwordPromptPattern = "Password: ";
         timeout = DEFAULT_TIMEOUT;
         log = null;
     }
 
-    public boolean login(String plcUrl, String userEmail, String password) {
+    /**
+     * get an PLCCLient instance
+     */
+    static public AggregatePLCClient getPLCClient(String url, String pi, String pass) {
+        return (new AggregatePLCClient(url, pi, pass));
+    }
+
+    static public AggregatePLCClient getPLCClient() {
+        return getPLCClient(AggregateState.getPlcURL(), AggregateState.getPlcPI(), AggregateState.getPlcPassword());
+    }
+
+    /**
+     * @return the timeout
+     */
+    public int getTimeout() {
+        return this.timeout;
+    }
+
+    /**
+     * @param timeout the timeout to set
+     */
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    private boolean alive() {
+        return (proc != null && in != null && out != null);
+    }
+
+    public boolean login() {
         log = Logger.getLogger(this.getClass());
-        promptPattern = "[" + userEmail + " any]" + promptPattern;
         try {
-            proc = new ProcessBuilder("/usr/bin/plcsh", "-h", plcUrl, "-r", "any", "-u", userEmail).start();
+            proc = new ProcessBuilder("expect", "-c", "spawn python", "-c", "interact").start();
             in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             out = new PrintStream(proc.getOutputStream());
-            this.readUntil(passwordPromptPattern);
-            out.println(password);
-            out.flush();
-            if (!this.readUntil(promptPattern)) {
-                log.error("/usr/bin/plcsh failed authenticate user: " + userEmail);
-                return false;
+            if (proc==null || in==null || out==null) {
+                log.info("failed to build process");
             }
+            this.readUntil(promptPattern);
+            log.info("plcapi buffer dump #1: " + this.buffer);
+            loginCmd = loginCmd.replaceFirst("<_url_>", plcUrl);
+            loginCmd = loginCmd.replaceFirst("<_user_>", piEmail);
+            loginCmd = loginCmd.replaceFirst("<_pass_>", password);
+            out.println(loginCmd);
+            out.flush();
+            int ret = this.readPattern("^1", "Failed to authticate call", promptPattern);
+            log.info("login code: " + Integer.toString(ret));
+            log.info("plcapi buffer dump #2: " + this.buffer);
+            if (ret != 1) {
+                log.error("plcapi server failed authenticate the PI: " + piEmail);
+                log.error("plcapi server IO failure with buffer dump: " + this.buffer);
+                proc = null; in = null; out = null;
+                return false;
+            } 
         } catch (IOException e) {
-            log.error("failed to execute /usr/bin/plcsh: IO error: " + e.getMessage());
+            log.error("failed to execute python: IO error: " + e.getMessage());
+            proc = null; in = null; out = null;
             return false;
         }
+
         return true;
     }
 
     public boolean logoff() {
-        out.println("exit");
+        if (!alive())
+            return false;
+        try {
+            out.println("import sys; sys.exit(0)");
+            in.close(); out.close();
+        } catch (IOException e) {
+            log.error("PLCCLient::logoff IO error: " + e.getMessage());
+        }
+        in = null;
+        out = null;
+        proc = null;
         return true;
     }
 
@@ -70,9 +170,11 @@ public class AggregatePLCClient {
      * @return output of command
      */
     public String command(String cmd) {
+        cmd = cmd.replaceAll(";\n", "");
+        cmd = cmd.replaceAll("\n", ";");
         out.println(cmd);
         out.flush();
-        this.readUntil(promptPattern);//hopefully can remove this in the future
+        //this.readUntil(promptPattern);//hopefully can remove this in the future
         if (this.readUntil(promptPattern)) {
             /* Remove command from output */
             buffer = buffer.replaceFirst(cmd + "\n", "");
@@ -84,7 +186,7 @@ public class AggregatePLCClient {
     }
 
     /**
-     * Reads output from plcsh until the specified pattern is reached. promptPattern
+     * Reads output from python until the specified pattern is reached. promptPattern
      * is often useful when used in conjunction with this method.
      * @param pattern Regular expression used to determine when output should stop being read
      * @return output read until pattern is found
@@ -98,7 +200,7 @@ public class AggregatePLCClient {
     }
 
     /**
-     * Reads output from plcsh until the specified pattern is reached. promptPattern
+     * Reads output from python until the specified pattern is reached. promptPattern
      * is often useful when used in conjunction with this method.
      * @param pattern1 Regular expression used to determine the first match
      * @param pattern2 Regular expression used to determine the second match
@@ -106,8 +208,8 @@ public class AggregatePLCClient {
      * @return integer 1: first match 2: second match 0: zero match -1: IO error -2: timeout
      */
     public int readPattern(String pattern1, String pattern2, String readstop) {
-        //starting the plcsh reading thread
-        Reader reader = new Reader(in, log, pattern1, pattern2, readstop);
+        //starting the python reading thread
+        Reader reader = new Reader(in, pattern1, pattern2, readstop);
         reader.start();
 
         //starting the timer-sleep thread
@@ -119,7 +221,6 @@ public class AggregatePLCClient {
                 } catch (InterruptedException e) {
                     log.error("unexpected intteruption of timer-sleep: " + e.getMessage());
                 }
-                log.error("/usr/bin/plcsh not repsonding!");
                 flags[0] = false;
             }
         }.start();
@@ -129,9 +230,11 @@ public class AggregatePLCClient {
         while (flags[0] && (ret < -1)) {
             ret = reader.getExitValue();
         }
-        if (flags[0] == false)
+        buffer = reader.getBuffer();
+        if (flags[0] == false) {
             reader.interrupt();
-
+            log.error("Thread reading python plcapi-server got stuck! It has been interrupted.");
+        }
         return reader.getExitValue();
     }
 
@@ -155,35 +258,24 @@ public class AggregatePLCClient {
         return bufferAll;
     }
 
-    /**
-     * @return the timeout
-     */
-    public int getTimeout() {
-        return this.timeout;
-    }
-
-    /**
-     * @param timeout the timeout to set
-     */
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
-
     private static class Reader extends Thread {
-        private final BufferedReader in;
-        private final Logger log;
         private final String pattern1;
         private final String pattern2;
         private final String readstop;
+        private BufferedReader in;
+        private Logger log;
         private int exit;
+        private String buffer;
 
-        private Reader(BufferedReader in, Logger log, String ptn1, String ptn2, String stop) {
+
+        private Reader(BufferedReader in, String ptn1, String ptn2, String stop) {
             this.in = in;
-            this.log = log;
+            this.log = null;
             this.pattern1 = ptn1;
             this.pattern2 = ptn2;
             this.readstop = stop;
             exit = -2;
+            buffer = "";
         }
 
         public int getExitValue()
@@ -191,52 +283,37 @@ public class AggregatePLCClient {
             return exit;
         }
 
+        public String getBuffer()
+        {
+            return buffer;
+        }
+
         public void run() {
+            log = Logger.getLogger("net.geni.aggregate");
             String line = "";
-            String buffer = "";
             char c;
-            Pattern regex1 = null;
-            if (pattern1 != null) {
-                regex1 = Pattern.compile(pattern1);
-            }
-            Pattern regex2 = null;
-            if (pattern2 != null) {
-                regex2 = Pattern.compile(pattern2);
-            }
+            int ret = 0;
             if (readstop == null) {
                 exit = -1;
                 return;
             }
-            Pattern regexstop = Pattern.compile(readstop);
-            exit = 0;
             try {
                 while ((c = (char) in.read()) != -1) {
                     buffer += c;
                     if (c == '\n') {
-                        if (log != null) {
-                            log.info(line);
-                        }
                         line = "";
                     } else {
                         line += c;
-                        if (regex1 != null && regex1.matcher(line).matches()) {
-                            if (log != null) {
-                                log.info(line);
-                            }
-                            exit = 1;
+                        if (pattern1 != null && line.matches(pattern1)) {
+                            ret = 1;
                         }
-                        if (regex2 != null && regex2.matcher(line).matches()) {
-                            if (log != null) {
-                                log.info(line);
-                            }
-                            if (exit == 0) {
-                                exit = 2;
+                        if (pattern2 != null && line.matches(pattern2)) {
+                            if (ret == 0) {
+                                ret = 2;
                             }
                         }
-                        if (regexstop.matcher(line).matches()) {
-                            if (log != null) {
-                                log.info(line);
-                            }
+                        if (line.matches(readstop)) {
+                            exit = ret;
                             return;
                         }
                     }
@@ -246,5 +323,136 @@ public class AggregatePLCClient {
                 return;
             }
         }
+    }
+
+    /**
+     *
+     * @param cmd the command executed before this operation
+     * @param hm the hashmap to return the buffer content
+     */
+    private void extractHashMapFromBuffer(String cmd, HashMap hm) {
+        hm.clear();
+        buffer = buffer.replaceFirst(cmd + "\n", "");
+        buffer = buffer.replaceFirst(promptPattern + "\n*", "");
+        String[] blocks = buffer.split("[\\[\\]\\{\\}\\,]");
+        for (String block: blocks) {
+            if (block.contains("':")) {
+                String[] pair = block.split("':");
+                log.info("hm dump: " + block + " split to:" + Integer.toString(pair.length));
+                pair[0] = pair[0].replaceAll("'|^(\\s+)", "");
+                pair[1] = pair[1].replaceAll("'|^(\\s+)", "");
+                hm.put(pair[0], pair[1]);
+            }
+        }
+    }
+
+    /*commands for PLC slice operations*/
+
+    public int createSlice(String sliceName, String url, String descr, String user, Vector<String> nodeUrns) {
+        if (!alive()) {
+            if (!login())
+                return -1;
+        }
+
+        createSliceCmd = createSliceCmd.replaceAll("<_name_>", sliceName);
+        createSliceCmd = createSliceCmd.replaceFirst("<_url_>", url);
+        createSliceCmd = createSliceCmd.replaceFirst("<_descr_>", descr);
+        createSliceCmd = createSliceCmd.replaceFirst("<_user_>", user);
+        String nodeArray = "";
+        for (String node: nodeUrns) {
+            nodeArray += node;
+            nodeArray += ',';
+        }
+        nodeArray.trim();
+        createSliceCmd = createSliceCmd.replaceAll("<_node_list_>", nodeArray);
+        out.println(createSliceCmd);
+        out.flush();
+        int ret = this.readPattern("^1\\s1\\s1", "Fault", promptPattern);
+        if (ret != 1) {
+            log.error("plcapi server failed to create Slice '" + sliceName +"' on Nodes: " + nodeArray);
+            logoff();
+        }
+        return ret;
+    }
+
+    public int deleteSlice(String sliceName) {
+        if (!alive()) {
+            if (!login())
+                return -1;
+        }
+        out.println("print api_server.DeleteSlice(auth,'"+sliceName+"');");
+        out.flush();
+        int ret = this.readPattern("^1", "Fault", promptPattern);
+        if (ret != 1) {
+            log.error("plcapi server failed to delete Slice '" + sliceName +"'");
+            logoff();
+        }
+        return ret;
+    }
+
+    public int updateSlice(String sliceName, String url, String descr, int expire, Vector<String> users, Vector<String> nodes) {
+        if (!alive()) {
+            if (!login())
+                return -1;
+        }
+
+        updateSliceCmd = updateSliceCmd.replaceAll("<_name_>", sliceName);
+        updateSliceCmd = updateSliceCmd.replaceFirst("<_url_>", url);
+        updateSliceCmd = updateSliceCmd.replaceFirst("<_descr_>", descr);
+        updateSliceCmd = updateSliceCmd.replaceFirst("<_expire_>", Integer.toString(expire));
+        String userArray = "";
+        for (String user: users) {
+            userArray += user;
+            userArray += ',';
+        }
+        userArray.trim();
+        updateSliceCmd = updateSliceCmd.replaceAll("<_user_list_>", userArray);
+        String nodeArray = "";
+        for (String node: nodes) {
+            nodeArray += node;
+            nodeArray += ',';
+        }
+        nodeArray.trim();
+        updateSliceCmd = updateSliceCmd.replaceAll("<_node_list_>", nodeArray);
+        out.println(loginCmd);
+        out.flush();
+        int ret = this.readPattern("^1\\s1\\s1", "Fault", promptPattern);
+        if (ret != 1) {
+            log.error("plcapi server failed to update Slice '" + sliceName +"' on Nodes: " + nodeArray);
+            logoff();
+        }
+        return ret;
+    }
+
+    /**
+     *
+     * @param sliceName
+     * @param sliceData
+     * @return int code: 1 success; 2 unknow slice; 0 failed to exact data
+     */
+    public int querySlice(String sliceName, HashMap sliceData) {
+        if (!alive()) {
+            if (!login())
+                return -1;
+        }
+        String cmd = "print api_server.GetSlices(auth,'"+sliceName+"');";
+        out.println(cmd);
+        out.flush();
+        int ret = this.readPattern("^\\[\\{", "^\\[\\]", promptPattern);
+        sliceData.clear();
+        if (ret == 1) {
+             extractHashMapFromBuffer(cmd, sliceData);
+             if (sliceData.isEmpty()) {
+                 log.error("failed to parse slice data:" + this.buffer);
+                 logoff();
+                 return 0;
+             }
+        } else if (ret ==2) {
+            log.error("plcapi server cannot recognize Slice '" + sliceName +"'");
+        } else {
+            log.error("plcapi server failed to query Slice '" + sliceName +"'");
+            logoff();
+        }
+        return ret;
     }
 }

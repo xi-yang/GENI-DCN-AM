@@ -36,14 +36,14 @@
                         */
 
                         
-                                    protected net.geni.aggregate.services.api.SliceStatusType localSliceStatus ;
+                                    protected java.lang.String localSliceStatus ;
                                 
 
                            /**
                            * Auto generated getter method
-                           * @return net.geni.aggregate.services.api.SliceStatusType
+                           * @return java.lang.String
                            */
-                           public  net.geni.aggregate.services.api.SliceStatusType getSliceStatus(){
+                           public  java.lang.String getSliceStatus(){
                                return localSliceStatus;
                            }
 
@@ -53,7 +53,7 @@
                                * Auto generated setter method
                                * @param param SliceStatus
                                */
-                               public void setSliceStatus(net.geni.aggregate.services.api.SliceStatusType param){
+                               public void setSliceStatus(java.lang.String param){
                             
                                             this.localSliceStatus=param;
                                     
@@ -227,12 +227,40 @@
                
                    }
                
-                                            if (localSliceStatus==null){
-                                                 throw new org.apache.axis2.databinding.ADBException("sliceStatus cannot be null!!");
-                                            }
-                                           localSliceStatus.serialize(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","sliceStatus"),
-                                               factory,xmlWriter);
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
+                                            xmlWriter.writeStartElement(prefix,"sliceStatus", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"sliceStatus");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("sliceStatus");
+                                    }
+                                
+
+                                          if (localSliceStatus==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("sliceStatus cannot be null!!");
+                                                  
+                                          }else{
+
                                         
+                                                   xmlWriter.writeCharacters(localSliceStatus);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                             
                                        if (localVlanResvResult!=null){
                                             for (int i = 0;i < localVlanResvResult.length;i++){
                                                 if (localVlanResvResult[i] != null){
@@ -413,15 +441,15 @@
                  java.util.ArrayList attribList = new java.util.ArrayList();
 
                 
-                            elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "sliceStatus"));
-                            
-                            
-                                    if (localSliceStatus==null){
-                                         throw new org.apache.axis2.databinding.ADBException("sliceStatus cannot be null!!");
-                                    }
-                                    elementList.add(localSliceStatus);
-                                
+                                 
+                                        if (localSliceStatus != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localSliceStatus));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("sliceStatus cannot be null!!");
+                                        }
+                                    
                              if (localVlanResvResult!=null) {
                                  for (int i = 0;i < localVlanResvResult.length;i++){
 
@@ -525,7 +553,10 @@
                                 
                                     if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","sliceStatus").equals(reader.getName())){
                                 
-                                                object.setSliceStatus(net.geni.aggregate.services.api.SliceStatusType.Factory.parse(reader));
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setSliceStatus(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
                                               
                                         reader.next();
                                     

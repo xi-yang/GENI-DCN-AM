@@ -49,7 +49,10 @@ public class AggregateState
     private static AggregateP2PVlans aggregateP2PVlans = new AggregateP2PVlans();
     private static AggregateUsers aggregateUsers = new AggregateUsers();
     private static String idcURL = "";
-    private static String idcRepo = "/usr/local/aggregate/AggregateWS/conf/repo";
+    private static String idcRepo = "";
+    private static String plcURL = "";
+    private static String plcPI = "";
+    private static String plcPassword = "";
     
     // Global states
     private static AggregateSQLStatements sqlStatements = null;
@@ -75,6 +78,9 @@ public class AggregateState
         }
         idcURL = aggregateProps.getProperty("aggregate.idc.url", "https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS");
         idcRepo = aggregateProps.getProperty("aggregate.idc.repo", "/usr/local/aggregate/AggregateWS/conf/repo");
+        plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
+        plcPI = aggregateProps.getProperty("aggregate.plc.pi", "xyang@east.isi.edu");
+        plcPassword = aggregateProps.getProperty("aggregate.plc.pass", "password");
         log.info("aggregate.idc.rep set to " + idcRepo);
         //create and load preferences
         AMPrefs = Preferences.systemNodeForPackage(AggregateWS.class);
@@ -227,6 +233,17 @@ public class AggregateState
 
     public static String getIdcRepo() {
         return idcRepo;
+    }
+
+    public static String getPlcURL() {
+        return plcURL;
+    }
+
+    public static String getPlcPI() {
+        return plcPI;
+    }
+    public static String getPlcPassword() {
+        return plcPassword;
     }
 
     public static String getSliceNameById(int id) {

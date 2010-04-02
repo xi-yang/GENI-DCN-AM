@@ -35,9 +35,9 @@ For users who deploy from scrach
 
 2. Install the GENI AggregateWS 
 
--- svn export svn://svn.maxgigapop.net/geni-aggregate /usr/local/aggregate
+-- svn export svn://svn.maxgigapop.net/geni-aggregate /usr/local/geni-aggregate
 
--- set $AGGREGATE_HOME to /usr/local/aggregate
+-- set $AGGREGATE_HOME to /usr/local/geni-aggregate
 
 -- cd $AGGREGATE_HOME/AggregateWS
 
@@ -49,7 +49,7 @@ For users who deploy from scrach
    set aggregate.mysql.user and pggregate.mysql.pass
    set aggregate.idc.url to your OSCARS IDC server
 
--- if you choose a AGGREGATE_HOME different than /usr/local/aggregate
+-- if you choose a AGGREGATE_HOME different than /usr/local/geni-aggregate
    update aggregate.properties: aggregate.idc.repo path
    update $AGGREGATE_HOME/AggregateWS/conf/repo/rampConfig.xml to set 
    absolute path to the OSCARS.jks file
@@ -71,7 +71,7 @@ For users who deploy from scrach
 
       keytool -import -keystore OSCARS.jks -alias yourkeyname -file ~/yourkeyname.x509.cer 
 
-   update <!ENTITY rampConfig SYSTEM "/usr/local/aggregate/AggregateWS/conf/repo/rampConfig.xml"> 
+   update <!ENTITY rampConfig SYSTEM "/usr/local/geni-aggregate/AggregateWS/conf/repo/rampConfig.xml"> 
    in $AGGREGATE_HOME/AggregateWS/conf/repo/axis2.xml to point to correct rampConfig.xml path.
 
    update <ramp:user> value to 'yourkeyname' in $AGGREGATE_HOME/AggregateWS/conf/repo/rampConfig.xml
