@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import java.util.Vector;
 import java.util.HashMap;
 import org.apache.log4j.*;
-import expect4j.*;
 
 /**
  *
@@ -48,29 +47,19 @@ public class AggregatePLCClient {
         + "slice_data['description'] = '<_descr_>';"
         + "slice_data['instantiation'] = 'plc-instantiated';"
         + "slice_id = api_server.AddSlice(auth, slice_data);"
-        + "ret1 = api_server.AddPersonToSlice(auth, auth['Username'], slice_id);"
-        + "oldnodes =api_server.GetNodes(api.auth, slice_id);"
-        + "newnodes = [<_node_list_>];"
-        + "deleted_nodes = list(set(newnodes).difference(oldnodes));"
-        + "added_nodes = list(set(oldnodes).difference(newnodes));"
-        + "ret2 = print api_server.AddSliceToNodes('<_name_>', added_nodes);"
-        + "ret3 = print api_server.DeleteSliceFromNodes('<_name_>', deleted_nodes);"
-        + "print ret1, ret2, ret3;"; //success pattern: "1 1 1"
+        + "ret1 = api_server.AddPersonToSlice(auth, '<_user_>', slice_id);"
+        + "nodes = <_node_list_>;"
+        + "ret2 = api_server.AddSliceToNodes(auth, '<_name_>', nodes);"
+        + "print ret1, ret2;"; //success pattern: "1 1"
 
     private String updateSliceCmd = "slice_data = {};"
         + "slice_data['name'] = '<_name_>';"
         + "slice_data['url'] = '<_url_>';"
         + "slice_data['description'] = '<_descr_>';"
-        + "slice_data['instantiation'] = 'plc-instantiated';"
-        + "slice_id = api_server.AddSlice(auth, slice_data);"
-        + "ret1 = api_server.AddPersonToSlice(auth, auth['Username'], slice_id);"
-        + "oldnodes =api_server.GetNodes(api.auth, slice_id);"
-        + "newnodes = [<_node_list_>];"
-        + "deleted_nodes = list(set(newnodes).difference(oldnodes));"
-        + "added_nodes = list(set(oldnodes).difference(newnodes));"
-        + "ret2 = print api_server.AddSliceToNodes('<_name_>', added_nodes);"
-        + "ret3 = print api_server.DeleteSliceFromNodes('<_name_>', deleted_nodes);"
-        + "print ret1, ret2, ret3;"; //success pattern: "1 1 1"
+        + "slice_data['expires'] = <_expires_>;"
+        + "slice_data['persons'] = <_user_list_>;"
+        + "slice_data['nodes'] = <_node_list_>;"
+        + "print api_server.UpdateSlice(auth, '<_name_>', slice_data);";
 
     private AggregatePLCClient() {}
 
@@ -85,6 +74,13 @@ public class AggregatePLCClient {
         timeout = DEFAULT_TIMEOUT;
         log = null;
     }
+
+    /*
+    protected void finalize() {
+        if (alive())
+            logoff();
+    }
+    */
 
     /**
      * get an PLCCLient instance
@@ -125,14 +121,12 @@ public class AggregatePLCClient {
                 log.info("failed to build process");
             }
             this.readUntil(promptPattern);
-            log.debug("plcapi login buffer dump #1: " + this.buffer);
             loginCmd = loginCmd.replaceFirst("<_url_>", plcUrl);
             loginCmd = loginCmd.replaceFirst("<_user_>", piEmail);
             loginCmd = loginCmd.replaceFirst("<_pass_>", password);
             this.sendCommand(loginCmd);
             int ret = this.readPattern("^1", "Failed to authenticate call", promptPattern);
             log.debug("login code: " + Integer.toString(ret));
-            log.debug("plcapi login buffer dump #2: " + this.buffer);
             if (ret != 1) {
                 log.error("plcapi server failed authenticate the PI: " + piEmail);
                 log.debug("plcapi server IO failure with buffer dump: " + this.buffer);
@@ -293,7 +287,8 @@ public class AggregatePLCClient {
                     } else {
                         line += c;
                         if (pattern1 != null && line.matches(pattern1)) {
-                            ret = 1;
+                            if (ret == 0)
+                                ret = 1;
                         }
                         if (pattern2 != null && line.matches(pattern2)) {
                             if (ret == 0) {
@@ -313,21 +308,30 @@ public class AggregatePLCClient {
         }
     }
 
+    private String makePyArray(String[] items) {
+        String retArray = "[";
+        for (int i = 0; i < items.length; i++) {
+            retArray += "'";
+            retArray += items[i];
+            retArray += "'";
+            if (i < items.length-1)
+                retArray += ",";
+        }
+        retArray += "]";
+        return retArray;
+    }
     /**
      *
-     * @param cmd the command executed before this operation
      * @param hm the hashmap to return the buffer content
      */
-    private HashMap[] extractHashMapFromBuffer(String cmd) {
+    private HashMap[] extractHashMapFromBuffer() {
         buffer = buffer.replaceFirst(promptPattern + "\n*", "");
         String[] chunks = buffer.split("\\s*\\[\\{|\\},\\s*\\{|\\}\\]\\s*"); //split [{A}, {B}]
-        HashMap[] hms = new HashMap[chunks.length];
+        HashMap[] hms = new HashMap[chunks.length-1];
         for (int i = 1; i < chunks.length; i++) { //ignore first chunk
-            log.debug("extractHashMapFromBuffer chunk: " + chunks[i]);
             String[] blocks = chunks[i].split(", '");
             hms[i-1] = new HashMap();
             for (String block: blocks) {
-                log.debug("extractHashMapFromBuffer block: " + block);
                 if (block.contains("':")) {
                     String[] pair = block.split("':");
                     pair[0] = pair[0].replaceAll("'|^(\\s+)", "");
@@ -341,7 +345,7 @@ public class AggregatePLCClient {
 
     /*commands for PLC slice operations*/
 
-    public int createSlice(String sliceName, String url, String descr, String user, Vector<String> nodeUrns) {
+    public int createSlice(String sliceName, String url, String descr, String user, String[] nodes) {
         if (!alive()) {
             if (!login())
                 return -1;
@@ -351,15 +355,12 @@ public class AggregatePLCClient {
         createSliceCmd = createSliceCmd.replaceFirst("<_url_>", url);
         createSliceCmd = createSliceCmd.replaceFirst("<_descr_>", descr);
         createSliceCmd = createSliceCmd.replaceFirst("<_user_>", user);
-        String nodeArray = "";
-        for (String node: nodeUrns) {
-            nodeArray += node;
-            nodeArray += ',';
-        }
-        nodeArray.trim();
+        String nodeArray = makePyArray(nodes);
         createSliceCmd = createSliceCmd.replaceAll("<_node_list_>", nodeArray);
         this.sendCommand(createSliceCmd);
-        int ret = this.readPattern("^1\\s1\\s1", "Fault", promptPattern);
+        log.debug("createSlice dump #1: " + createSliceCmd);
+        int ret = this.readPattern("^1\\s1", "Fault", promptPattern);
+        log.debug("createSlice dump #2: " + this.buffer);
         if (ret != 1) {
             log.error("plcapi server failed to create Slice '" + sliceName +"' on Nodes: " + nodeArray);
             logoff();
@@ -372,42 +373,58 @@ public class AggregatePLCClient {
             if (!login())
                 return -1;
         }
-        this.sendCommand("print api_server.DeleteSlice(auth,'"+sliceName+"');");
+        String cmd = "print api_server.DeleteSlice(auth, '"+sliceName+"');";
+        this.sendCommand(cmd);
         int ret = this.readPattern("^1", "Fault", promptPattern);
         if (ret != 1) {
-            log.error("plcapi server failed to delete Slice '" + sliceName +"'");
+            log.error("plcapi server failed to delete the slice '" + sliceName +"'");
             logoff();
         }
         return ret;
     }
 
-    public int updateSlice(String sliceName, String url, String descr, int expire, Vector<String> users, Vector<String> nodes) {
+    public boolean hasSlice(String sliceName) {
+        if (!alive()) {
+            if (!login())
+                return false;
+        }
+
+        String cmd = "print api_server.GetSlices(auth, '"+sliceName+"');";
+        this.sendCommand(cmd);
+        int ret = this.readPattern("^\\[\\{", "^\\[\\]", promptPattern);
+        if (ret == 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public int updateSlice(String sliceName, String url, String descr, int expires, String[] users, String[] nodes) {
         if (!alive()) {
             if (!login())
                 return -1;
         }
 
+        if (!hasSlice(sliceName)) {
+            log.error("plcapi server does not recognize '" + sliceName +"'");
+            return 0;
+        }
+
         updateSliceCmd = updateSliceCmd.replaceAll("<_name_>", sliceName);
         updateSliceCmd = updateSliceCmd.replaceFirst("<_url_>", url);
         updateSliceCmd = updateSliceCmd.replaceFirst("<_descr_>", descr);
-        updateSliceCmd = updateSliceCmd.replaceFirst("<_expire_>", Integer.toString(expire));
-        String userArray = "";
-        for (String user: users) {
-            userArray += user;
-            userArray += ',';
-        }
-        userArray.trim();
+        updateSliceCmd = updateSliceCmd.replaceFirst("<_expires_>", Integer.toString(expires));
+        String userArray = makePyArray(users);
         updateSliceCmd = updateSliceCmd.replaceAll("<_user_list_>", userArray);
-        String nodeArray = "";
-        for (String node: nodes) {
-            nodeArray += node;
-            nodeArray += ',';
-        }
-        nodeArray.trim();
+        String nodeArray = makePyArray(nodes);
         updateSliceCmd = updateSliceCmd.replaceAll("<_node_list_>", nodeArray);
-        this.sendCommand(loginCmd);
-        int ret = this.readPattern("^1\\s1\\s1", "Fault", promptPattern);
-        if (ret != 1) {
+        this.sendCommand(updateSliceCmd);
+        log.debug("updateSlice dump #1: " + updateSliceCmd);
+        int ret = this.readPattern("^1", "Fault|Error", promptPattern);
+        log.debug("updateSlice dump #2: " + this.buffer);
+        if (ret == 1) {
+            ;
+        } else {
             log.error("plcapi server failed to update Slice '" + sliceName +"' on Nodes: " + nodeArray);
             logoff();
         }
@@ -420,20 +437,22 @@ public class AggregatePLCClient {
      * @param sliceData
      * @return int code: 1 success; 2 unknow slice; 0 failed to exact data
      */
-    public int querySlice(String sliceName, Vector<HashMap> hmSlices) {
+    public int querySlice(String[] sliceNames, Vector<HashMap> hmSlices) {
         if (!alive()) {
             if (!login())
                 return -1;
         }
-        String cmd = "print api_server.GetSlices(auth,'"+sliceName+"');";
+        hmSlices.clear();
+        String sliceArray = makePyArray(sliceNames);
+        String cmd = "print api_server.GetSlices(auth,"+sliceArray+");";
         this.sendCommand(cmd);
         int ret = this.readPattern("^\\[\\{", "^\\[\\]", promptPattern);
-        hmSlices.clear();
         if (ret == 1) {
-             HashMap[] hmResults = extractHashMapFromBuffer(cmd);
+             HashMap[] hmResults = extractHashMapFromBuffer();
              if (hmResults.length > 0) {
-                for (HashMap hm: hmResults)
+                for (HashMap hm: hmResults) {
                     hmSlices.add(hm);
+                }
              }
              else {
                  log.error("failed to parse slice data:" + this.buffer);
@@ -441,9 +460,9 @@ public class AggregatePLCClient {
                  return 0;
              }
         } else if (ret ==2) {
-            log.error("plcapi server cannot recognize Slice '" + sliceName +"'");
+            log.error("plcapi server recognizes none of the slices: " + sliceArray);
         } else {
-            log.error("plcapi server failed to query Slice '" + sliceName +"'");
+            log.error("plcapi server failed to query  the slices: " + sliceArray);
             logoff();
         }
         return ret;

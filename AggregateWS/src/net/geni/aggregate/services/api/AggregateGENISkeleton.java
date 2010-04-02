@@ -28,40 +28,91 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     /**
      * Auto generated method signature
      *
+     * @param createSlice14
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.CreateSliceResponse CreateSlice(
+            net.geni.aggregate.services.api.CreateSlice createSlice14)
+            throws AggregateFaultMessage {
+        CreateSliceType createSlice = createSlice14.getCreateSlice();
+        String sliceName = createSlice.getSliceID();
+        if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
+            sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        }
+        String url = createSlice.getUrl();
+        String description = createSlice.getDescription();
+        String user = createSlice.getUser();
+        String[] nodes = createSlice.getNode();
+
+        //The below logic wil be moved into AggregateSlices
+        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        int ret = plcClient.createSlice(sliceName, url, description, user, nodes);
+
+        //form response
+        CreateSliceResponseType createSliceResponseType = new CreateSliceResponseType();
+        CreateSliceResponse createSliceResponse = new CreateSliceResponse();
+        createSliceResponseType.setSliceID(sliceName);
+        createSliceResponseType.setStatus("retCode="+Integer.toString(ret));
+        createSliceResponse.setCreateSliceResponse(createSliceResponseType);
+        return createSliceResponse;
+    }
+
+    /**
+     * Auto generated method signature
+     *
      * @param updateSlice0
      * @throws AggregateFaultMessage :
      */
     public net.geni.aggregate.services.api.UpdateSliceResponse UpdateSlice(
             net.geni.aggregate.services.api.UpdateSlice updateSlice0)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#UpdateSlice");
+        UpdateSliceType updateSlice = updateSlice0.getUpdateSlice();
+        String sliceName = updateSlice.getSliceID();
+        if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
+            sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        }
+        String url = updateSlice.getUrl();
+        String description = updateSlice.getDescription();
+        String[] users = updateSlice.getUser();
+        String[] nodes = updateSlice.getNode();
+        int expires = updateSlice.getExpires();
+
+        //The below logic wil be moved into AggregateSlices
+        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        int ret = plcClient.updateSlice(sliceName, url, description, expires, users, nodes);
+
+        //form response
+        UpdateSliceResponseType updateSliceResponseType = new UpdateSliceResponseType();
+        UpdateSliceResponse updateSliceResponse = new UpdateSliceResponse();
+        updateSliceResponseType.setStatus("retCode="+Integer.toString(ret));
+        updateSliceResponse.setUpdateSliceResponse(updateSliceResponseType);
+        return updateSliceResponse;
     }
 
     /**
      * Auto generated method signature
      *
-     * @param stopSlice2
+     * @param deleteSlice18
      * @throws AggregateFaultMessage :
      */
-    public net.geni.aggregate.services.api.StopSliceResponse StopSlice(
-            net.geni.aggregate.services.api.StopSlice stopSlice2)
+    public net.geni.aggregate.services.api.DeleteSliceResponse DeleteSlice(
+            net.geni.aggregate.services.api.DeleteSlice deleteSlice18)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#StopSlice");
-    }
+        DeleteSliceType deleteSlice = deleteSlice18.getDeleteSlice();
+        String sliceName = deleteSlice.getSliceID();
+        if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
+            sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        }
+        //The below logic wil be moved into AggregateSlices
+        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        int ret = plcClient.deleteSlice(sliceName);
 
-    /**
-     * Auto generated method signature
-     *
-     * @param deleteSliceNetwork4
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.DeleteSliceNetworkResponse DeleteSliceNetwork(
-            net.geni.aggregate.services.api.DeleteSliceNetwork deleteSliceNetwork4)
-            throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#DeleteSliceNetwork");
+        //form response
+        DeleteSliceResponseType deleteSliceResponseType = new DeleteSliceResponseType();
+        DeleteSliceResponse deleteSliceResponse = new DeleteSliceResponse();
+        deleteSliceResponseType.setStatus("retCode="+Integer.toString(ret));
+        deleteSliceResponse.setDeleteSliceResponse(deleteSliceResponseType);
+        return deleteSliceResponse;
     }
 
     /**
@@ -78,7 +129,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //The below logic wil be moved into AggregateSlices
         AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
         Vector<HashMap> hmSlices = new Vector<HashMap>();
-        plcClient.querySlice(sliceNames[0], hmSlices);
+        plcClient.querySlice(sliceNames, hmSlices);
         if (hmSlices.isEmpty() || hmSlices.get(0).isEmpty()) {
             throw new AggregateFaultMessage("Unkown Slice '" + sliceNames[0] + "' or Failure in retrieve slice data from PLC");
         }
@@ -86,24 +137,15 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //form response
         QuerySliceResponseType querySliceResponseType = new QuerySliceResponseType();
         QuerySliceResponse querySliceResponse = new QuerySliceResponse();
-        querySliceResponseType.setStatus(sliceNames[0]);
-        querySliceResponseType.setMessage(hmSlices.get(0).toString());
+        Vector<String> qrsV = new Vector<String>();
+        for (HashMap hm: hmSlices) {
+            qrsV.add(hm.toString());
+        }
+        String[] qrs = new String[qrsV.size()];
+        qrs = qrsV.toArray(qrs);
+        querySliceResponseType.setQueryResult(qrs);
         querySliceResponse.setQuerySliceResponse(querySliceResponseType);
-        return querySliceResponse;
-        
-    }
-
-    /**
-     * Auto generated method signature
-     *
-     * @param createSliceNetwork8
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.CreateSliceNetworkResponse CreateSliceNetwork(
-            net.geni.aggregate.services.api.CreateSliceNetwork createSliceNetwork8)
-            throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#CreateSliceNetwork");
+        return querySliceResponse;        
     }
 
     /**
@@ -144,32 +186,6 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         listNodesResponseType.setListNodesResponseTypeSequence((ListNodesResponseTypeSequence[]) lnrtsV.toArray(new ListNodesResponseTypeSequence[]{}));
         listNodesResponse.setListNodesResponse(listNodesResponseType);
         return listNodesResponse;
-    }
-
-    /**
-     * Auto generated method signature
-     *
-     * @param startSlice12
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.StartSliceResponse StartSlice(
-            net.geni.aggregate.services.api.StartSlice startSlice12)
-            throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#StartSlice");
-    }
-
-    /**
-     * Auto generated method signature
-     *
-     * @param createSlice14
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.CreateSliceResponse CreateSlice(
-            net.geni.aggregate.services.api.CreateSlice createSlice14)
-            throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#CreateSlice");
     }
 
     /**
@@ -218,19 +234,6 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     /**
      * Auto generated method signature
      *
-     * @param deleteSlice18
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.DeleteSliceResponse DeleteSlice(
-            net.geni.aggregate.services.api.DeleteSlice deleteSlice18)
-            throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#DeleteSlice");
-    }
-
-    /**
-     * Auto generated method signature
-     *
      * @param listCapabilities20
      * @throws AggregateFaultMessage :
      */
@@ -264,27 +267,70 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     /**
      * Auto generated method signature
      *
-     * @param resetSlice22
+     * @param createSliceVlan30
      * @throws AggregateFaultMessage :
      */
-    public net.geni.aggregate.services.api.ResetSliceResponse ResetSlice(
-            net.geni.aggregate.services.api.ResetSlice resetSlice22)
+    public net.geni.aggregate.services.api.CreateSliceVlanResponse CreateSliceVlan(
+            net.geni.aggregate.services.api.CreateSliceVlan createSliceVlan30)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#ResetSlice");
-    }
 
-    /**
-     * Auto generated method signature
-     *
-     * @param querySliceNetwork24
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.QuerySliceNetworkResponse QuerySliceNetwork(
-            net.geni.aggregate.services.api.QuerySliceNetwork querySliceNetwork24)
-            throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#QuerySliceNetwork");
+        CreateSliceVlanType createSliceVlan = createSliceVlan30.getCreateSliceVlan();
+        String sliceId = createSliceVlan.getSliceID();
+        VlanReservationDescriptorType vlanResvDescr = createSliceVlan.getVlanReservation();
+        String source = vlanResvDescr.getSourceNode();
+        String destination = vlanResvDescr.getDestinationNode();
+        int vlan = vlanResvDescr.getVlan();
+        float bw = vlanResvDescr.getBandwidth();
+        String description = vlanResvDescr.getDescription();
+
+        String status = "";
+        String message = "";
+        long startTime = System.currentTimeMillis()/1000;
+        long endTime = System.currentTimeMillis()/1000;
+
+        // look for existing sliceVlan
+        AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
+        AggregateP2PVlan p2pvlan = p2pvlans.getBySliceName(sliceId);
+        if (p2pvlan != null && p2pvlan.getVlanTag() == vlan) {
+            status = "failed";
+            message = "GRI=" + p2pvlan.getGlobalReservationId() + ", Status=" + p2pvlan.getStatus() +
+                    "\nNote: You may delete the VLAN and re-create.";
+        } else {// look for slice
+            boolean haveSlice = false;
+            AggregateSlices slices = AggregateState.getAggregateSlices();
+            AggregateSlice slice = slices.getByName(sliceId);
+            if (slice != null) {
+                if (slice.getCreatedTime() > startTime) {
+                    startTime = slice.getCreatedTime();
+                }
+                if (slice.getExpiredTime() > endTime) {
+                    endTime = slice.getExpiredTime();
+                } else {//the slice has already expired
+                    status = "failed";
+                    message = "Slice=" + sliceId + " has already expired. No VLAN created.";
+                }
+            } else {
+                status = "failed";
+                message = "Slice=" + sliceId + " does not exist. No VLAN created.";
+            }
+            if (!status.matches("failed")) {
+                p2pvlan = new AggregateP2PVlan(sliceId, source, destination, vlan, bw, description, startTime, endTime);
+                status = p2pvlan.setupVlan();
+                if (status.equalsIgnoreCase("failed")) {
+                    message = "Error=" + p2pvlan.getErrorMessage();
+                } else {
+                    message = "GRI=" + p2pvlan.getGlobalReservationId();
+                }
+                AggregateState.getAggregateP2PVlans().add(p2pvlan);
+            }
+        }
+        //form response
+        CreateSliceVlanResponseType createSliceVlanResponseType = new CreateSliceVlanResponseType();
+        CreateSliceVlanResponse createSliceVlanResponse = new CreateSliceVlanResponse();
+        createSliceVlanResponseType.setStatus(status);
+        createSliceVlanResponseType.setMessage(message);
+        createSliceVlanResponse.setCreateSliceVlanResponse(createSliceVlanResponseType);
+        return createSliceVlanResponse;
     }
 
     /**
@@ -373,73 +419,46 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         return deleteSliceVlanResponse;
     }
 
+    /********************* TODO Services **************************************/
+
     /**
      * Auto generated method signature
      *
-     * @param createSliceVlan30
+     * @param createSliceNetwork8
      * @throws AggregateFaultMessage :
      */
-    public net.geni.aggregate.services.api.CreateSliceVlanResponse CreateSliceVlan(
-            net.geni.aggregate.services.api.CreateSliceVlan createSliceVlan30)
+    public net.geni.aggregate.services.api.CreateSliceNetworkResponse CreateSliceNetwork(
+            net.geni.aggregate.services.api.CreateSliceNetwork createSliceNetwork8)
             throws AggregateFaultMessage {
+        //TODO : fill this with the necessary business logic
+        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#CreateSliceNetwork");
+    }
 
-        CreateSliceVlanType createSliceVlan = createSliceVlan30.getCreateSliceVlan();
-        String sliceId = createSliceVlan.getSliceID();
-        VlanReservationDescriptorType vlanResvDescr = createSliceVlan.getVlanReservation();
-        String source = vlanResvDescr.getSourceNode();
-        String destination = vlanResvDescr.getDestinationNode();
-        int vlan = vlanResvDescr.getVlan();
-        float bw = vlanResvDescr.getBandwidth();
-        String description = vlanResvDescr.getDescription();
 
-        String status = "";
-        String message = "";
-        long startTime = System.currentTimeMillis()/1000;
-        long endTime = System.currentTimeMillis()/1000;
+    /**
+     * Auto generated method signature
+     *
+     * @param deleteSliceNetwork4
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.DeleteSliceNetworkResponse DeleteSliceNetwork(
+            net.geni.aggregate.services.api.DeleteSliceNetwork deleteSliceNetwork4)
+            throws AggregateFaultMessage {
+        //TODO : fill this with the necessary business logic
+        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#DeleteSliceNetwork");
+    }
 
-        // look for existing sliceVlan
-        AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
-        AggregateP2PVlan p2pvlan = p2pvlans.getBySliceName(sliceId);
-        if (p2pvlan != null && p2pvlan.getVlanTag() == vlan) {
-            status = "failed";
-            message = "GRI=" + p2pvlan.getGlobalReservationId() + ", Status=" + p2pvlan.getStatus() +
-                    "\nNote: You may delete the VLAN and re-create.";
-        } else {// look for slice
-            boolean haveSlice = false;
-            AggregateSlices slices = AggregateState.getAggregateSlices();
-            AggregateSlice slice = slices.getByName(sliceId);
-            if (slice != null) {
-                if (slice.getCreatedTime() > startTime) {
-                    startTime = slice.getCreatedTime();
-                }
-                if (slice.getExpiredTime() > endTime) {
-                    endTime = slice.getExpiredTime();
-                } else {//the slice has already expired
-                    status = "failed";
-                    message = "Slice=" + sliceId + " has already expired. No VLAN created.";
-                }
-            } else {
-                status = "failed";
-                message = "Slice=" + sliceId + " does not exist. No VLAN created.";
-            }
-            if (!status.matches("failed")) {
-                p2pvlan = new AggregateP2PVlan(sliceId, source, destination, vlan, bw, description, startTime, endTime);
-                status = p2pvlan.setupVlan();
-                if (status.equalsIgnoreCase("failed")) {
-                    message = "Error=" + p2pvlan.getErrorMessage();
-                } else {
-                    message = "GRI=" + p2pvlan.getGlobalReservationId();
-                }
-                AggregateState.getAggregateP2PVlans().add(p2pvlan);
-            }
-        }
-        //form response
-        CreateSliceVlanResponseType createSliceVlanResponseType = new CreateSliceVlanResponseType();
-        CreateSliceVlanResponse createSliceVlanResponse = new CreateSliceVlanResponse();
-        createSliceVlanResponseType.setStatus(status);
-        createSliceVlanResponseType.setMessage(message);
-        createSliceVlanResponse.setCreateSliceVlanResponse(createSliceVlanResponseType);
-        return createSliceVlanResponse;
+    /**
+     * Auto generated method signature
+     *
+     * @param querySliceNetwork24
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.QuerySliceNetworkResponse QuerySliceNetwork(
+            net.geni.aggregate.services.api.QuerySliceNetwork querySliceNetwork24)
+            throws AggregateFaultMessage {
+        //TODO : fill this with the necessary business logic
+        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#QuerySliceNetwork");
     }
 
     /**
@@ -455,5 +474,46 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#QuerySliceNetwork");
     }
 
+    /************************* OBSOLETE Services ******************************/
+
+    /**
+     * Auto generated method signature
+     *
+     * @param resetSlice22
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.ResetSliceResponse ResetSlice(
+            net.geni.aggregate.services.api.ResetSlice resetSlice22)
+            throws AggregateFaultMessage {
+        //TODO : fill this with the necessary business logic
+        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#ResetSlice");
+    }
+
+    /**
+     * Auto generated method signature
+     *
+     * @param startSlice12
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.StartSliceResponse StartSlice(
+            net.geni.aggregate.services.api.StartSlice startSlice12)
+            throws AggregateFaultMessage {
+        //TODO : fill this with the necessary business logic
+        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#StartSlice");
+    }
+
+    /**
+     * Auto generated method signature
+     *
+     * @param stopSlice2
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.StopSliceResponse StopSlice(
+            net.geni.aggregate.services.api.StopSlice stopSlice2)
+            throws AggregateFaultMessage {
+        //TODO : fill this with the necessary business logic
+        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#StopSlice");
+    }
+
+
 }
-    

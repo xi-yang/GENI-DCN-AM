@@ -53,6 +53,7 @@ public class AggregateState
     private static String plcURL = "";
     private static String plcPI = "";
     private static String plcPassword = "";
+    private static String plcPrefix = "";
     
     // Global states
     private static AggregateSQLStatements sqlStatements = null;
@@ -81,6 +82,7 @@ public class AggregateState
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         plcPI = aggregateProps.getProperty("aggregate.plc.pi", "xyang@east.isi.edu");
         plcPassword = aggregateProps.getProperty("aggregate.plc.pass", "password");
+        plcPrefix = aggregateProps.getProperty("aggregate.plc.base", "maxpl");
         log.info("aggregate.idc.rep set to " + idcRepo);
         //create and load preferences
         AMPrefs = Preferences.systemNodeForPackage(AggregateWS.class);
@@ -242,8 +244,13 @@ public class AggregateState
     public static String getPlcPI() {
         return plcPI;
     }
+
     public static String getPlcPassword() {
         return plcPassword;
+    }
+
+    public static String getPlcPrefix() {
+        return plcPrefix;
     }
 
     public static String getSliceNameById(int id) {

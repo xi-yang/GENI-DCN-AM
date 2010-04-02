@@ -129,6 +129,7 @@
 	    <copy file="conf/log4j.properties" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/classes/log4j.properties"/>
     </target>
     <target name="axis2-deploy-local" depends="wsdl2java-AggregateGENI, axis2-aar, -deploy-lib-env-dir-, -deploy-lib-abs-dir-">
+            <fail message="Cannot find 'expect' executable in sytem. Please install 'expect'..." unless="haveExpect"/>
            <!--empty-->
     </target>
     <target name="axis2-deploy-dir-check" depends="axis2-aar">
