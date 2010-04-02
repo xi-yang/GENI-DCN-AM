@@ -77,9 +77,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String[] sliceNames = querySlice.getSliceID();
         //The below logic wil be moved into AggregateSlices
         AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
-        HashMap hmResult = new HashMap();
-        plcClient.querySlice(sliceNames[0], hmResult);
-        if (hmResult.isEmpty()) {
+        Vector<HashMap> hmSlices = new Vector<HashMap>();
+        plcClient.querySlice(sliceNames[0], hmSlices);
+        if (hmSlices.isEmpty() || hmSlices.get(0).isEmpty()) {
             throw new AggregateFaultMessage("Unkown Slice '" + sliceNames[0] + "' or Failure in retrieve slice data from PLC");
         }
 
@@ -87,7 +87,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         QuerySliceResponseType querySliceResponseType = new QuerySliceResponseType();
         QuerySliceResponse querySliceResponse = new QuerySliceResponse();
         querySliceResponseType.setStatus(sliceNames[0]);
-        querySliceResponseType.setMessage(hmResult.toString());
+        querySliceResponseType.setMessage(hmSlices.get(0).toString());
         querySliceResponse.setQuerySliceResponse(querySliceResponseType);
         return querySliceResponse;
         

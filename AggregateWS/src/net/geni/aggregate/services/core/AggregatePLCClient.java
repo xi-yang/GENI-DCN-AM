@@ -125,17 +125,17 @@ public class AggregatePLCClient {
                 log.info("failed to build process");
             }
             this.readUntil(promptPattern);
-            log.info("plcapi buffer dump #1: " + this.buffer);
+            log.debug("plcapi login buffer dump #1: " + this.buffer);
             loginCmd = loginCmd.replaceFirst("<_url_>", plcUrl);
             loginCmd = loginCmd.replaceFirst("<_user_>", piEmail);
             loginCmd = loginCmd.replaceFirst("<_pass_>", password);
             this.sendCommand(loginCmd);
-            int ret = this.readPattern("^1", "Failed to authticate call", promptPattern);
-            log.info("login code: " + Integer.toString(ret));
-            log.info("plcapi buffer dump #2: " + this.buffer);
+            int ret = this.readPattern("^1", "Failed to authenticate call", promptPattern);
+            log.debug("login code: " + Integer.toString(ret));
+            log.debug("plcapi login buffer dump #2: " + this.buffer);
             if (ret != 1) {
                 log.error("plcapi server failed authenticate the PI: " + piEmail);
-                log.error("plcapi server IO failure with buffer dump: " + this.buffer);
+                log.debug("plcapi server IO failure with buffer dump: " + this.buffer);
                 proc = null; in = null; out = null;
                 return false;
             } 
@@ -169,8 +169,6 @@ public class AggregatePLCClient {
      * @return output of command
      */
     public void sendCommand(String cmd) {
-        cmd = cmd.replaceAll(";\n", "");
-        cmd = cmd.replaceAll("\n", ";");
         out.println(cmd);
         out.flush();
     }
@@ -320,20 +318,25 @@ public class AggregatePLCClient {
      * @param cmd the command executed before this operation
      * @param hm the hashmap to return the buffer content
      */
-    private void extractHashMapFromBuffer(String cmd, HashMap hm) {
-        hm.clear();
-        buffer = buffer.replaceFirst(cmd + "\n", "");
+    private HashMap[] extractHashMapFromBuffer(String cmd) {
         buffer = buffer.replaceFirst(promptPattern + "\n*", "");
-        String[] blocks = buffer.split("[\\[\\]\\{\\}\\,]");
-        for (String block: blocks) {
-            if (block.contains("':")) {
-                String[] pair = block.split("':");
-                log.info("hm dump: " + block + " split to:" + Integer.toString(pair.length));
-                pair[0] = pair[0].replaceAll("'|^(\\s+)", "");
-                pair[1] = pair[1].replaceAll("'|^(\\s+)", "");
-                hm.put(pair[0], pair[1]);
+        String[] chunks = buffer.split("\\s*\\[\\{|\\},\\s*\\{|\\}\\]\\s*"); //split [{A}, {B}]
+        HashMap[] hms = new HashMap[chunks.length];
+        for (int i = 1; i < chunks.length; i++) { //ignore first chunk
+            log.debug("extractHashMapFromBuffer chunk: " + chunks[i]);
+            String[] blocks = chunks[i].split(", '");
+            hms[i-1] = new HashMap();
+            for (String block: blocks) {
+                log.debug("extractHashMapFromBuffer block: " + block);
+                if (block.contains("':")) {
+                    String[] pair = block.split("':");
+                    pair[0] = pair[0].replaceAll("'|^(\\s+)", "");
+                    pair[1] = pair[1].replaceAll("'|^(\\s+)", "");
+                    hms[i-1].put(pair[0], pair[1]);
+                }
             }
         }
+        return hms;
     }
 
     /*commands for PLC slice operations*/
@@ -417,7 +420,7 @@ public class AggregatePLCClient {
      * @param sliceData
      * @return int code: 1 success; 2 unknow slice; 0 failed to exact data
      */
-    public int querySlice(String sliceName, HashMap sliceData) {
+    public int querySlice(String sliceName, Vector<HashMap> hmSlices) {
         if (!alive()) {
             if (!login())
                 return -1;
@@ -425,10 +428,14 @@ public class AggregatePLCClient {
         String cmd = "print api_server.GetSlices(auth,'"+sliceName+"');";
         this.sendCommand(cmd);
         int ret = this.readPattern("^\\[\\{", "^\\[\\]", promptPattern);
-        sliceData.clear();
+        hmSlices.clear();
         if (ret == 1) {
-             extractHashMapFromBuffer(cmd, sliceData);
-             if (sliceData.isEmpty()) {
+             HashMap[] hmResults = extractHashMapFromBuffer(cmd);
+             if (hmResults.length > 0) {
+                for (HashMap hm: hmResults)
+                    hmSlices.add(hm);
+             }
+             else {
                  log.error("failed to parse slice data:" + this.buffer);
                  logoff();
                  return 0;
