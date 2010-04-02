@@ -129,8 +129,7 @@ public class AggregatePLCClient {
             loginCmd = loginCmd.replaceFirst("<_url_>", plcUrl);
             loginCmd = loginCmd.replaceFirst("<_user_>", piEmail);
             loginCmd = loginCmd.replaceFirst("<_pass_>", password);
-            out.println(loginCmd);
-            out.flush();
+            this.sendCommand(loginCmd);
             int ret = this.readPattern("^1", "Failed to authticate call", promptPattern);
             log.info("login code: " + Integer.toString(ret));
             log.info("plcapi buffer dump #2: " + this.buffer);
@@ -153,7 +152,7 @@ public class AggregatePLCClient {
         if (!alive())
             return false;
         try {
-            out.println("import sys; sys.exit(0)");
+            this.sendCommand("import sys; sys.exit(0)");
             in.close(); out.close();
         } catch (IOException e) {
             log.error("PLCCLient::logoff IO error: " + e.getMessage());
@@ -169,20 +168,11 @@ public class AggregatePLCClient {
      * @param cmd command to run on PLCAPI
      * @return output of command
      */
-    public String command(String cmd) {
+    public void sendCommand(String cmd) {
         cmd = cmd.replaceAll(";\n", "");
         cmd = cmd.replaceAll("\n", ";");
         out.println(cmd);
         out.flush();
-        //this.readUntil(promptPattern);//hopefully can remove this in the future
-        if (this.readUntil(promptPattern)) {
-            /* Remove command from output */
-            buffer = buffer.replaceFirst(cmd + "\n", "");
-            /* Remove prompt from output */
-            buffer = buffer.replaceFirst(promptPattern + "\n*", "");
-        }
-
-        return buffer;
     }
 
     /**
@@ -365,8 +355,7 @@ public class AggregatePLCClient {
         }
         nodeArray.trim();
         createSliceCmd = createSliceCmd.replaceAll("<_node_list_>", nodeArray);
-        out.println(createSliceCmd);
-        out.flush();
+        this.sendCommand(createSliceCmd);
         int ret = this.readPattern("^1\\s1\\s1", "Fault", promptPattern);
         if (ret != 1) {
             log.error("plcapi server failed to create Slice '" + sliceName +"' on Nodes: " + nodeArray);
@@ -380,8 +369,7 @@ public class AggregatePLCClient {
             if (!login())
                 return -1;
         }
-        out.println("print api_server.DeleteSlice(auth,'"+sliceName+"');");
-        out.flush();
+        this.sendCommand("print api_server.DeleteSlice(auth,'"+sliceName+"');");
         int ret = this.readPattern("^1", "Fault", promptPattern);
         if (ret != 1) {
             log.error("plcapi server failed to delete Slice '" + sliceName +"'");
@@ -414,8 +402,7 @@ public class AggregatePLCClient {
         }
         nodeArray.trim();
         updateSliceCmd = updateSliceCmd.replaceAll("<_node_list_>", nodeArray);
-        out.println(loginCmd);
-        out.flush();
+        this.sendCommand(loginCmd);
         int ret = this.readPattern("^1\\s1\\s1", "Fault", promptPattern);
         if (ret != 1) {
             log.error("plcapi server failed to update Slice '" + sliceName +"' on Nodes: " + nodeArray);
@@ -436,8 +423,7 @@ public class AggregatePLCClient {
                 return -1;
         }
         String cmd = "print api_server.GetSlices(auth,'"+sliceName+"');";
-        out.println(cmd);
-        out.flush();
+        this.sendCommand(cmd);
         int ret = this.readPattern("^\\[\\{", "^\\[\\]", promptPattern);
         sliceData.clear();
         if (ret == 1) {
