@@ -125,11 +125,10 @@ public class AggregatePLCClient {
             loginCmd = loginCmd.replaceFirst("<_user_>", piEmail);
             loginCmd = loginCmd.replaceFirst("<_pass_>", password);
             this.sendCommand(loginCmd);
-            int ret = this.readPattern("^1", "Failed to authenticate call", promptPattern);
+            int ret = this.readPattern("^1", ".*Failed to authenticate call", promptPattern);
             log.debug("login code: " + Integer.toString(ret));
             if (ret != 1) {
-                log.error("plcapi server failed authenticate the PI: " + piEmail);
-                log.debug("plcapi server IO failure with buffer dump: " + this.buffer);
+                log.error("plcapi server failed authenticate the user (PI): " + piEmail);
                 proc = null; in = null; out = null;
                 return false;
             } 
@@ -359,7 +358,7 @@ public class AggregatePLCClient {
         createSliceCmd = createSliceCmd.replaceAll("<_node_list_>", nodeArray);
         this.sendCommand(createSliceCmd);
         log.debug("createSlice dump #1: " + createSliceCmd);
-        int ret = this.readPattern("^1\\s1", "Fault", promptPattern);
+        int ret = this.readPattern("^1\\s1", ".*Fault|.*Error", promptPattern);
         log.debug("createSlice dump #2: " + this.buffer);
         if (ret != 1) {
             log.error("plcapi server failed to create Slice '" + sliceName +"' on Nodes: " + nodeArray);
@@ -375,7 +374,7 @@ public class AggregatePLCClient {
         }
         String cmd = "print api_server.DeleteSlice(auth, '"+sliceName+"');";
         this.sendCommand(cmd);
-        int ret = this.readPattern("^1", "Fault", promptPattern);
+        int ret = this.readPattern("^1", ".*Fault|.*Error", promptPattern);
         if (ret != 1) {
             log.error("plcapi server failed to delete the slice '" + sliceName +"'");
             logoff();
@@ -420,7 +419,7 @@ public class AggregatePLCClient {
         updateSliceCmd = updateSliceCmd.replaceAll("<_node_list_>", nodeArray);
         this.sendCommand(updateSliceCmd);
         log.debug("updateSlice dump #1: " + updateSliceCmd);
-        int ret = this.readPattern("^1", "Fault|Error", promptPattern);
+        int ret = this.readPattern("^1", ".*Fault|.*Error", promptPattern);
         log.debug("updateSlice dump #2: " + this.buffer);
         if (ret == 1) {
             ;
