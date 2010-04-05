@@ -66,9 +66,9 @@ public class AggregateState
         String aggregateHome = System.getenv("AGGREGATE_HOME");
         String propFileName = "aggregate.properties";
         if (aggregateHome != null && !aggregateHome.equals(""))
-            propFileName = aggregateHome + "/AggregateWS/conf/" + propFileName;
+            propFileName = aggregateHome + "/AggregateAttic/conf/" + propFileName;
         else
-            propFileName = "/usr/local/aggregate/AggregateWS/conf/" + propFileName;
+            propFileName = "/usr/local/aggregate/AggregateAttic/conf/" + propFileName;
 
         try {
             FileInputStream in = new FileInputStream(propFileName);
@@ -78,7 +78,7 @@ public class AggregateState
             //logging for exception!
         }
         idcURL = aggregateProps.getProperty("aggregate.idc.url", "https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS");
-        idcRepo = aggregateProps.getProperty("aggregate.idc.repo", "/usr/local/aggregate/AggregateWS/conf/repo");
+        idcRepo = aggregateProps.getProperty("aggregate.idc.repo", "/usr/local/aggregate/AggregateAttic/conf/repo");
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         plcPI = aggregateProps.getProperty("aggregate.plc.pi", "xyang@east.isi.edu");
         plcPassword = aggregateProps.getProperty("aggregate.plc.pass", "password");
