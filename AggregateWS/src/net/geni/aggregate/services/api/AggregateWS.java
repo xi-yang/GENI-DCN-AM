@@ -293,20 +293,14 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         return AggregateState.getSkeletonAPI().UpdateSlice(updateSlice);
     }
 
-    //??
     public StartSliceResponse StartSlice(net.geni.aggregate.services.api.StartSlice startSlice) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return AggregateState.getSkeletonAPI().StartSlice(startSlice);
     }
 
-    //??
     public StopSliceResponse StopSlice(net.geni.aggregate.services.api.StopSlice stopSlice) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return AggregateState.getSkeletonAPI().StopSlice(stopSlice);
     }
 
-    //??
-    public ResetSliceResponse ResetSlice(net.geni.aggregate.services.api.ResetSlice resetSlice) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     public QuerySliceResponse QuerySlice(net.geni.aggregate.services.api.QuerySlice querySlice) throws AggregateFaultMessage {
         return AggregateState.getSkeletonAPI().QuerySlice(querySlice);

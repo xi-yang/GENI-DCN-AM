@@ -151,6 +151,58 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     /**
      * Auto generated method signature
      *
+     * @param startSlice12
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.StartSliceResponse StartSlice(
+            net.geni.aggregate.services.api.StartSlice startSlice12)
+            throws AggregateFaultMessage {
+        StartSliceType startSlice = startSlice12.getStartSlice();
+        String sliceName = startSlice.getSliceID();
+        if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
+            sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        }
+        //The below logic wil be moved into AggregateSlices
+        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        int ret = plcClient.startStopSlice(sliceName, true);
+
+        //form response
+        StartSliceResponseType startSliceResponseType = new StartSliceResponseType();
+        StartSliceResponse startSliceResponse = new StartSliceResponse();
+        startSliceResponseType.setStatus("retCode="+Integer.toString(ret));
+        startSliceResponse.setStartSliceResponse(startSliceResponseType);
+        return startSliceResponse;
+    }
+
+    /**
+     * Auto generated method signature
+     *
+     * @param stopSlice2
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.StopSliceResponse StopSlice(
+            net.geni.aggregate.services.api.StopSlice stopSlice2)
+            throws AggregateFaultMessage {
+        StopSliceType stopSlice = stopSlice2.getStopSlice();
+        String sliceName = stopSlice.getSliceID();
+        if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
+            sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        }
+        //The below logic wil be moved into AggregateSlices
+        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        int ret = plcClient.startStopSlice(sliceName, false);
+
+        //form response
+        StopSliceResponseType stopSliceResponseType = new StopSliceResponseType();
+        StopSliceResponse stopSliceResponse = new StopSliceResponse();
+        stopSliceResponseType.setStatus("retCode="+Integer.toString(ret));
+        stopSliceResponse.setStopSliceResponse(stopSliceResponseType);
+        return stopSliceResponse;
+    }
+
+    /**
+     * Auto generated method signature
+     *
      * @param listNodes10
      * @throws AggregateFaultMessage :
      */
@@ -473,47 +525,4 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //TODO : fill this with the necessary business logic
         throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#QuerySliceNetwork");
     }
-
-    /************************* OBSOLETE Services ******************************/
-
-    /**
-     * Auto generated method signature
-     *
-     * @param resetSlice22
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.ResetSliceResponse ResetSlice(
-            net.geni.aggregate.services.api.ResetSlice resetSlice22)
-            throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#ResetSlice");
-    }
-
-    /**
-     * Auto generated method signature
-     *
-     * @param startSlice12
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.StartSliceResponse StartSlice(
-            net.geni.aggregate.services.api.StartSlice startSlice12)
-            throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#StartSlice");
-    }
-
-    /**
-     * Auto generated method signature
-     *
-     * @param stopSlice2
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.StopSliceResponse StopSlice(
-            net.geni.aggregate.services.api.StopSlice stopSlice2)
-            throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#StopSlice");
-    }
-
-
 }

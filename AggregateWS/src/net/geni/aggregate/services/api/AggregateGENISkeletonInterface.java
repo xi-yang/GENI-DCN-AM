@@ -195,21 +195,6 @@
         /**
          * Auto generated method signature
          * 
-                                    * @param resetSlice
-             * @throws AggregateFaultMessage : 
-         */
-
-        
-                public net.geni.aggregate.services.api.ResetSliceResponse ResetSlice
-                (
-                  net.geni.aggregate.services.api.ResetSlice resetSlice
-                 )
-            throws AggregateFaultMessage;
-        
-         
-        /**
-         * Auto generated method signature
-         * 
                                     * @param querySliceNetwork
              * @throws AggregateFaultMessage : 
          */

@@ -70,7 +70,7 @@
             </fileset>
         </copy>
         <copy toDir="${basedir}/xml-resources/axis2/META-INF/" overwrite="true">
-            <fileset dir="${basedir}/conf/repo">
+            <fileset dir="${basedir}/../AggregateAttic/conf/repo">
                 <include name="services.xml"/>
             </fileset>
         </copy>
@@ -97,7 +97,7 @@
     </target>
     <target name="axis2-aar" depends="compile">
         <mkdir dir="${build.dir}/axis2/WEB-INF/services"/>
-        <copy file="${basedir}/conf/log4j.properties" tofile="${build.dir}/classes/log4j.properties"/>
+        <copy file="${basedir}/../AggregateAttic/conf/log4j.properties" tofile="${build.dir}/classes/log4j.properties"/>
         <jar destfile="${build.dir}/axis2/WEB-INF/services/${ant.project.name}.aar">
             <fileset excludes="**/Test.class" dir="${build.dir}/classes"/>
             <fileset dir="${basedir}/xml-resources/axis2">
@@ -110,23 +110,23 @@
     </target>
     <target name="-deploy-lib-env-dir-" if="haveEnvDir">
             <copy file="${build.dir}/axis2/WEB-INF/services/AggregateWS.aar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/services/AggregateWS.aar"/>
-            <copy file="${basedir}/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
+            <copy file="${basedir}/../AggregateAttic/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
             <copy toDir="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/lib">
                 <fileset dir="${basedir}/lib/">
                     <include name="*.jar"/>
                 </fileset>
             </copy>
-	    <copy file="conf/log4j.properties" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/classes/log4j.properties"/>
+	    <copy file="../AggregateAttic/conf/log4j.properties" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/classes/log4j.properties"/>
     </target>
     <target name="-deploy-lib-abs-dir-" unless="haveEnvDir">
 	    <copy file="${build.dir}/axis2/WEB-INF/services/AggregateWS.aar" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/services/AggregateWS.aar"/>
-	    <copy file="${basedir}/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
+	    <copy file="${basedir}/../AggregateAttic/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
 	    <copy toDir="/usr/local/tomcat/webapps/axis2/WEB-INF/lib">
                 <fileset dir="${basedir}/lib/">
                     <include name="*.jar"/>
                 </fileset>
             </copy>
-	    <copy file="conf/log4j.properties" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/classes/log4j.properties"/>
+	    <copy file="../AggregateAttic/conf/log4j.properties" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/classes/log4j.properties"/>
     </target>
     <target name="axis2-deploy-local" depends="wsdl2java-AggregateGENI, axis2-aar, -deploy-lib-env-dir-, -deploy-lib-abs-dir-">
             <fail message="Cannot find 'expect' executable in sytem. Please install 'expect'..." unless="haveExpect"/>

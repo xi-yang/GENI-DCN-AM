@@ -37,7 +37,7 @@ is divided into following sections:
     <target name="-pre-init">
 	<property environment="env"/>
         <available property="haveEnvDir" file="${env.AGGREGATE_HOME}" type="dir"/>
-        <available property="haveExpect" file="/usr/bin/expect1"/>
+        <available property="haveExpect" file="/usr/bin/expect"/>
     </target>
     <target depends="-pre-init" name="-init-private">
         <property file="nbproject/private/config.properties"/>

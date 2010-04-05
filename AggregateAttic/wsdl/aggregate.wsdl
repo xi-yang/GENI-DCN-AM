@@ -22,19 +22,21 @@
 <!--  **************************************************************** -->
 
 			<!-- SliceStatusType: slice status -->
+			<!-- Unused due to problematic enumeration handling in axis2
 			<xs:simpleType name="SliceStatusType">
 				<xs:restriction base="xs:string">
-					<xs:enumeration value="no slice" /> <!-- unknown, never submitted -->
-					<xs:enumeration value="scheduled" />  <!-- waiting for execution -->
-					<xs:enumeration value="pending" /><!-- starting up -->
-					<xs:enumeration value="executing" />   <!-- running -->
-					<xs:enumeration value="paused" />    <!-- paused but available -->
-					<xs:enumeration value="stopped" />   <!-- user requested termination -->
-					<xs:enumeration value="finished" />    <!-- finished and exited cleanly -->
-					<xs:enumeration value="terminated" />  <!-- unattended termination -->
-					<xs:enumeration value="deleted" />   <!-- user deleted -->
+					<xs:enumeration value="no slice" /> 
+					<xs:enumeration value="scheduled" /> 
+					<xs:enumeration value="pending" />
+					<xs:enumeration value="executing" /> 
+					<xs:enumeration value="paused" /> 
+					<xs:enumeration value="stopped" /> 
+					<xs:enumeration value="finished" />  
+					<xs:enumeration value="terminated" /> 
+					<xs:enumeration value="deleted" /> 
 				</xs:restriction>
 			</xs:simpleType>
+			-->
 
 			<xs:complexType name="CapabilityType">
 				<xs:sequence>
@@ -171,9 +173,11 @@
 			<xs:element name="CreateSlice" type="tns:CreateSliceType"/>
 			<xs:complexType name="CreateSliceType">
 				<xs:sequence>
-					<xs:element name="node" type="tns:NodeDescriptorType" maxOccurs="unbounded"/>
-					<xs:element name="start" type="xs:int"/>
-					<xs:element name="end" type="xs:int"/>
+					<xs:element name="sliceID" type="xs:string"/>
+					<xs:element name="url" type="xs:string"/>
+					<xs:element name="description" type="xs:string"/>
+					<xs:element name="user" type="xs:string"/>
+					<xs:element name="node" type="xs:string" maxOccurs="unbounded"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -182,7 +186,7 @@
 			<xs:complexType name="CreateSliceResponseType">
 				<xs:sequence>
 					<xs:element name="sliceID" type="xs:string"/>
-					<xs:element name="status" type="tns:SliceStatusType"/>
+					<xs:element name="status" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -190,7 +194,7 @@
 			<xs:element name="DeleteSlice" type="tns:DeleteSliceType"/>
 			<xs:complexType name="DeleteSliceType">
 				<xs:sequence>
-					<xs:element name="sliceID" type="xs:string" maxOccurs="unbounded"/>
+					<xs:element name="sliceID" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -207,7 +211,11 @@
 			<xs:complexType name="UpdateSliceType">
 				<xs:sequence>
 					<xs:element name="sliceID" type="xs:string"/>
-					<xs:element name="node" type="tns:NodeDescriptorType" maxOccurs="unbounded"/>
+					<xs:element name="url" type="xs:string"/>
+					<xs:element name="description" type="xs:string"/>
+					<xs:element name="user" type="xs:string" maxOccurs="unbounded"/>
+					<xs:element name="node" type="xs:string" maxOccurs="unbounded"/>
+					<xs:element name="expires" type="xs:int"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -227,7 +235,7 @@
 			<xs:element name="StartSlice" type="tns:StartSliceType"/>
 			<xs:complexType name="StartSliceType">
 				<xs:sequence>
-					<xs:element name="sliceID" type="xs:string" maxOccurs="unbounded"/>
+					<xs:element name="sliceID" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -243,29 +251,13 @@
 			<xs:element name="StopSlice" type="tns:StopSliceType"/>
 			<xs:complexType name="StopSliceType">
 				<xs:sequence>
-					<xs:element name="sliceID" type="xs:string" maxOccurs="unbounded"/>
+					<xs:element name="sliceID" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
 			<!-- StopSlice response definitions -->
 			<xs:element name="StopSliceResponse" type="tns:StopSliceResponseType"/>
 			<xs:complexType name="StopSliceResponseType">
-				<xs:sequence>
-					<xs:element name="status" type="xs:string"/>
-				</xs:sequence>
-			</xs:complexType>
-
-			<!-- ResetSlice request definitions -->
-			<xs:element name="ResetSlice" type="tns:ResetSliceType"/>
-			<xs:complexType name="ResetSliceType">
-				<xs:sequence>
-					<xs:element name="sliceID" type="xs:string" maxOccurs="unbounded"/>
-				</xs:sequence>
-			</xs:complexType>
-
-			<!-- ResetSlice response definitions -->
-			<xs:element name="ResetSliceResponse" type="tns:ResetSliceResponseType"/>
-			<xs:complexType name="ResetSliceResponseType">
 				<xs:sequence>
 					<xs:element name="status" type="xs:string"/>
 				</xs:sequence>
@@ -283,7 +275,7 @@
 			<xs:element name="QuerySliceResponse" type="tns:QuerySliceResponseType"/>
 			<xs:complexType name="QuerySliceResponseType">
 				<xs:sequence>
-					<xs:element name="status" type="tns:SliceStatusType"/>
+					<xs:element name="queryResult" type="xs:string" maxOccurs="unbounded"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -360,7 +352,7 @@
 			<xs:element name="CreateSliceNetworkResponse" type="tns:CreateSliceNetworkResponseType"/>
 			<xs:complexType name="CreateSliceNetworkResponseType">
 				<xs:sequence>
-					<xs:element name="sliceStatus" type="tns:SliceStatusType"/>
+					<xs:element name="sliceStatus" type="xs:string"/>
 					<xs:element name="vlanResvResult" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
 				</xs:sequence>
 			</xs:complexType>
@@ -377,7 +369,7 @@
 			<xs:element name="DeleteSliceNetworkResponse" type="tns:DeleteSliceNetworkResponseType"/>
 			<xs:complexType name="DeleteSliceNetworkResponseType">
 				<xs:sequence>
-					<xs:element name="sliceStatus" type="tns:SliceStatusType"/>
+					<xs:element name="sliceStatus" type="xs:string"/>
 					<xs:element name="vlanResvResult" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
 				</xs:sequence>
 			</xs:complexType>
@@ -394,7 +386,7 @@
 			<xs:element name="QuerySliceNetworkResponse" type="tns:QuerySliceNetworkResponseType"/>
 			<xs:complexType name="QuerySliceNetworkResponseType">
 				<xs:sequence>
-					<xs:element name="sliceStatus" type="tns:SliceStatusType"/>
+					<xs:element name="sliceStatus" type="xs:string"/>
 					<xs:element name="vlanResvResult" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
 				</xs:sequence>
 			</xs:complexType>
@@ -483,14 +475,6 @@
 
 	<message name="StopSliceResponseMsg">
 		<part name="StopSliceMsgResp" element="tns:StopSliceResponse" />
-	</message>
-
-	<message name="ResetSliceRequestMsg">
-		<part name="ResetSliceMsgReq" element="tns:ResetSlice" />
-	</message>
-
-	<message name="ResetSliceResponseMsg">
-		<part name="ResetSliceMsgResp" element="tns:ResetSliceResponse" />
 	</message>
 
 	<message name="QuerySliceRequestMsg">
@@ -600,11 +584,6 @@
 		<operation name="StopSlice">
 			<input message="tns:StopSliceRequestMsg" />
 			<output message="tns:StopSliceResponseMsg" />
-			<fault  name="AggregateException" message="tns:AggregateFaultMessage" />
-		</operation>
-		<operation name="ResetSlice">
-			<input message="tns:ResetSliceRequestMsg" />
-			<output message="tns:ResetSliceResponseMsg" />
 			<fault  name="AggregateException" message="tns:AggregateFaultMessage" />
 		</operation>
 		<operation name="QuerySlice">
@@ -745,19 +724,6 @@
 
 		<operation name="StopSlice">
 			<soap:operation soapAction="StopSlice" />
-			<input>
-				<soap:body use="literal" />
-			</input>
-			<output>
-				<soap:body use="literal" />
-			</output>
-			<fault name="AggregateException">
-				<soap:fault name="AggregateException" use="literal" />
-			</fault>
-		</operation>
-
-		<operation name="ResetSlice">
-			<soap:operation soapAction="ResetSlice" />
 			<input>
 				<soap:body use="literal" />
 			</input>

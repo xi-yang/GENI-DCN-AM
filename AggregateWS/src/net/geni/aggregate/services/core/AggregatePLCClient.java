@@ -61,6 +61,13 @@ public class AggregatePLCClient {
         + "slice_data['nodes'] = <_node_list_>;"
         + "print api_server.UpdateSlice(auth, '<_name_>', slice_data);";
 
+    private String startSliceCmd = "slices = api_server.GetSlices(auth, {'name': '<_name_>'}, ['slice_id']);\n"
+        + "if not slices:\n"
+        + "slice_id = slices[0]['slice_id'];"
+        + "tags = api_server.GetSliceTags(auth, {'slice_id': slice_id, 'name': 'enabled'}, ['slice_tag_id']);"
+        + "tag_id = tags[0]['slice_tag_id'];"
+        + "print api_server.UpdateSliceTag(auth, tag_id, \"<_tag_id_>\")\n\n;";
+
     private AggregatePLCClient() {}
 
     public AggregatePLCClient(String url, String pi, String pass) {
@@ -418,9 +425,7 @@ public class AggregatePLCClient {
         String nodeArray = makePyArray(nodes);
         updateSliceCmd = updateSliceCmd.replaceAll("<_node_list_>", nodeArray);
         this.sendCommand(updateSliceCmd);
-        log.debug("updateSlice dump #1: " + updateSliceCmd);
         int ret = this.readPattern("^1", ".*Fault|.*Error", promptPattern);
-        log.debug("updateSlice dump #2: " + this.buffer);
         if (ret == 1) {
             ;
         } else {
@@ -462,6 +467,32 @@ public class AggregatePLCClient {
             log.error("plcapi server recognizes none of the slices: " + sliceArray);
         } else {
             log.error("plcapi server failed to query  the slices: " + sliceArray);
+            logoff();
+        }
+        return ret;
+    }
+
+    public int startStopSlice(String sliceName, boolean startOrStop) {
+        if (!alive()) {
+            if (!login())
+                return -1;
+        }
+
+        startSliceCmd = startSliceCmd.replaceAll("<_name_>", sliceName);
+        if (startOrStop) {//start
+            startSliceCmd = startSliceCmd.replaceAll("<_tag_id_>", "1");
+        }
+        else {//stop
+            startSliceCmd = startSliceCmd.replaceAll("<_tag_id_>", "0");
+        }
+        this.sendCommand(startSliceCmd);
+        log.debug("startSliceCmd dump #1: " + startSliceCmd);
+        int ret = this.readPattern("^1", ".*Fault|.*Error", promptPattern);
+        log.debug("startSliceCmd dump #2: " + this.buffer);
+        if (ret == 1) {
+            ;
+        } else {
+            log.error("plcapi server failed to " + (startOrStop ? "start slice: ":"stop slice: ") + sliceName);
             logoff();
         }
         return ret;
