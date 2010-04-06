@@ -18,7 +18,7 @@ import org.apache.log4j.*;
  *
  * @author root
  */
-public class AggregatePLCClient {
+public class AggregatePLC_APIClient {
     protected String plcUrl;
     protected String piEmail;
     protected String password;
@@ -66,11 +66,11 @@ public class AggregatePLCClient {
         + "slice_id = slices[0]['slice_id'];"
         + "tags = api_server.GetSliceTags(auth, {'slice_id': slice_id, 'name': 'enabled'}, ['slice_tag_id']);"
         + "tag_id = tags[0]['slice_tag_id'];"
-        + "print api_server.UpdateSliceTag(auth, tag_id, \"<_tag_id_>\")\n\n;";
+        + "print api_server.UpdateSliceTag(auth, tag_id, \"<_tag_id_>\");\n\n";
 
-    private AggregatePLCClient() {}
+    private AggregatePLC_APIClient() {}
 
-    public AggregatePLCClient(String url, String pi, String pass) {
+    public AggregatePLC_APIClient(String url, String pi, String pass) {
         plcUrl = url;
         piEmail = pi;
         password = pass;
@@ -92,11 +92,11 @@ public class AggregatePLCClient {
     /**
      * get an PLCCLient instance
      */
-    static public AggregatePLCClient getPLCClient(String url, String pi, String pass) {
-        return (new AggregatePLCClient(url, pi, pass));
+    static public AggregatePLC_APIClient getPLCClient(String url, String pi, String pass) {
+        return (new AggregatePLC_APIClient(url, pi, pass));
     }
 
-    static public AggregatePLCClient getPLCClient() {
+    static public AggregatePLC_APIClient getPLCClient() {
         return getPLCClient(AggregateState.getPlcURL(), AggregateState.getPlcPI(), AggregateState.getPlcPassword());
     }
 

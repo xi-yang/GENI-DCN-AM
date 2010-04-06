@@ -197,6 +197,15 @@ public class AggregateP2PVlan {
         return hmRet;
      }
 
+    private boolean setVlanOnNodes(boolean addOrDel) {
+        //login to PLC-ssh (new AggregatePLC_SSHClient)
+        
+        //add/delete source vtag interface
+
+        //add/delete destination vtag interface
+        return true;
+    }
+
     public void saveVlanInDB()
         throws AggregateException {
         String sqlStmt = "INSERT INTO " + AggregateState.getP2PVlansTab() +

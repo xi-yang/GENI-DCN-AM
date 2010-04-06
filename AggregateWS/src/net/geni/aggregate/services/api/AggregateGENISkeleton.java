@@ -16,7 +16,7 @@ import net.geni.aggregate.services.core.AggregateSlice;
 import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateP2PVlan;
 import net.geni.aggregate.services.core.AggregateP2PVlans;
-import net.geni.aggregate.services.core.AggregatePLCClient;
+import net.geni.aggregate.services.core.AggregatePLC_APIClient;
 import net.geni.aggregate.services.core.AggregateUser;
 import net.geni.aggregate.services.core.AggregateUsers;
 import net.geni.aggregate.services.core.AggregateException;
@@ -45,7 +45,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String[] nodes = createSlice.getNode();
 
         //The below logic wil be moved into AggregateSlices
-        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         int ret = plcClient.createSlice(sliceName, url, description, user, nodes);
 
         //form response
@@ -78,7 +78,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         int expires = updateSlice.getExpires();
 
         //The below logic wil be moved into AggregateSlices
-        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         int ret = plcClient.updateSlice(sliceName, url, description, expires, users, nodes);
 
         //form response
@@ -104,7 +104,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
         }
         //The below logic wil be moved into AggregateSlices
-        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         int ret = plcClient.deleteSlice(sliceName);
 
         //form response
@@ -127,7 +127,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         QuerySliceType querySlice = querySlice6.getQuerySlice();
         String[] sliceNames = querySlice.getSliceID();
         //The below logic wil be moved into AggregateSlices
-        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         Vector<HashMap> hmSlices = new Vector<HashMap>();
         plcClient.querySlice(sliceNames, hmSlices);
         if (hmSlices.isEmpty() || hmSlices.get(0).isEmpty()) {
@@ -163,7 +163,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
         }
         //The below logic wil be moved into AggregateSlices
-        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         int ret = plcClient.startStopSlice(sliceName, true);
 
         //form response
@@ -189,7 +189,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
         }
         //The below logic wil be moved into AggregateSlices
-        AggregatePLCClient plcClient = AggregatePLCClient.getPLCClient();
+        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         int ret = plcClient.startStopSlice(sliceName, false);
 
         //form response
