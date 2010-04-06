@@ -5,8 +5,8 @@
 
 package net.geni.aggregate.services.core;
 
-import java.util.Vector;
-import java.util.HashMap;
+import java.io.*;
+import java.util.*;
 import java.rmi.RemoteException;
 import org.apache.axis2.AxisFault;
 import org.apache.log4j.*;
@@ -37,7 +37,7 @@ public class AggregateP2PVlan {
     String errMessage;
     String status;
 
-    private Logger log;
+    private org.apache.log4j.Logger log;
     /**
     * constructor
     */
@@ -54,7 +54,7 @@ public class AggregateP2PVlan {
         endTime = et;
         errMessage = "";
         status = "";
-        log = Logger.getLogger("net.geni.aggregate");
+        log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
     }
 
     public AggregateP2PVlan(int sid, int v, String s, String d, float b, String g, String ss) {
@@ -70,7 +70,7 @@ public class AggregateP2PVlan {
         errMessage = "";
         startTime = 0;
         endTime = 0;
-        log = Logger.getLogger("net.geni.aggregate");
+        log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
     }
 
 
@@ -98,6 +98,7 @@ public class AggregateP2PVlan {
     public String getStatus() {
         return status;
     }
+
     /**
      * setup p2p vlan
      * @param
@@ -129,6 +130,11 @@ public class AggregateP2PVlan {
             errMessage = "OSCARSStub threw exception in createReservation: " +e.getMessage();
         }
 
+        if (!setVlanOnNodes(true)) {
+            status = "failed";
+            errMessage = "setupVlan failed to add VLAN interface on source or destination nodes";
+        }
+)
         try {
             this.saveVlanInDB();
         } catch (AggregateException e) {
@@ -164,6 +170,11 @@ public class AggregateP2PVlan {
             errMessage = "OSCARSStub threw exception in cancelReservation: " +e.getMessage();
         }
 
+        if (!setVlanOnNodes(false)) {
+            status = "failed";
+            errMessage = "setupVlan failed to delete VLAN interface on source or destination nodes";
+        }
+
         return status;
      }
 
@@ -197,10 +208,27 @@ public class AggregateP2PVlan {
         return hmRet;
      }
 
-    private boolean setVlanOnNodes(boolean addOrDel) {
+    private boolean setVlanOnNodes(boolean add) {
         //login to PLC-ssh (new AggregatePLC_SSHClient)
-        
+        AggregatePLC_SSHClient client = AggregatePLC_SSHClient.getPLCClient();
+        if (client == null || !client.login()) {
+            log.error("cannot instantiate AggregatePLC_SSHClient connection to PLC server");
+            return false;
+        }
+
         //add/delete source vtag interface
+        if (client.vconfigVlan(source, "eth1", Integer.toString(vtag), add)) {
+            log.info((add?"added":"deleted") + " vlan interface to node "+ source + "on eth1." + vtag);
+            //TODO: IP address allocation!
+            if (!client.ifconfigIp(source, "eth1."+Integer.toString(vtag), "10.10.10.1", "255.255.255.0")) {
+                log.error("failed to configure IP address on node "+ source + " eth1." + vtag);
+                return false;
+            }
+        }
+        else {
+            log.error("failed to " + (add?"add":"delete") + " vlan interface on node "+ source + " eth1." + vtag);
+            return false;
+        }
 
         //add/delete destination vtag interface
         return true;

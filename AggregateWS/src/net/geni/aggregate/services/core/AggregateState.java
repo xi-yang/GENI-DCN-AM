@@ -54,6 +54,12 @@ public class AggregateState
     private static String plcPI = "";
     private static String plcPassword = "";
     private static String plcPrefix = "";
+    private static String plcSshHost = "";
+    private static String plcSshLogin = "";
+    private static String plcSshPort = "";
+    private static String plcSshKeyfile = "";
+    private static String plcSshKeypass = "";
+    private static String plcSshExecPrefix = "";
     
     // Global states
     private static AggregateSQLStatements sqlStatements = null;
@@ -68,7 +74,7 @@ public class AggregateState
         if (aggregateHome != null && !aggregateHome.equals(""))
             propFileName = aggregateHome + "/AggregateAttic/conf/" + propFileName;
         else
-            propFileName = "/usr/local/aggregate/AggregateAttic/conf/" + propFileName;
+            propFileName = "/usr/local/geni-aggregate/AggregateAttic/conf/" + propFileName;
 
         try {
             FileInputStream in = new FileInputStream(propFileName);
@@ -78,12 +84,20 @@ public class AggregateState
             //logging for exception!
         }
         idcURL = aggregateProps.getProperty("aggregate.idc.url", "https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS");
-        idcRepo = aggregateProps.getProperty("aggregate.idc.repo", "/usr/local/aggregate/AggregateAttic/conf/repo");
+        log.info("aggregate.idc.url set to " + idcURL);
+        idcRepo = aggregateProps.getProperty("aggregate.idc.repo", "/usr/local/geni-aggregate/AggregateAttic/conf/repo");
+        log.info("aggregate.idc.repo set to " + idcRepo);
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         plcPI = aggregateProps.getProperty("aggregate.plc.pi", "xyang@east.isi.edu");
         plcPassword = aggregateProps.getProperty("aggregate.plc.pass", "password");
         plcPrefix = aggregateProps.getProperty("aggregate.plc.base", "maxpl");
-        log.info("aggregate.idc.rep set to " + idcRepo);
+        plcSshHost = aggregateProps.getProperty("aggregate.plc.ssh.host", "max-myplc.dragon.maxgigapop.net");
+        plcSshLogin = aggregateProps.getProperty("aggregate.plc.ssh.login", "root");
+        plcSshPort = aggregateProps.getProperty("aggregate.plc.ssh.port", "22");
+        plcSshKeyfile = aggregateProps.getProperty("aggregate.plc.ssh.keyfile", idcRepo + "/plc-ssh.pkey");
+        plcSshKeypass = aggregateProps.getProperty("aggregate.plc.ssh.keypass", idcRepo + "");
+        plcSshExecPrefix = aggregateProps.getProperty("aggregate.plc.ssh.execprefix", "");
+
         //create and load preferences
         AMPrefs = Preferences.systemNodeForPackage(AggregateWS.class);
         dbPrefs = AMPrefs.node("database");
@@ -253,6 +267,30 @@ public class AggregateState
         return plcPrefix;
     }
 
+    public static String getPlcSshHost() {
+        return plcSshHost;
+    }
+
+    public static String getPlcSshLogin() {
+        return plcSshLogin;
+    }
+
+    public static String getPlcSshPort() {
+        return plcSshPort;
+    }
+
+    public static String getPlcSshKeyfile() {
+        return plcSshKeyfile;
+    }
+
+    public static String getPlcSshKeypass() {
+        return plcSshKeypass;
+    }
+
+    public static String getPlcSshExecPrefix() {
+        return plcSshExecPrefix;
+    }
+
     public static String getSliceNameById(int id) {
         for (int i = 0; i < aggregateSlices.size(); i++) {
             if (aggregateSlices.get(i).getId() == id) {
@@ -270,4 +308,5 @@ public class AggregateState
         }
         return 0;
     }
+
 }
