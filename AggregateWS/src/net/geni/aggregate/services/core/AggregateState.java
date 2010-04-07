@@ -97,6 +97,7 @@ public class AggregateState
         plcSshKeyfile = aggregateProps.getProperty("aggregate.plc.ssh.keyfile", idcRepo + "/plc-ssh.pkey");
         plcSshKeypass = aggregateProps.getProperty("aggregate.plc.ssh.keypass", idcRepo + "");
         plcSshExecPrefix = aggregateProps.getProperty("aggregate.plc.ssh.execprefix", "");
+        plcSshExecPrefix = plcSshExecPrefix.replaceAll("[\\'\\\"]", "");
 
         //create and load preferences
         AMPrefs = Preferences.systemNodeForPackage(AggregateWS.class);

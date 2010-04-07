@@ -14,7 +14,6 @@ import net.geni.aggregate.services.core.AggregateNode;
 import net.geni.aggregate.services.core.AggregateSlice;
 import net.geni.aggregate.services.core.AggregateP2PVlan;
 import net.geni.aggregate.services.core.AggregateUser;
-import net.geni.aggregate.services.core.AggregateSlicerCore;
 import net.geni.aggregate.services.core.AggregateSQLStatements;
 import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateUtils;
@@ -28,7 +27,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
 {
     public static Logger log = Logger.getLogger("net.geni.aggregate");
 
-    private AggregateSlicerCore aggregateSlicerCore;
     private Thread aggregateServerThread;
     
     public void init(ServiceContext serviceContext) {
@@ -255,10 +253,12 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                 return;
             }
         }
+        /*
         aggregateSlicerCore = new AggregateSlicerCore();
         aggregateServerThread = new Thread(aggregateSlicerCore);
         aggregateServerThread.start();
         log.info("AggregateWS init() finished!");
+        */
     }
 
     /**
@@ -266,7 +266,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
      * @param serviceContext
      */
     public void destroy(ServiceContext serviceContext) {
-        aggregateSlicerCore.stopCore();
+        //aggregateSlicerCore.stopCore();
     }
 
     public ListCapabilitiesResponse ListCapabilities(net.geni.aggregate.services.api.ListCapabilities listCapabilities) throws AggregateFaultMessage {

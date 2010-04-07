@@ -44,17 +44,20 @@ public class AggregatePLC_SSHClient extends AggregateCLIClient {
     }
 
     public boolean login() {
-        if (!super.login("expect", "-c", "spawn ssh -i "+sshKeyfile + " -l "+plcLogin+" "+plcHost, "-c", "interact"))
+        if (!super.login("expect", "-c", "spawn ssh -i "+sshKeyfile +" -p "+sshPort+" -l "+plcLogin+" "+plcHost, "-c", "interact"))
             return false;
 
         readUntil(promptPattern);
+        log.debug("PLCSSH login dump#1 " + buffer);
         if (buffer.contains("Are you sure")) {
             sendCommand("yes");
             readUntil(promptPattern);
+            log.debug("PLCSSH login dump#2 " + buffer);
         }
         if (buffer.contains("Enter passphrase for key")) {
-            sendCommand("yes");
+            sendCommand(sshKeypass);
             readUntil(promptPattern);
+            log.debug("PLCSSH login dump#3 " + buffer);
         }
 
         return true;
@@ -72,7 +75,9 @@ public class AggregatePLC_SSHClient extends AggregateCLIClient {
 
         String cmd = sshExecPrefix + node + " vconfig " + (add ? "add ":"rem ") + iface + (add?" ":".") + vlan;
         this.sendCommand(cmd);
+        log.debug("vconfigVlan command: "+cmd);
         int ret = this.readPattern(promptPattern, ".*ERROR|.*Invalid", promptPattern);
+        log.debug("vconfigVlan result: "+buffer);
         if (ret == 1) {
             return true;
         }

@@ -132,9 +132,9 @@ public class AggregateP2PVlan {
 
         if (!setVlanOnNodes(true)) {
             status = "failed";
-            errMessage = "setupVlan failed to add VLAN interface on source or destination nodes";
+            errMessage = "setupVlan failed to add VLAN interface on source or destination node";
         }
-)
+
         try {
             this.saveVlanInDB();
         } catch (AggregateException e) {
@@ -172,7 +172,7 @@ public class AggregateP2PVlan {
 
         if (!setVlanOnNodes(false)) {
             status = "failed";
-            errMessage = "setupVlan failed to delete VLAN interface on source or destination nodes";
+            errMessage = "setupVlan failed to delete VLAN interface on source or destination node";
         }
 
         return status;
@@ -220,7 +220,7 @@ public class AggregateP2PVlan {
         if (client.vconfigVlan(source, "eth1", Integer.toString(vtag), add)) {
             log.info((add?"added":"deleted") + " vlan interface to node "+ source + "on eth1." + vtag);
             //TODO: IP address allocation!
-            if (!client.ifconfigIp(source, "eth1."+Integer.toString(vtag), "10.10.10.1", "255.255.255.0")) {
+            if (add && !client.ifconfigIp(source, "eth1."+Integer.toString(vtag), "10.10.10.1", "255.255.255.0")) {
                 log.error("failed to configure IP address on node "+ source + " eth1." + vtag);
                 return false;
             }
@@ -231,6 +231,19 @@ public class AggregateP2PVlan {
         }
 
         //add/delete destination vtag interface
+        if (client.vconfigVlan(destination, "eth1", Integer.toString(vtag), add)) {
+            log.info((add?"added":"deleted") + " vlan interface to node "+ destination + "on eth1." + vtag);
+            //TODO: IP address allocation!
+            if (add && !client.ifconfigIp(destination, "eth1."+Integer.toString(vtag), "10.10.10.2", "255.255.255.0")) {
+                log.error("failed to configure IP address on node "+ destination + " eth1." + vtag);
+                return false;
+            }
+        }
+        else {
+            log.error("failed to " + (add?"add":"delete") + " vlan interface on node "+ destination + " eth1." + vtag);
+            return false;
+        }
+
         return true;
     }
 

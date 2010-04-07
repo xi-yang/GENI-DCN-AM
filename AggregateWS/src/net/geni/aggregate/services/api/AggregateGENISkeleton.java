@@ -263,7 +263,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             sliceDesc.setName(slices.get(i).getSliceName());
             sliceDesc.setUrl(slices.get(i).getURL());
             sliceDesc.setDescription(slices.get(i).getDescription());
-            sliceDesc.setMembers(slices.get(i).getMembers());
+            sliceDesc.setNodes(slices.get(i).getNodes());
             int userId = slices.get(i).getCreatorId();
             String creator = "userID=" + Integer.toString(userId, 10);
             AggregateUser user = AggregateState.getAggregateUsers().getById(userId);

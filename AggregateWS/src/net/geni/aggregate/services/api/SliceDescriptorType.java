@@ -122,30 +122,30 @@
                             
 
                         /**
-                        * field for Members
+                        * field for Nodes
                         */
 
                         
-                                    protected java.lang.String localMembers ;
+                                    protected java.lang.String localNodes ;
                                 
 
                            /**
                            * Auto generated getter method
                            * @return java.lang.String
                            */
-                           public  java.lang.String getMembers(){
-                               return localMembers;
+                           public  java.lang.String getNodes(){
+                               return localNodes;
                            }
 
                            
                         
                             /**
                                * Auto generated setter method
-                               * @param param Members
+                               * @param param Nodes
                                */
-                               public void setMembers(java.lang.String param){
+                               public void setNodes(java.lang.String param){
                             
-                                            this.localMembers=param;
+                                            this.localNodes=param;
                                     
 
                                }
@@ -447,28 +447,28 @@
                                         if (prefix == null) {
                                             prefix = generatePrefix(namespace);
 
-                                            xmlWriter.writeStartElement(prefix,"members", namespace);
+                                            xmlWriter.writeStartElement(prefix,"nodes", namespace);
                                             xmlWriter.writeNamespace(prefix, namespace);
                                             xmlWriter.setPrefix(prefix, namespace);
 
                                         } else {
-                                            xmlWriter.writeStartElement(namespace,"members");
+                                            xmlWriter.writeStartElement(namespace,"nodes");
                                         }
 
                                     } else {
-                                        xmlWriter.writeStartElement("members");
+                                        xmlWriter.writeStartElement("nodes");
                                     }
                                 
 
-                                          if (localMembers==null){
+                                          if (localNodes==null){
                                               // write the nil attribute
                                               
-                                                     throw new org.apache.axis2.databinding.ADBException("members cannot be null!!");
+                                                     throw new org.apache.axis2.databinding.ADBException("nodes cannot be null!!");
                                                   
                                           }else{
 
                                         
-                                                   xmlWriter.writeCharacters(localMembers);
+                                                   xmlWriter.writeCharacters(localNodes);
                                             
                                           }
                                     
@@ -756,12 +756,12 @@
                                         }
                                     
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
-                                                                      "members"));
+                                                                      "nodes"));
                                  
-                                        if (localMembers != null){
-                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localMembers));
+                                        if (localNodes != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localNodes));
                                         } else {
-                                           throw new org.apache.axis2.databinding.ADBException("members cannot be null!!");
+                                           throw new org.apache.axis2.databinding.ADBException("nodes cannot be null!!");
                                         }
                                     
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
@@ -920,11 +920,11 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","members").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","nodes").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
-                                              object.setMembers(
+                                              object.setNodes(
                                                     org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
                                               
                                         reader.next();

@@ -41,5 +41,10 @@ public class AggregateSlices extends Vector<AggregateSlice>
          }
          return null;
      }
-}
 
+     //createSlice
+     //deleteSlice
+     //updateSlice
+     //querySlice
+     //sliceDB insert/delete/update
+}
