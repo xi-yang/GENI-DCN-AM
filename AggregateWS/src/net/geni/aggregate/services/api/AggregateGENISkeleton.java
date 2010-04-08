@@ -7,6 +7,7 @@
 package net.geni.aggregate.services.api;
 
 import org.apache.log4j.*;
+import java.util.List;
 import java.util.Vector;
 import java.util.HashMap;
 import net.geni.aggregate.services.core.AggregateCapabilities;
@@ -255,13 +256,14 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //form response
         ListSlicesResponseType listSlicesResponseType = new ListSlicesResponseType();
         ListSlicesResponse listSlicesResponse = new ListSlicesResponse();
-        AggregateSlices slices = AggregateState.getAggregateSlices();
+        List<AggregateSlice> slices = AggregateState.getAggregateSlices().getAll();
         Vector<ListSlicesResponseTypeSequence> listSlicesResponseSeq = new Vector<ListSlicesResponseTypeSequence>();
+
         for (int i = 0; i < slices.size(); i++) {
             SliceDescriptorType sliceDesc = new SliceDescriptorType();
             ListSlicesResponseTypeSequence listSlicesResponseTypeSeq = new ListSlicesResponseTypeSequence();
             sliceDesc.setName(slices.get(i).getSliceName());
-            sliceDesc.setUrl(slices.get(i).getURL());
+            sliceDesc.setUrl(slices.get(i).getUrl());
             sliceDesc.setDescription(slices.get(i).getDescription());
             sliceDesc.setNodes(slices.get(i).getNodes());
             int userId = slices.get(i).getCreatorId();
@@ -439,13 +441,11 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
         AggregateP2PVlan p2pvlan = p2pvlans.getBySliceName(sliceId);
         if (p2pvlan != null && p2pvlan.getVlanTag() == vlan) {
-            if (p2pvlan.getStatus().equalsIgnoreCase("active")) {
-                status = p2pvlan.teardownVlan();
-                if (status.equalsIgnoreCase("FAILED")) {
-                    message = "Error=" + p2pvlan.getErrorMessage();
-                } else {
-                    message = "GRI=" + p2pvlan.getGlobalReservationId();
-                }
+            status = p2pvlan.teardownVlan();
+            if (status.matches("(?i)failed")) {
+                message = "Error=" + p2pvlan.getErrorMessage();
+            } else {
+                message = "GRI=" + p2pvlan.getGlobalReservationId();
             }
             try {
                 if (message.equals("")) {

@@ -35,19 +35,12 @@ public class AggregateState
     private static String aggregateDB = null;
     private static String coreTab = null;
     private static String slicerTab = "slicer";
-    private static final String capsTab = "capabilities";
-    private static final String nodesTab = "nodes";
-    private static final String slicesTab = "slices";
-    private static final String usersTab = "users";
-    private static final String p2pvlansTab = "p2pvlans";
-    private static final String networksTab = "networks";
-
-    // Resrouces
-    private static AggregateCapabilities aggregateCaps = new AggregateCapabilities();
-    private static AggregateNodes aggregateNodes = new AggregateNodes();
-    private static AggregateSlices aggregateSlices = new AggregateSlices();
-    private static AggregateP2PVlans aggregateP2PVlans = new AggregateP2PVlans();
-    private static AggregateUsers aggregateUsers = new AggregateUsers();
+    private static String capsTab = "capabilities";
+    private static String nodesTab = "nodes";
+    private static String slicesTab = "slices";
+    private static String usersTab = "users";
+    private static String p2pvlansTab = "p2pvlans";
+    private static String networksTab = "networks";
     private static String idcURL = "";
     private static String idcRepo = "";
     private static String plcURL = "";
@@ -60,6 +53,13 @@ public class AggregateState
     private static String plcSshKeyfile = "";
     private static String plcSshKeypass = "";
     private static String plcSshExecPrefix = "";
+
+    // Resrouces
+    private static AggregateCapabilities aggregateCaps = null;
+    private static AggregateNodes aggregateNodes = null;
+    private static AggregateSlices aggregateSlices = null;
+    private static AggregateP2PVlans aggregateP2PVlans = null;
+    private static AggregateUsers aggregateUsers = null;
     
     // Global states
     private static AggregateSQLStatements sqlStatements = null;
@@ -124,6 +124,15 @@ public class AggregateState
         } catch(BackingStoreException ex) {
             log.error("BackingStoreException ..." + ex.getMessage());
         }
+        //init hibernate
+        HibernateUtil.initSessionFactory();
+
+        //init instances
+        aggregateCaps = new AggregateCapabilities();
+        aggregateNodes = new AggregateNodes();
+        aggregateSlices = new AggregateSlices();
+        aggregateP2PVlans = new AggregateP2PVlans();
+        aggregateUsers = new AggregateUsers();
     }
 
     // initializer
@@ -293,20 +302,16 @@ public class AggregateState
     }
 
     public static String getSliceNameById(int id) {
-        for (int i = 0; i < aggregateSlices.size(); i++) {
-            if (aggregateSlices.get(i).getId() == id) {
-                return aggregateSlices.get(i).getSliceName();
-            }
-        }
+        AggregateSlice slice = aggregateSlices.getById(id);
+        if (slice != null)
+            return slice.getSliceName();
         return "";
     }
 
     public static int getSliceIdByName(String name) {
-        for (int i = 0; i < aggregateSlices.size(); i++) {
-            if (aggregateSlices.get(i).getSliceName().equalsIgnoreCase(name)) {
-                return aggregateSlices.get(i).getId();
-            }
-        }
+        AggregateSlice slice = aggregateSlices.getByName(name);
+        if (slice != null)
+            return slice.getId();
         return 0;
     }
 

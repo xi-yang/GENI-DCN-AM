@@ -124,7 +124,7 @@ public class AggregateCLIClient {
      */
     public int readPattern(String pattern1, String pattern2, String readstop) {
         //starting the python reading thread
-        Reader reader = new Reader(in, pattern1, pattern2, readstop);
+        Reader reader = new Reader(proc, pattern1, pattern2, readstop);
         reader.start();
 
         //starting the timer-sleep thread
@@ -145,11 +145,11 @@ public class AggregateCLIClient {
         while (flags[0] && (ret < -1)) {
             ret = reader.getExitValue();
         }
-        buffer = reader.getBuffer();
         if (flags[0] == false) {
             reader.interrupt();
             log.error("Thread reading from CLI server got stuck! It has been interrupted.");
         }
+        buffer = reader.getBuffer();
         return reader.getExitValue();
     }
 
@@ -183,8 +183,8 @@ public class AggregateCLIClient {
         private String buffer;
 
 
-        private Reader(BufferedReader in, String ptn1, String ptn2, String stop) {
-            this.in = in;
+        private Reader(Process proc, String ptn1, String ptn2, String stop) {
+            this.in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             this.log = null;
             this.pattern1 = ptn1;
             this.pattern2 = ptn2;
@@ -213,7 +213,11 @@ public class AggregateCLIClient {
                 return;
             }
             try {
-                while ((c = (char) in.read()) != -1) {
+                while (true) {
+                    if (!in.ready())
+                        this.sleep(1);
+                    if ((c = (char) in.read()) == -1)
+                        break;
                     buffer += c;
                     if (c == '\n') {
                         line = "";
@@ -234,6 +238,9 @@ public class AggregateCLIClient {
                         }
                     }
                 }
+            } catch (InterruptedException e) {
+                exit = -1;
+                return;
             } catch (IOException e) {
                 exit = -1;
                 return;

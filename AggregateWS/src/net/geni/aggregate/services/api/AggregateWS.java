@@ -8,6 +8,7 @@ import org.apache.log4j.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import net.geni.aggregate.services.core.AggregateWSRunner;
 import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateException;
 import net.geni.aggregate.services.core.AggregateNode;
@@ -17,6 +18,7 @@ import net.geni.aggregate.services.core.AggregateUser;
 import net.geni.aggregate.services.core.AggregateSQLStatements;
 import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateUtils;
+import net.geni.aggregate.services.core.HibernateUtil;
 import org.apache.axis2.context.ServiceContext;
 
 /**
@@ -28,6 +30,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     public static Logger log = Logger.getLogger("net.geni.aggregate");
 
     private Thread aggregateServerThread;
+    private AggregateWSRunner aggregateWSRunner;
     
     public void init(ServiceContext serviceContext) {
 
@@ -88,7 +91,8 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "id int(11) NOT NULL auto_increment, " + // slice ID
                     "url TEXT NOT NULL, " + // slice URL
                     "description TEXT NOT NULL, " + // slice description
-                    "members TEXT NOT NULL, " + // slice node members
+                    "users TEXT NOT NULL, " + // slice users/persons
+                    "nodes TEXT NOT NULL, " + // slice node members
                     "creatorId INT(11) NOT NULL, " + // user who created the slice
                     "createdTime BIGINT(20), " + // launch timestamp
                     "expiredTime BIGINT(20), " + // expire timestamp
@@ -197,6 +201,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             }
         }
         // slices
+        /*
         try {
             sql.aggSlices_Stmt.select();
             while(dummy) {
@@ -205,7 +210,8 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                         sql.aggSlices_Stmt.getInt("id"),
                         sql.aggSlices_Stmt.getString("url"),
                         sql.aggSlices_Stmt.getString("description"),
-                        sql.aggSlices_Stmt.getString("members"),
+                        sql.aggSlices_Stmt.getString("users"),
+                        sql.aggSlices_Stmt.getString("nodes"),
                         sql.aggSlices_Stmt.getInt("creatorId"),
                         sql.aggSlices_Stmt.getLong("createdTime"),
                         sql.aggSlices_Stmt.getLong("expiredTime")));
@@ -216,6 +222,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                 return;
             }
         }
+        */
         // p2pvlans AggregateP2PVlan(int sid, int v, String s, String d, float b, String g, String ss)
         try {
             sql.aggP2PVlans_Stmt.select();
@@ -253,12 +260,11 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                 return;
             }
         }
-        /*
-        aggregateSlicerCore = new AggregateSlicerCore();
-        aggregateServerThread = new Thread(aggregateSlicerCore);
+
+        aggregateWSRunner = new AggregateWSRunner();
+        aggregateServerThread = new Thread(aggregateWSRunner);
         aggregateServerThread.start();
         log.info("AggregateWS init() finished!");
-        */
     }
 
     /**
@@ -266,7 +272,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
      * @param serviceContext
      */
     public void destroy(ServiceContext serviceContext) {
-        //aggregateSlicerCore.stopCore();
+        aggregateWSRunner.stop();
     }
 
     public ListCapabilitiesResponse ListCapabilities(net.geni.aggregate.services.api.ListCapabilities listCapabilities) throws AggregateFaultMessage {

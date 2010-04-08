@@ -97,7 +97,6 @@
     </target>
     <target name="axis2-aar" depends="compile">
         <mkdir dir="${build.dir}/axis2/WEB-INF/services"/>
-        <copy file="${basedir}/../AggregateAttic/conf/log4j.properties" tofile="${build.dir}/classes/log4j.properties"/>
         <jar destfile="${build.dir}/axis2/WEB-INF/services/${ant.project.name}.aar">
             <fileset excludes="**/Test.class" dir="${build.dir}/classes"/>
             <fileset dir="${basedir}/xml-resources/axis2">
@@ -116,7 +115,11 @@
                     <include name="*.jar"/>
                 </fileset>
             </copy>
-	    <copy file="../AggregateAttic/conf/log4j.properties" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/classes/log4j.properties"/>
+            <copy todir="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/classes" overwrite="true">
+                <fileset dir="${build.dir}/classes">
+                    <include name="**"/>
+                </fileset>
+            </copy>
     </target>
     <target name="-deploy-lib-abs-dir-" unless="haveEnvDir">
 	    <copy file="${build.dir}/axis2/WEB-INF/services/AggregateWS.aar" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/services/AggregateWS.aar"/>
@@ -126,7 +129,11 @@
                     <include name="*.jar"/>
                 </fileset>
             </copy>
-	    <copy file="../AggregateAttic/conf/log4j.properties" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/classes/log4j.properties"/>
+            <copy todir="/usr/local/tomcat/webapps/axis2/WEB-INF/classes" overwrite="true">
+                <fileset dir="${build.dir}/classes">
+                    <include name="**"/>
+                </fileset>
+            </copy>
     </target>
     <target name="axis2-deploy-local" depends="wsdl2java-AggregateGENI, axis2-aar, -deploy-lib-env-dir-, -deploy-lib-abs-dir-">
             <fail message="Cannot find 'expect' executable in sytem. Please install 'expect'..." unless="haveExpect"/>
