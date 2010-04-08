@@ -9,6 +9,7 @@
         <parameter name="ServiceClass">net.geni.aggregate.services.api.AggregateWS</parameter>
         <parameter name="useOriginalwsdl">true</parameter>
         <parameter name="modifyUserWSDLPortAddress">false</parameter>
+        <parameter name="ServiceTCCL">composite</parameter>
         <operation name="UpdateSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <actionMapping>UpdateSlice</actionMapping>
             <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/UpdateSliceResponse</outputActionMapping>

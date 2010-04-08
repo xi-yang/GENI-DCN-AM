@@ -64,7 +64,7 @@
 					<xs:element name="name" type="xs:string"/>
 					<xs:element name="url" type="xs:string"/>
 					<xs:element name="description" type="xs:string"/>
-					<xs:element name="members" type="xs:string"/>
+					<xs:element name="nodes" type="xs:string"/>
 					<xs:element name="creator" type="xs:string"/>
 					<xs:element name="createdTime" type="xs:long"/>
 					<xs:element name="expiredTime" type="xs:long"/>
