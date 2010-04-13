@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="net.geni.aggregate.services.core.AggregateP2PVlan" table="p2pvlans">
+      <id column="id" name="id">
+          <generator class="increment"></generator>
+      </id>
+      <property column="vlanTag" name="vtag"/>
+      <property column="sliceName" name="sliceName"/>
+      <property column="description" name="description"/>
+      <property column="source" name="source"/>
+      <property column="destination" name="destination"/>
+      <property column="bandwidth" name="bandwidth"/>
+      <property column="globalReservationId" name="gri"/>
+      <property column="status" name="status"/>
+  </class>
+</hibernate-mapping>

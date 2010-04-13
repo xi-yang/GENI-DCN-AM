@@ -2,6 +2,19 @@ CREATE DATABASE IF NOT EXISTS aggregate;
 USE aggregate;
 
 --
+-- Table structure for table `resources`
+--
+
+DROP TABLE IF EXISTS `resources`;
+CREATE TABLE `resources` (
+  `id` int(11) NOT NULL auto_increment,
+  `type` varchar(255) NOT NULL,
+  `reference` int(11) NOT NULL,
+  `rspecId` int(11) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `capabilities`
 --
 
@@ -26,6 +39,7 @@ CREATE TABLE `front_end` (
   `statusMsg` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`requestID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 --
 -- Table structure for table `nodes`
@@ -67,7 +81,8 @@ DROP TABLE IF EXISTS `p2pvlans`;
 CREATE TABLE `p2pvlans` (
   `id` int(11) NOT NULL auto_increment,
   `vlanTag` int(11) NOT NULL,
-  `sliceId` int(11) NOT NULL,
+  `sliceName` varchar(255) NOT NULL,
+  `desription` varchar(255) NOT NULL default '',
   `source` varchar(255) NOT NULL default '',
   `destination` varchar(255) NOT NULL default '',
   `bandwidth` float NOT NULL,
@@ -83,8 +98,9 @@ CREATE TABLE `p2pvlans` (
 DROP TABLE IF EXISTS `networks`;
 CREATE TABLE `networks` (
   `id` int(11) NOT NULL auto_increment,
-  `sliceId` int(11) NOT NULL,
+  `sliceName` varchar(255) NOT NULL,
   `vlanPool` text NOT NULL default '',
+  `ipPool` text NOT NULL default '',
   `status` varchar(20) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

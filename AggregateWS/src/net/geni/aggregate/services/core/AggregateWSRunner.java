@@ -16,14 +16,12 @@ import net.geni.aggregate.services.api.AggregateGENISkeleton;
 public class AggregateWSRunner implements Runnable {
 
     private boolean axisRunning = true;
-    private AggregateSQLStatements sql;
 
     public AggregateWSRunner() {
 
         //initialize the interface
         AggregateState.setSkeletonAPI(new AggregateGENISkeleton());
 
-        sql = AggregateState.getSqlStatements();
     }
 
     public void run() {

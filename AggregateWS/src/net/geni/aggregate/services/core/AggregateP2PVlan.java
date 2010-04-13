@@ -20,27 +20,32 @@ import net.es.oscars.PropHandler;
  *
  * @author xyang
  */
-public class AggregateP2PVlan {
+public class AggregateP2PVlan extends AggregateResource {
 
     //IDCAPIClient
-    AggregateIDCClient apiClient;
+    AggregateIDCClient apiClient = null;
     //Reservation parameters
-    String gri;
-    String sliceName;
-    String source;
-    String destination;
-    int vtag;
-    float bandwidth;
-    String description;
-    long startTime;
-    long endTime;
-    String errMessage;
-    String status;
+    int id = 0;
+    String gri = "";
+    String sliceName = "";
+    String source = "";
+    String destination = "";
+    int vtag = -1;
+    float bandwidth = 0;
+    String description = "";
+    long startTime = 0;
+    long endTime = 0;
+    String errMessage = "";
+    String status = "";
 
     private org.apache.log4j.Logger log;
     /**
-    * constructor
+    * constructors
     */
+    public AggregateP2PVlan(){
+        log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
+    }
+
     public AggregateP2PVlan(String sl, String s, String d, int v, float b, String desc, long st, long et) {
         apiClient = null;
         gri = "";
@@ -59,7 +64,7 @@ public class AggregateP2PVlan {
 
     public AggregateP2PVlan(int sid, int v, String s, String d, float b, String g, String ss) {
         apiClient = null;
-        sliceName = AggregateState.getSliceNameById(sid);
+        sliceName = AggregateState.getAggregateSlices().getById(sid).getSliceName();
         source = s;
         destination = d;
         vtag = v;
@@ -73,9 +78,72 @@ public class AggregateP2PVlan {
         log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setBandwidth(float bandwidth) {
+        this.bandwidth = bandwidth;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public void setGri(String gri) {
+        this.gri = gri;
+    }
+
+    public void setSliceName(String sliceName) {
+        this.sliceName = sliceName;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setVtag(int vtag) {
+        this.vtag = vtag;
+    }
+
+    public int getId() {
+        return id;
+    }
 
     public String getSliceName() {
         return sliceName;
+    }
+
+    public float getBandwidth() {
+        return bandwidth;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public String getGri() {
+        return gri;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public int getVtag() {
+        return vtag;
     }
 
     public String getGlobalReservationId() {
@@ -133,13 +201,6 @@ public class AggregateP2PVlan {
         if (!setVlanOnNodes(true)) {
             status = "failed";
             errMessage = "setupVlan failed to add VLAN interface on source or destination node";
-        }
-
-        try {
-            this.saveVlanInDB();
-        } catch (AggregateException e) {
-            errMessage = "AggregateException returned from createReservation: " +e.getMessage();
-            this.log.error("Error occurs in AggregateP2PVlan::saveVlanInDB: " + errMessage);
         }
 
         return status;
@@ -216,58 +277,36 @@ public class AggregateP2PVlan {
             return false;
         }
 
+        boolean ret = true;
         //add/delete source vtag interface
         if (client.vconfigVlan(source, "eth1", Integer.toString(vtag), add)) {
-            log.info((add?"added":"deleted") + " vlan interface to node "+ source + "on eth1." + vtag);
-            //TODO: IP address allocation!
-            if (add && !client.ifconfigIp(source, "eth1."+Integer.toString(vtag), "10.10.10.1", "255.255.255.0")) {
-                log.error("failed to configure IP address on node "+ source + " eth1." + vtag);
-                return false;
-            }
+            log.info((add?"added":"deleted") + " vlan interface to node "+ source + "on eth1." + Integer.toString(vtag));
         }
         else {
-            log.error("failed to " + (add?"add":"delete") + " vlan interface on node "+ source + " eth1." + vtag);
-            return false;
+            log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ source + " eth1." + Integer.toString(vtag));
+            log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
+
+        }
+        //TODO: IP address allocation!
+        if (add && !client.ifconfigIp(source, "eth1." + Integer.toString(vtag), "10.10.10.1", "255.255.255.0")) {
+            log.error("failed to configure IP address on node " + source + " eth1." + Integer.toString(vtag));
+            ret = false;
         }
 
         //add/delete destination vtag interface
         if (client.vconfigVlan(destination, "eth1", Integer.toString(vtag), add)) {
-            log.info((add?"added":"deleted") + " vlan interface to node "+ destination + "on eth1." + vtag);
-            //TODO: IP address allocation!
-            if (add && !client.ifconfigIp(destination, "eth1."+Integer.toString(vtag), "10.10.10.2", "255.255.255.0")) {
-                log.error("failed to configure IP address on node "+ destination + " eth1." + vtag);
-                return false;
-            }
+            log.info((add?"added":"deleted") + " vlan interface to node "+ destination + "on eth1." + Integer.toString(vtag));
         }
         else {
-            log.error("failed to " + (add?"add":"delete") + " vlan interface on node "+ destination + " eth1." + vtag);
-            return false;
+            log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ destination + " eth1." + Integer.toString(vtag));
+            log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
+        }
+        //TODO: IP address allocation!
+        if (add && !client.ifconfigIp(destination, "eth1." + Integer.toString(vtag), "10.10.10.2", "255.255.255.0")) {
+            log.error("failed to configure IP address on node " + destination + " eth1." + Integer.toString(vtag));
+            ret = false;
         }
 
-        return true;
-    }
-
-    public void saveVlanInDB()
-        throws AggregateException {
-        String sqlStmt = "INSERT INTO " + AggregateState.getP2PVlansTab() +
-                " (vlanTag, sliceId, source, destination, bandwidth, globalReservationId, status) " +
-                "VALUES ( '" + Integer.toString(vtag) + "'," +
-                " '" + Integer.toString(AggregateState.getSliceIdByName(sliceName)) +"'," +
-                " '" + source + "'," +
-                " '" + destination + "'," +
-                " '" + Float.toString(bandwidth) + "'," +
-                " '" + gri + "'," +
-                " '" + status + "')";
-        //this.log.info("SQL command: " + sqlStmt);
-        AggregateUtils.executeDirectStatement(sqlStmt);
-    }
-
-    public void deleteVlanFromDB()
-        throws AggregateException {
-        String sqlStmt = "DELETE FROM " + AggregateState.getP2PVlansTab() +
-                " WHERE sliceId='" + Integer.toString(AggregateState.getSliceIdByName(sliceName)) +
-                "' and vlanTag='" + Integer.toString(vtag) + "'";
-        //this.log.info("SQL command: " + sqlStmt);
-        AggregateUtils.executeDirectStatement(sqlStmt);
+        return ret;
     }
 }

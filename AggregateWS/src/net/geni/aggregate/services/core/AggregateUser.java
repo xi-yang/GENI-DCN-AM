@@ -5,17 +5,20 @@
 
 package net.geni.aggregate.services.core;
 
+
 /**
  *
  * @author root
  */
-public class AggregateUser {
-    int id;
-    String name;
-    String firstName;
-    String lastName;
-    String email;
-    String description;
+public class AggregateUser extends AggregateResource {
+    int id = 0;
+    String name = "";
+    String firstName = "";
+    String lastName = "";
+    String email = "";
+    String description = "";
+
+    public AggregateUser() { }
 
     public AggregateUser(int i, String n, String f, String l, String e, String d) {
         id = i;
@@ -24,6 +27,30 @@ public class AggregateUser {
         lastName = l;
         email = e;
         description = d;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getId() {

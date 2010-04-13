@@ -12,31 +12,42 @@ import net.geni.aggregate.services.api.NodeDescriptorTypeSequence_type0;
  *
  * @author jflidr
  */
-public class AggregateNode
-{
-
-    private String urn;
+public class AggregateNode extends AggregateResource {
     private int id;
+    private String urn;
     private String description;
-    private Vector<AggregateCapability> caps = new Vector<AggregateCapability>();
+    private String capabilities;
+
+    public AggregateNode() {
+        urn = "";
+        id = 0;
+        description = "";
+        capabilities = "";
+    }
 
     public AggregateNode(String u, int i, String d, String c) {
         urn = u;
         id = i;
         description = d;
-        String[] a = c.split("\\s*,\\s*");
-        for(int j = 0; j < a.length; j++) {
-            AggregateCapability cap = AggregateState.getAggregateCaps().getCap(a[j]);
-            if(cap != null) {
-                caps.add(cap);
-            }
-        }
+        capabilities = c;
     }
 
-    public Vector<AggregateCapability> getCaps() {
-        return caps;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setUrn(String urn) {
+        this.urn = urn;
+    }
+
+    public void setCapabilities(String capabilities) {
+        this.capabilities = capabilities;
+    }
+    
     public String getDescription() {
         return description;
     }
@@ -49,30 +60,33 @@ public class AggregateNode
         return urn;
     }
 
-    public boolean hasAll(Vector<String> u) {
-        int capCnt = 0;
-        for(int i = 0; i < u.size(); i++) {
-            for(int j = 0; j < caps.size(); j++) {
-                if(caps.get(j).getUrn().matches(u.get(i))) {
-                    capCnt++;
-                    break;
-                }
-            }
+    public String getCapabilities() {
+        return capabilities;
+    }
 
+    public boolean hasAllCaps(Vector<String> caps) {
+        int capCnt = 0;
+        for(int i = 0; i < caps.size(); i++) {
+            if (capabilities.contains(caps.get(i))) {
+                capCnt++;
+            }
         }
-        return (capCnt == u.size());
+        return (capCnt == caps.size());
     }
 
     public NodeDescriptorTypeSequence_type0 getCapTypeSeq() {
         NodeDescriptorTypeSequence_type0 ndT = new NodeDescriptorTypeSequence_type0();
         Vector<CapabilityType> ctV = new Vector<CapabilityType>();
-        for(int i = 0; i < caps.size(); i++) {
+        String[] caps = capabilities.split("\\s*,\\s*");
+        AggregateCapabilities aggregateCaps = AggregateState.getAggregateCaps();
+        for(String c: caps) {
             CapabilityType cT = new CapabilityType();
-            cT.setName(caps.get(i).getName());
-            cT.setUrn(caps.get(i).getUrn());
-            cT.setId(caps.get(i).getId());
-            cT.setDescription(caps.get(i).getDescription());
-            cT.setControllerURL(caps.get(i).getControllerURL());
+            AggregateCapability cap = aggregateCaps.getByUrn(c);
+            cT.setName(cap.getName());
+            cT.setUrn(cap.getUrn());
+            cT.setId(cap.getId());
+            cT.setDescription(cap.getDescription());
+            cT.setControllerURL(cap.getControllerURL());
             ctV.add(cT);
         }
         ndT.setCapability((CapabilityType[]) ctV.toArray(new CapabilityType[]{}));

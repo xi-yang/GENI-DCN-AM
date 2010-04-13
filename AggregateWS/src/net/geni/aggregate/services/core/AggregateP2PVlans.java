@@ -5,48 +5,201 @@
 
 package net.geni.aggregate.services.core;
 
-import java.util.Vector;
+import java.util.*;
+import org.hibernate.*;
+import org.apache.log4j.*;
 
 /**
  *
  * @author Xi Yang
  */
-public class AggregateP2PVlans extends Vector<AggregateP2PVlan>
+public class AggregateP2PVlans
 {
+    private Session session;
+    private org.apache.log4j.Logger log;
+
+    public AggregateP2PVlans() {
+        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+        log = Logger.getLogger(this.getClass());
+    }
 
     public synchronized boolean add(AggregateP2PVlan p2pv) {
         if(!(p2pv.getSliceName() == null)) {
-            super.add(p2pv);
+            try {
+                if (!session.isOpen())
+                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                org.hibernate.Transaction tx = session.beginTransaction();
+                session.save(p2pv);
+                tx.commit();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         }
         else
             throw new IllegalArgumentException("the P2PVlan object must be associated with a valid sliceName");
         return true;
     }
 
-    public AggregateP2PVlan getBySliceName(String name) {
-         for(int j = 0; j < size(); j++) {
-            if(get(j).getSliceName().matches(name)) {
-                return get(j);
-            }
-         }
-         return null;
-     }
 
-     public AggregateP2PVlan getByVlanTag(int vtag) {
-         for(int j = 0; j < size(); j++) {
-            if(get(j).getVlanTag() == vtag) {
-                return get(j);
+    public synchronized boolean update(AggregateP2PVlan p2pv) {
+        if(!(p2pv.getSliceName() == null)) {
+            try {
+                if (!session.isOpen())
+                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                org.hibernate.Transaction tx = session.beginTransaction();
+                session.update(p2pv);
+                tx.commit();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
             }
-         }
-         return null;
-     }
+        }
+        else
+            throw new IllegalArgumentException("the P2PVlan object must be associated with a valid sliceName");
+        return true;
+    }
 
-     public AggregateP2PVlan getByGRI(String gri) {
-         for(int j = 0; j < size(); j++) {
-            if(get(j).getGlobalReservationId().matches(gri)) {
-                return get(j);
+    public synchronized boolean delete(AggregateP2PVlan p2pv) {
+        if (p2pv == null)
+            return false;
+        try {
+            if (!session.isOpen())
+                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+            org.hibernate.Transaction tx = session.beginTransaction();
+            session.delete(p2pv);
+            tx.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public synchronized boolean delete(String name, int vtag) {
+        try {
+            if (!session.isOpen())
+                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+            org.hibernate.Transaction tx = session.beginTransaction();
+            AggregateP2PVlan p2pv = this.getBySliceAndVtag(name, vtag);
+            if (p2pv == null)
+                return false;
+            session.delete(p2pv);
+            tx.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public synchronized AggregateP2PVlan getBySliceAndVtag(String name, int vtag) {
+        try {
+            if (!session.isOpen())
+                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+            org.hibernate.Transaction tx = session.beginTransaction();
+            Query q = session.createQuery("from AggregateP2PVlan as p2pvlan where p2pvlan.sliceName='"
+                    + name + "' and p2pvlan.vtag="+Integer.toString(vtag));
+            if (q.list().size() == 0)
+                return null;
+            return (AggregateP2PVlan) q.list().get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public synchronized AggregateP2PVlan getByGRI(String gri) {
+        try {
+            if (!session.isOpen())
+                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+            org.hibernate.Transaction tx = session.beginTransaction();
+            Query q = session.createQuery("from AggregateP2PVlan as p2pvlan where p2pvlan.globalReservationId='"
+                    + gri + "'");
+            if (q.list().size() == 0)
+                return null;
+            return (AggregateP2PVlan) q.list().get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public synchronized HashMap createVlan(String sliceName, String source, String destination, int vtag, float bw, String description, long startTime, long endTime) {
+        HashMap ret = new HashMap();
+        AggregateP2PVlan p2pvlan = this.getBySliceAndVtag(sliceName, vtag);
+        String status = "";
+        String message = "";
+        if (p2pvlan != null && p2pvlan.getVlanTag() == vtag) {
+            status = "failed";
+            message = "GRI=" + p2pvlan.getGlobalReservationId() + ", Status=" + p2pvlan.getStatus() +
+                    "\nNote: You may delete the VLAN and re-create.";
+        } else {
+            AggregateSlices slices = AggregateState.getAggregateSlices();
+            AggregateSlice slice = slices.getByName(sliceName);
+            if (slice != null) {
+                if (slice.getCreatedTime() > startTime) {
+                    startTime = slice.getCreatedTime();
+                }
+                if (slice.getExpiredTime() > endTime) {
+                    endTime = slice.getExpiredTime();
+                } else {//the slice has already expired
+                    status = "failed";
+                    message = "Slice=" + sliceName + " has already expired. No VLAN created.";
+                }
+            } else {
+                status = "failed";
+                message = "Slice=" + sliceName + " does not exist. No VLAN created.";
             }
-         }
-         return null;
-     }
+            if (!status.matches("failed")) {
+                p2pvlan = new AggregateP2PVlan(sliceName, source, destination, vtag, bw, description, startTime, endTime);
+                status = p2pvlan.setupVlan();
+                if (status.equalsIgnoreCase("failed")) {
+                    message = "Error=" + p2pvlan.getErrorMessage();
+                } else {
+                    message = "GRI=" + p2pvlan.getGlobalReservationId();
+                }
+                //DB insert
+                if (!AggregateState.getAggregateP2PVlans().add(p2pvlan)) {
+                    status = "failed";
+                    message += "\nFailed to add the p2pvlan into database";
+                }
+            }
+        }
+        ret.put("status", status);
+        ret.put("message", message);
+        return ret;
+    }
+
+    public synchronized HashMap deleteVlan(String sliceName, int vtag) {
+        HashMap ret = new HashMap();
+        // look for slice
+        AggregateP2PVlan p2pvlan = this.getBySliceAndVtag(sliceName, vtag);
+        String status = "";
+        String message = "";
+        if (p2pvlan != null && p2pvlan.getVlanTag() == vtag) {
+            status = p2pvlan.teardownVlan();
+
+            if (status.matches("(?i)failed")) {
+                message = "Error=" + p2pvlan.getErrorMessage();
+            } else {
+                message = "GRI=" + p2pvlan.getGlobalReservationId();
+            }
+
+            if (message.equals("")) {
+                message = "GRI=" + p2pvlan.getGlobalReservationId();
+            }
+            //DB delete
+            if (!AggregateState.getAggregateP2PVlans().delete(p2pvlan)) {
+                status = "failed";
+                message += "\nFailed to delete the p2pvlan from database";
+            }
+        } else {
+            status = "failed";
+            message = "Unkown SliceVLAN: " + sliceName + Integer.toString(vtag);
+        }
+        ret.put("status", status);
+        ret.put("message", message);
+        return ret;
+    }
 }

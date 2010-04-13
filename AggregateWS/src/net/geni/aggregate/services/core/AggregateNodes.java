@@ -4,66 +4,91 @@
  */
 package net.geni.aggregate.services.core;
 
-import java.util.Vector;
+import java.util.*;
+import org.hibernate.*;
+import org.apache.log4j.*;
 
 /**
  *
  * @author jflidr
  */
-public class AggregateNodes extends Vector<AggregateNode>
-{
+public class AggregateNodes {
+    private Session session;
+    private org.apache.log4j.Logger log;
 
-    @Override
+    public AggregateNodes() {
+        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+        log = Logger.getLogger(this.getClass());
+    }
+
     public synchronized boolean add(AggregateNode n) {
         if(!((n.getUrn() == null) || (n.getDescription() == null))) {
-            super.add(n);
+            try {
+                if (!session.isOpen())
+                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                org.hibernate.Transaction tx = session.beginTransaction();
+                session.save(n);
+                tx.commit();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         } else {
             throw new IllegalArgumentException("all the fields in the capability object must be specified");
         }
         return true;
     }
 
+
+    public synchronized List<AggregateNode> getAll() {
+        try {
+            if (!session.isOpen())
+                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+            org.hibernate.Transaction tx = session.beginTransaction();
+            Query q = session.createQuery("from AggregateNode");
+            return (List<AggregateNode>)q.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * get by capacity filter strings
      */
-    public Vector<AggregateNode> get(Vector<String> u) {
-        Vector<AggregateNode> ret = new Vector<AggregateNode>();
-        if(u.size() == 0) {
-            return this;
+    public synchronized List<AggregateNode> getByCaps(Vector<String> caps) {
+        if(caps.size() == 0) {
+            return null;
         }
-        for(int i = 0; i < size(); i++) {
-            AggregateNode n = get(i);
-            if(n.hasAll(u)) {
-                ret.add(n);
-            }
+        //form filter
+        List<AggregateNode> allnodes = getAll();
+        List<AggregateNode> nodes = new ArrayList();
+        for (AggregateNode node: allnodes) {
+            if (node.hasAllCaps(caps))
+                nodes.add(node);
         }
-        return ret;
+        if (nodes.size() == 0)
+            return null;
+        return nodes;
     }
 
     /**
      * get by urn
      */
-    public AggregateNode getById(String urn) {
-        for(int i = 0; i < size(); i++) {
-            AggregateNode n = get(i);
-            if(n.getUrn().matches(urn)) {
-                return n;
-            }
+    public synchronized AggregateNode getByUrn(String urn) {
+        try {
+            if (!session.isOpen())
+                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+            org.hibernate.Transaction tx = session.beginTransaction();
+            Query q = session.createQuery("from AggregateNode as node where node.urn='" + urn + "'");
+            if (q.list().size() == 0)
+                return null;
+            return (AggregateNode) q.list().get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    /**
-     * get by id
-     */
-    public AggregateNode getById(int id) {
-        for(int i = 0; i < size(); i++) {
-            AggregateNode n = get(i);
-            if(n.getId() == id) {
-                return n;
-            }
-        }
-        return null;
-    }
 
 }

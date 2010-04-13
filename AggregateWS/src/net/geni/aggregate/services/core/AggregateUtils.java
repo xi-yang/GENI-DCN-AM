@@ -4,10 +4,8 @@
  */
 package net.geni.aggregate.services.core;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Vector;
-import java.util.logging.Level;
+import java.util.*;
+import org.hibernate.*;
 import net.geni.aggregate.services.api.AggregateFault;
 import net.geni.aggregate.services.api.AggregateFaultMessage;
 import net.geni.aggregate.services.api.AggregateFaultMessageExt;
@@ -18,28 +16,20 @@ import net.geni.aggregate.services.api.AggregateFaultMessageExt;
  */
 public class AggregateUtils
 {
+    static private Session session = null;
 
     public static void executeDirectStatement(String sql) throws AggregateException {
-        Statement stmt = null;
         try {
-            stmt = AggregateState.getAggregateDBConnection().createStatement();
-            stmt.execute(sql);
-        } catch(SQLException ex) {
-            String msg = "nimbis DB off line";
-            //AggregateState.logger.log(Level.SEVERE, msg, ex);
-            throw new AggregateException(ex, AggregateException.FATAL);
-        } finally {
-            if(stmt != null) {
-                try {
-                    stmt.close();
-                } catch(SQLException ex) {
-                    String msg = "nimbis DB error";
-                    //AggregateState.logger.log(Level.SEVERE, msg, ex);
-                    throw new AggregateException(ex, AggregateException.ERROR);
-                } finally {
-                    stmt = null;
-                }
+            if (session == null || !session.isOpen()) {
+                session = HibernateUtil.getSessionFactory().getCurrentSession();
             }
+            org.hibernate.Transaction tx = session.beginTransaction();
+            SQLQuery q = session.createSQLQuery(sql);
+            q.executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            String msg = "nimbis DB off line";
+            throw new AggregateException(e, AggregateException.FATAL);
         }
     }
 
@@ -123,4 +113,43 @@ public class AggregateUtils
         }
         return paramsCnt;
     }
+
+    public static String makeArrayString(String[] items, char c) {
+        String retArray = "";
+        for (int i = 0; i < items.length; i++) {
+            retArray += items[i];
+            if (i < items.length-1)
+                retArray += c;
+        }
+        return retArray;
+    }
+
+    public static String makeArrayString(String[] items) {
+        return makeArrayString(items, ',');
+    }
+
+    public static String makePyArrayString(String[] items) {
+        String retArray = "[";
+        for (int i = 0; i < items.length; i++) {
+            retArray += "'";
+            retArray += items[i];
+            retArray += "'";
+            if (i < items.length-1)
+                retArray += ",";
+        }
+        retArray += "]";
+        return retArray;
+    }
+
+    public static String getUrnField(String urn, String field) {
+        int start = urn.indexOf(field+":");
+        if (start == -1)
+            return null;
+        start += field.length()+1;
+        int end = urn.indexOf(':', start);
+        if (end == -1 )
+            end = urn.length();
+        return urn.substring(start, end);
+    }
+
 }

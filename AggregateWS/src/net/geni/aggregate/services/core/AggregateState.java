@@ -24,17 +24,12 @@ public class AggregateState
 {
     //Logger
     public static Logger log = Logger.getLogger("net.geni.aggregate");
+
     //Properties
     private static Properties aggregateProps = new Properties();
-    // Preferences
-    private static Preferences AMPrefs = null;
-    private static Preferences dbPrefs = null;
-    private static Preferences aggregatePrefs = null;
     private static String dbPwd;
     private static String dbUser;
-    private static String aggregateDB = null;
-    private static String coreTab = null;
-    private static String slicerTab = "slicer";
+    private static String resourcesTab = "resources";
     private static String capsTab = "capabilities";
     private static String nodesTab = "nodes";
     private static String slicesTab = "slices";
@@ -62,10 +57,8 @@ public class AggregateState
     private static AggregateUsers aggregateUsers = null;
     
     // Global states
-    private static AggregateSQLStatements sqlStatements = null;
     private static AggregateGENISkeleton skeletonAPI = null;
-    private static Connection aggregateDBConnection = null;
-    private static final long pollInterval = 5000;
+    private static final long pollInterval = 5000; //miliseconds
 
     public static void init() {
         //init properties
@@ -83,11 +76,16 @@ public class AggregateState
         } catch (IOException e) {
             //logging for exception!
         }
+
+        dbUser = aggregateProps.getProperty("aggregate.mysql.user", "geniuser");
+        log.info("aggregate.mysql.user set to " + dbUser);
+        dbPwd = aggregateProps.getProperty("aggregate.mysql.pass", "genipass");
         idcURL = aggregateProps.getProperty("aggregate.idc.url", "https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS");
         log.info("aggregate.idc.url set to " + idcURL);
         idcRepo = aggregateProps.getProperty("aggregate.idc.repo", "/usr/local/geni-aggregate/AggregateAttic/conf/repo");
         log.info("aggregate.idc.repo set to " + idcRepo);
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
+        log.info("aggregate.plc.url set to " + plcURL);
         plcPI = aggregateProps.getProperty("aggregate.plc.pi", "xyang@east.isi.edu");
         plcPassword = aggregateProps.getProperty("aggregate.plc.pass", "password");
         plcPrefix = aggregateProps.getProperty("aggregate.plc.base", "maxpl");
@@ -99,31 +97,6 @@ public class AggregateState
         plcSshExecPrefix = aggregateProps.getProperty("aggregate.plc.ssh.execprefix", "");
         plcSshExecPrefix = plcSshExecPrefix.replaceAll("[\\'\\\"]", "");
 
-        //create and load preferences
-        AMPrefs = Preferences.systemNodeForPackage(AggregateWS.class);
-        dbPrefs = AMPrefs.node("database");
-        aggregatePrefs = AMPrefs.node("aggregate");
-
-        initPrefs(); //NOTE: this is a shortcut saving me some typing
-        // database prefs
-        dbPwd = dbPrefs.get("password", null);
-        dbUser = dbPrefs.get("user", null);
-        aggregateDB = dbPrefs.get("aggregateDB", null);
-        coreTab = dbPrefs.get("frontEndTab", null);
-        slicerTab = dbPrefs.get("aggregateTab", null);
-
-        if((dbPwd == null) ||
-                (dbUser == null) ||
-                (aggregateDB == null) ||
-                (coreTab == null) ||
-                (slicerTab == null)) {
-            throw new IllegalArgumentException("corrupted preferences");
-        }
-        try {
-            AMPrefs.sync();
-        } catch(BackingStoreException ex) {
-            log.error("BackingStoreException ..." + ex.getMessage());
-        }
         //init hibernate
         HibernateUtil.initSessionFactory();
 
@@ -135,38 +108,9 @@ public class AggregateState
         aggregateUsers = new AggregateUsers();
     }
 
-    // initializer
-    private static void initPrefs() {
-        dbPrefs.put("user", aggregateProps.getProperty("aggregate.mysql.user", "geniuser"));
-        dbPrefs.put("password", aggregateProps.getProperty("aggregate.mysql.pass", "genipass"));
-        dbPrefs.put("aggregateDB", "aggregate");
-        dbPrefs.put("frontEndTab", "front_end");
-        dbPrefs.put("aggregateTab", "slicer");
-        //aggregate prefs
-//        dragonCapsPrefs.put("name", "");
-//        dragonCapsPrefs.put("id", "");
-//        dragonCapsPrefs.put("description", "");
-//        dragonCapsPrefs.put("controllerURL", "");
-//        PLCapsPrefs.put("name", "");
-//        PLCapsPrefs.put("id", "");
-//        PLCapsPrefs.put("description", "");
-//        PLCapsPrefs.put("controllerURL", "");
-    }
-    //properties
+    //setters/getters 
     public static Properties getProperties() {
         return aggregateProps;
-    }
-    // sql
-    public static void setAggregateDBConnection(Connection aggregateDB) {
-        aggregateDBConnection = aggregateDB;
-    }
-
-    public static Connection getAggregateDBConnection() {
-        return aggregateDBConnection;
-    }
-
-    public static String getSqFrontEndTab() {
-        return coreTab;
     }
 
     public static void setSkeletonAPI(AggregateGENISkeleton aggregateSkeleton) {
@@ -179,14 +123,6 @@ public class AggregateState
 
     public static long getPollInterval() {
         return pollInterval;
-    }
-
-    public static AggregateSQLStatements getSqlStatements() {
-        return sqlStatements;
-    }
-
-    public static void setSqlStatements(AggregateSQLStatements s) {
-        sqlStatements = s;
     }
 
     public static AggregateCapabilities getAggregateCaps() {
@@ -209,12 +145,8 @@ public class AggregateState
         return aggregateUsers;
     }
 
-    public static String getAggregateDB() {
-        return aggregateDB;
-    }
-
-    public static String getSlicerTab() {
-        return slicerTab;
+    public static String getResourcesTab() {
+        return resourcesTab;
     }
 
     public static String getDbPwd() {
@@ -223,10 +155,6 @@ public class AggregateState
 
     public static String getDbUser() {
         return dbUser;
-    }
-
-    public static String getCoreTab() {
-        return coreTab;
     }
 
     public static String getCapsTab() {
@@ -300,19 +228,4 @@ public class AggregateState
     public static String getPlcSshExecPrefix() {
         return plcSshExecPrefix;
     }
-
-    public static String getSliceNameById(int id) {
-        AggregateSlice slice = aggregateSlices.getById(id);
-        if (slice != null)
-            return slice.getSliceName();
-        return "";
-    }
-
-    public static int getSliceIdByName(String name) {
-        AggregateSlice slice = aggregateSlices.getByName(name);
-        if (slice != null)
-            return slice.getId();
-        return 0;
-    }
-
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="net.geni.aggregate.services.core.AggregateNode" table="nodes">
+      <id column="id" name="id"/>
+      <property column="urn" name="urn"/>
+      <property column="description" name="description"/>
+      <property column="capabilities" name="capabilities"/>
+  </class>
+</hibernate-mapping>

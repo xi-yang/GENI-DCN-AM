@@ -5,9 +5,7 @@
 package net.geni.aggregate.services.api;
 
 import org.apache.log4j.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateWSRunner;
 import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateException;
@@ -15,8 +13,6 @@ import net.geni.aggregate.services.core.AggregateNode;
 import net.geni.aggregate.services.core.AggregateSlice;
 import net.geni.aggregate.services.core.AggregateP2PVlan;
 import net.geni.aggregate.services.core.AggregateUser;
-import net.geni.aggregate.services.core.AggregateSQLStatements;
-import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateUtils;
 import net.geni.aggregate.services.core.HibernateUtil;
 import org.apache.axis2.context.ServiceContext;
@@ -33,8 +29,8 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     private AggregateWSRunner aggregateWSRunner;
     
     public void init(ServiceContext serviceContext) {
-
         System.err.println("AggregateWS init...");
+
         // initialize preferences
         AggregateState.init();
         try {
@@ -43,17 +39,18 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             ex.printStackTrace();
             return;
         }
-        Connection aggregateDB;
+
+        // initialize database tables
         try {
-            String sqlURL = "jdbc:mysql://" + "127.0.0.1" +
-                    "/" + AggregateState.getAggregateDB() +
-                    "?user=" + AggregateState.getDbUser() +
-                    "&password=" + AggregateState.getDbPwd() +
-                    "&connectTimeout=10000&socketTimeout=5000";
-            aggregateDB = DriverManager.getConnection(sqlURL);
-            AggregateState.setAggregateDBConnection(aggregateDB);
-        } catch(SQLException ex) {
-            System.err.println("mysql connection failed...");
+            //init the resources table
+            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getResourcesTab() + " ( " +
+                    "id int(11) NOT NULL auto_increment, " +
+                    "type VARCHAR(255) NOT NULL, " +
+                    "reference int(11) NOT NULL, " +
+                    "rspecId int(11) NOT NULL, " +
+                    "PRIMARY KEY (id)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
+        } catch(AggregateException ex) {
             ex.printStackTrace();
             return;
         }
@@ -107,7 +104,8 @@ public class AggregateWS implements AggregateGENISkeletonInterface
           AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getP2PVlansTab() + " ( " +
                     "id int(11) NOT NULL auto_increment, " +
                     "vlanTag int(11) NOT NULL, " +
-                    "sliceId int(11) NOT NULL, " +
+                    "sliceName varchar(255) NOT NULL, " +
+                    "description varchar(255) NOT NULL default '', " +
                     "source varchar(255) NOT NULL default '', " +
                     "destination varchar(255) NOT NULL default '', " +
                     "bandwidth float NOT NULL, " +
@@ -123,8 +121,9 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             //init the networks table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getNetworksTab() + " ( " +
                     "id int(11) NOT NULL auto_increment, " +
-                    "sliceId int(11) NOT NULL, " +
+                    "sliceName varchar(255) NOT NULL, " +
                     "vlanPool text NOT NULL, " +
+                    "ipPool text NOT NULL, " +
                     "status varchar(20) NOT NULL default '', " +
                     "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
@@ -132,7 +131,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             ex.printStackTrace();
             return;
         }
-
         try {
             //init the users table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getUsersTab() + " ( " +
@@ -148,9 +146,10 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             ex.printStackTrace();
             return;
         }
+        // TODO: no need for the front_end table?
         try {
             //init the database
-            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getCoreTab() + " ( " +
+            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + "front_end" + " ( " +
                     "requestID VARCHAR(255) NOT NULL, " + // job ID 1
                     "status VARCHAR(255) NOT NULL DEFAULT 'no such job', " + // job status
                     "statusMsg VARCHAR(255) NOT NULL DEFAULT '', " + // status message if any
@@ -160,110 +159,15 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             ex.printStackTrace();
             return;
         }
-
-        // init all the mysql statements
-        AggregateState.setSqlStatements(new AggregateSQLStatements());
-        AggregateSQLStatements sql = AggregateState.getSqlStatements();
-        boolean dummy = true;
-        // load aggregate configuration
-        // caps
-        try {
-            sql.aggCaps_Stmt.select();
-            while(dummy) {
-                AggregateState.getAggregateCaps().add(new AggregateCapability(
-                        sql.aggCaps_Stmt.getNextString("name"),
-                        sql.aggCaps_Stmt.getString("urn"),
-                        sql.aggCaps_Stmt.getInt("id"),
-                        sql.aggCaps_Stmt.getString("description"),
-                        sql.aggCaps_Stmt.getString("controllerURL")));
-
-            }
-        } catch(AggregateException ex) {
-            if(ex.getType() == AggregateException.FATAL) {
-                log.error("FATAL error: terminating ..." + ex.getMessage());
-                return;
-            }
-        }
-        // nodes
-        try {
-            sql.aggNodes_Stmt.select();
-            while(dummy) {
-                AggregateState.getAggregateNodes().add(new AggregateNode(
-                        sql.aggNodes_Stmt.getNextString("urn"),
-                        sql.aggNodes_Stmt.getInt("id"),
-                        sql.aggNodes_Stmt.getString("description"),
-                        sql.aggNodes_Stmt.getString("capabilities")));
-            }
-        } catch(AggregateException ex) {
-            if(ex.getType() == AggregateException.FATAL) {
-                log.error("FATAL error: terminating ..." + ex.getMessage());
-                return;
-            }
-        }
-        // slices
-        /*
-        try {
-            sql.aggSlices_Stmt.select();
-            while(dummy) {
-                AggregateState.getAggregateSlices().add(new AggregateSlice(
-                        sql.aggSlices_Stmt.getNextString("sliceName"),
-                        sql.aggSlices_Stmt.getInt("id"),
-                        sql.aggSlices_Stmt.getString("url"),
-                        sql.aggSlices_Stmt.getString("description"),
-                        sql.aggSlices_Stmt.getString("users"),
-                        sql.aggSlices_Stmt.getString("nodes"),
-                        sql.aggSlices_Stmt.getInt("creatorId"),
-                        sql.aggSlices_Stmt.getLong("createdTime"),
-                        sql.aggSlices_Stmt.getLong("expiredTime")));
-            }
-        } catch(AggregateException ex) {
-            if(ex.getType() == AggregateException.FATAL) {
-                log.error("FATAL error: terminating ..." + ex.getMessage());
-                return;
-            }
-        }
-        */
-        // p2pvlans AggregateP2PVlan(int sid, int v, String s, String d, float b, String g, String ss)
-        try {
-            sql.aggP2PVlans_Stmt.select();
-            while(dummy) {
-                AggregateState.getAggregateP2PVlans().add(new AggregateP2PVlan(
-                        sql.aggP2PVlans_Stmt.getNextInt("sliceId"),
-                        sql.aggP2PVlans_Stmt.getInt("vlanTag"),
-                        sql.aggP2PVlans_Stmt.getString("source"),
-                        sql.aggP2PVlans_Stmt.getString("destination"),
-                        sql.aggP2PVlans_Stmt.getFloat("bandwidth"),
-                        sql.aggP2PVlans_Stmt.getString("globalReservationId"),
-                        sql.aggP2PVlans_Stmt.getString("status")));
-            }
-        } catch(AggregateException ex) {
-            if(ex.getType() == AggregateException.FATAL) {
-                log.error("FATAL error: terminating ..." + ex.getMessage());
-                return;
-            }
-        }
-        // users
-        try {
-            sql.aggUsers_Stmt.select();
-            while(dummy) {
-                AggregateState.getAggregateUsers().add(new AggregateUser(
-                        sql.aggUsers_Stmt.getNextInt("id"),
-                        sql.aggUsers_Stmt.getString("name"),
-                        sql.aggUsers_Stmt.getString("firstName"),
-                        sql.aggUsers_Stmt.getString("lastName"),
-                        sql.aggUsers_Stmt.getString("email"),
-                        sql.aggUsers_Stmt.getString("description")));
-            }
-        } catch(AggregateException ex) {
-            if(ex.getType() == AggregateException.FATAL) {
-                log.error("FATAL error: terminating ..." + ex.getMessage());
-                return;
-            }
-        }
-
+        
+        // Web Services handnling thread
         aggregateWSRunner = new AggregateWSRunner();
         aggregateServerThread = new Thread(aggregateWSRunner);
         aggregateServerThread.start();
+
+        // PLC polling and DB sync thread
+        // TODO
+
         log.info("AggregateWS init() finished!");
     }
 

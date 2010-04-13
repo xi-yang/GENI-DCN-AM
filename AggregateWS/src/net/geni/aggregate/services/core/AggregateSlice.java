@@ -5,13 +5,11 @@
 
 package net.geni.aggregate.services.core;
 
-import java.io.Serializable;
-
 /**
  *
  * @author Xi Yang
  */
-public class AggregateSlice implements java.io.Serializable {
+public class AggregateSlice extends AggregateResource {
 
     private String sliceName;
     private int id;
@@ -64,7 +62,7 @@ public class AggregateSlice implements java.io.Serializable {
     }
 
     public String getUsers() {
-        return nodes;
+        return users;
     }
 
     public void setUsers(String users) {

@@ -101,19 +101,6 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         return super.logoff("import sys; sys.exit(0)");
     }
 
-    private String makePyArray(String[] items) {
-        String retArray = "[";
-        for (int i = 0; i < items.length; i++) {
-            retArray += "'";
-            retArray += items[i];
-            retArray += "'";
-            if (i < items.length-1)
-                retArray += ",";
-        }
-        retArray += "]";
-        return retArray;
-    }
-
     /**
      *
      * @param hm the hashmap to return the buffer content
@@ -149,7 +136,7 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         createSliceCmd = createSliceCmd.replaceFirst("<_url_>", url);
         createSliceCmd = createSliceCmd.replaceFirst("<_descr_>", descr);
         createSliceCmd = createSliceCmd.replaceFirst("<_user_>", user);
-        String nodeArray = makePyArray(nodes);
+        String nodeArray = AggregateUtils.makePyArrayString(nodes);
         createSliceCmd = createSliceCmd.replaceAll("<_node_list_>", nodeArray);
         this.sendCommand(createSliceCmd);
         log.debug("createSlice dump #1: " + createSliceCmd);
@@ -208,9 +195,9 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         updateSliceCmd = updateSliceCmd.replaceFirst("<_url_>", url);
         updateSliceCmd = updateSliceCmd.replaceFirst("<_descr_>", descr);
         updateSliceCmd = updateSliceCmd.replaceFirst("<_expires_>", Integer.toString(expires));
-        String userArray = makePyArray(users);
+        String userArray = AggregateUtils.makePyArrayString(users);
         updateSliceCmd = updateSliceCmd.replaceAll("<_user_list_>", userArray);
-        String nodeArray = makePyArray(nodes);
+        String nodeArray = AggregateUtils.makePyArrayString(nodes);
         updateSliceCmd = updateSliceCmd.replaceAll("<_node_list_>", nodeArray);
         this.sendCommand(updateSliceCmd);
         int ret = this.readPattern("^1", ".*Fault|.*Error", promptPattern);
@@ -235,7 +222,7 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
                 return -1;
         }
         hmSlices.clear();
-        String sliceArray = makePyArray(sliceNames);
+        String sliceArray = AggregateUtils.makePyArrayString(sliceNames);
         String cmd = "print api_server.GetSlices(auth,"+sliceArray+");";
         this.sendCommand(cmd);
         int ret = this.readPattern("^\\[\\{", "^\\[\\]", promptPattern);
