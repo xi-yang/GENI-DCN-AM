@@ -352,8 +352,8 @@
 			<xs:element name="CreateSliceNetworkResponse" type="tns:CreateSliceNetworkResponseType"/>
 			<xs:complexType name="CreateSliceNetworkResponseType">
 				<xs:sequence>
-					<xs:element name="sliceStatus" type="xs:string"/>
-					<xs:element name="vlanResvResult" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
+					<xs:element name="status" type="xs:string"/>
+					<xs:element name="message" type="xs:string" minOccurs="0"/>
 				</xs:sequence>
 			</xs:complexType>
 
