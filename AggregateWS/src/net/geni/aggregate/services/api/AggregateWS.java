@@ -7,6 +7,7 @@ package net.geni.aggregate.services.api;
 import org.apache.log4j.*;
 import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateWSRunner;
+import net.geni.aggregate.services.core.AggregateRspecManager;
 import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateException;
 import net.geni.aggregate.services.core.AggregateNode;
@@ -108,6 +109,10 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "description varchar(255) NOT NULL default '', " +
                     "source varchar(255) NOT NULL default '', " +
                     "destination varchar(255) NOT NULL default '', " +
+                    "srcInterface varchar(255) NOT NULL default '', " +
+                    "dstInterface varchar(255) NOT NULL default '', " +
+                    "srcIpAndMask varchar(255) NOT NULL default '', " +
+                    "dstIpANdMask varchar(255) NOT NULL default '', " +
                     "bandwidth float NOT NULL, " +
                     "globalReservationId varchar(255) NOT NULL default '', " +
                     "status varchar(20) NOT NULL default '', " +
@@ -165,6 +170,11 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         aggregateServerThread = new Thread(aggregateWSRunner);
         aggregateServerThread.start();
 
+        // Rspec manager thread
+        AggregateRspecManager aggregateRspecManager = new AggregateRspecManager();
+        aggregateRspecManager.start();
+        AggregateState.setRspecManager(aggregateRspecManager);
+        
         // PLC polling and DB sync thread
         // TODO
 
@@ -229,7 +239,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     }
 
     public CreateSliceNetworkResponse CreateSliceNetwork(net.geni.aggregate.services.api.CreateSliceNetwork createSliceNetwork) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return AggregateState.getSkeletonAPI().CreateSliceNetwork(createSliceNetwork);
     }
 
     public DeleteSliceNetworkResponse DeleteSliceNetwork(net.geni.aggregate.services.api.DeleteSliceNetwork deleteSliceNetwork) throws AggregateFaultMessage {

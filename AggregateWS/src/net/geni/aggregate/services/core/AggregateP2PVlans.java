@@ -13,8 +13,7 @@ import org.apache.log4j.*;
  *
  * @author Xi Yang
  */
-public class AggregateP2PVlans
-{
+public class AggregateP2PVlans {
     private Session session;
     private org.apache.log4j.Logger log;
 

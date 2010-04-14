@@ -30,6 +30,10 @@ public class AggregateP2PVlan extends AggregateResource {
     String sliceName = "";
     String source = "";
     String destination = "";
+    String srcInterface = "";
+    String dstInterface = "";
+    String srcIpAndMask = "";
+    String dstIpAndMask = "";
     int vtag = -1;
     float bandwidth = 0;
     String description = "";
@@ -167,6 +171,38 @@ public class AggregateP2PVlan extends AggregateResource {
         return status;
     }
 
+    public String getDstInterface() {
+        return dstInterface;
+    }
+
+    public void setDstInterface(String dstInterface) {
+        this.dstInterface = dstInterface;
+    }
+
+    public String getDstIpAndMask() {
+        return dstIpAndMask;
+    }
+
+    public void setDstIpAndMask(String dstIpAndMask) {
+        this.dstIpAndMask = dstIpAndMask;
+    }
+
+    public String getSrcInterface() {
+        return srcInterface;
+    }
+
+    public void setSrcInterface(String srcInterface) {
+        this.srcInterface = srcInterface;
+    }
+
+    public String getSrcIpAndMask() {
+        return srcIpAndMask;
+    }
+
+    public void setSrcIpAndMask(String srcIpAndMask) {
+        this.srcIpAndMask = srcIpAndMask;
+    }
+
     /**
      * setup p2p vlan
      * @param
@@ -279,31 +315,31 @@ public class AggregateP2PVlan extends AggregateResource {
 
         boolean ret = true;
         //add/delete source vtag interface
-        if (client.vconfigVlan(source, "eth1", Integer.toString(vtag), add)) {
-            log.info((add?"added":"deleted") + " vlan interface to node "+ source + "on eth1." + Integer.toString(vtag));
+        if (client.vconfigVlan(source, srcInterface, Integer.toString(vtag), add)) {
+            log.info((add?"added":"deleted") + " vlan interface to node "+ source + "on "+ srcInterface + "."  + Integer.toString(vtag));
         }
         else {
-            log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ source + " eth1." + Integer.toString(vtag));
+            log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ source + " " + srcInterface + "." + Integer.toString(vtag));
             log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
 
         }
         //TODO: IP address allocation!
-        if (add && !client.ifconfigIp(source, "eth1." + Integer.toString(vtag), "10.10.10.1", "255.255.255.0")) {
-            log.error("failed to configure IP address on node " + source + " eth1." + Integer.toString(vtag));
+        if (add && !client.ifconfigIp(source, srcInterface + "." + Integer.toString(vtag), srcIpAndMask)) {
+            log.error("failed to configure IP address on node " + source + " " + srcInterface + "." + Integer.toString(vtag));
             ret = false;
         }
 
         //add/delete destination vtag interface
-        if (client.vconfigVlan(destination, "eth1", Integer.toString(vtag), add)) {
-            log.info((add?"added":"deleted") + " vlan interface to node "+ destination + "on eth1." + Integer.toString(vtag));
+        if (client.vconfigVlan(destination, dstInterface, Integer.toString(vtag), add)) {
+            log.info((add?"added":"deleted") + " vlan interface to node "+ destination + "on "+ dstInterface + "." + Integer.toString(vtag));
         }
         else {
-            log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ destination + " eth1." + Integer.toString(vtag));
+            log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ destination + " " + dstInterface + "." + Integer.toString(vtag));
             log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
         }
         //TODO: IP address allocation!
-        if (add && !client.ifconfigIp(destination, "eth1." + Integer.toString(vtag), "10.10.10.2", "255.255.255.0")) {
-            log.error("failed to configure IP address on node " + destination + " eth1." + Integer.toString(vtag));
+        if (add && !client.ifconfigIp(destination, dstInterface + "." + Integer.toString(vtag), dstIpAndMask)) {
+            log.error("failed to configure IP address on node " + destination + " " + dstInterface + "." + Integer.toString(vtag));
             ret = false;
         }
 

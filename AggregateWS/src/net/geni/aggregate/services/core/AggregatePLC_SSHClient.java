@@ -85,12 +85,20 @@ public class AggregatePLC_SSHClient extends AggregateCLIClient {
         return false;
     }
 
-    public boolean ifconfigIp(String node, String iface, String ipaddr, String netmask) {
+    public boolean ifconfigIp(String node, String iface, String ipAndMask) {
         if (!alive()) {
             if (!login())
                 return false;
         }
-
+        String ipaddr = ipAndMask.substring(0, ipAndMask.indexOf('/')-1);
+        String netmask = ipAndMask.substring(ipAndMask.indexOf('/')+1, ipAndMask.length());
+        if (netmask.matches("^\\d+$")) {
+            int suffix = Integer.valueOf(netmask);
+            if (suffix < 0 || suffix > 32)
+                return false;
+            int mask = ~(0xffffffff >> suffix);
+            netmask = Integer.toHexString(mask);
+        }
         String cmd = sshExecPrefix + node + " ifconfig " + iface + " " + ipaddr + " netmask " + netmask;
         this.sendCommand(cmd);
         int ret = this.readPattern(promptPattern, ".*No such device|.*Invalid argument", promptPattern);

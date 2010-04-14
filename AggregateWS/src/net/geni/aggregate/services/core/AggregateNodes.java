@@ -39,6 +39,40 @@ public class AggregateNodes {
         return true;
     }
 
+    public synchronized boolean update(AggregateNode n) {
+        if(!((n.getUrn() == null) || (n.getDescription() == null))) {
+            try {
+                if (!session.isOpen())
+                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                org.hibernate.Transaction tx = session.beginTransaction();
+                session.update(n);
+                tx.commit();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            throw new IllegalArgumentException("all the fields in the capability object must be specified");
+        }
+        return true;
+    }
+
+    public synchronized boolean delete(AggregateNode n) {
+        if(n == null)
+            return false;
+        try {
+            if (!session.isOpen()) {
+                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+            }
+            org.hibernate.Transaction tx = session.beginTransaction();
+            session.delete(n);
+            tx.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 
     public synchronized List<AggregateNode> getAll() {
         try {

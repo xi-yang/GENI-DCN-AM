@@ -5,6 +5,7 @@
 package net.geni.aggregate.services.core;
 
 import java.util.*;
+import java.util.regex.*;
 import org.hibernate.*;
 import net.geni.aggregate.services.api.AggregateFault;
 import net.geni.aggregate.services.api.AggregateFaultMessage;
@@ -141,8 +142,18 @@ public class AggregateUtils
         return retArray;
     }
 
+    public static String getUrnFields(String urn, String[] fields) {
+        String ret = "";
+        for (int i = 0; i < fields.length; i++) {
+            ret+=(fields[i]+"="+getUrnField(urn,fields[i]));
+            if (i != fields.length-1)
+                ret+=":";
+        }
+        return ret;
+    }
+    
     public static String getUrnField(String urn, String field) {
-        int start = urn.indexOf(field+":");
+        int start = urn.indexOf(field+"=");
         if (start == -1)
             return null;
         start += field.length()+1;
@@ -152,4 +163,21 @@ public class AggregateUtils
         return urn.substring(start, end);
     }
 
+    public static float convertBandwdithToMbps(String bwString) {
+        float ret = 0;
+        Pattern pattern = Pattern.compile("(\\d+)([mM]|[gG]|[kK]|[bB]).*");
+        Matcher matcher = pattern.matcher(bwString);
+        if (matcher.find()) {
+            String bw = matcher.group(1);
+            ret = Float.valueOf(bw);
+            String m = matcher.group(2);
+            if (m.equalsIgnoreCase("g"))
+                ret *= 1000;
+            else if (m.equalsIgnoreCase("k"))
+                ret /= 1000;
+            else if (m.equalsIgnoreCase("b"))
+                ret /= 1000000;
+        }
+        return ret;
+    }
 }

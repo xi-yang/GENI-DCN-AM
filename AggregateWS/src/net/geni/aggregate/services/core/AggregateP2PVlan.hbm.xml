@@ -7,9 +7,13 @@
       </id>
       <property column="vlanTag" name="vtag"/>
       <property column="sliceName" name="sliceName"/>
-      <property column="description" name="description"/>
       <property column="source" name="source"/>
       <property column="destination" name="destination"/>
+      <property column="srcInterface" name="srcInterface"/>
+      <property column="dstInterface" name="dstInterface"/>
+      <property column="srcIpAndMask" name="srcIpAndMask"/>
+      <property column="dstIpAndMask" name="dstIpAndMask"/>
+      <property column="description" name="description"/>
       <property column="bandwidth" name="bandwidth"/>
       <property column="globalReservationId" name="gri"/>
       <property column="status" name="status"/>

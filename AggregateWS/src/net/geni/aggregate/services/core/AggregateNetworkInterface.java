@@ -16,6 +16,8 @@ public class AggregateNetworkInterface extends AggregateResource {
     String deviceName = "";
     String ipAddress = "";
     String vlanTag = "";
+    String capacity = "";
+
     ArrayList<String> peerInterfaces = null;
 
     public AggregateNetworkInterface() {}
@@ -63,4 +65,31 @@ public class AggregateNetworkInterface extends AggregateResource {
     public void setPeerInterfaces(ArrayList<String> peerInterfaces) {
         this.peerInterfaces = peerInterfaces;
     }
+
+    public String getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(String capacity) {
+        this.capacity = capacity;
+    }
+
+    public int[] pairupInterfaces(AggregateNetworkInterface peer) {
+        int[] ret = new int[2];
+        ret[0] = -1; ret[1] = -1;
+        for (int i = 0; i < this.peerInterfaces.size(); i++) {
+            if (this.getPeerInterfaces().get(i).equalsIgnoreCase(peer.getInterfaceId())) {
+               ret[0] = i;
+               break;
+            }
+        }
+        for (int i = 0; i < peer.peerInterfaces.size(); i++) {
+            if (peer.getPeerInterfaces().get(i).equalsIgnoreCase(this.getInterfaceId())) {
+               ret[1] = i;
+               break;
+            }
+        }
+        return ret;
+    }
+
 }

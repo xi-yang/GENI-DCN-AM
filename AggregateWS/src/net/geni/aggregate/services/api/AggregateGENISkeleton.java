@@ -6,21 +6,24 @@
  */
 package net.geni.aggregate.services.api;
 
-import org.apache.log4j.*;
 import java.util.List;
 import java.util.Vector;
 import java.util.HashMap;
+import net.geni.aggregate.services.core.AggregateState;
+import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateCapabilities;
 import net.geni.aggregate.services.core.AggregateNode;
-import net.geni.aggregate.services.core.AggregateSlices;
+import net.geni.aggregate.services.core.AggregateNodes;
 import net.geni.aggregate.services.core.AggregateSlice;
-import net.geni.aggregate.services.core.AggregateState;
+import net.geni.aggregate.services.core.AggregateSlices;
 import net.geni.aggregate.services.core.AggregateP2PVlan;
 import net.geni.aggregate.services.core.AggregateP2PVlans;
-import net.geni.aggregate.services.core.AggregatePLC_APIClient;
 import net.geni.aggregate.services.core.AggregateUser;
 import net.geni.aggregate.services.core.AggregateUsers;
 import net.geni.aggregate.services.core.AggregateException;
+//TODO move to slcies...
+import net.geni.aggregate.services.core.AggregatePLC_APIClient;
+
 /**
  *  AggregateGENISkeleton java skeleton for the axisService
  */
@@ -45,9 +48,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String user = createSlice.getUser();
         String[] nodes = createSlice.getNode();
 
-        //The below logic wil be moved into AggregateSlices
-        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
-        int ret = plcClient.createSlice(sliceName, url, description, user, nodes);
+        AggregateSlices slices = AggregateState.getAggregateSlices();
+        int ret = slices.createSlice(sliceName, url, description, user, nodes);
 
         //form response
         CreateSliceResponseType createSliceResponseType = new CreateSliceResponseType();
@@ -78,9 +80,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String[] nodes = updateSlice.getNode();
         int expires = updateSlice.getExpires();
 
-        //The below logic wil be moved into AggregateSlices
-        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
-        int ret = plcClient.updateSlice(sliceName, url, description, expires, users, nodes);
+        AggregateSlices slices = AggregateState.getAggregateSlices();
+        int ret = slices.updateSlice(sliceName, url, description, expires, users, nodes);
 
         //form response
         UpdateSliceResponseType updateSliceResponseType = new UpdateSliceResponseType();
@@ -104,9 +105,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
             sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
         }
-        //The below logic wil be moved into AggregateSlices
-        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
-        int ret = plcClient.deleteSlice(sliceName);
+
+        AggregateSlices slices = AggregateState.getAggregateSlices();
+        int ret = slices.deleteSlice(sliceName);
 
         //form response
         DeleteSliceResponseType deleteSliceResponseType = new DeleteSliceResponseType();
@@ -127,7 +128,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throws AggregateFaultMessage {
         QuerySliceType querySlice = querySlice6.getQuerySlice();
         String[] sliceNames = querySlice.getSliceID();
-        //The below logic wil be moved into AggregateSlices
+
+        //TODO: re-sync PLC and Aggregate DB (then query directly from AggregateDB)
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         Vector<HashMap> hmSlices = new Vector<HashMap>();
         plcClient.querySlice(sliceNames, hmSlices);
@@ -224,17 +226,19 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
                 capURNs.add(nodeCapURN);
             }
         }
-        Vector<AggregateNode> filtNodes = AggregateState.getAggregateNodes().get(capURNs);
+        List<AggregateNode> filtNodes = AggregateState.getAggregateNodes().getByCaps(capURNs);
         Vector<ListNodesResponseTypeSequence> lnrtsV = new Vector<ListNodesResponseTypeSequence>();
-        for (int i = 0; i < filtNodes.size(); i++) {
-            NodeDescriptorType nd = new NodeDescriptorType();
-            nd.setUrn(filtNodes.get(i).getUrn());
-            nd.setId(filtNodes.get(i).getId());
-            nd.setDescription(filtNodes.get(i).getDescription());
-            nd.setNodeDescriptorTypeSequence_type0(filtNodes.get(i).getCapTypeSeq());
-            ListNodesResponseTypeSequence l = new ListNodesResponseTypeSequence();
-            l.setNode(nd);
-            lnrtsV.add(l);
+        if (filtNodes != null) {
+            for (AggregateNode node: filtNodes) {
+                NodeDescriptorType nd = new NodeDescriptorType();
+                nd.setUrn(node.getUrn());
+                nd.setId(node.getId());
+                nd.setDescription(node.getDescription());
+                nd.setNodeDescriptorTypeSequence_type0(node.getCapTypeSeq());
+                ListNodesResponseTypeSequence l = new ListNodesResponseTypeSequence();
+                l.setNode(nd);
+                lnrtsV.add(l);
+            }
         }
         listNodesResponseType.setListNodesResponseTypeSequence((ListNodesResponseTypeSequence[]) lnrtsV.toArray(new ListNodesResponseTypeSequence[]{}));
         listNodesResponse.setListNodesResponse(listNodesResponseType);
@@ -299,8 +303,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //form response
         ListCapabilitiesResponseType listCapResponseType = new ListCapabilitiesResponseType();
         ListCapabilitiesResponse listCapResponse = new ListCapabilitiesResponse();
-        AggregateCapabilities caps = AggregateState.getAggregateCaps();
+        AggregateCapabilities aggregateCaps = AggregateState.getAggregateCaps();
         Vector<ListCapabilitiesResponseTypeSequence> listCapsSeq = new Vector<ListCapabilitiesResponseTypeSequence>();
+        List<AggregateCapability> caps = aggregateCaps.getAll();
         for (int i = 0; i < caps.size(); i++) {
             CapabilityType capDesc = new CapabilityType();
             ListCapabilitiesResponseTypeSequence listCapResponseTypeSeq = new ListCapabilitiesResponseTypeSequence();
@@ -337,47 +342,15 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         float bw = vlanResvDescr.getBandwidth();
         String description = vlanResvDescr.getDescription();
 
-        String status = "";
-        String message = "";
         long startTime = System.currentTimeMillis()/1000;
         long endTime = System.currentTimeMillis()/1000;
 
         // look for existing sliceVlan
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
-        AggregateP2PVlan p2pvlan = p2pvlans.getBySliceName(sliceId);
-        if (p2pvlan != null && p2pvlan.getVlanTag() == vlan) {
-            status = "failed";
-            message = "GRI=" + p2pvlan.getGlobalReservationId() + ", Status=" + p2pvlan.getStatus() +
-                    "\nNote: You may delete the VLAN and re-create.";
-        } else {// look for slice
-            boolean haveSlice = false;
-            AggregateSlices slices = AggregateState.getAggregateSlices();
-            AggregateSlice slice = slices.getByName(sliceId);
-            if (slice != null) {
-                if (slice.getCreatedTime() > startTime) {
-                    startTime = slice.getCreatedTime();
-                }
-                if (slice.getExpiredTime() > endTime) {
-                    endTime = slice.getExpiredTime();
-                } else {//the slice has already expired
-                    status = "failed";
-                    message = "Slice=" + sliceId + " has already expired. No VLAN created.";
-                }
-            } else {
-                status = "failed";
-                message = "Slice=" + sliceId + " does not exist. No VLAN created.";
-            }
-            if (!status.matches("failed")) {
-                p2pvlan = new AggregateP2PVlan(sliceId, source, destination, vlan, bw, description, startTime, endTime);
-                status = p2pvlan.setupVlan();
-                if (status.equalsIgnoreCase("failed")) {
-                    message = "Error=" + p2pvlan.getErrorMessage();
-                } else {
-                    message = "GRI=" + p2pvlan.getGlobalReservationId();
-                }
-                AggregateState.getAggregateP2PVlans().add(p2pvlan);
-            }
-        }
+        HashMap hm = p2pvlans.createVlan(sliceId, source, destination, vlan, bw, description, startTime, endTime);
+        String status = (String)hm.get("status");
+        String message = (String)hm.get("message");
+
         //form response
         CreateSliceVlanResponseType createSliceVlanResponseType = new CreateSliceVlanResponseType();
         CreateSliceVlanResponse createSliceVlanResponse = new CreateSliceVlanResponse();
@@ -403,8 +376,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         HashMap hm = new HashMap();
         // look for slice
+        // TODO: re-sync IDC and AggregateDB
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
-        AggregateP2PVlan p2pvlan = p2pvlans.getBySliceName(sliceId);
+        AggregateP2PVlan p2pvlan = p2pvlans.getBySliceAndVtag(sliceId, vlan);
         if (p2pvlan != null && p2pvlan.getVlanTag() == vlan) {
             hm = p2pvlan.queryVlan();
         } else {
@@ -434,33 +408,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String sliceId = deleteSliceVlan.getSliceID();
         int vlan = deleteSliceVlan.getVlan();
 
-
-        String status = "";
-        String message = "";
-        // look for slice
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
-        AggregateP2PVlan p2pvlan = p2pvlans.getBySliceName(sliceId);
-        if (p2pvlan != null && p2pvlan.getVlanTag() == vlan) {
-            status = p2pvlan.teardownVlan();
-            if (status.matches("(?i)failed")) {
-                message = "Error=" + p2pvlan.getErrorMessage();
-            } else {
-                message = "GRI=" + p2pvlan.getGlobalReservationId();
-            }
-            try {
-                if (message.equals("")) {
-                    message = "GRI=" + p2pvlan.getGlobalReservationId();
-                }
-                p2pvlan.deleteVlanFromDB();
-                AggregateState.getAggregateP2PVlans().remove(p2pvlan);
-                status = "deleted";
-            } catch (AggregateException ex) {
-                status = "failed";
-                message += "\nAggregateException returned from deleteVlanFromDB: " + ex.getMessage();
-            }
-        } else {
-            throw new AggregateFaultMessage("Unkown SliceVLAN: " + sliceId + Integer.toString(vlan));
-        }
+        HashMap hm = p2pvlans.deleteVlan(sliceId, vlan);
+        String status = (String)hm.get("status");
+        String message = (String)hm.get("message");
 
         //form response
         DeleteSliceVlanResponseType deleteSliceVlanResponseType = new DeleteSliceVlanResponseType();
@@ -482,10 +433,28 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     public net.geni.aggregate.services.api.CreateSliceNetworkResponse CreateSliceNetwork(
             net.geni.aggregate.services.api.CreateSliceNetwork createSliceNetwork8)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#CreateSliceNetwork");
-    }
+        CreateSliceNetworkType createSliceNework = createSliceNetwork8.getCreateSliceNetwork();
+        String sliceId = createSliceNework.getSliceID(); //sliceName
+        RSpecTopologyType rspecTopo = createSliceNework.getRspecNetwork();
+        String rspecXml = rspecTopo.getStatement()[0];
 
+        String status = "normal";
+        String message = "";
+        try {
+            AggregateState.getRspecManager().createRspec(rspecXml);
+        } catch (AggregateException e) {
+            status = "failed:";
+            message = e.getMessage();
+        }
+
+        //form response
+        CreateSliceNetworkResponseType createSliceNetworkResponseType = new CreateSliceNetworkResponseType();
+        CreateSliceNetworkResponse createSliceNetworkResponse = new CreateSliceNetworkResponse();
+        createSliceNetworkResponseType.setStatus(status);
+        createSliceNetworkResponseType.setMessage(message);
+        createSliceNetworkResponse.setCreateSliceNetworkResponse(createSliceNetworkResponseType);
+        return createSliceNetworkResponse;
+    }
 
     /**
      * Auto generated method signature

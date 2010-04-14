@@ -58,6 +58,7 @@ public class AggregateState
     
     // Global states
     private static AggregateGENISkeleton skeletonAPI = null;
+    private static AggregateRspecManager aggregateRspecManager = null;
     private static final long pollInterval = 5000; //miliseconds
 
     public static void init() {
@@ -119,6 +120,14 @@ public class AggregateState
 
     public static AggregateGENISkeleton getSkeletonAPI() {
         return skeletonAPI;
+    }
+
+    public static AggregateRspecManager getRspecManager() {
+        return aggregateRspecManager;
+    }
+
+    public static void setRspecManager(AggregateRspecManager rspecMan) {
+        AggregateState.aggregateRspecManager = rspecMan;
     }
 
     public static long getPollInterval() {
