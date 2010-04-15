@@ -1,7 +1,7 @@
 POST /axis2/services/AggregateGENI/ HTTP/1.1
 User-Agent: wsdlpull/1.23
-Host: 206.196.176.170:8080
-SOAPAction: "QuerySliceVlan"
+Host: 65.114.168.135:8080
+SOAPAction: "UpdateSlice"
 Content-Type: text/xml; charset=UTF-8
 Accept: text/xml;
 Content-Length: CONTENT_LENGTH
@@ -9,9 +9,15 @@ Content-Length: CONTENT_LENGTH
 <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://aggregate.geni.net/services/api/">
 	<SOAP-ENV:Body>
-		<QuerySliceVlan xmlns="http://aggregate.geni.net/services/api/">
-			<sliceID>maxpl_xi_test4</sliceID>
-			<vlan>3033</vlan>
-		</QuerySliceVlan>
+		<UpdateSlice xmlns="http://aggregate.geni.net/services/api/">
+			<sliceID>xi_test4</sliceID>
+			<url>http://www.east.isi.edu</url>
+			<description>Test slice for AM development - Update</description>
+			<user>xyang@east.isi.edu</user>
+			<user>tlehman@east.isi.edu</user>
+			<node>planetlab2.dragon.maxgigapop.net</node>
+			<node>planetlab3.dragon.maxgigapop.net</node>
+			<expires>1271563981</expires>
+		</UpdateSlice>
 	</SOAP-ENV:Body>
 </SOAP-ENV:Envelope>

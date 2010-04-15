@@ -34,7 +34,7 @@ Content-Length: CONTENT_LENGTH
             <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.1001">
                 <deviceType>Ethernet</deviceType>
                 <deviceName>eth1</deviceName>
-                <capacity>1000Mbps</capacity>
+                <capacity>100Mbps</capacity>
                 <ipAddress>10.10.10.1/24</ipAddress>
                 <vlanRange>1001</vlanRange>
                 <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1.1001</peerNetworkInterface>
@@ -42,7 +42,7 @@ Content-Length: CONTENT_LENGTH
             <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.1002">
                 <deviceType>Ethernet</deviceType>
                 <deviceName>eth1</deviceName>
-                <capacity>1000Mbps</capacity>
+                <capacity>100Mbps</capacity>
                 <ipAddress>10.10.20.1/24</ipAddress>
                 <vlanRange>1002</vlanRange>
                 <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.1002</peerNetworkInterface>
@@ -60,7 +60,7 @@ Content-Length: CONTENT_LENGTH
             <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1.1001">
                 <deviceType>Ethernet</deviceType>
                 <deviceName>eth1</deviceName>
-                <capacity>1000Mbps</capacity>
+                <capacity>100Mbps</capacity>
                 <ipAddress>10.10.10.2/24</ipAddress>
                 <vlanRange>1001</vlanRange>
                 <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.1001</peerNetworkInterface>
@@ -68,7 +68,7 @@ Content-Length: CONTENT_LENGTH
             <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1.1003">
                 <deviceType>Ethernet</deviceType>
                 <deviceName>eth1</deviceName>
-                <capacity>1000Mbps</capacity>
+                <capacity>100Mbps</capacity>
                 <ipAddress>10.10.30.1/24</ipAddress>
                 <vlanRange>1003</vlanRange>
                 <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.1003</peerNetworkInterface>
@@ -86,7 +86,7 @@ Content-Length: CONTENT_LENGTH
             <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.1002">
                 <deviceType>Ethernet</deviceType>
                 <deviceName>eth1</deviceName>
-                <capacity>1000Mbps</capacity>
+                <capacity>100Mbps</capacity>
                 <ipAddress>10.10.20.2/24</ipAddress>
                 <vlanRange>1002</vlanRange>
                 <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.1002</peerNetworkInterface>
@@ -94,7 +94,7 @@ Content-Length: CONTENT_LENGTH
             <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.1003">
                 <deviceType>Ethernet</deviceType>
                 <deviceName>eth1</deviceName>
-                <capacity>1000Mbps</capacity>
+                <capacity>100Mbps</capacity>
                 <ipAddress>10.10.30.2/24</ipAddress>
                 <vlanRange>1003</vlanRange>
                 <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1.1003</peerNetworkInterface>

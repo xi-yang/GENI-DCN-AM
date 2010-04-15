@@ -10,7 +10,7 @@ Content-Length: CONTENT_LENGTH
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://aggregate.geni.net/services/api/">
 	<SOAP-ENV:Body>
 		<DeleteSliceVlan xmlns="http://aggregate.geni.net/services/api/">
-			<sliceID>maxpl_xi_test1</sliceID>
+			<sliceID>maxpl_xi_test4</sliceID>
 			<vlan>3033</vlan>
 		</DeleteSliceVlan>
 	</SOAP-ENV:Body>

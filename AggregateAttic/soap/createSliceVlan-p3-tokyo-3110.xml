@@ -14,7 +14,11 @@ Content-Length: CONTENT_LENGTH
 			<vlanReservation>
 				<vlan>3110</vlan>
 				<sourceNode>planetlab3.dragon.maxgigapop.net</sourceNode>
+                                <srcInterface>eth1</srcInterface>
+                                <srcIpAndMask>10.10.11.5/30</srcInterface>
 				<destinationNode>tokyo.dcn.jgn2plus.jp</destinationNode>
+                                <dstInterface>eth1</dstInterface>
+                                <dstIpAndMask>10.10.11.6/30</dstInterface>
 				<bandwidth>100</bandwidth>
 				<description>VLAN3110 between MAX-planetlab3 and JGN2-Tokyo</description>
 			</vlanReservation>
