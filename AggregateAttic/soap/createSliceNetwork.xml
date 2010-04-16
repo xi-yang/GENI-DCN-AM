@@ -15,7 +15,7 @@ Content-Length: CONTENT_LENGTH
 				<statement> 
 <![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
-<rspec id="my-test-max-rspec-slice1">
+<rspec id="xi_rspec_slice1">
     <aggregate>geni.maxgigapop.net</aggregate>
     <CtrlPlane:lifetime id="time-1271533930-1271563981">
         <start>1271174406</start>
