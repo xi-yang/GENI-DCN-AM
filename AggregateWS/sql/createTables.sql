@@ -69,6 +69,7 @@ CREATE TABLE `slices` (
   `creatorId` int(11) NOT NULL,
   `createdTime` bigint(20) default NULL,
   `expiredTime` bigint(20) default NULL,
+  `status` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -91,7 +92,7 @@ CREATE TABLE `p2pvlans` (
   `dstIpAndMask` varchar(255) NOT NULL default '',
   `bandwidth` float NOT NULL,
   `globalReservationId` varchar(255) NOT NULL default '',
-  `status` varchar(20) NOT NULL default '',
+  `status` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -105,7 +106,7 @@ CREATE TABLE `networks` (
   `sliceName` varchar(255) NOT NULL,
   `vlanPool` text NOT NULL default '',
   `ipPool` text NOT NULL default '',
-  `status` varchar(20) NOT NULL default '',
+  `status` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

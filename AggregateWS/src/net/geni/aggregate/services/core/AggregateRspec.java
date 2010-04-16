@@ -17,6 +17,9 @@ import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import net.geni.aggregate.services.api.VlanReservationDescriptorType;
+import net.geni.aggregate.services.api.VlanReservationResultType;
+
 /**
  *
  * @author Xi Yang
@@ -268,5 +271,40 @@ public class AggregateRspec implements java.io.Serializable {
                     + " bandwdith="+Float.toString(((AggregateP2PVlan)rc).getBandwidth()));
             }
         }
+    }
+
+    HashMap retrieveRspecInfo() {
+        HashMap hm = new HashMap();
+        for (AggregateResource rc: resources) {
+            if (rc.getType().equalsIgnoreCase("computeSlice")) {
+                AggregateSlice slice = (AggregateSlice)rc;
+                hm.put("sliceStatus", slice.getStatus());
+            } else if (rc.getType().equalsIgnoreCase("p2pVlan")) {
+                AggregateP2PVlan p2pvlan = (AggregateP2PVlan)rc;
+                Vector<VlanReservationResultType> vlanResults = (Vector<VlanReservationResultType>)hm.get("vlanResults");
+                if (vlanResults == null) {
+                    vlanResults = new Vector<VlanReservationResultType>();
+                    hm.put("vlanResults", vlanResults);
+                }
+                VlanReservationDescriptorType vlanDescr = new VlanReservationDescriptorType();
+                vlanDescr.setDescription(p2pvlan.getDescription());
+                vlanDescr.setSourceNode(p2pvlan.getSource());
+                vlanDescr.setSrcInterface(p2pvlan.getSrcInterface());
+                vlanDescr.setSrcIpAndMask(p2pvlan.getSrcIpAndMask());
+                vlanDescr.setDestinationNode(p2pvlan.getDestination());
+                vlanDescr.setDstInterface(p2pvlan.getDstInterface());
+                vlanDescr.setDstIpAndMask(p2pvlan.getDstIpAndMask());
+                vlanDescr.setBandwidth(p2pvlan.getBandwidth());
+                vlanDescr.setVlan(p2pvlan.getVtag());
+
+                VlanReservationResultType vlanResult = new VlanReservationResultType();
+                vlanResult.setReservation(vlanDescr);
+                vlanResult.setGlobalReservationId(p2pvlan.getGlobalReservationId());
+                vlanResult.setStatus(p2pvlan.getStatus());
+                vlanResult.setMessage(p2pvlan.getErrorMessage());
+                vlanResults.add(vlanResult);
+            }
+        }
+        return hm;
     }
 }

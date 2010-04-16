@@ -20,6 +20,7 @@ public class AggregateSlice extends AggregateResource {
     private int creatorId;
     private long createdTime;
     private long expiredTime;
+    private String status;
 
     public AggregateSlice() {
         sliceName = "";
@@ -31,6 +32,7 @@ public class AggregateSlice extends AggregateResource {
         creatorId = 0;
         createdTime = 0;
         expiredTime = 0;
+        status = "";
     }
 
     public AggregateSlice(String n, int i, String u,  String d, String us, String ns, int cI, long cT, long eT) {
@@ -43,6 +45,7 @@ public class AggregateSlice extends AggregateResource {
         creatorId = cI;
         createdTime = cT;
         expiredTime = eT;
+        status = "";
     }
 
     public String getUrl() {
@@ -116,4 +119,13 @@ public class AggregateSlice extends AggregateResource {
     public void setExpiredTime(long expiredTime) {
         this.expiredTime = expiredTime;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 }

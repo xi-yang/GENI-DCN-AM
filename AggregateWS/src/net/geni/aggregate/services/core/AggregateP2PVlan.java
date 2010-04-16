@@ -138,10 +138,6 @@ public class AggregateP2PVlan extends AggregateResource {
         return destination;
     }
 
-    public String getGri() {
-        return gri;
-    }
-
     public String getSource() {
         return source;
     }
@@ -159,8 +155,8 @@ public class AggregateP2PVlan extends AggregateResource {
         return gri;
     }
 
-    public int getVlanTag() {
-        return vtag;
+    public String getGri() {
+        return gri;
     }
 
     public String getErrorMessage() {

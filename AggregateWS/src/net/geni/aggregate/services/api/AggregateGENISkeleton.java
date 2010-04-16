@@ -390,7 +390,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         // TODO: re-sync IDC and AggregateDB
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
         AggregateP2PVlan p2pvlan = p2pvlans.getBySliceAndVtag(sliceId, vlan);
-        if (p2pvlan != null && p2pvlan.getVlanTag() == vlan) {
+        if (p2pvlan != null && p2pvlan.getVtag() == vlan) {
             hm = p2pvlan.queryVlan();
             p2pvlans.update(p2pvlan);
         } else {
@@ -446,10 +446,11 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             net.geni.aggregate.services.api.CreateSliceNetwork createSliceNetwork8)
             throws AggregateFaultMessage {
         CreateSliceNetworkType createSliceNework = createSliceNetwork8.getCreateSliceNetwork();
-        String sliceId = createSliceNework.getSliceID(); //sliceName
         RSpecTopologyType rspecTopo = createSliceNework.getRspecNetwork();
-        String rspecXml = rspecTopo.getStatement()[0];
-
+        String rspecXml = "";
+        for (String s: rspecTopo.getStatement()) {
+            rspecXml += s;
+        }
         String status = "accepted";
         String message = "";
         try {
@@ -478,8 +479,26 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     public net.geni.aggregate.services.api.DeleteSliceNetworkResponse DeleteSliceNetwork(
             net.geni.aggregate.services.api.DeleteSliceNetwork deleteSliceNetwork4)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#DeleteSliceNetwork");
+        DeleteSliceNetworkType deleteSliceNework = deleteSliceNetwork4.getDeleteSliceNetwork();
+        String rspecName = deleteSliceNework.getRspecID();
+
+        String status = "accepted";
+        String message = "";
+        try {
+            AggregateState.getRspecManager().deleteRspec(rspecName);
+            message = "none";
+        } catch (AggregateException e) {
+            status = "failed:";
+            message = e.getMessage();
+        }
+
+        //form response
+        DeleteSliceNetworkResponseType deleteSliceNetworkResponseType = new DeleteSliceNetworkResponseType();
+        DeleteSliceNetworkResponse deleteSliceNetworkResponse = new DeleteSliceNetworkResponse();
+        deleteSliceNetworkResponseType.setStatus(status);
+        deleteSliceNetworkResponseType.setMessage(message);
+        deleteSliceNetworkResponse.setDeleteSliceNetworkResponse(deleteSliceNetworkResponseType);
+        return deleteSliceNetworkResponse;
     }
 
     /**
@@ -491,8 +510,28 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     public net.geni.aggregate.services.api.QuerySliceNetworkResponse QuerySliceNetwork(
             net.geni.aggregate.services.api.QuerySliceNetwork querySliceNetwork24)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#QuerySliceNetwork");
+        QuerySliceNetworkType querySliceNework = querySliceNetwork24.getQuerySliceNetwork();
+        String rspecName = querySliceNework.getRspecID();
+        HashMap hmRet = null;
+        try {
+            hmRet = AggregateState.getRspecManager().queryRspec(rspecName);
+            if (hmRet == null)
+                throw new AggregateFaultMessage("Unknown Rsepc:"+rspecName);
+        } catch (AggregateException e) {
+            throw new AggregateFaultMessage("Failed to query Rsepc:"+rspecName
+                + " AggregateException: " + e.getMessage());
+        }
+
+        //form response
+        QuerySliceNetworkResponseType querySliceNetworkResponseType = new QuerySliceNetworkResponseType();
+        QuerySliceNetworkResponse querySliceNetworkResponse = new QuerySliceNetworkResponse();
+        querySliceNetworkResponseType.setSliceStatus((String)hmRet.get("sliceStatus"));
+        Vector<VlanReservationResultType> vlanResvResults = (Vector<VlanReservationResultType>)hmRet.get("vlanResults");
+        if (vlanResvResults != null)
+            for (VlanReservationResultType r: vlanResvResults)
+                querySliceNetworkResponseType.addVlanResvResult(r);
+        querySliceNetworkResponse.setQuerySliceNetworkResponse(querySliceNetworkResponseType);
+        return querySliceNetworkResponse;
     }
 
     /**

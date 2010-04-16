@@ -15,10 +15,10 @@ import org.apache.log4j.*;
  */
 public class AggregateRspecManager extends Thread{
     private volatile boolean goRun = true;
+    private volatile Vector<AggregateRspec> aggrRspecs;
+    private volatile Vector<AggregateRspecRunner> rspecThreads;
     private Session session;
     private org.apache.log4j.Logger log;
-    private Vector<AggregateRspec> aggrRspecs;
-    private Vector<AggregateRspecRunner> rspecThreads;
 
     public AggregateRspecManager() {
         super();
@@ -46,9 +46,20 @@ public class AggregateRspecManager extends Thread{
 
     public void run() {
         while (goRun) {
-            //polling aggrRspecs for status change
-            //give instructions to rspecThreads (e.g., terminate on expires)
-
+            //polling rspecThreads and rspecRspecs for status change
+            synchronized(rspecThreads) {
+                for (AggregateRspecRunner rspecThread: rspecThreads) {
+                    AggregateRspec rspec = rspecThread.getRspec();
+                    if (rspec.getStatus().equalsIgnoreCase("terminated")
+                      || rspec.getStatus().equalsIgnoreCase("rollbacked")) {
+                        //rollbacked thread may get diff. treatment?
+                        rspecThreads.remove(rspecThread);
+                        aggrRspecs.remove(rspec);
+                        break;  // go loop again!
+                    }
+                    //give other instructions e.g., terminate on expires
+                }
+            }
         }
     }
 
@@ -58,7 +69,33 @@ public class AggregateRspecManager extends Thread{
         aggrRspecs.add(aggrRspec);
         //aggrRspec.dumpRspec();
         AggregateRspecRunner rspecRunner = new AggregateRspecRunner(aggrRspec);
-        rspecThreads.add(rspecRunner);
+        synchronized(rspecThreads) {
+            rspecThreads.add(rspecRunner);
+        }
         rspecRunner.start();
+    }
+
+    public synchronized void deleteRspec(String rspecName) throws AggregateException {
+        synchronized(rspecThreads) {
+            for (AggregateRspecRunner rspecThread: rspecThreads) {
+                if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecName)) {
+                    rspecThread.setGoRun(false);
+                    rspecThread.interrupt();
+                    return;
+                }
+            }
+        }
+        throw new AggregateException("deleteRspec: Unkown Rspec: "+rspecName);
+    }
+
+    public synchronized HashMap queryRspec(String rspecName) throws AggregateException {
+        synchronized(rspecThreads) {
+            for (AggregateRspec aggrRspec: aggrRspecs) {
+                if (aggrRspec.getRspecName().equalsIgnoreCase(rspecName)) {
+                    return aggrRspec.retrieveRspecInfo();
+                }
+            }
+        }
+        throw new AggregateException("queryRspec: Unkown Rspec: "+rspecName);
     }
 }

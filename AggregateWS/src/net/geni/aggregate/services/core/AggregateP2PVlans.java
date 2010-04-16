@@ -130,7 +130,7 @@ public class AggregateP2PVlans {
         AggregateP2PVlan p2pvlan = this.getBySliceAndVtag(sliceName, vtag);
         String status = "";
         String message = "";
-        if (p2pvlan != null && p2pvlan.getVlanTag() == vtag) {
+        if (p2pvlan != null && p2pvlan.getVtag() == vtag) {
             status = "failed";
             message = "GRI=" + p2pvlan.getGlobalReservationId() + ", Status=" + p2pvlan.getStatus() +
                     "\nNote: You may delete the VLAN and re-create.";
@@ -181,7 +181,7 @@ public class AggregateP2PVlans {
         AggregateP2PVlan p2pvlan = this.getBySliceAndVtag(sliceName, vtag);
         String status = "";
         String message = "";
-        if (p2pvlan != null && p2pvlan.getVlanTag() == vtag) {
+        if (p2pvlan != null && p2pvlan.getVtag() == vtag) {
             status = p2pvlan.teardownVlan();
 
             if (status.matches("(?i)failed")) {

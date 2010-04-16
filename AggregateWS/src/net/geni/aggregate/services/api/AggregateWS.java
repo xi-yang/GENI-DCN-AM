@@ -94,6 +94,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "creatorId INT(11) NOT NULL, " + // user who created the slice
                     "createdTime BIGINT(20), " + // launch timestamp
                     "expiredTime BIGINT(20), " + // expire timestamp
+                    "status varchar(255) NOT NULL default '', " +
                     "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
         } catch(AggregateException ex) {
@@ -115,7 +116,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "dstIpANdMask varchar(255) NOT NULL default '', " +
                     "bandwidth float NOT NULL, " +
                     "globalReservationId varchar(255) NOT NULL default '', " +
-                    "status varchar(20) NOT NULL default '', " +
+                    "status varchar(255) NOT NULL default '', " +
                     "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
         } catch(AggregateException ex) {
@@ -129,7 +130,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "sliceName varchar(255) NOT NULL, " +
                     "vlanPool text NOT NULL, " +
                     "ipPool text NOT NULL, " +
-                    "status varchar(20) NOT NULL default '', " +
+                    "status varchar(255) NOT NULL default '', " +
                     "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
         } catch(AggregateException ex) {
@@ -243,11 +244,11 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     }
 
     public DeleteSliceNetworkResponse DeleteSliceNetwork(net.geni.aggregate.services.api.DeleteSliceNetwork deleteSliceNetwork) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return AggregateState.getSkeletonAPI().DeleteSliceNetwork(deleteSliceNetwork);
     }
 
     public QuerySliceNetworkResponse QuerySliceNetwork(net.geni.aggregate.services.api.QuerySliceNetwork querySliceNetwork) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return AggregateState.getSkeletonAPI().QuerySliceNetwork(querySliceNetwork);
     }
     public GetResourceTopologyResponse  GetResourceTopology(net.geni.aggregate.services.api.GetResourceTopology getResourceTopology) throws AggregateFaultMessage {
         throw new UnsupportedOperationException("Not supported yet.");

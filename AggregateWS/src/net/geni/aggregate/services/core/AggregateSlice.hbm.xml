@@ -11,5 +11,6 @@
       <property column="creatorId" name="creatorId"/>
       <property column="createdTime" name="createdTime"/>
       <property column="expiredTime" name="expiredTime"/>
+      <property column="status" name="status"/>
   </class>
 </hibernate-mapping>
