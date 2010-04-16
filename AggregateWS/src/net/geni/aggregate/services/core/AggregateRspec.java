@@ -32,11 +32,12 @@ public class AggregateRspec implements java.io.Serializable {
     private String status;
 
     public AggregateRspec() {
-        log = Logger.getLogger(this.getClass());
+        log = org.apache.log4j.Logger.getLogger(this.getClass());
         rspecName = "";
         aggregateName = "";
         startTime = endTime = 0;
         resources = new ArrayList<AggregateResource>();
+        status = "";
     }
 
     public int getId() {
@@ -168,11 +169,12 @@ public class AggregateRspec implements java.io.Serializable {
         //TODO ?
     }
 
-    void parseComputeNode(Node compNodeRoot) throws AggregateException {
+    AggregateNode parseComputeNode(Node compNodeRoot) throws AggregateException {
         //assuming planetlab node for now
         String sliverId = compNodeRoot.getAttributes().getNamedItem("id").getTextContent().trim();
         String address = "";
         NodeList children = compNodeRoot.getChildNodes();
+        Vector<AggregateNetworkInterface> myNetIfs = new Vector<AggregateNetworkInterface>();
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             String nodeName = child.getNodeName();
@@ -182,7 +184,8 @@ public class AggregateRspec implements java.io.Serializable {
             } else if (nodeName != null && nodeName.equalsIgnoreCase("computeCapability")) {
                 parseComputeCapability(child);
             } else if (nodeName != null && nodeName.equalsIgnoreCase("networkInterface")) {
-                parseNetworkInterface(child);
+                AggregateNetworkInterface netIf = parseNetworkInterface(child);
+                myNetIfs.add(netIf);
             }
         }
         //get node URN from sliverId
@@ -197,6 +200,9 @@ public class AggregateRspec implements java.io.Serializable {
         aggrNode.setRspecId(this.id); //rspec entry has been created in db
         AggregateState.getAggregateNodes().update(aggrNode);
         resources.add(aggrNode);
+        for (AggregateNetworkInterface netIf: myNetIfs)
+            netIf.setParentNode(aggrNode);
+        return aggrNode;
     }
 
     void parseNetFPGANode(Node netfNodeRoot) throws AggregateException {
@@ -207,7 +213,7 @@ public class AggregateRspec implements java.io.Serializable {
         //TODO ?
     }
 
-    void parseNetworkInterface(Node netIfRoot) throws AggregateException {
+    AggregateNetworkInterface parseNetworkInterface(Node netIfRoot) throws AggregateException {
         //assuming planetlab node and VLAN interface for now
         String netIfId = netIfRoot.getAttributes().getNamedItem("id").getTextContent().trim();
         String deviceName = "";
@@ -245,39 +251,7 @@ public class AggregateRspec implements java.io.Serializable {
         //?aggrNetIf.setReference(aggrNetIf.getId());
         aggrNetIf.setRspecId(this.id);
         resources.add(aggrNetIf);
-    }
-
-    void prepareP2PVlans() throws AggregateException {
-        for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
-                AggregateNetworkInterface netIf1 = (AggregateNetworkInterface)resources.get(i);
-                for (int j = 0; j < resources.size(); j++) {
-                    if (resources.get(j).getType().equalsIgnoreCase("networkInterface")) {
-                        AggregateNetworkInterface netIf2 = (AggregateNetworkInterface)resources.get(j);
-                        int[] ifIndices = netIf1.pairupInterfaces(netIf2);
-                        if (ifIndices[0] != -1 && ifIndices[1] != -1) {
-                            netIf1.getPeerInterfaces().remove(ifIndices[0]);
-                            netIf2.getPeerInterfaces().remove(ifIndices[1]);
-                            String source = AggregateUtils.getUrnField(netIf1.getInterfaceId(), "node");
-                            String destination = AggregateUtils.getUrnField(netIf2.getInterfaceId(), "node");
-                            String description = rspecName + " p2pvlan-" + source + "-" + destination + "-" + netIf1.getVlanTag();
-                            int vtag = Integer.valueOf(netIf1.getVlanTag());
-                            //AggregateUtils.convertBandwdithToMbps(String ...);
-                            float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());
-                            AggregateP2PVlan p2pvlan = new AggregateP2PVlan(this.rspecName,
-                                    source, destination, vtag, bandwidth, description,
-                                    this.startTime, this.endTime);
-                            p2pvlan.setSrcInterface(netIf1.getDeviceName());
-                            p2pvlan.setDstInterface(netIf2.getDeviceName());
-                            p2pvlan.setSrcIpAndMask(netIf1.getIpAddress());
-                            p2pvlan.setDstIpAndMask(netIf2.getIpAddress());
-                            p2pvlan.setType("p2pVlan");
-                            resources.add(p2pvlan);
-                        }
-                    }
-                }
-            }
-        }
+        return aggrNetIf;
     }
 
     void dumpRspec() {

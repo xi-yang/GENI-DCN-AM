@@ -33,7 +33,7 @@ INSERT INTO `slices` VALUES ('maxpl_dynamic_net', 3, 'http://geni.maxgigapop.net
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` VALUES (98, 'TomLehman', 'Tom', 'Lehman', 'tlehman@east.isi.edu', 'Project Leader at USC/ISI East');
-INSERT INTO `users` VALUES (100, 'xyang', 'Xi', 'Yang', 'xyang@east.isi.edu', 'Computer Scientist at USC/ISI East');
+INSERT INTO `users` VALUES (18, 'TomLehman', 'Tom', 'Lehman', 'tlehman@east.isi.edu', 'Project Leader at USC/ISI East');
+INSERT INTO `users` VALUES (19, 'xyang', 'Xi', 'Yang', 'xyang@east.isi.edu', 'Computer Scientist at USC/ISI East');
 
 

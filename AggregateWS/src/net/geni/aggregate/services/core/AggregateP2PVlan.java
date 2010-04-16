@@ -234,7 +234,7 @@ public class AggregateP2PVlan extends AggregateResource {
             errMessage = "OSCARSStub threw exception in createReservation: " +e.getMessage();
         }
 
-        if (!setVlanOnNodes(true)) {
+        if (!status.equalsIgnoreCase("failed") && !setVlanOnNodes(true)) {
             status = "failed";
             errMessage = "setupVlan failed to add VLAN interface on source or destination node";
         }
@@ -269,7 +269,7 @@ public class AggregateP2PVlan extends AggregateResource {
 
         if (!setVlanOnNodes(false)) {
             status = "failed";
-            errMessage = "setupVlan failed to delete VLAN interface on source or destination node";
+            errMessage += "teardownVlan failed to delete VLAN interface on source or destination node";
         }
 
         return status;
@@ -320,10 +320,10 @@ public class AggregateP2PVlan extends AggregateResource {
         }
         else {
             log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ source + " " + srcInterface + "." + Integer.toString(vtag));
-            log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
+            if (add)
+                log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
 
         }
-        //TODO: IP address allocation!
         if (add && !client.ifconfigIp(source, srcInterface + "." + Integer.toString(vtag), srcIpAndMask)) {
             log.error("failed to configure IP address on node " + source + " " + srcInterface + "." + Integer.toString(vtag));
             ret = false;
@@ -335,9 +335,9 @@ public class AggregateP2PVlan extends AggregateResource {
         }
         else {
             log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ destination + " " + dstInterface + "." + Integer.toString(vtag));
-            log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
+            if (add)
+                log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
         }
-        //TODO: IP address allocation!
         if (add && !client.ifconfigIp(destination, dstInterface + "." + Integer.toString(vtag), dstIpAndMask)) {
             log.error("failed to configure IP address on node " + destination + " " + dstInterface + "." + Integer.toString(vtag));
             ret = false;

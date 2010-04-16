@@ -17,7 +17,7 @@ public class AggregateNetworkInterface extends AggregateResource {
     String ipAddress = "";
     String vlanTag = "";
     String capacity = "";
-
+    AggregateNode parentNode = null;
     ArrayList<String> peerInterfaces = null;
 
     public AggregateNetworkInterface() {}
@@ -56,6 +56,14 @@ public class AggregateNetworkInterface extends AggregateResource {
 
     public void setVlanTag(String vlanTag) {
         this.vlanTag = vlanTag;
+    }
+
+    public AggregateNode getParentNode() {
+        return parentNode;
+    }
+
+    public void setParentNode(AggregateNode parentNode) {
+        this.parentNode = parentNode;
     }
 
     public ArrayList<String> getPeerInterfaces() {

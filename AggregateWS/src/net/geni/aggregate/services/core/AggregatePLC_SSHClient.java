@@ -90,14 +90,14 @@ public class AggregatePLC_SSHClient extends AggregateCLIClient {
             if (!login())
                 return false;
         }
-        String ipaddr = ipAndMask.substring(0, ipAndMask.indexOf('/')-1);
+        String ipaddr = ipAndMask.substring(0, ipAndMask.indexOf('/'));
         String netmask = ipAndMask.substring(ipAndMask.indexOf('/')+1, ipAndMask.length());
         if (netmask.matches("^\\d+$")) {
             int suffix = Integer.valueOf(netmask);
             if (suffix < 0 || suffix > 32)
                 return false;
-            int mask = ~(0xffffffff >> suffix);
-            netmask = Integer.toHexString(mask);
+            int mask = ~(0x7fffffff >> (suffix-1));
+            netmask = "0x"+Integer.toHexString(mask);
         }
         String cmd = sshExecPrefix + node + " ifconfig " + iface + " " + ipaddr + " netmask " + netmask;
         this.sendCommand(cmd);

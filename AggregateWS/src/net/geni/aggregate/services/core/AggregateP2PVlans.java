@@ -19,7 +19,7 @@ public class AggregateP2PVlans {
 
     public AggregateP2PVlans() {
         this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-        log = Logger.getLogger(this.getClass());
+        log = org.apache.log4j.Logger.getLogger(this.getClass());
     }
 
     public synchronized boolean add(AggregateP2PVlan p2pv) {
@@ -124,8 +124,9 @@ public class AggregateP2PVlans {
         return null;
     }
 
-    public synchronized HashMap createVlan(String sliceName, String source, String destination, int vtag, float bw, String description, long startTime, long endTime) {
-        HashMap ret = new HashMap();
+    public synchronized AggregateP2PVlan createVlan(String sliceName, String source, String srcInterface,
+            String srcIpAndMask, String destination, String dstInterface, String dstIpAndMask,
+            int vtag, float bw, String description, long startTime, long endTime, HashMap hm) {
         AggregateP2PVlan p2pvlan = this.getBySliceAndVtag(sliceName, vtag);
         String status = "";
         String message = "";
@@ -152,6 +153,10 @@ public class AggregateP2PVlans {
             }
             if (!status.matches("failed")) {
                 p2pvlan = new AggregateP2PVlan(sliceName, source, destination, vtag, bw, description, startTime, endTime);
+                p2pvlan.setSrcInterface(srcInterface);
+                p2pvlan.setSrcIpAndMask(srcIpAndMask);
+                p2pvlan.setDstInterface(dstInterface);
+                p2pvlan.setDstIpAndMask(dstIpAndMask);
                 status = p2pvlan.setupVlan();
                 if (status.equalsIgnoreCase("failed")) {
                     message = "Error=" + p2pvlan.getErrorMessage();
@@ -165,9 +170,9 @@ public class AggregateP2PVlans {
                 }
             }
         }
-        ret.put("status", status);
-        ret.put("message", message);
-        return ret;
+        hm.put("status", status);
+        hm.put("message", message);
+        return p2pvlan;
     }
 
     public synchronized HashMap deleteVlan(String sliceName, int vtag) {

@@ -82,7 +82,7 @@ CREATE TABLE `p2pvlans` (
   `id` int(11) NOT NULL auto_increment,
   `vlanTag` int(11) NOT NULL,
   `sliceName` varchar(255) NOT NULL,
-  `desription` varchar(255) NOT NULL default '',
+  `description` varchar(255) NOT NULL default '',
   `source` varchar(255) NOT NULL default '',
   `destination` varchar(255) NOT NULL default '',
   `srcInterface` varchar(255) NOT NULL default '',

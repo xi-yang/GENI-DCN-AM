@@ -23,7 +23,7 @@ import net.geni.aggregate.services.api.AggregateWS;
 public class AggregateState
 {
     //Logger
-    public static Logger log = Logger.getLogger("net.geni.aggregate");
+    public static Logger log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
 
     //Properties
     private static Properties aggregateProps = new Properties();

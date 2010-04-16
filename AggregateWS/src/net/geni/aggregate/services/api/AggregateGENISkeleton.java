@@ -49,13 +49,14 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String[] nodes = createSlice.getNode();
 
         AggregateSlices slices = AggregateState.getAggregateSlices();
-        int ret = slices.createSlice(sliceName, url, description, user, nodes);
+        AggregateSlice slice = slices.createSlice(sliceName, url, description, user, nodes);
+        String status = (slice == null?"failed":"successful");
 
         //form response
         CreateSliceResponseType createSliceResponseType = new CreateSliceResponseType();
         CreateSliceResponse createSliceResponse = new CreateSliceResponse();
         createSliceResponseType.setSliceID(sliceName);
-        createSliceResponseType.setStatus("retCode="+Integer.toString(ret));
+        createSliceResponseType.setStatus(status);
         createSliceResponse.setCreateSliceResponse(createSliceResponseType);
         return createSliceResponse;
     }
@@ -128,7 +129,11 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throws AggregateFaultMessage {
         QuerySliceType querySlice = querySlice6.getQuerySlice();
         String[] sliceNames = querySlice.getSliceID();
-
+        for (String sliceName: sliceNames) {
+            if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
+                sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+            }
+        }
         //TODO: re-sync PLC and Aggregate DB (then query directly from AggregateDB)
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         Vector<HashMap> hmSlices = new Vector<HashMap>();
@@ -337,17 +342,23 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String sliceId = createSliceVlan.getSliceID();
         VlanReservationDescriptorType vlanResvDescr = createSliceVlan.getVlanReservation();
         String source = vlanResvDescr.getSourceNode();
+        String srcInterface = vlanResvDescr.getSrcInterface();
+        String srcIpAndMask = vlanResvDescr.getSrcIpAndMask();
         String destination = vlanResvDescr.getDestinationNode();
+        String dstInterface = vlanResvDescr.getDstInterface();
+        String dstIpAndMask = vlanResvDescr.getDstIpAndMask();
         int vlan = vlanResvDescr.getVlan();
         float bw = vlanResvDescr.getBandwidth();
+        
         String description = vlanResvDescr.getDescription();
-
         long startTime = System.currentTimeMillis()/1000;
         long endTime = System.currentTimeMillis()/1000;
 
         // look for existing sliceVlan
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
-        HashMap hm = p2pvlans.createVlan(sliceId, source, destination, vlan, bw, description, startTime, endTime);
+        HashMap hm = new HashMap<String, String>();
+        AggregateP2PVlan p2pvlan = p2pvlans.createVlan(sliceId, source, srcInterface, srcIpAndMask,
+            destination, dstInterface, dstIpAndMask, vlan, bw, description, startTime, endTime, hm);
         String status = (String)hm.get("status");
         String message = (String)hm.get("message");
 
@@ -381,6 +392,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         AggregateP2PVlan p2pvlan = p2pvlans.getBySliceAndVtag(sliceId, vlan);
         if (p2pvlan != null && p2pvlan.getVlanTag() == vlan) {
             hm = p2pvlan.queryVlan();
+            p2pvlans.update(p2pvlan);
         } else {
             throw new AggregateFaultMessage("Unkown SliceVLAN: " + sliceId + Integer.toString(vlan));
         }
@@ -438,10 +450,11 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         RSpecTopologyType rspecTopo = createSliceNework.getRspecNetwork();
         String rspecXml = rspecTopo.getStatement()[0];
 
-        String status = "normal";
+        String status = "accepted";
         String message = "";
         try {
             AggregateState.getRspecManager().createRspec(rspecXml);
+            message = "none";
         } catch (AggregateException e) {
             status = "failed:";
             message = e.getMessage();

@@ -24,7 +24,7 @@ import org.apache.axis2.context.ServiceContext;
  */
 public class AggregateWS implements AggregateGENISkeletonInterface
 {
-    public static Logger log = Logger.getLogger("net.geni.aggregate");
+    public static Logger log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
 
     private Thread aggregateServerThread;
     private AggregateWSRunner aggregateWSRunner;

@@ -18,7 +18,7 @@ public class AggregateCapabilities {
 
     public AggregateCapabilities() {
         this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-        log = Logger.getLogger(this.getClass());
+        log = org.apache.log4j.Logger.getLogger(this.getClass());
     }
 
     public synchronized boolean add(AggregateCapability c) {

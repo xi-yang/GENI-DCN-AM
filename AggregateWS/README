@@ -76,6 +76,29 @@ For users who deploy from scrach
 
    update <ramp:user> value to 'yourkeyname' in $AGGREGATE_HOME/AggregateAttic/conf/repo/rampConfig.xml
 
+-- configure authentication for PlanetLab PLC
+   configure aggregate.properties for PlanetLab PLCAPI connection following this example
+
+       aggregate.plc.url=https://max-myplc.dragon.maxgigapop.net/PLCAPI/
+       aggregate.plc.pi=PI_user_name(email)
+       aggregate.plc.pass=PI_user_password
+   
+   configure aggregate.properties for PlanetLab Server SSH connection following this example
+
+       aggregate.plc.ssh.host=max-myplc.dragon.maxgigapop.net
+       aggregate.plc.ssh.login=root
+       aggregate.plc.ssh.port=22
+       aggregate.plc.ssh.keyfile=/usr/local/geni-aggregate/AggregateAttic/conf/repo/plc-ssh.pkey
+       aggregate.plc.ssh.keypass=
+       aggregate.plc.ssh.execprefix="ssh -i /etc/planetlab/root_ssh_key.rsa "
+
+   Generate an SSH keypair.
+   Place the private key under the directory as specified by 'aggregate.plc.ssh.keyfile'.
+   Install the public key to the PLC server either under 'root' or a password-less sudoer, whose
+   name is specified by 'aggregate.plc.ssh.login'. Set keypass if needed.
+   *Note: root_ssh_key.rsa in the 'aggregate.plc.ssh.execprefix' specifies the SSH key that the PLC 
+   server uses to connect to PlanetLab nodes. Update its name and location if needed.
+
 4. Start GENI AggregateWS Services
 
 -- cd $CATALINA_HOME/bin

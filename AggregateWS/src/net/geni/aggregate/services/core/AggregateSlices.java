@@ -19,7 +19,7 @@ public class AggregateSlices {
 
     public AggregateSlices() {
         this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-        log = Logger.getLogger(this.getClass());
+        log = org.apache.log4j.Logger.getLogger(this.getClass());
     }
 
     public synchronized boolean add(AggregateSlice s) {
@@ -131,12 +131,12 @@ public class AggregateSlices {
         return null;
     }
 
-    public synchronized int createSlice(String sliceName, String url, String description, String user, String[] nodes) {
+    public synchronized AggregateSlice createSlice(String sliceName, String url, String description, String user, String[] nodes) {
         //create slice wit PLC
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         int ret = plcClient.createSlice(sliceName, url, description, user, nodes);
+        AggregateSlice slice = null;
 
-        
         if (ret == 1) { //slice successfully craeted with PLC
             String[] names = new String[1];
             names[0] = sliceName;
@@ -148,12 +148,12 @@ public class AggregateSlices {
                 int creator_person_id = Integer.parseInt((String)hmV.get(0).get("creator_person_id"));
                 long created = Integer.parseInt((String)hmV.get(0).get("created"));
                 long expires = Integer.parseInt((String)hmV.get(0).get("expires"));
-                AggregateSlice slice = new AggregateSlice(sliceName, slice_id, url,
+                slice = new AggregateSlice(sliceName, slice_id, url,
                         description, user, AggregateUtils.makeArrayString(nodes), creator_person_id, created, expires);
                 this.add(slice);
             }
         }
-        return ret;
+        return slice;
     }
 
     public synchronized int deleteSlice(String sliceName) {

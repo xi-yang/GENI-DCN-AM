@@ -18,12 +18,14 @@ public class AggregateRspecManager extends Thread{
     private Session session;
     private org.apache.log4j.Logger log;
     private Vector<AggregateRspec> aggrRspecs;
-    //private Vector<AggregateRspecRunnder> rspecThreads;
+    private Vector<AggregateRspecRunner> rspecThreads;
 
     public AggregateRspecManager() {
+        super();
+        log = org.apache.log4j.Logger.getLogger(this.getClass());
         this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-        log = Logger.getLogger(this.getClass());
         aggrRspecs = new Vector<AggregateRspec>();
+        rspecThreads = new Vector<AggregateRspecRunner>();
     }
 
     public Vector<AggregateRspec> getAggrRspecs() {
@@ -45,26 +47,18 @@ public class AggregateRspecManager extends Thread{
     public void run() {
         while (goRun) {
             //polling aggrRspecs for status change
-            //give instructions to rspecThreads
+            //give instructions to rspecThreads (e.g., terminate on expires)
 
-            //temp test code
-            System.out.println("RspecMan running!");
-            try {
-                this.sleep(30000);//30 secs
-            } catch (Exception e) {
-                return;
-            }
         }
     }
 
     public synchronized void createRspec(String rspecXML) throws AggregateException {
         AggregateRspec aggrRspec = new AggregateRspec();
         aggrRspec.parseRspec(rspecXML);
-        aggrRspec.prepareP2PVlans();
         aggrRspecs.add(aggrRspec);
-        aggrRspec.dumpRspec();
-        //create AggregateRspecRunner
-        //pass aggrRspec to AggregateRspecRunner
-        //start  AggregateRspecRunner thread
+        //aggrRspec.dumpRspec();
+        AggregateRspecRunner rspecRunner = new AggregateRspecRunner(aggrRspec);
+        rspecThreads.add(rspecRunner);
+        rspecRunner.start();
     }
 }

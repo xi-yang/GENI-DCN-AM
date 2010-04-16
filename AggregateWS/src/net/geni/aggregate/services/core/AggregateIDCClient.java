@@ -44,7 +44,7 @@ public class AggregateIDCClient {
         idcURL = url;
         idcRepo = repo;
         gri = new GlobalReservationId();
-        log = Logger.getLogger("net.geni.aggregate");
+        log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
     }
     /**
      * get an IDCCLient instance

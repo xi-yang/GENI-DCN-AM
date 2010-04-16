@@ -28,7 +28,7 @@ public class AggregateCLIClient {
     protected String buffer;
     protected Logger log;
     private int timeout;
-    private final int DEFAULT_TIMEOUT = 15000; //miliseconds == 15 seconds
+    private final int DEFAULT_TIMEOUT = 30000; //miliseconds == 30 seconds
 
     private AggregateCLIClient() {}
 
@@ -58,7 +58,7 @@ public class AggregateCLIClient {
     }
 
     public boolean login(String... argv) {
-        log = Logger.getLogger(this.getClass());
+        log = org.apache.log4j.Logger.getLogger(this.getClass());
         try {
             proc = new ProcessBuilder(argv).start();
             in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -204,7 +204,7 @@ public class AggregateCLIClient {
         }
 
         public void run() {
-            log = Logger.getLogger("net.geni.aggregate");
+            log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
             String line = "";
             char c;
             int ret = 0;
