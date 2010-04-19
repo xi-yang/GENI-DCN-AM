@@ -347,7 +347,6 @@
 			<xs:element name="CreateSliceNetwork" type="tns:CreateSliceNetworkType"/>
 			<xs:complexType name="CreateSliceNetworkType">
 				<xs:sequence>
-					<xs:element name="sliceID" type="xs:string"/>
 					<xs:element name="rspecNetwork" type="tns:RSpecTopologyType"/>
 				</xs:sequence>
 			</xs:complexType>
@@ -365,7 +364,7 @@
 			<xs:element name="DeleteSliceNetwork" type="tns:DeleteSliceNetworkType"/>
 			<xs:complexType name="DeleteSliceNetworkType">
 				<xs:sequence>
-					<xs:element name="sliceID" type="xs:string"/>
+					<xs:element name="rspecID" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -373,8 +372,8 @@
 			<xs:element name="DeleteSliceNetworkResponse" type="tns:DeleteSliceNetworkResponseType"/>
 			<xs:complexType name="DeleteSliceNetworkResponseType">
 				<xs:sequence>
-					<xs:element name="sliceStatus" type="xs:string"/>
-					<xs:element name="vlanResvResult" type="tns:VlanReservationResultType" maxOccurs="unbounded"/>
+					<xs:element name="status" type="xs:string"/>
+					<xs:element name="message" type="xs:string" minOccurs="0"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -382,7 +381,7 @@
 			<xs:element name="QuerySliceNetwork" type="tns:QuerySliceNetworkType"/>
 			<xs:complexType name="QuerySliceNetworkType">
 				<xs:sequence>
-					<xs:element name="sliceID" type="xs:string"/>
+					<xs:element name="rspecID" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
