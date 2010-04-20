@@ -4,7 +4,7 @@
     targetNamespace="http://geni.maxgigapop.net/aggregate/rspec/20100412/" 
     elementFormDefault="qualified" 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-    xmlns:MaxRspec="http://www.maxgigapop.net/sfa/rspec/20100412/"
+    xmlns:MaxRspec="http://geni.maxgigapop.net/aggregate/rspec/20100412/"
     xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20080828/">
   
 
@@ -29,13 +29,13 @@
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:topology"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:computeResource"/>
     </xs:sequence>
-    <xs:attribute name="name" use="required" type="xs:string"/>
+    <xs:attribute name="id" use="required" type="xs:string"/>
   </xs:complexType>
   
   <!-- Compute Resource -->
   <xs:element name="computeResource" type="MaxRspec:ComputeResourceContent"/>
 
-  <xs:element name="ComputeResourceContent">
+  <xs:complexType name="ComputeResourceContent">
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:computeNode"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:planetlabNodeSliver"/>
@@ -52,7 +52,7 @@
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
         <xs:element minOccurs="0" name="address" type="xs:string" />
-        <xs:element minOccurs="0" name="computeCapacity" type="MaxRspec:computeCapacityContent" />
+        <xs:element minOccurs="0" name="computeCapacity" type="MaxRspec:ComputeCapacityContent" />
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:networkInterface"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>
@@ -119,7 +119,7 @@
   <!-- NetFPGA specific -->
   <xs:element name="netFpgaCapacity" type="MaxRspec:NetFpgaCapacityContent" />
 
-  <xs:complexType name="netFpgaCapacityContent">
+  <xs:complexType name="NetFpgaCapacityContent">
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" name="cardId" type="xs:string"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" name="portId" type="xs:string"/>
