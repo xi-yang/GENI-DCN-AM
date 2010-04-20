@@ -194,7 +194,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         
         // PLC polling and DB sync thread
         AggregateSlicesPoller aggregateSlicesPoller = new AggregateSlicesPoller();
-        aggregateSlicesPoller.setPollInterval(AggregateState.getPollInterval());
+        //aggregateSlicesPoller.setPollInterval(AggregateState.getPollInterval());
         aggregateSlicesPoller.start();
         AggregateState.setSlicesPoller(aggregateSlicesPoller);
 

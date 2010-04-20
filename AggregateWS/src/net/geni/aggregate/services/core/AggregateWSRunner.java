@@ -33,8 +33,8 @@ public class AggregateWSRunner implements Runnable {
         while(axisRunning) {
             try {
 
-
                 Thread.sleep(AggregateState.getPollInterval());
+
             } catch(InterruptedException ex) {
                 //AggregateState.logger.log(Level.INFO, "user interrupt: terminating ...", ex);
                 axisRunning = false;
