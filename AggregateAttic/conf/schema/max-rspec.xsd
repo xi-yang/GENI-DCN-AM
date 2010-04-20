@@ -14,7 +14,7 @@
     </xs:documentation>
   </xs:annotation>
     
-  <xsd:import namespace="http://ogf.org/schema/network/topology/ctrlPlane/20080828/"
+  <xs:import namespace="http://ogf.org/schema/network/topology/ctrlPlane/20080828/"
               schemaLocation="nmtopo-ctrlp.xsd"/>
 
   <!-- Max Rspec -->
@@ -24,6 +24,7 @@
     <xs:sequence>
       <xs:element name="aggregate" type="xs:string"/>
       <xs:element name="description" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="user" type="xs:string"/>
       <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:topology"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:computeResource"/>
