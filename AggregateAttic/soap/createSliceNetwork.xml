@@ -10,44 +10,18 @@ Content-Length: CONTENT_LENGTH
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://aggregate.geni.net/services/api/">
 	<SOAP-ENV:Body>
 		<CreateSliceNetwork xmlns="http://aggregate.geni.net/services/api/">
-			<sliceID>maxpl_xi_rspec1</sliceID>
 			<rspecNetwork>
 				<statement> 
 <![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <rspec id="xi_rspec_slice1">
     <aggregate>geni.maxgigapop.net</aggregate>
+    <description>Xi's test rspec</description>
     <CtrlPlane:lifetime id="time-1271533930-1271563981">
         <start>1271174406</start>
         <end>1271563981</end>
     </CtrlPlane:lifetime>
     <computeResource id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1">
-        <planetlabNodeSliver id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2">
-            <address>206.196.176.133</address>
-            <computeCapacity>
-                <cpuType>generic</cpuType>
-                <cpuSpeed>2.0GHz</cpuSpeed>
-                <numCpuCores>1</numCpuCores>
-                <memorySize>256MB</memorySize>
-                <diskSize>16GB</diskSize>
-            </computeCapacity>
-            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.1001">
-                <deviceType>Ethernet</deviceType>
-                <deviceName>eth1</deviceName>
-                <capacity>100Mbps</capacity>
-                <ipAddress>10.10.10.1/24</ipAddress>
-                <vlanRange>1001</vlanRange>
-                <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1.1001</peerNetworkInterface>
-            </networkInterface>
-            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.1002">
-                <deviceType>Ethernet</deviceType>
-                <deviceName>eth1</deviceName>
-                <capacity>100Mbps</capacity>
-                <ipAddress>10.10.20.1/24</ipAddress>
-                <vlanRange>1002</vlanRange>
-                <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.1002</peerNetworkInterface>
-            </networkInterface>
-        </planetlabNodeSliver>
         <planetlabNodeSliver id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3">
             <address>206.196.176.55</address>
             <computeCapacity>
@@ -65,13 +39,13 @@ Content-Length: CONTENT_LENGTH
                 <vlanRange>1001</vlanRange>
                 <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.1001</peerNetworkInterface>
             </networkInterface>
-            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1.1003">
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1.107">
                 <deviceType>Ethernet</deviceType>
                 <deviceName>eth1</deviceName>
                 <capacity>100Mbps</capacity>
                 <ipAddress>10.10.30.1/24</ipAddress>
-                <vlanRange>1003</vlanRange>
-                <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.1003</peerNetworkInterface>
+                <vlanRange>107</vlanRange>
+                <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.107</peerNetworkInterface>
             </networkInterface>
         </planetlabNodeSliver>
         <planetlabNodeSliver id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5">
@@ -83,21 +57,47 @@ Content-Length: CONTENT_LENGTH
                 <memorySize>256MB</memorySize>
                 <diskSize>16GB</diskSize>
             </computeCapacity>
-            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.1002">
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.312">
                 <deviceType>Ethernet</deviceType>
                 <deviceName>eth1</deviceName>
                 <capacity>100Mbps</capacity>
                 <ipAddress>10.10.20.2/24</ipAddress>
-                <vlanRange>1002</vlanRange>
-                <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.1002</peerNetworkInterface>
+                <vlanRange>312</vlanRange>
+                <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.312</peerNetworkInterface>
             </networkInterface>
-            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.1003">
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.107">
                 <deviceType>Ethernet</deviceType>
                 <deviceName>eth1</deviceName>
                 <capacity>100Mbps</capacity>
                 <ipAddress>10.10.30.2/24</ipAddress>
-                <vlanRange>1003</vlanRange>
-                <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1.1003</peerNetworkInterface>
+                <vlanRange>107</vlanRange>
+                <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1.107</peerNetworkInterface>
+            </networkInterface>
+        </planetlabNodeSliver>
+        <planetlabNodeSliver id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2">
+            <address>206.196.176.133</address>
+            <computeCapacity>
+                <cpuType>generic</cpuType>
+                <cpuSpeed>2.0GHz</cpuSpeed>
+                <numCpuCores>1</numCpuCores>
+                <memorySize>256MB</memorySize>
+                <diskSize>16GB</diskSize>
+            </computeCapacity>
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.1001">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>100Mbps</capacity>
+                <ipAddress>10.10.10.1/24</ipAddress>
+                <vlanRange>1001</vlanRange>
+                <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1.1001</peerNetworkInterface>
+            </networkInterface>
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1.312">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>100Mbps</capacity>
+                <ipAddress>10.10.20.1/24</ipAddress>
+                <vlanRange>312</vlanRange>
+                <peerNetworkInterface>urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1.312</peerNetworkInterface>
             </networkInterface>
         </planetlabNodeSliver>
     </computeResource>

@@ -23,6 +23,7 @@
   <xs:complexType name="MaxRspecContent">
     <xs:sequence>
       <xs:element name="aggregate" type="xs:string"/>
+      <xs:element name="description" type="xs:string"/>
       <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:topology"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:computeResource"/>
