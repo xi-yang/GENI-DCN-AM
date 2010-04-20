@@ -50,11 +50,34 @@ public class AggregateRspecManager extends Thread{
             synchronized(rspecThreads) {
                 for (AggregateRspecRunner rspecThread: rspecThreads) {
                     AggregateRspec rspec = rspecThread.getRspec();
-                    if (rspec.getStatus().equalsIgnoreCase("terminated")
+                    if (rspec.getStatus().equalsIgnoreCase("working")) {
+                        //rspec in working state, increased to 15 minutes poll
+                        if (rspecThread.getPollInterval() < 900000)
+                            rspecThread.setPollInterval(900000);
+                    } else if (rspec.getStatus().equalsIgnoreCase("terminated")
                       || rspec.getStatus().equalsIgnoreCase("rollbacked")) {
                         //rollbacked thread may get diff. treatment?
                         rspecThreads.remove(rspecThread);
                         aggrRspecs.remove(rspec);
+                        try {
+                            if (!session.isOpen()) {
+                                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                            }
+                            org.hibernate.Transaction tx = session.beginTransaction();
+                            session.delete(rspec);
+                            session.flush();
+                            tx.commit();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        //delete rspec resources to DB
+                        for (AggregateResource rc : rspec.getResources()) {
+                            try {
+                                rc.exitResouceTable();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                         break;  // go loop again!
                     }
                     //give other instructions e.g., terminate on expires
@@ -63,25 +86,46 @@ public class AggregateRspecManager extends Thread{
         }
     }
 
-    public synchronized void createRspec(String rspecXML) throws AggregateException {
+    public synchronized String createRspec(String rspecXML) throws AggregateException {
         AggregateRspec aggrRspec = new AggregateRspec();
         aggrRspec.parseRspec(rspecXML);
+        aggrRspec.setStatus("starting");
+        synchronized (session) {
+            if (!(aggrRspec.getRspecName().isEmpty() || aggrRspec.getAggregateName().isEmpty()
+              || aggrRspec.getResources().size() == 0)) {
+                try {
+                    if (!session.isOpen()) {
+                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    }
+                    org.hibernate.Transaction tx = session.beginTransaction();
+                    session.save(aggrRspec);
+                    session.flush();
+                    tx.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "failed";
+                }
+            } else {
+                throw new IllegalArgumentException("Rspec needs to have rspecName, aggregateName and at least one resource item.");
+            }
+        }
         aggrRspecs.add(aggrRspec);
         //aggrRspec.dumpRspec();
-        AggregateRspecRunner rspecRunner = new AggregateRspecRunner(aggrRspec);
+        AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
         synchronized(rspecThreads) {
             rspecThreads.add(rspecRunner);
         }
         rspecRunner.start();
+        return aggrRspec.getStatus();
     }
 
-    public synchronized void deleteRspec(String rspecName) throws AggregateException {
+    public synchronized String deleteRspec(String rspecName) throws AggregateException {
         synchronized(rspecThreads) {
             for (AggregateRspecRunner rspecThread: rspecThreads) {
                 if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecName)) {
                     rspecThread.setGoRun(false);
                     rspecThread.interrupt();
-                    return;
+                    return "stopping";
                 }
             }
         }
@@ -98,4 +142,28 @@ public class AggregateRspecManager extends Thread{
         }
         throw new AggregateException("queryRspec: Unkown Rspec: "+rspecName);
     }
+
+
+    public synchronized void updateRspec(AggregateRspec aggrRspec) {
+        synchronized (session) {
+            if (!(aggrRspec.getRspecName().isEmpty() || aggrRspec.getAggregateName().isEmpty()
+              || aggrRspec.getResources().size() == 0)) {
+                try {
+                    if (!session.isOpen()) {
+                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    }
+                    org.hibernate.Transaction tx = session.beginTransaction();
+                    session.update(aggrRspec);
+                    session.flush();
+                    tx.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("AggregateRspecManager.updateRspec (status=" + aggrRspec.getStatus()+") Exception:" + e.getMessage());
+                }
+            } else {
+                throw new IllegalArgumentException("Rspec needs to have rspecName, aggregateName and at least one resource item.");
+            }
+        }
+    }
+
 }

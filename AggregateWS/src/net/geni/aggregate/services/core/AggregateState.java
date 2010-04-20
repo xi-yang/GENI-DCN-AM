@@ -30,6 +30,7 @@ public class AggregateState
     private static String dbPwd;
     private static String dbUser;
     private static String resourcesTab = "resources";
+    private static String rspecsTab = "rspecs";
     private static String capsTab = "capabilities";
     private static String nodesTab = "nodes";
     private static String slicesTab = "slices";
@@ -154,16 +155,20 @@ public class AggregateState
         return aggregateUsers;
     }
 
-    public static String getResourcesTab() {
-        return resourcesTab;
-    }
-
     public static String getDbPwd() {
         return dbPwd;
     }
 
     public static String getDbUser() {
         return dbUser;
+    }
+
+    public static String getResourcesTab() {
+        return resourcesTab;
+    }
+
+    public static String getRspecsTab() {
+        return rspecsTab;
     }
 
     public static String getCapsTab() {

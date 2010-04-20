@@ -8,6 +8,7 @@ package net.geni.aggregate.services.core;
 import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
+import org.hibernate.*;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -26,21 +27,18 @@ import net.geni.aggregate.services.api.VlanReservationResultType;
  */
 public class AggregateRspec implements java.io.Serializable {
     private org.apache.log4j.Logger log;
-    private int id;
-    private String rspecName;
-    private String aggregateName;
-    private long startTime;
-    private long endTime;
+    private int id = 0 ;
+    private String rspecName = "";
+    private String aggregateName = "";
+    private String description = "";
+    private long startTime = 0;
+    private long endTime = 0;
     private List<AggregateResource> resources;
-    private String status;
+    private String status = "";
 
     public AggregateRspec() {
         log = org.apache.log4j.Logger.getLogger(this.getClass());
-        rspecName = "";
-        aggregateName = "";
-        startTime = endTime = 0;
         resources = new ArrayList<AggregateResource>();
-        status = "";
     }
 
     public int getId() {
@@ -51,12 +49,37 @@ public class AggregateRspec implements java.io.Serializable {
         this.id = id;
     }
 
+    public void setAggregateName(String aggregateName) {
+        this.aggregateName = aggregateName;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setRspecName(String rspecName) {
+        this.rspecName = rspecName;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+
     public String getAggregateName() {
         return aggregateName;
     }
 
     public String getRspecName() {
         return rspecName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public long getStartTime() {
@@ -109,6 +132,9 @@ public class AggregateRspec implements java.io.Serializable {
                        nodeName = child.getNodeName();
                        if (nodeName != null && nodeName.equalsIgnoreCase("aggregate")) {
                            aggregateName = child.getTextContent().trim();
+                       }
+                       else if (nodeName != null && nodeName.equalsIgnoreCase("description")) {
+                           description = child.getTextContent().trim();
                        }
                        else if (nodeName != null && nodeName.equalsIgnoreCase("CtrlPlane:lifetime")) {
                            parseLifetime(child);
@@ -201,7 +227,7 @@ public class AggregateRspec implements java.io.Serializable {
         aggrNode.setType(compNodeRoot.getNodeName());
         aggrNode.setReference(aggrNode.getId());
         aggrNode.setRspecId(this.id); //rspec entry has been created in db
-        AggregateState.getAggregateNodes().update(aggrNode);
+        //AggregateState.getAggregateNodes().update(aggrNode);
         resources.add(aggrNode);
         for (AggregateNetworkInterface netIf: myNetIfs)
             netIf.setParentNode(aggrNode);
@@ -251,7 +277,10 @@ public class AggregateRspec implements java.io.Serializable {
         aggrNetIf.setCapacity(capacity);
         aggrNetIf.setPeerInterfaces(peerNetIfs);
         aggrNetIf.setType(netIfRoot.getNodeName());
-        //?aggrNetIf.setReference(aggrNetIf.getId());
+        //TODO: add AggregateNetworkInterfaces collection class
+        //      add the aggrNetIf into DB (interfaces table)
+        //      --> delete the aggrNetIf from DB when rspec is terminated?
+        aggrNetIf.setReference(aggrNetIf.getId());
         aggrNetIf.setRspecId(this.id);
         resources.add(aggrNetIf);
         return aggrNetIf;
@@ -307,4 +336,5 @@ public class AggregateRspec implements java.io.Serializable {
         }
         return hm;
     }
+
 }

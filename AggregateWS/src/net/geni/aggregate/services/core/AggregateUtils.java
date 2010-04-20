@@ -29,7 +29,6 @@ public class AggregateUtils
             q.executeUpdate();
             tx.commit();
         } catch (Exception e) {
-            String msg = "nimbis DB off line";
             throw new AggregateException(e, AggregateException.FATAL);
         }
     }

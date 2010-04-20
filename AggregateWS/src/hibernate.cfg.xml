@@ -11,6 +11,6 @@
     <mapping resource="net/geni/aggregate/services/core/AggregateNode.hbm.xml"/>
     <mapping resource="net/geni/aggregate/services/core/AggregateP2PVlan.hbm.xml"/>
     <mapping resource="net/geni/aggregate/services/core/AggregateUser.hbm.xml"/>
-    <mapping resource="net/geni/aggregate/services/core/AggregateResource.hbm.xml"/>
+    <mapping resource="net/geni/aggregate/services/core/AggregateRspec.hbm.xml"/>
   </session-factory>
 </hibernate-configuration>

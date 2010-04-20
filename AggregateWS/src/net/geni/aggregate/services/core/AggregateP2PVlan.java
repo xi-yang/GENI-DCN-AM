@@ -280,7 +280,7 @@ public class AggregateP2PVlan extends AggregateResource {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         HashMap hmRet = new HashMap();
-        status = "failed";
+        status = "unknown"; //?
         hmRet.put("status", status);
         try {
             hmRet = apiClient.queryReservation(gri);
@@ -310,6 +310,9 @@ public class AggregateP2PVlan extends AggregateResource {
         }
 
         boolean ret = true;
+
+        //TODO: verify the devices exist for srcInterface and dstInterface
+        
         //add/delete source vtag interface
         if (client.vconfigVlan(source, srcInterface, Integer.toString(vtag), add)) {
             log.info((add?"added":"deleted") + " vlan interface to node "+ source + "on "+ srcInterface + "."  + Integer.toString(vtag));

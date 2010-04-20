@@ -14,119 +14,144 @@ import org.apache.log4j.*;
  * @author Xi Yang
  */
 public class AggregateSlices {
-    private Session session;
+    private static Session session;
     private org.apache.log4j.Logger log;
 
     public AggregateSlices() {
-        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
         log = org.apache.log4j.Logger.getLogger(this.getClass());
     }
 
-    public synchronized boolean add(AggregateSlice s) {
-        if(!((s.getSliceName() == null) || (s.getCreatorId() == 0) || (s.getUrl() == null) || (s.getDescription() == null)
-               || (s.getCreatedTime() == 0) || (s.getExpiredTime() == 0) )) {
+    public boolean add(AggregateSlice s) {
+        synchronized (session) {
+            if (!((s.getSliceName() == null) || (s.getCreatorId() == 0) || (s.getUrl() == null) || (s.getDescription() == null) || (s.getCreatedTime() == 0) || (s.getExpiredTime() == 0))) {
+                try {
+                    if (!session.isOpen()) {
+                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    }
+                    org.hibernate.Transaction tx = session.beginTransaction();
+                    session.save(s);
+                    session.flush();
+                    tx.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            } else {
+                throw new IllegalArgumentException("all the fields in the Slice object must be specified");
+            }
+        }
+        return true;
+    }
+
+    public boolean delete(String name) {
+        synchronized (session) {
             try {
-                if (!session.isOpen())
+                if (!session.isOpen()) {
                     this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                }
                 org.hibernate.Transaction tx = session.beginTransaction();
-                session.save(s);
+                AggregateSlice s = this.getByName(name);
+                if (s == null) {
+                    return false;
+                }
+                session.delete(s);
+                session.flush();
                 tx.commit();
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
         }
-        else
-            throw new IllegalArgumentException("all the fields in the Slice object must be specified");
         return true;
     }
 
-    public synchronized boolean delete(String name) {
-        try {
-            if (!session.isOpen())
-                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-            org.hibernate.Transaction tx = session.beginTransaction();
-            AggregateSlice s = this.getByName(name);
-            if (s == null)
-                return false;
-            session.delete(s);
-            tx.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public synchronized boolean update(AggregateSlice s) {
-        if(!((s.getSliceName() == null) || (s.getCreatorId() == 0) || (s.getUrl() == null) || (s.getDescription() == null)
-               || (s.getCreatedTime() == 0) || (s.getExpiredTime() == 0) )) {
-            try {
-                if (!session.isOpen())
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-                org.hibernate.Transaction tx = session.beginTransaction();
-                session.update(s);
-                tx.commit();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
+    public boolean update(AggregateSlice s) {
+        synchronized (session) {
+            if (!((s.getSliceName() == null) || (s.getCreatorId() == 0) || (s.getUrl() == null) || (s.getDescription() == null) || (s.getCreatedTime() == 0) || (s.getExpiredTime() == 0))) {
+                try {
+                    if (!session.isOpen()) {
+                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    }
+                    org.hibernate.Transaction tx = session.beginTransaction();
+                    session.update(s);
+                    session.flush();
+                    tx.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            } else {
+                throw new IllegalArgumentException("all the fields in the Slice object must be specified");
             }
         }
-        else
-            throw new IllegalArgumentException("all the fields in the Slice object must be specified");
         return true;
     }
 
-    public synchronized AggregateSlice getById(int id) {
-        try {
-            if (!session.isOpen())
-                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-            return (AggregateSlice)session.get(AggregateSlice.class, id);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public AggregateSlice getById(int id) {
+        synchronized (session) {
+            try {
+                if (!session.isOpen()) {
+                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                }
+                return (AggregateSlice) session.get(AggregateSlice.class, id);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
-    public synchronized AggregateSlice getByName(String name) {
-        try {
-            if (!session.isOpen())
-                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-            org.hibernate.Transaction tx = session.beginTransaction();
-            Query q = session.createQuery("from AggregateSlice as slice where slice.sliceName='" + name + "'");
-            if (q.list().size() == 0)
-                return null;
-            return (AggregateSlice) q.list().get(0);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public AggregateSlice getByName(String name) {
+        synchronized (session) {
+            try {
+                if (!session.isOpen()) {
+                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                }
+                org.hibernate.Transaction tx = session.beginTransaction();
+                Query q = session.createQuery("from AggregateSlice as slice where slice.sliceName='" + name + "'");
+                if (q.list().size() == 0) {
+                    return null;
+                }
+                return (AggregateSlice) q.list().get(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
-    public synchronized AggregateSlice getByURL(String url) {
-        try {
-            if (!session.isOpen())
-                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-            org.hibernate.Transaction tx = session.beginTransaction();
-            Query q = session.createQuery("from AggregateSlice as slice where slice.url=" + url + "");
-            if (q.list().size() == 0)
-                return null;
-            return (AggregateSlice) q.list().get(0);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public AggregateSlice getByURL(String url) {
+        synchronized (session) {
+            try {
+                if (!session.isOpen()) {
+                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                }
+                org.hibernate.Transaction tx = session.beginTransaction();
+                Query q = session.createQuery("from AggregateSlice as slice where slice.url=" + url + "");
+                if (q.list().size() == 0) {
+                    return null;
+                }
+                return (AggregateSlice) q.list().get(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
-    public synchronized List<AggregateSlice> getAll() {
+    public List<AggregateSlice> getAll() {
+        synchronized (session) {
         try {
-            if (!session.isOpen())
-                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-            org.hibernate.Transaction tx = session.beginTransaction();
-            Query q = session.createQuery("from AggregateSlice");
-            return (List<AggregateSlice>)q.list();
-        } catch (Exception e) {
-            e.printStackTrace();
+                if (!session.isOpen()) {
+                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                }
+                org.hibernate.Transaction tx = session.beginTransaction();
+                Query q = session.createQuery("from AggregateSlice");
+                return (List<AggregateSlice>) q.list();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

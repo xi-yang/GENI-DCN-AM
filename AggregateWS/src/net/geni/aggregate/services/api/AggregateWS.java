@@ -56,6 +56,22 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             return;
         }
         try {
+            //init the rspecs table
+            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getRspecsTab() + " ( " +
+                    "id int(11) NOT NULL auto_increment, " +
+                    "rspecName varchar(255) NOT NULL, " +
+                    "aggregateName varchar(255) NOT NULL, " +
+                    "description text NOT NULL, " +
+                    "startTime bigint(20) default NULL, " +
+                    "endTime bigint(20) default NULL, " +
+                    "status varchar(255) NOT NULL, " +
+                    "PRIMARY KEY (id)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
+        } catch(AggregateException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        try {
             //init the capabilities table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getCapsTab() + " ( " +
                     "name VARCHAR(255) NOT NULL, " +

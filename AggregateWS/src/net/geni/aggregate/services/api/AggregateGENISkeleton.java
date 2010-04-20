@@ -451,10 +451,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         for (String s: rspecTopo.getStatement()) {
             rspecXml += s;
         }
-        String status = "accepted";
+        String status = "";
         String message = "";
         try {
-            AggregateState.getRspecManager().createRspec(rspecXml);
+            status = AggregateState.getRspecManager().createRspec(rspecXml);
             message = "none";
         } catch (AggregateException e) {
             status = "failed:";
@@ -482,10 +482,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         DeleteSliceNetworkType deleteSliceNework = deleteSliceNetwork4.getDeleteSliceNetwork();
         String rspecName = deleteSliceNework.getRspecID();
 
-        String status = "accepted";
+        String status = "";
         String message = "";
         try {
-            AggregateState.getRspecManager().deleteRspec(rspecName);
+            status = AggregateState.getRspecManager().deleteRspec(rspecName);
             message = "none";
         } catch (AggregateException e) {
             status = "failed:";
@@ -525,7 +525,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //form response
         QuerySliceNetworkResponseType querySliceNetworkResponseType = new QuerySliceNetworkResponseType();
         QuerySliceNetworkResponse querySliceNetworkResponse = new QuerySliceNetworkResponse();
-        querySliceNetworkResponseType.setSliceStatus((String)hmRet.get("sliceStatus"));
+        String status = (String)hmRet.get("sliceStatus");
+        if (status == null)
+            status = "pending";
+        querySliceNetworkResponseType.setSliceStatus(status);
         Vector<VlanReservationResultType> vlanResvResults = (Vector<VlanReservationResultType>)hmRet.get("vlanResults");
         if (vlanResvResults != null)
             for (VlanReservationResultType r: vlanResvResults)

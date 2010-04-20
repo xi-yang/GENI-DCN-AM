@@ -15,13 +15,16 @@ import org.apache.log4j.*;
 public class AggregateRspecRunner extends Thread {
     private volatile boolean goRun = true;
     private volatile boolean goPoll = true;
+    private volatile int pollInterval = 30000; //30 secs by default
     private org.apache.log4j.Logger log;
     private AggregateRspec rspec;
+    private AggregateRspecManager manager;
 
     private AggregateRspecRunner() {}
 
-    public AggregateRspecRunner(AggregateRspec rspec) {
+    public AggregateRspecRunner(AggregateRspecManager manager, AggregateRspec rspec) {
         super();
+        this.manager = manager;
         this.rspec = rspec;
         log = org.apache.log4j.Logger.getLogger(this.getClass());
     }
@@ -50,36 +53,50 @@ public class AggregateRspecRunner extends Thread {
         this.rspec = rspec;
     }
 
+    public synchronized int getPollInterval() {
+        return pollInterval;
+    }
+
+    public synchronized void setPollInterval(int pollInterval) {
+        this.pollInterval = pollInterval;
+    }
+
     public void run() {
+        rspec.setStatus("slice-starting");
+        manager.updateRspec(rspec);
         try {
             this.createSlice();
         } catch (AggregateException e) {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
             e.printStackTrace();
             rspec.setStatus("slice-failed");
+            manager.updateRspec(rspec);
         }
         if (rspec.getStatus().equalsIgnoreCase("slice-failed")) {
             rollback(); //revert
             return;
         }
-        rspec.setStatus("slice-created");
-
+        rspec.setStatus("vlans-starting");
+        manager.updateRspec(rspec);
         try {
             this.createP2PVlans();
         } catch (AggregateException e) {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
             e.printStackTrace();
             rspec.setStatus("vlans-failed");
+            manager.updateRspec(rspec);
         }
         if (rspec.getStatus().equalsIgnoreCase("vlans-failed")) {
             rollback(); //revert
             return;
         }
+
         rspec.setStatus("vlans-created");
+        manager.updateRspec(rspec);
 
         while (goRun) {
             try {
-                this.sleep(30000); //30 secs
+                this.sleep(pollInterval); //30 secs
             } catch (InterruptedException e) {
                 if (!goRun) {
                     break;
@@ -88,11 +105,16 @@ public class AggregateRspecRunner extends Thread {
             if (goRun && goPoll) {
                 try {
                     this.pollP2PVlans();
+                    if (rspec.getStatus().equalsIgnoreCase("vlans-active")) {
+                        rspec.setStatus("working");
+                        manager.updateRspec(rspec);
+                    }
                 }catch (AggregateException e) {
                     log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
                     e.printStackTrace();
                     rollback();
                     rspec.setStatus("vlans-failed");
+                    manager.updateRspec(rspec);
                     goRun = false;
                 }
             }
@@ -124,7 +146,11 @@ public class AggregateRspecRunner extends Thread {
         AggregateSlice aggrSlice = AggregateState.getAggregateSlices().createSlice(sliceName, url, description,
                 AggregateState.getPlcPI(), nodes.split(":"));
         if (aggrSlice != null) {
+            aggrSlice.setStatus("created");
             aggrSlice.setType("computeSlice");
+            aggrSlice.setReference(aggrSlice.getId());
+            aggrSlice.setRspecId(rspec.getId());
+            aggrSlice.enterResouceTable();
             resources.add(aggrSlice);
         } else {
             rspec.setStatus("slice-failed");
@@ -181,6 +207,9 @@ public class AggregateRspecRunner extends Thread {
                                 throw (new AggregateException("Failed to create P2PVlan:"+description));
                             }
                             p2pvlan.setType("p2pVlan");
+                            p2pvlan.setReference(p2pvlan.getId());
+                            p2pvlan.setRspecId(rspec.getId());
+                            p2pvlan.enterResouceTable();
                             resources.add(p2pvlan);
                             if (p2pvlan.getStatus().equalsIgnoreCase("failed"))
                                 throw (new AggregateException("Failed to setup P2PVlan:"+description));
@@ -193,20 +222,27 @@ public class AggregateRspecRunner extends Thread {
     }
 
     private void pollP2PVlans() throws AggregateException {
+        boolean allActive = true;
+        boolean hasP2PVlan = false;
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).getType().equalsIgnoreCase("p2pVlans")) {
+            if (resources.get(i).getType().equalsIgnoreCase("p2pVlan")) {
                 AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(i);
+                hasP2PVlan = true;
                 p2pvlan.queryVlan();
                 log.debug("polled p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
                 if (p2pvlan.getStatus().equalsIgnoreCase("failed"))
                     throw (new AggregateException("P2PVlan:"+p2pvlan.getDescription()
                         +" creation failed."));
-                if (AggregateState.getAggregateP2PVlans().update(p2pvlan))
+                if (!AggregateState.getAggregateP2PVlans().update(p2pvlan))
                     throw (new AggregateException("Cannot update P2PVlan:"+p2pvlan.getDescription()
                         +" with AggregateDB."));
+                if (!p2pvlan.getStatus().equalsIgnoreCase("active"))
+                    allActive = false;
             }
         }
+        if (allActive && hasP2PVlan)
+            rspec.setStatus("vlans-active");
     }
 
     private void deleteP2PVlans() throws AggregateException {
@@ -237,6 +273,7 @@ public class AggregateRspecRunner extends Thread {
             e.printStackTrace();
             rspec.setStatus("rollbacked");
         }
+        manager.updateRspec(rspec);
     }
 
     private void terminate() {
@@ -251,5 +288,6 @@ public class AggregateRspecRunner extends Thread {
         goRun = false;
         goPoll = false;
         rspec.setStatus("terminated");
+        manager.updateRspec(rspec);
     }
 }

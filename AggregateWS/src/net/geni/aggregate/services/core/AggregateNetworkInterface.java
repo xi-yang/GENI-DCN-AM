@@ -12,6 +12,7 @@ import java.util.*;
  * @author root
  */
 public class AggregateNetworkInterface extends AggregateResource {
+    int id = 0;
     String interfaceId = "";
     String deviceName = "";
     String ipAddress = "";
@@ -24,6 +25,14 @@ public class AggregateNetworkInterface extends AggregateResource {
     
     public AggregateNetworkInterface(String ifd) {
         interfaceId = ifd;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDeviceName() {

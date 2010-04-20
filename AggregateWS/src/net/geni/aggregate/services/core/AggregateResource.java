@@ -6,6 +6,7 @@
 package net.geni.aggregate.services.core;
 
 import java.io.Serializable;
+import org.hibernate.*;
 
 /**
  *
@@ -16,6 +17,7 @@ public class AggregateResource implements java.io.Serializable {
     protected String type = "";
     protected int reference = 0;
     protected int rspecId = 0;
+    protected boolean inDB = false;
 
     public AggregateResource() {}
 
@@ -56,5 +58,39 @@ public class AggregateResource implements java.io.Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isInDB() {
+        return inDB;
+    }
+
+    public void setInDB(boolean inDB) {
+        this.inDB = inDB;
+    }
+
+    public void enterResouceTable() throws AggregateException {
+        String sql = "INSERT INTO resources(type, reference, rspecId) VALUES ("
+            + "'" + this.type + "', "
+            + Integer.toString(this.reference) + ", "
+            + Integer.toString(this.rspecId) + ")";
+        AggregateUtils.executeDirectStatement(sql);
+        try {
+            Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+            org.hibernate.Transaction tx = session.beginTransaction();
+            SQLQuery q = session.createSQLQuery("SELECT MAX(id) FROM resources");
+            id_ = Integer.valueOf(q.list().get(0).toString());
+        } catch (Exception e) {
+            throw new AggregateException(e, AggregateException.FATAL);
+        }
+
+        inDB = true;
+    }
+
+    public void exitResouceTable() throws AggregateException {
+        if (!inDB)
+            return;
+        AggregateUtils.executeDirectStatement( "DELETE FROM resources WHERE id="
+            + Integer.toString(this.id_));
+        inDB = false;
     }
 }

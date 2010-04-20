@@ -15,6 +15,22 @@ CREATE TABLE `resources` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Table structure for table `rspecs`
+--
+
+DROP TABLE IF EXISTS `rspecs`;
+CREATE TABLE `rspecs` (
+  `id` int(11) NOT NULL auto_increment,
+  `rspecName` varchar(255) NOT NULL,
+  `aggregateName` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `startTime` bigint(20) default NULL,
+  `endTime` bigint(20) default NULL,
+  `status` varchar(255) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `capabilities`
 --
 
@@ -125,4 +141,3 @@ CREATE TABLE `users` (
   `description` text NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
