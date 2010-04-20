@@ -8,6 +8,7 @@ import org.apache.log4j.*;
 import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateWSRunner;
 import net.geni.aggregate.services.core.AggregateRspecManager;
+import net.geni.aggregate.services.core.AggregateSlicesPoller;
 import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateException;
 import net.geni.aggregate.services.core.AggregateNode;
@@ -47,7 +48,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getResourcesTab() + " ( " +
                     "id int(11) NOT NULL auto_increment, " +
                     "type VARCHAR(255) NOT NULL, " +
-                    "reference int(11) NOT NULL, " +
                     "rspecId int(11) NOT NULL, " +
                     "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
@@ -89,7 +89,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             //init the nodes table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getNodesTab() + " ( " +
                     "urn VARCHAR(255) NOT NULL, " +
-                    "id INT NOT NULL AUTO_INCREMENT, " +
+                    "id int(11) NOT NULL, " +
                     "description TEXT NOT NULL, " +
                     "capabilities TEXT, " +
                     "PRIMARY KEY (id, urn)" +
@@ -102,7 +102,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             //init the slices table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getSlicesTab() + " ( " +
                     "sliceName VARCHAR(255), " + // slice Name
-                    "id int(11) NOT NULL auto_increment, " + // slice ID
+                    "id int(11) NOT NULL, " + // slice ID
                     "url TEXT NOT NULL, " + // slice URL
                     "description TEXT NOT NULL, " + // slice description
                     "users TEXT NOT NULL, " + // slice users/persons
@@ -120,7 +120,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         try {
             //init the p2pvlans table
           AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getP2PVlansTab() + " ( " +
-                    "id int(11) NOT NULL auto_increment, " +
+                    "id int(11) NOT NULL, " +
                     "vlanTag int(11) NOT NULL, " +
                     "sliceName varchar(255) NOT NULL, " +
                     "description varchar(255) NOT NULL default '', " +
@@ -193,7 +193,11 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         AggregateState.setRspecManager(aggregateRspecManager);
         
         // PLC polling and DB sync thread
-        // TODO
+        AggregateSlicesPoller aggregateSlicesPoller = new AggregateSlicesPoller();
+        aggregateSlicesPoller.setPollInterval(AggregateState.getPollInterval());
+        aggregateSlicesPoller.start();
+        AggregateState.setSlicesPoller(aggregateSlicesPoller);
+
 
         log.info("AggregateWS init() finished!");
     }

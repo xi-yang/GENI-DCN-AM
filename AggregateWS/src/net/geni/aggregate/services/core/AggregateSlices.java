@@ -214,4 +214,36 @@ public class AggregateSlices {
         }
         return ret;
     }
+
+    public synchronized void pollSlices() {
+        List<AggregateSlice> slices = this.getAll();
+        if (slices.isEmpty())
+            return;
+        String[] names = new String[1];
+        Vector<HashMap> hmV = new Vector<HashMap>();
+        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
+        for (AggregateSlice slice: slices) {
+            names[0] = slice.getSliceName();
+            int ret = plcClient.querySlice(names, hmV);
+            if (ret == 1) {
+                long expires = Integer.parseInt((String)hmV.get(0).get("expires"));
+                String users = (String)hmV.get(0).get("person_ids");
+                users = users.replaceAll("[\\[\\]]", "");
+                //convert id to user name/email
+                String nodes = (String)hmV.get(0).get("node_ids");
+                nodes = nodes.replaceAll("[\\[\\]]", "");
+                //convert id to node name
+                String descr = (String)hmV.get(0).get("description");
+                //translate users and nodes
+                slice.setExpiredTime(expires);
+                slice.setUsers(users);
+                slice.setNodes(nodes);
+                slice.setDescription(descr);
+                slice.setStatus("active");
+            } else {
+                slice.setStatus("unknown");
+            }
+            this.update(slice);
+        }
+    }
 }

@@ -11,7 +11,6 @@ package net.geni.aggregate.services.core;
  */
 public class AggregateCapability extends AggregateResource {
     private String name;
-    private int id;
     private String description;
     private String controllerURL;
     private String urn;

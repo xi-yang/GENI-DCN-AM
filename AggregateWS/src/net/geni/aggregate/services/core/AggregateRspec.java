@@ -33,7 +33,8 @@ public class AggregateRspec implements java.io.Serializable {
     private String description = "";
     private long startTime = 0;
     private long endTime = 0;
-    private List<AggregateResource> resources;
+    private List<String> users = null;
+    private List<AggregateResource> resources = null;
     private String status = "";
 
     public AggregateRspec() {
@@ -90,6 +91,14 @@ public class AggregateRspec implements java.io.Serializable {
         return endTime;
     }
 
+    public List<String> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<String> users) {
+        this.users = users;
+    }
+
     public List<AggregateResource> getResources() {
         return resources;
     }
@@ -106,18 +115,31 @@ public class AggregateRspec implements java.io.Serializable {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 
-            //TODO: Validating document with schemas
-            //final String rspecSchema = "max-rspec.xsd";
-            //final String ctrlpSchema = "nmtopo-ctrlp.xsd";
-            //final String[] schemas = {rspecSchema, ctrlpSchema};
-            //final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
-            //docFactory.setNamespaceAware(true);
-            //docFactory.setValidating(true);
-            //factory.setAttribute(JAXP_SCHEMA_SOURCE, schemas);
+            //validating document with schemas
+            if (AggregateState.getAggregateConfDir() != null) {
+                /*
+                URL schemaUrl = getClass().getClassLoader().getResource("max-rspec.xsd");
+                final String rspecSchema = schemaUrl.toString();
+                schemaUrl = getClass().getClassLoader().getResource("nmtopo-ctrlp.xsd");
+                log.debug("shcema URL:"+ rspecSchema);
+                final String ctrlpSchema = schemaUrl.toString();
+                */
+                final String ctrlpSchema = "file:" + AggregateState.getAggregateConfDir() + "schema/nmtopo-ctrlp.xsd";
+                final String rspecSchema = "file:" + AggregateState.getAggregateConfDir() + "schema/max-rspec.xsd";
+                final String[] schemas = {ctrlpSchema, rspecSchema};
+                final String JAXP_SHCEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
+                final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
+                final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
+                docFactory.setNamespaceAware(true);
+                docFactory.setValidating(true);
+                docFactory.setAttribute(JAXP_SHCEMA_LANGUAGE, W3C_XML_SCHEMA);
+                docFactory.setAttribute(JAXP_SCHEMA_SOURCE, schemas);
+            }
 
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(rspec.trim()));
+            //TODO: docBuilder.setErrorHandler ... 
             Document rspecXMLDoc = docBuilder.parse(is);
 
             NodeList children = rspecXMLDoc.getChildNodes();
@@ -133,16 +155,21 @@ public class AggregateRspec implements java.io.Serializable {
                        if (nodeName != null && nodeName.equalsIgnoreCase("aggregate")) {
                            aggregateName = child.getTextContent().trim();
                        }
+                       else if (nodeName != null && nodeName.equalsIgnoreCase("user")) {
+                           if (users == null)
+                               users = new ArrayList<String>();
+                           users.add(child.getTextContent().trim());
+                       }
                        else if (nodeName != null && nodeName.equalsIgnoreCase("description")) {
                            description = child.getTextContent().trim();
                        }
-                       else if (nodeName != null && nodeName.equalsIgnoreCase("CtrlPlane:lifetime")) {
+                       else if (nodeName != null && nodeName.equalsIgnoreCase("lifetime")) {
                            parseLifetime(child);
                        }
                        else if (nodeName != null && nodeName.equalsIgnoreCase("computeResource")) {
                            parseComputeResources(child);
                        }
-                       else if (nodeName != null && nodeName.equalsIgnoreCase("CtrlPlane:topology")) {
+                       else if (nodeName != null && nodeName.equalsIgnoreCase("topology")) {
                            parseNetworkTopology(child);
                        }
                    }
@@ -225,7 +252,6 @@ public class AggregateRspec implements java.io.Serializable {
             throw new AggregateException("unknown aggregateNode "+urn+" (extracted from "+sliverId+")");
         }
         aggrNode.setType(compNodeRoot.getNodeName());
-        aggrNode.setReference(aggrNode.getId());
         aggrNode.setRspecId(this.id); //rspec entry has been created in db
         //AggregateState.getAggregateNodes().update(aggrNode);
         resources.add(aggrNode);
@@ -280,7 +306,6 @@ public class AggregateRspec implements java.io.Serializable {
         //TODO: add AggregateNetworkInterfaces collection class
         //      add the aggrNetIf into DB (interfaces table)
         //      --> delete the aggrNetIf from DB when rspec is terminated?
-        aggrNetIf.setReference(aggrNetIf.getId());
         aggrNetIf.setRspecId(this.id);
         resources.add(aggrNetIf);
         return aggrNetIf;
@@ -336,5 +361,4 @@ public class AggregateRspec implements java.io.Serializable {
         }
         return hm;
     }
-
 }

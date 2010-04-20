@@ -107,6 +107,24 @@ public class AggregateNodes {
     }
 
     /**
+     * get by ID
+     */
+    public synchronized AggregateNode getByUrn(int id) {
+        try {
+            if (!session.isOpen())
+                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+            org.hibernate.Transaction tx = session.beginTransaction();
+            Query q = session.createQuery("from AggregateNode as node where node.id=" + Integer.toBinaryString(id));
+            if (q.list().size() == 0)
+                return null;
+            return (AggregateNode) q.list().get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
      * get by urn
      */
     public synchronized AggregateNode getByUrn(String urn) {
@@ -123,6 +141,4 @@ public class AggregateNodes {
         }
         return null;
     }
-
-
 }

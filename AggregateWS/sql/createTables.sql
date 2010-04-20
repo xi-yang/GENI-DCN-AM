@@ -64,7 +64,7 @@ CREATE TABLE `front_end` (
 DROP TABLE IF EXISTS `nodes`;
 CREATE TABLE `nodes` (
   `urn` varchar(255) NOT NULL,
-  `id` int(11) NOT NULL auto_increment,
+  `id` int(11) NOT NULL,
   `description` text NOT NULL,
   `capabilities` text,
   PRIMARY KEY  (`id`,`urn`)
@@ -77,7 +77,7 @@ CREATE TABLE `nodes` (
 DROP TABLE IF EXISTS `slices`;
 CREATE TABLE `slices` (
   `sliceName` varchar(255) NOT NULL default '',
-  `id` int(11) NOT NULL auto_increment,
+  `id` int(11) NOT NULL,
   `url` text NOT NULL,
   `description` text NOT NULL,
   `users` text NOT NULL,
@@ -96,7 +96,7 @@ CREATE TABLE `slices` (
 
 DROP TABLE IF EXISTS `p2pvlans`;
 CREATE TABLE `p2pvlans` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` int(11) NOT NULL,
   `vlanTag` int(11) NOT NULL,
   `sliceName` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL default '',

@@ -25,7 +25,6 @@ public class AggregateP2PVlan extends AggregateResource {
     //IDCAPIClient
     AggregateIDCClient apiClient = null;
     //Reservation parameters
-    int id = 0;
     String gri = "";
     String sliceName = "";
     String source = "";
@@ -48,6 +47,7 @@ public class AggregateP2PVlan extends AggregateResource {
     */
     public AggregateP2PVlan(){
         log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
+        type = "p2pVlan";
     }
 
     public AggregateP2PVlan(String sl, String s, String d, int v, float b, String desc, long st, long et) {
@@ -64,6 +64,7 @@ public class AggregateP2PVlan extends AggregateResource {
         errMessage = "";
         status = "";
         log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
+        type = "p2pVlan";
     }
 
     public AggregateP2PVlan(int sid, int v, String s, String d, float b, String g, String ss) {
@@ -80,10 +81,7 @@ public class AggregateP2PVlan extends AggregateResource {
         startTime = 0;
         endTime = 0;
         log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        type = "p2pVlan";
     }
 
     public void setBandwidth(float bandwidth) {
@@ -116,10 +114,6 @@ public class AggregateP2PVlan extends AggregateResource {
 
     public void setVtag(int vtag) {
         this.vtag = vtag;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getSliceName() {

@@ -105,6 +105,22 @@ public class AggregateP2PVlans {
         return true;
     }
 
+    public List<AggregateP2PVlan> getAll() {
+        synchronized (session) {
+        try {
+                if (!session.isOpen()) {
+                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                }
+                org.hibernate.Transaction tx = session.beginTransaction();
+                Query q = session.createQuery("from AggregateP2PVlan");
+                return (List<AggregateP2PVlan>) q.list();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     public AggregateP2PVlan getBySliceAndVtag(String name, int vtag) {
         synchronized (session) {
             try {

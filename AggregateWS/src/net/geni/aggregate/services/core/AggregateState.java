@@ -60,16 +60,17 @@ public class AggregateState
     // Global states
     private static AggregateGENISkeleton skeletonAPI = null;
     private static AggregateRspecManager aggregateRspecManager = null;
-    private static final long pollInterval = 5000; //miliseconds
+    private static AggregateSlicesPoller aggregateSlicesPoller = null;
+    private static final int pollInterval = 60000; //miliseconds
 
     public static void init() {
         //init properties
         String aggregateHome = System.getenv("AGGREGATE_HOME");
-        String propFileName = "aggregate.properties";
         if (aggregateHome != null && !aggregateHome.equals(""))
-            propFileName = aggregateHome + "/AggregateAttic/conf/" + propFileName;
+            aggregateHome = aggregateHome + "/AggregateAttic/conf/";
         else
-            propFileName = "/usr/local/geni-aggregate/AggregateAttic/conf/" + propFileName;
+            aggregateHome = "/usr/local/geni-aggregate/AggregateAttic/conf/";
+        String propFileName =  aggregateHome + "aggregate.properties";
 
         try {
             FileInputStream in = new FileInputStream(propFileName);
@@ -78,7 +79,7 @@ public class AggregateState
         } catch (IOException e) {
             //logging for exception!
         }
-
+        aggregateProps.setProperty("aggregate.conf.dir", aggregateHome);
         dbUser = aggregateProps.getProperty("aggregate.mysql.user", "geniuser");
         log.info("aggregate.mysql.user set to " + dbUser);
         dbPwd = aggregateProps.getProperty("aggregate.mysql.pass", "genipass");
@@ -115,6 +116,10 @@ public class AggregateState
         return aggregateProps;
     }
 
+    public static String getAggregateConfDir() {
+        return aggregateProps.getProperty("aggregate.conf.dir", null);
+    }
+
     public static void setSkeletonAPI(AggregateGENISkeleton aggregateSkeleton) {
         skeletonAPI = aggregateSkeleton;
     }
@@ -127,11 +132,19 @@ public class AggregateState
         return aggregateRspecManager;
     }
 
+    public static AggregateSlicesPoller getSlicesPoller() {
+        return aggregateSlicesPoller;
+    }
+
     public static void setRspecManager(AggregateRspecManager rspecMan) {
         AggregateState.aggregateRspecManager = rspecMan;
     }
 
-    public static long getPollInterval() {
+    public static void setSlicesPoller(AggregateSlicesPoller aggregateSlicesPoller) {
+        AggregateState.aggregateSlicesPoller = aggregateSlicesPoller;
+    }
+
+    public static int getPollInterval() {
         return pollInterval;
     }
 
