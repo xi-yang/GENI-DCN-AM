@@ -18,16 +18,16 @@ public class AggregateSlices {
     private org.apache.log4j.Logger log;
 
     public AggregateSlices() {
-        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session = HibernateUtil.getSessionFactory().openSession();
         log = org.apache.log4j.Logger.getLogger(this.getClass());
     }
 
     public boolean add(AggregateSlice s) {
-        synchronized (session) {
+        synchronized (this) {
             if (!((s.getSliceName() == null) || (s.getCreatorId() == 0) || (s.getUrl() == null) || (s.getDescription() == null) || (s.getCreatedTime() == 0) || (s.getExpiredTime() == 0))) {
                 try {
                     if (!session.isOpen()) {
-                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                        session = HibernateUtil.getSessionFactory().getCurrentSession();
                     }
                     org.hibernate.Transaction tx = session.beginTransaction();
                     session.save(s);
@@ -45,10 +45,10 @@ public class AggregateSlices {
     }
 
     public boolean delete(String name) {
-        synchronized (session) {
+        synchronized (this) {
             try {
                 if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
                 org.hibernate.Transaction tx = session.beginTransaction();
                 AggregateSlice s = this.getByName(name);
@@ -67,11 +67,11 @@ public class AggregateSlices {
     }
 
     public boolean update(AggregateSlice s) {
-        synchronized (session) {
+        synchronized (this) {
             if (!((s.getSliceName() == null) || (s.getCreatorId() == 0) || (s.getUrl() == null) || (s.getDescription() == null) || (s.getCreatedTime() == 0) || (s.getExpiredTime() == 0))) {
                 try {
                     if (!session.isOpen()) {
-                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                        session = HibernateUtil.getSessionFactory().getCurrentSession();
                     }
                     org.hibernate.Transaction tx = session.beginTransaction();
                     session.update(s);
@@ -89,10 +89,10 @@ public class AggregateSlices {
     }
 
     public AggregateSlice getById(int id) {
-        synchronized (session) {
+        synchronized (this) {
             try {
                 if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
                 return (AggregateSlice) session.get(AggregateSlice.class, id);
             } catch (Exception e) {
@@ -103,10 +103,10 @@ public class AggregateSlices {
     }
 
     public AggregateSlice getByName(String name) {
-        synchronized (session) {
+        synchronized (this) {
             try {
                 if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
                 org.hibernate.Transaction tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateSlice as slice where slice.sliceName='" + name + "'");
@@ -122,10 +122,10 @@ public class AggregateSlices {
     }
 
     public AggregateSlice getByURL(String url) {
-        synchronized (session) {
+        synchronized (this) {
             try {
                 if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
                 org.hibernate.Transaction tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateSlice as slice where slice.url=" + url + "");
@@ -141,10 +141,10 @@ public class AggregateSlices {
     }
 
     public List<AggregateSlice> getAll() {
-        synchronized (session) {
-        try {
+        synchronized (this) {
+            try {
                 if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
                 org.hibernate.Transaction tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateSlice");
@@ -217,7 +217,7 @@ public class AggregateSlices {
 
     public synchronized void pollSlices() {
         List<AggregateSlice> slices = this.getAll();
-        if (slices.isEmpty())
+        if (slices == null || slices.isEmpty())
             return;
         String[] names = new String[1];
         Vector<HashMap> hmV = new Vector<HashMap>();

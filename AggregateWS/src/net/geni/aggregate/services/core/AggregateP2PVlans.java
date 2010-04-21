@@ -18,16 +18,16 @@ public class AggregateP2PVlans {
     private org.apache.log4j.Logger log;
 
     public AggregateP2PVlans() {
-        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session = HibernateUtil.getSessionFactory().openSession();
         log = org.apache.log4j.Logger.getLogger(this.getClass());
     }
 
     public boolean add(AggregateP2PVlan p2pv) {
-        synchronized (session) {
+        synchronized (this) {
             if (!(p2pv.getSliceName() == null)) {
                 try {
                     if (!session.isOpen()) {
-                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                        session = HibernateUtil.getSessionFactory().getCurrentSession();
                     }
                     org.hibernate.Transaction tx = session.beginTransaction();
                     session.save(p2pv);
@@ -45,11 +45,11 @@ public class AggregateP2PVlans {
 
 
     public boolean update(AggregateP2PVlan p2pv) {
-        synchronized (session) {
+        synchronized (this) {
             if (!(p2pv.getSliceName() == null)) {
                 try {
                     if (!session.isOpen()) {
-                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                        session = HibernateUtil.getSessionFactory().getCurrentSession();
                     }
                     org.hibernate.Transaction tx = session.beginTransaction();
                     session.update(p2pv);
@@ -68,10 +68,10 @@ public class AggregateP2PVlans {
     public boolean delete(AggregateP2PVlan p2pv) {
         if (p2pv == null)
             return false;
-        synchronized (session) {
+        synchronized (this) {
             try {
                 if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
                 org.hibernate.Transaction tx = session.beginTransaction();
                 session.delete(p2pv);
@@ -85,10 +85,10 @@ public class AggregateP2PVlans {
     }
 
     public boolean delete(String name, int vtag) {
-        synchronized (session) {
+        synchronized (this) {
             try {
                 if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
                 org.hibernate.Transaction tx = session.beginTransaction();
                 AggregateP2PVlan p2pv = this.getBySliceAndVtag(name, vtag);
@@ -106,10 +106,10 @@ public class AggregateP2PVlans {
     }
 
     public List<AggregateP2PVlan> getAll() {
-        synchronized (session) {
+        synchronized (this) {
         try {
                 if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
                 org.hibernate.Transaction tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateP2PVlan");
@@ -122,10 +122,10 @@ public class AggregateP2PVlans {
     }
 
     public AggregateP2PVlan getBySliceAndVtag(String name, int vtag) {
-        synchronized (session) {
+        synchronized (this) {
             try {
                 if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
                 org.hibernate.Transaction tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateP2PVlan as p2pvlan where p2pvlan.sliceName='" + name + "' and p2pvlan.vtag=" + Integer.toString(vtag));
@@ -141,10 +141,10 @@ public class AggregateP2PVlans {
     }
 
     public AggregateP2PVlan getByGRI(String gri) {
-        synchronized (session) {
+        synchronized (this) {
             try {
                 if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
                 org.hibernate.Transaction tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateP2PVlan as p2pvlan where p2pvlan.globalReservationId='" + gri + "'");

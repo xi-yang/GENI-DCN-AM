@@ -32,30 +32,30 @@
         
 
                         /**
-                        * field for SliceID
+                        * field for RspecID
                         */
 
                         
-                                    protected java.lang.String localSliceID ;
+                                    protected java.lang.String localRspecID ;
                                 
 
                            /**
                            * Auto generated getter method
                            * @return java.lang.String
                            */
-                           public  java.lang.String getSliceID(){
-                               return localSliceID;
+                           public  java.lang.String getRspecID(){
+                               return localRspecID;
                            }
 
                            
                         
                             /**
                                * Auto generated setter method
-                               * @param param SliceID
+                               * @param param RspecID
                                */
-                               public void setSliceID(java.lang.String param){
+                               public void setRspecID(java.lang.String param){
                             
-                                            this.localSliceID=param;
+                                            this.localRspecID=param;
                                     
 
                                }
@@ -165,28 +165,28 @@
                                         if (prefix == null) {
                                             prefix = generatePrefix(namespace);
 
-                                            xmlWriter.writeStartElement(prefix,"sliceID", namespace);
+                                            xmlWriter.writeStartElement(prefix,"rspecID", namespace);
                                             xmlWriter.writeNamespace(prefix, namespace);
                                             xmlWriter.setPrefix(prefix, namespace);
 
                                         } else {
-                                            xmlWriter.writeStartElement(namespace,"sliceID");
+                                            xmlWriter.writeStartElement(namespace,"rspecID");
                                         }
 
                                     } else {
-                                        xmlWriter.writeStartElement("sliceID");
+                                        xmlWriter.writeStartElement("rspecID");
                                     }
                                 
 
-                                          if (localSliceID==null){
+                                          if (localRspecID==null){
                                               // write the nil attribute
                                               
-                                                     throw new org.apache.axis2.databinding.ADBException("sliceID cannot be null!!");
+                                                     throw new org.apache.axis2.databinding.ADBException("rspecID cannot be null!!");
                                                   
                                           }else{
 
                                         
-                                                   xmlWriter.writeCharacters(localSliceID);
+                                                   xmlWriter.writeCharacters(localRspecID);
                                             
                                           }
                                     
@@ -355,12 +355,12 @@
 
                 
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
-                                                                      "sliceID"));
+                                                                      "rspecID"));
                                  
-                                        if (localSliceID != null){
-                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localSliceID));
+                                        if (localRspecID != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localRspecID));
                                         } else {
-                                           throw new org.apache.axis2.databinding.ADBException("sliceID cannot be null!!");
+                                           throw new org.apache.axis2.databinding.ADBException("rspecID cannot be null!!");
                                         }
                                     
 
@@ -441,11 +441,11 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","sliceID").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","rspecID").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
-                                              object.setSliceID(
+                                              object.setRspecID(
                                                     org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
                                               
                                         reader.next();

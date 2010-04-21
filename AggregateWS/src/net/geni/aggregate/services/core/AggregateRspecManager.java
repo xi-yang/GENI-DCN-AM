@@ -134,7 +134,7 @@ public class AggregateRspecManager extends Thread{
         }
 
         aggrRspec.setStatus("starting");
-        synchronized (session) {
+        synchronized (this) {
             if (!(aggrRspec.getRspecName().isEmpty() || aggrRspec.getAggregateName().isEmpty()
               || aggrRspec.getResources().size() == 0)) {
                 try {
@@ -190,7 +190,7 @@ public class AggregateRspecManager extends Thread{
 
 
     public synchronized void updateRspec(AggregateRspec aggrRspec) {
-        synchronized (session) {
+        synchronized (this) {
             if (!(aggrRspec.getRspecName().isEmpty() || aggrRspec.getAggregateName().isEmpty()
               || aggrRspec.getResources().size() == 0)) {
                 try {

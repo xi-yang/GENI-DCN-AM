@@ -92,6 +92,66 @@
                             
 
                         /**
+                        * field for SrcInterface
+                        */
+
+                        
+                                    protected java.lang.String localSrcInterface ;
+                                
+
+                           /**
+                           * Auto generated getter method
+                           * @return java.lang.String
+                           */
+                           public  java.lang.String getSrcInterface(){
+                               return localSrcInterface;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param SrcInterface
+                               */
+                               public void setSrcInterface(java.lang.String param){
+                            
+                                            this.localSrcInterface=param;
+                                    
+
+                               }
+                            
+
+                        /**
+                        * field for SrcIpAndMask
+                        */
+
+                        
+                                    protected java.lang.String localSrcIpAndMask ;
+                                
+
+                           /**
+                           * Auto generated getter method
+                           * @return java.lang.String
+                           */
+                           public  java.lang.String getSrcIpAndMask(){
+                               return localSrcIpAndMask;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param SrcIpAndMask
+                               */
+                               public void setSrcIpAndMask(java.lang.String param){
+                            
+                                            this.localSrcIpAndMask=param;
+                                    
+
+                               }
+                            
+
+                        /**
                         * field for DestinationNode
                         */
 
@@ -116,6 +176,66 @@
                                public void setDestinationNode(java.lang.String param){
                             
                                             this.localDestinationNode=param;
+                                    
+
+                               }
+                            
+
+                        /**
+                        * field for DstInterface
+                        */
+
+                        
+                                    protected java.lang.String localDstInterface ;
+                                
+
+                           /**
+                           * Auto generated getter method
+                           * @return java.lang.String
+                           */
+                           public  java.lang.String getDstInterface(){
+                               return localDstInterface;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param DstInterface
+                               */
+                               public void setDstInterface(java.lang.String param){
+                            
+                                            this.localDstInterface=param;
+                                    
+
+                               }
+                            
+
+                        /**
+                        * field for DstIpAndMask
+                        */
+
+                        
+                                    protected java.lang.String localDstIpAndMask ;
+                                
+
+                           /**
+                           * Auto generated getter method
+                           * @return java.lang.String
+                           */
+                           public  java.lang.String getDstIpAndMask(){
+                               return localDstIpAndMask;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param DstIpAndMask
+                               */
+                               public void setDstIpAndMask(java.lang.String param){
+                            
+                                            this.localDstIpAndMask=param;
                                     
 
                                }
@@ -348,6 +468,74 @@
                                         if (prefix == null) {
                                             prefix = generatePrefix(namespace);
 
+                                            xmlWriter.writeStartElement(prefix,"srcInterface", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"srcInterface");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("srcInterface");
+                                    }
+                                
+
+                                          if (localSrcInterface==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("srcInterface cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localSrcInterface);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                             
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
+                                            xmlWriter.writeStartElement(prefix,"srcIpAndMask", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"srcIpAndMask");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("srcIpAndMask");
+                                    }
+                                
+
+                                          if (localSrcIpAndMask==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("srcIpAndMask cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localSrcIpAndMask);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                             
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
                                             xmlWriter.writeStartElement(prefix,"destinationNode", namespace);
                                             xmlWriter.writeNamespace(prefix, namespace);
                                             xmlWriter.setPrefix(prefix, namespace);
@@ -370,6 +558,74 @@
 
                                         
                                                    xmlWriter.writeCharacters(localDestinationNode);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                             
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
+                                            xmlWriter.writeStartElement(prefix,"dstInterface", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"dstInterface");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("dstInterface");
+                                    }
+                                
+
+                                          if (localDstInterface==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("dstInterface cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localDstInterface);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                             
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
+                                            xmlWriter.writeStartElement(prefix,"dstIpAndMask", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"dstIpAndMask");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("dstIpAndMask");
+                                    }
+                                
+
+                                          if (localDstIpAndMask==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("dstIpAndMask cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localDstIpAndMask);
                                             
                                           }
                                     
@@ -616,12 +872,48 @@
                                         }
                                     
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "srcInterface"));
+                                 
+                                        if (localSrcInterface != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localSrcInterface));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("srcInterface cannot be null!!");
+                                        }
+                                    
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "srcIpAndMask"));
+                                 
+                                        if (localSrcIpAndMask != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localSrcIpAndMask));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("srcIpAndMask cannot be null!!");
+                                        }
+                                    
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "destinationNode"));
                                  
                                         if (localDestinationNode != null){
                                             elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localDestinationNode));
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("destinationNode cannot be null!!");
+                                        }
+                                    
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "dstInterface"));
+                                 
+                                        if (localDstInterface != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localDstInterface));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("dstInterface cannot be null!!");
+                                        }
+                                    
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "dstIpAndMask"));
+                                 
+                                        if (localDstIpAndMask != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localDstIpAndMask));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("dstIpAndMask cannot be null!!");
                                         }
                                     
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
@@ -755,11 +1047,87 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","srcInterface").equals(reader.getName())){
+                                
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setSrcInterface(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                else{
+                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                }
+                            
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","srcIpAndMask").equals(reader.getName())){
+                                
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setSrcIpAndMask(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                else{
+                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                }
+                            
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
                                     if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","destinationNode").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
                                               object.setDestinationNode(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                else{
+                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                }
+                            
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","dstInterface").equals(reader.getName())){
+                                
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setDstInterface(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                else{
+                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                }
+                            
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","dstIpAndMask").equals(reader.getName())){
+                                
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setDstIpAndMask(
                                                     org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
                                               
                                         reader.next();

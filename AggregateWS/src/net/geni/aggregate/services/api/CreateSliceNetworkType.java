@@ -32,36 +32,6 @@
         
 
                         /**
-                        * field for SliceID
-                        */
-
-                        
-                                    protected java.lang.String localSliceID ;
-                                
-
-                           /**
-                           * Auto generated getter method
-                           * @return java.lang.String
-                           */
-                           public  java.lang.String getSliceID(){
-                               return localSliceID;
-                           }
-
-                           
-                        
-                            /**
-                               * Auto generated setter method
-                               * @param param SliceID
-                               */
-                               public void setSliceID(java.lang.String param){
-                            
-                                            this.localSliceID=param;
-                                    
-
-                               }
-                            
-
-                        /**
                         * field for RspecNetwork
                         */
 
@@ -188,40 +158,6 @@
                
                    }
                
-                                    namespace = "http://aggregate.geni.net/services/api/";
-                                    if (! namespace.equals("")) {
-                                        prefix = xmlWriter.getPrefix(namespace);
-
-                                        if (prefix == null) {
-                                            prefix = generatePrefix(namespace);
-
-                                            xmlWriter.writeStartElement(prefix,"sliceID", namespace);
-                                            xmlWriter.writeNamespace(prefix, namespace);
-                                            xmlWriter.setPrefix(prefix, namespace);
-
-                                        } else {
-                                            xmlWriter.writeStartElement(namespace,"sliceID");
-                                        }
-
-                                    } else {
-                                        xmlWriter.writeStartElement("sliceID");
-                                    }
-                                
-
-                                          if (localSliceID==null){
-                                              // write the nil attribute
-                                              
-                                                     throw new org.apache.axis2.databinding.ADBException("sliceID cannot be null!!");
-                                                  
-                                          }else{
-
-                                        
-                                                   xmlWriter.writeCharacters(localSliceID);
-                                            
-                                          }
-                                    
-                                   xmlWriter.writeEndElement();
-                             
                                             if (localRspecNetwork==null){
                                                  throw new org.apache.axis2.databinding.ADBException("rspecNetwork cannot be null!!");
                                             }
@@ -390,15 +326,6 @@
                  java.util.ArrayList attribList = new java.util.ArrayList();
 
                 
-                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
-                                                                      "sliceID"));
-                                 
-                                        if (localSliceID != null){
-                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localSliceID));
-                                        } else {
-                                           throw new org.apache.axis2.databinding.ADBException("sliceID cannot be null!!");
-                                        }
-                                    
                             elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "rspecNetwork"));
                             
@@ -483,25 +410,6 @@
                     
                     reader.next();
                 
-                                    
-                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
-                                
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","sliceID").equals(reader.getName())){
-                                
-                                    java.lang.String content = reader.getElementText();
-                                    
-                                              object.setSliceID(
-                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
-                                              
-                                        reader.next();
-                                    
-                              }  // End of if for expected property start element
-                                
-                                else{
-                                    // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
-                                }
-                            
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 

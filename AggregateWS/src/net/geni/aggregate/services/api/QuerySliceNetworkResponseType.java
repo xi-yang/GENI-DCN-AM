@@ -69,6 +69,12 @@
                         
                                     protected net.geni.aggregate.services.api.VlanReservationResultType[] localVlanResvResult ;
                                 
+                           /*  This tracker boolean wil be used to detect whether the user called the set method
+                          *   for this attribute. It will be used to determine whether to include this field
+                           *   in the serialized XML
+                           */
+                           protected boolean localVlanResvResultTracker = false ;
+                           
 
                            /**
                            * Auto generated getter method
@@ -88,10 +94,6 @@
                                */
                               protected void validateVlanResvResult(net.geni.aggregate.services.api.VlanReservationResultType[] param){
                              
-                              if ((param != null) && (param.length < 1)){
-                                throw new java.lang.RuntimeException();
-                              }
-                              
                               }
 
 
@@ -104,6 +106,14 @@
                                    validateVlanResvResult(param);
 
                                
+                                          if (param != null){
+                                             //update the setting tracker
+                                             localVlanResvResultTracker = true;
+                                          } else {
+                                             localVlanResvResultTracker = false;
+                                                 
+                                          }
+                                      
                                       this.localVlanResvResult=param;
                               }
 
@@ -118,6 +128,9 @@
                                    localVlanResvResult = new net.geni.aggregate.services.api.VlanReservationResultType[]{};
                                    }
 
+                            
+                                 //update the setting tracker
+                                localVlanResvResultTracker = true;
                             
 
                                java.util.List list =
@@ -260,7 +273,7 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                              if (localVlanResvResultTracker){
                                        if (localVlanResvResult!=null){
                                             for (int i = 0;i < localVlanResvResult.length;i++){
                                                 if (localVlanResvResult[i] != null){
@@ -268,7 +281,7 @@
                                                            factory,xmlWriter);
                                                 } else {
                                                    
-                                                           throw new org.apache.axis2.databinding.ADBException("vlanResvResult cannot be null!!");
+                                                        // we don't have to do any thing since minOccures is zero
                                                     
                                                 }
 
@@ -278,7 +291,7 @@
                                                throw new org.apache.axis2.databinding.ADBException("vlanResvResult cannot be null!!");
                                         
                                     }
-                                 
+                                 }
                     xmlWriter.writeEndElement();
                
 
@@ -449,7 +462,7 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("sliceStatus cannot be null!!");
                                         }
-                                    
+                                     if (localVlanResvResultTracker){
                              if (localVlanResvResult!=null) {
                                  for (int i = 0;i < localVlanResvResult.length;i++){
 
@@ -459,7 +472,7 @@
                                          elementList.add(localVlanResvResult[i]);
                                     } else {
                                         
-                                               throw new org.apache.axis2.databinding.ADBException("vlanResvResult cannot be null !!");
+                                                // nothing to do
                                             
                                     }
 
@@ -470,7 +483,7 @@
                                     
                              }
 
-                        
+                        }
 
                 return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
             
@@ -609,11 +622,10 @@
                                                             
                               }  // End of if for expected property start element
                                 
-                                else{
-                                    // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
-                                }
-                              
+                                    else {
+                                        
+                                    }
+                                  
                             while (!reader.isStartElement() && !reader.isEndElement())
                                 reader.next();
                             
