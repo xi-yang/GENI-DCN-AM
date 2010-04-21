@@ -74,9 +74,9 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         try {
             //init the capabilities table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getCapsTab() + " ( " +
+                    "id INT NOT NULL AUTO_INCREMENT, " +
                     "name VARCHAR(255) NOT NULL, " +
                     "urn VARCHAR(255) NOT NULL, " +
-                    "id INT NOT NULL AUTO_INCREMENT, " +
                     "description TEXT NOT NULL, " +
                     "controllerURL VARCHAR(255) NOT NULL, " +
                     "PRIMARY KEY (id, urn)" +
@@ -88,29 +88,43 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         try {
             //init the nodes table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getNodesTab() + " ( " +
+                    "id int(11) NOT NULL, " + // resource ID
+                    "nodeId int(11) NOT NULL, " + // node ID by PLC
                     "urn VARCHAR(255) NOT NULL, " +
-                    "id int(11) NOT NULL, " +
                     "description TEXT NOT NULL, " +
                     "capabilities TEXT, " +
-                    "PRIMARY KEY (id, urn)" +
+                    "PRIMARY KEY (id, nodeId)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
         } catch(AggregateException ex) {
             ex.printStackTrace();
             return;
         }
         try {
-            //init the slices table
-            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getSlicesTab() + " ( " +
-                    "sliceName VARCHAR(255), " + // slice Name
-                    "id int(11) NOT NULL, " + // slice ID
-                    "url TEXT NOT NULL, " + // slice URL
-                    "description TEXT NOT NULL, " + // slice description
-                    "users TEXT NOT NULL, " + // slice users/persons
-                    "nodes TEXT NOT NULL, " + // slice node members
-                    "creatorId INT(11) NOT NULL, " + // user who created the slice
-                    "createdTime BIGINT(20), " + // launch timestamp
-                    "expiredTime BIGINT(20), " + // expire timestamp
-                    "status varchar(255) NOT NULL default '', " +
+            //init the nodes table
+            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getNodesTab() + " ( " +
+                    "id int(11) NOT NULL, " + // resource ID
+                    "nodeId int(11) NOT NULL, " + // node ID by PLC
+                    "urn VARCHAR(255) NOT NULL, " +
+                    "description TEXT NOT NULL, " +
+                    "capabilities TEXT, " +
+                    "PRIMARY KEY (id, nodeId)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
+        } catch(AggregateException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        try {
+            //init the interfaces table
+            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getInterfacesTab() + " ( " +
+                    "id int(11) NOT NULL, " + // resource ID
+                    "pnid int(11) NOT NULL, " + // parent node resource ID
+                    "urn varchar(255) NOT NULL, " +
+                    "deviceName varchar(255) NOT NULL, " +
+                    "capacity varchar(255) NOT NULL, " +
+                    "ipAddress varchar(255) NOT NULL, " +
+                    "vlanRanges  text NOT NULL, " +
+                    "attachedLinks  text NOT NULL, " +
+                    "peerInterfaces  text NOT NULL, " +
                     "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
         } catch(AggregateException ex) {
@@ -156,7 +170,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         try {
             //init the users table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getUsersTab() + " ( " +
-                    "id int(11) NOT NULL auto_increment, " +
+                    "id int(11) NOT NULL, " +
                     "name varchar(40) NOT NULL default '', " +
                     "firstName varchar(40) NOT NULL default '', " +
                     "lastName varchar(40) NOT NULL default '', " +
@@ -271,6 +285,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         return AggregateState.getSkeletonAPI().QuerySliceNetwork(querySliceNetwork);
     }
     public GetResourceTopologyResponse  GetResourceTopology(net.geni.aggregate.services.api.GetResourceTopology getResourceTopology) throws AggregateFaultMessage {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return AggregateState.getSkeletonAPI().GetResourceTopology(getResourceTopology);
     }
 }

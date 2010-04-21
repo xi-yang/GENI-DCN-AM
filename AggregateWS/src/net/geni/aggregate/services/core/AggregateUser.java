@@ -5,12 +5,13 @@
 
 package net.geni.aggregate.services.core;
 
+import java.io.Serializable;
 
 /**
  *
  * @author root
  */
-public class AggregateUser extends AggregateResource {
+public class AggregateUser implements java.io.Serializable {
     int id = 0;
     String name = "";
     String firstName = "";

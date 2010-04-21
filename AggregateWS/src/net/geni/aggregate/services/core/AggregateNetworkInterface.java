@@ -12,27 +12,20 @@ import java.util.*;
  * @author root
  */
 public class AggregateNetworkInterface extends AggregateResource {
-    int id = 0;
-    String interfaceId = "";
+    String urn = "";
     String deviceName = "";
     String ipAddress = "";
     String vlanTag = "";
     String capacity = "";
-    AggregateNode parentNode = null;
+    ArrayList<String> attachedLinkUrns = null;
     ArrayList<String> peerInterfaces = null;
+    AggregateNode parentNode = null;
+    int pnid = 0;
 
     public AggregateNetworkInterface() {}
     
-    public AggregateNetworkInterface(String ifd) {
-        interfaceId = ifd;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public AggregateNetworkInterface(String urn) {
+        this.urn = urn;
     }
 
     public String getDeviceName() {
@@ -43,12 +36,12 @@ public class AggregateNetworkInterface extends AggregateResource {
         this.deviceName = deviceName;
     }
 
-    public String getInterfaceId() {
-        return interfaceId;
+    public String getUrn() {
+        return urn;
     }
 
-    public void setInterfaceId(String ifd) {
-        this.interfaceId = ifd;
+    public void setUrn(String urn) {
+        this.urn = urn;
     }
 
     public String getIpAddress() {
@@ -73,13 +66,22 @@ public class AggregateNetworkInterface extends AggregateResource {
 
     public void setParentNode(AggregateNode parentNode) {
         this.parentNode = parentNode;
+        this.pnid = parentNode.getId();
     }
 
-    public ArrayList<String> getPeerInterfaces() {
+    public ArrayList<String> getLinks() {
+        return attachedLinkUrns;
+    }
+
+    public void setLinks(ArrayList<String> links) {
+        this.attachedLinkUrns = links;
+    }
+
+    public ArrayList<String> getPeers() {
         return peerInterfaces;
     }
 
-    public void setPeerInterfaces(ArrayList<String> peerInterfaces) {
+    public void setPeers(ArrayList<String> peerInterfaces) {
         this.peerInterfaces = peerInterfaces;
     }
 
@@ -91,17 +93,55 @@ public class AggregateNetworkInterface extends AggregateResource {
         this.capacity = capacity;
     }
 
+    public void setAttachedLinkUrns(String links) {
+        attachedLinkUrns = new ArrayList();
+        attachedLinkUrns.toArray(links.split("[\\s,]"));
+    }
+
+    public String getAttachedLinkUrns() {
+        String ret = "";
+        for (String link: attachedLinkUrns) {
+            ret = ret + ", " + link;
+        }
+        if (!ret.isEmpty())
+            ret = ret.substring(2);
+        return ret;
+    }
+
+    public void setPeerInterfaces(String peers) {
+        peerInterfaces = new ArrayList();
+        peerInterfaces.toArray(peers.split("[\\s,]"));
+    }
+
+    public String getPeerInterfaces() {
+        String ret = "";
+        for (String link: attachedLinkUrns) {
+            ret = ret + ", " + link;
+        }
+        if (!ret.isEmpty())
+            ret = ret.substring(2);
+        return ret;
+    }
+
+    public int getPnid() {
+        return pnid;
+    }
+
+    public void setPnid(int pnid) {
+        this.pnid = pnid;
+    }
+
     public int[] pairupInterfaces(AggregateNetworkInterface peer) {
         int[] ret = new int[2];
         ret[0] = -1; ret[1] = -1;
         for (int i = 0; i < this.peerInterfaces.size(); i++) {
-            if (this.getPeerInterfaces().get(i).equalsIgnoreCase(peer.getInterfaceId())) {
+            if (this.getPeers().get(i).equalsIgnoreCase(peer.getUrn())) {
                ret[0] = i;
                break;
             }
         }
         for (int i = 0; i < peer.peerInterfaces.size(); i++) {
-            if (peer.getPeerInterfaces().get(i).equalsIgnoreCase(this.getInterfaceId())) {
+            if (peer.getPeers().get(i).equalsIgnoreCase(this.getUrn())) {
                ret[1] = i;
                break;
             }

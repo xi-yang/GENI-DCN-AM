@@ -8,6 +8,9 @@ package net.geni.aggregate.services.core;
 import java.util.*;
 import org.hibernate.*;
 import org.apache.log4j.*;
+import org.apache.axis2.AxisFault;
+import net.es.oscars.oscars.AAAFaultMessage;
+import net.es.oscars.oscars.BSSFaultMessage;
 
 /**
  *
@@ -15,9 +18,10 @@ import org.apache.log4j.*;
  */
 public class AggregateRspecManager extends Thread{
     final int extendedPollInterval = 900000; // 15 minutes
-    private volatile boolean goRun = true;
+    private volatile boolean goRun = false;
     private volatile List<AggregateRspec> aggrRspecs;
     private volatile List<AggregateRspecRunner> rspecThreads;
+    private AggregateRspec aggrRspecGlobal = null;
     private static Session session;
     private org.apache.log4j.Logger log;
 
@@ -33,8 +37,8 @@ public class AggregateRspecManager extends Thread{
         return aggrRspecs;
     }
 
-    public void setAggrRspecs(List<AggregateRspec> aggrRspecs) {
-        this.aggrRspecs = aggrRspecs;
+    public AggregateRspec getAggrRspecGlobal() {
+        return aggrRspecGlobal;
     }
 
     public boolean isGoRun() {
@@ -43,6 +47,16 @@ public class AggregateRspecManager extends Thread{
 
     public void setGoRun(boolean goRun) {
         this.goRun = goRun;
+    }
+
+    public void loadCRDB() {
+        String filePath = AggregateState.getAggregateCRDBFilePath();
+        if (filePath == null) {
+            log.error("Fatal Error: aggregate.properties file misses the 'aggregate.crdb.path' property!");
+            return;
+        }
+        aggrRspecGlobal = new AggregateRspec();
+        aggrRspecGlobal.configRspecFromFile(filePath);
     }
 
     public void reloadFromDB() {
@@ -85,7 +99,9 @@ public class AggregateRspecManager extends Thread{
     }
 
     public void run() {
+        loadCRDB();
         reloadFromDB();
+        goRun = true;
         while (goRun) {
             //polling rspecThreads and rspecRspecs for status change
             synchronized(rspecThreads) {
@@ -209,6 +225,91 @@ public class AggregateRspecManager extends Thread{
                 throw new IllegalArgumentException("Rspec needs to have rspecName, aggregateName and at least one resource item.");
             }
         }
+    }
+
+    public synchronized String[] getResourceTopologyXML(String scope, String[] rspecNames) throws AggregateException {
+        if (goRun == false) {
+            throw new AggregateException("Initilization not finished yet. Try again later...");
+        }
+
+        String[] statements = null;
+        int len = 0;
+        if (rspecNames == null || rspecNames.length == 0) {
+            String networkTopology = "";
+            String computeResource = "";
+
+            //get compute resources
+            if (scope.equalsIgnoreCase("all") || scope.contains("compute")) {
+                if (aggrRspecGlobal != null) {
+                    computeResource = aggrRspecGlobal.getXml();
+                }
+                if (computeResource != null && !computeResource.isEmpty()) {
+                    log.debug("computeResource XML: " + computeResource);
+                    computeResource = computeResource.replaceAll("\n\\s*", "");
+                    len++;
+                }
+            }
+            //get nework topology
+            if (scope.equalsIgnoreCase("all") || scope.contains("network")) {
+                AggregateIDCClient client = AggregateIDCClient.getIDCClient();
+                String errMessage = null;
+                try {
+                    networkTopology = client.retrieveNetworkTopology("all");
+                } catch (AxisFault e) {
+                    errMessage = "AxisFault from queryReservation: " + e.getMessage();
+                } catch (AAAFaultMessage e) {
+                    errMessage = "AAAFaultMessage from queryReservation: " + e.getFaultMessage().getMsg();
+                } catch (BSSFaultMessage e) {
+                    errMessage = "BSSFaultMessage from queryReservation: " + e.getFaultMessage().getMsg();
+                } catch (java.rmi.RemoteException e) {
+                    errMessage = "RemoteException returned from queryReservation: " + e.getMessage();
+                } catch (Exception e) {
+                    errMessage = "OSCARSStub threw exception in queryReservation: " + e.getMessage();
+                }
+                if (errMessage != null) {
+                    throw new AggregateException(errMessage);
+                }
+                if (networkTopology != null && !networkTopology.isEmpty()) {
+                    len++;
+                }
+            }
+            //collect results
+            if (len > 0 ) {
+                statements = new String[len];
+                if (len == 1) {
+                    if (computeResource != null && !computeResource.isEmpty()) {
+                        statements[0] = computeResource;
+                    } else {
+                        statements[0] = networkTopology;
+                    }
+                } else {
+                    statements[0] = computeResource;
+                    statements[1] = networkTopology;
+                }
+            }
+        } else {
+                Vector<AggregateRspec> retRspecs = new Vector<AggregateRspec>();
+                synchronized (aggrRspecs) {
+                    for (String name: rspecNames) {
+                        for (AggregateRspec rspec: aggrRspecs) {
+                            if (rspec.getRspecName().equalsIgnoreCase(name) && rspec.getXml() != null) {
+                                retRspecs.add(rspec);
+                            }
+                        }
+                    }
+                }
+                len = retRspecs.size();
+                statements = new String[len];
+                for (int i = 0; i < len; i++) {
+                    statements[i] = retRspecs.get(i).getXml().replaceAll("\n\\s*", "");
+                }
+        }
+
+        if (len == 0) {
+            throw new AggregateException("No resouce found under scope: " + scope);
+        }
+
+        return statements;
     }
 
 }

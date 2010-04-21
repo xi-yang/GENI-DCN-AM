@@ -21,7 +21,6 @@ import net.geni.aggregate.services.core.AggregateP2PVlans;
 import net.geni.aggregate.services.core.AggregateUser;
 import net.geni.aggregate.services.core.AggregateUsers;
 import net.geni.aggregate.services.core.AggregateException;
-//TODO move to slcies...
 import net.geni.aggregate.services.core.AggregatePLC_APIClient;
 
 /**
@@ -546,7 +545,24 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
     public net.geni.aggregate.services.api.GetResourceTopologyResponse GetResourceTopology(
             net.geni.aggregate.services.api.GetResourceTopology getResourceTopology32)
             throws AggregateFaultMessage {
-        //TODO : fill this with the necessary business logic
-        throw new java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#QuerySliceNetwork");
+        GetResourceTopologyType getResourceTopology = getResourceTopology32.getGetResourceTopology();
+        String scope = getResourceTopology.getScope();
+        String [] rspecNames = getResourceTopology.getRspec();
+
+        String[] statements = null;
+        try {
+            statements = AggregateState.getRspecManager().getResourceTopologyXML(scope, rspecNames);
+        } catch (AggregateException e) {
+            throw new AggregateFaultMessage(e.getMessage());
+        }
+
+        GetResourceTopologyResponseType getResourceTopologyResponseType = new GetResourceTopologyResponseType();
+        GetResourceTopologyResponse getResourceTopologyResponse = new GetResourceTopologyResponse();
+        getResourceTopologyResponseType.setStatus("normal");
+        RSpecTopologyType rspecTopo = new RSpecTopologyType();
+        rspecTopo.setStatement(statements);
+        getResourceTopologyResponseType.setResourceTopology(rspecTopo);
+        getResourceTopologyResponse.setGetResourceTopologyResponse(getResourceTopologyResponseType);
+        return getResourceTopologyResponse;
     }
 }

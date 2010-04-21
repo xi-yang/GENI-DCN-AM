@@ -13,7 +13,7 @@ import net.geni.aggregate.services.api.NodeDescriptorTypeSequence_type0;
  * @author jflidr
  */
 public class AggregateNode extends AggregateResource {
-    private int id = 0;
+    private int nodeId = 0;
     private String urn;
     private String description;
     private String capabilities;
@@ -26,17 +26,17 @@ public class AggregateNode extends AggregateResource {
 
     public AggregateNode(String u, int i, String d, String c) {
         urn = u;
-        id = i;
+        nodeId = i;
         description = d;
         capabilities = c;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setNodeId(int id) {
+        this.nodeId = id;
     }
 
-    public int getId() {
-        return this.id;
+    public int getNodeId() {
+        return this.nodeId;
     }
 
     public void setDescription(String description) {

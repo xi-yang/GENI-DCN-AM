@@ -8,8 +8,27 @@
     </id>
     <property column="type" name="type"/>
     <property column="rspecId" name="rspecId"/>
+    <joined-subclass name="net.geni.aggregate.services.core.AggregateNode" table="nodes">
+      <key column="id"/>
+      <property column="nodeId" name="nodeId"/>
+      <property column="urn" name="urn"/>
+      <property column="description" name="description"/>
+      <property column="capabilities" name="capabilities"/>
+    </joined-subclass>
+    <joined-subclass name="net.geni.aggregate.services.core.AggregateNetworkInterface" table="interfaces">
+      <key column="id"/>
+      <property column="pnid" name="pnid"/>
+      <property column="urn" name="urn"/>
+      <property column="deviceName" name="deviceName"/>
+      <property column="capacity" name="capacity"/>
+      <property column="ipAddress" name="ipAddress"/>
+      <property column="vlanRanges" name="vlanTag"/>
+      <property column="attachedLinks" name="attachedLinkUrns"/>
+      <property column="peerInterfaces" name="peerInterfaces"/>
+    </joined-subclass>
     <joined-subclass name="net.geni.aggregate.services.core.AggregateSlice" table="slices">
       <key column="id"/>
+      <property column="sliceId" name="sliceId"/>
       <property column="sliceName" name="sliceName"/>
       <property column="url" name="url"/>
       <property column="description" name="description"/>

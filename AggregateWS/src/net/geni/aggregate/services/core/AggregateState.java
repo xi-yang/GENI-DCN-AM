@@ -33,6 +33,7 @@ public class AggregateState
     private static String rspecsTab = "rspecs";
     private static String capsTab = "capabilities";
     private static String nodesTab = "nodes";
+    private static String interfacesTab = "interfaces";
     private static String slicesTab = "slices";
     private static String usersTab = "users";
     private static String p2pvlansTab = "p2pvlans";
@@ -53,6 +54,7 @@ public class AggregateState
     // Resrouces
     private static AggregateCapabilities aggregateCaps = null;
     private static AggregateNodes aggregateNodes = null;
+    private static AggregateNetworkInterfaces aggregateInterfaces = null;
     private static AggregateSlices aggregateSlices = null;
     private static AggregateP2PVlans aggregateP2PVlans = null;
     private static AggregateUsers aggregateUsers = null;
@@ -106,6 +108,7 @@ public class AggregateState
         //init instances
         aggregateCaps = new AggregateCapabilities();
         aggregateNodes = new AggregateNodes();
+        aggregateInterfaces = new AggregateNetworkInterfaces();
         aggregateSlices = new AggregateSlices();
         aggregateP2PVlans = new AggregateP2PVlans();
         aggregateUsers = new AggregateUsers();
@@ -156,6 +159,10 @@ public class AggregateState
         return aggregateNodes;
     }
 
+    public static AggregateNetworkInterfaces getAggregateInterfaces() {
+        return aggregateInterfaces;
+    }
+
     public static AggregateSlices getAggregateSlices() {
         return aggregateSlices;
     }
@@ -190,6 +197,10 @@ public class AggregateState
 
     public static String getNodesTab() {
         return nodesTab;
+    }
+
+    public static String getInterfacesTab() {
+        return interfacesTab;
     }
 
     public static String getSlicesTab() {
@@ -254,5 +265,9 @@ public class AggregateState
 
     public static String getPlcSshExecPrefix() {
         return plcSshExecPrefix;
+    }
+
+    public static String getAggregateCRDBFilePath() { //computeResource DB file
+        return aggregateProps.getProperty("aggregate.crdb.path", null);
     }
 }

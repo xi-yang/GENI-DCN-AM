@@ -5,11 +5,13 @@
 
 package net.geni.aggregate.services.core;
 
+import java.io.Serializable;
+
 /**
  *
  * @author jflidr, xyang
  */
-public class AggregateCapability extends AggregateResource {
+public class AggregateCapability implements java.io.Serializable {
     int id;
     private String name;
     private String description;

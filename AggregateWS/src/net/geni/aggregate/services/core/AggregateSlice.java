@@ -10,7 +10,7 @@ package net.geni.aggregate.services.core;
  * @author Xi Yang
  */
 public class AggregateSlice extends AggregateResource {
-
+    private int sliceId;
     private String sliceName;
     private String description;
     private String url;
@@ -22,6 +22,7 @@ public class AggregateSlice extends AggregateResource {
     private String status;
 
     public AggregateSlice() {
+        sliceId = 0;
         sliceName = "";
         url = "";
         description = "";
@@ -36,7 +37,7 @@ public class AggregateSlice extends AggregateResource {
 
     public AggregateSlice(String n, int i, String u,  String d, String us, String ns, int cI, long cT, long eT) {
         sliceName = n;
-        id = i;
+        sliceId = i;
         url = u;
         description = d;
         users = us;
@@ -46,6 +47,14 @@ public class AggregateSlice extends AggregateResource {
         expiredTime = eT;
         status = "";
         type = "computeSlice";
+    }
+
+    public int getSliceId() {
+        return sliceId;
+    }
+
+    public void setSliceId(int sliceId) {
+        this.sliceId = sliceId;
     }
 
     public String getUrl() {

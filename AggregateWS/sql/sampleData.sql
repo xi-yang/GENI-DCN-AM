@@ -4,29 +4,32 @@ USE aggregate;
 -- Dumping data for table `capabilities`
 --
 
-INSERT INTO `capabilities` VALUES ('DRAGON','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon',1,'dynamic networks provisioning capability','https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS?wsdl');
-INSERT INTO `capabilities` VALUES ('PlanetLab','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab',2,'virtualized computational resources','https://max-myplc.dragon.maxgigapop.net/PLCAPI/');
-INSERT INTO `capabilities` VALUES ('NetFPGA','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=netfpga',3,'netfpga cards','http://idc.dragon.maxgigapop.net:8443/axis2/services/NetFPGA?wsdl');
+INSERT INTO `capabilities` VALUES (1, 'DRAGON','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon','dynamic networks provisioning capability','https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS?wsdl');
+INSERT INTO `capabilities` VALUES (2, 'PlanetLab','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab','virtualized computational resources','https://max-myplc.dragon.maxgigapop.net/PLCAPI/');
+INSERT INTO `capabilities` VALUES (3, 'NetFPGA','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=netfpga','netfpga cards','http://idc.dragon.maxgigapop.net:8443/axis2/services/NetFPGA?wsdl');
 
 --
 -- Dumping data for table `nodes`
 --
 
-INSERT INTO `nodes` VALUES ('urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB5',1,'planetlab5.dragon.maxgigapop.net','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab');
-INSERT INTO `nodes` VALUES ('urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB4',2,'planetlab4.dragon.maxgigapop.net','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab');
-INSERT INTO `nodes` VALUES ('urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB3',3,'planetlab3.dragon.maxgigapop.net','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab');
-INSERT INTO `nodes` VALUES ('urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB2',4,'planetlab2.dragon.maxgigapop.net','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab');
-INSERT INTO `nodes` VALUES ('urn:ogf:geni:domain=dragon.maxgigapop.net:node=IDC',5,'MAX-DRAGON InterDomain Controller','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon');
-INSERT INTO `nodes` VALUES ('urn:ogf:geni:domain=dragon.maxgigapop.net:node=STYX',6,'Node with 2 NetFPGA cards','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=netfpga');
+INSERT INTO `nodes` VALUES (1, 1, 'urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB5','planetlab5.dragon.maxgigapop.net','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab');
+INSERT INTO `nodes` VALUES (2, 3, 'urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB4','planetlab4.dragon.maxgigapop.net','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab');
+INSERT INTO `nodes` VALUES (3, 5, 'urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB3','planetlab3.dragon.maxgigapop.net','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab');
+INSERT INTO `nodes` VALUES (4, 2, 'urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB2','planetlab2.dragon.maxgigapop.net','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab');
+INSERT INTO `nodes` VALUES (5, 0, 'urn:ogf:geni:domain=dragon.maxgigapop.net:node=IDC','MAX-DRAGON InterDomain Controller','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon');
+INSERT INTO `nodes` VALUES (6, 0, 'urn:ogf:geni:domain=dragon.maxgigapop.net:node=STYX','Node with 2 NetFPGA cards','urn:ogf:geni:domain=dragon.maxgigapop.net:capability=netfpga');
 
 
 --
 -- Dumping data for table `slices`
 --
 
-INSERT INTO `slices` VALUES ('maxpl_xi_test1', 1, 'http://geni.maxgigapop.net', 'Planetlab Slice#1 for MAX-GENI demo at GEC7', '', 'urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB2,urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB3,urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB4,urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB5', 100, UNIX_TIMESTAMP('2010-03-09 16:14:53'), UNIX_TIMESTAMP('2011-04-18 00:14:54'), "active");
-INSERT INTO `slices` VALUES ('maxpl_xi_test2', 2, 'http://geni.maxgigapop.net', 'Planetlab Slice#2 for MAX-GENI demo at GEC7', '', 'urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB3,urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB4,urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB5', 100, UNIX_TIMESTAMP('2010-03-10 01:49:32'), UNIX_TIMESTAMP('2011-04-18 17:49:33'), "active");
-INSERT INTO `slices` VALUES ('maxpl_dynamic_net', 3, 'http://geni.maxgigapop.net', 'Dynamic Networked Slice for MAX-GENI demo at GEC7', '', 'urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB2,urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB3,urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB4,urn:ogf:geni:domain=dragon.maxgigapop.net:node=PLANETLAB5', 98, UNIX_TIMESTAMP('2010-03-11 10:23:00'), UNIX_TIMESTAMP('2010-04-23 10:43:00'), "active");
+INSERT INTO `resources` VALUES (1, 'computeNode', 0);
+INSERT INTO `resources` VALUES (2, 'computeNode', 0);
+INSERT INTO `resources` VALUES (3, 'computeNode', 0);
+INSERT INTO `resources` VALUES (4, 'computeNode', 0);
+INSERT INTO `resources` VALUES (5, 'computeNode', 0);
+INSERT INTO `resources` VALUES (6, 'computeNode', 0);
 
 
 --

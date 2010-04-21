@@ -194,13 +194,13 @@ public class AggregateRspecRunner extends Thread {
                             continue;
                         int[] ifIndices = netIf1.pairupInterfaces(netIf2);
                         if (ifIndices[0] != -1 && ifIndices[1] != -1) {
-                            netIf1.getPeerInterfaces().remove(ifIndices[0]);
-                            netIf2.getPeerInterfaces().remove(ifIndices[1]);
+                            netIf1.getPeers().remove(ifIndices[0]);
+                            netIf2.getPeers().remove(ifIndices[1]);
                             //lookup service should have names such as planetlab2.dragon.maxgigapop.net
-                            String source = AggregateUtils.getUrnField(netIf1.getInterfaceId(), "node")
-                                +"."+AggregateUtils.getUrnField(netIf1.getInterfaceId(), "domain");
-                            String destination = AggregateUtils.getUrnField(netIf2.getInterfaceId(), "node")
-                                +"."+AggregateUtils.getUrnField(netIf1.getInterfaceId(), "domain");
+                            String source = AggregateUtils.getUrnField(netIf1.getUrn(), "node")
+                                +"."+AggregateUtils.getUrnField(netIf1.getUrn(), "domain");
+                            String destination = AggregateUtils.getUrnField(netIf2.getUrn(), "node")
+                                +"."+AggregateUtils.getUrnField(netIf1.getUrn(), "domain");
                             String description = rspec.getRspecName() + " p2pvlan-" + source + "-" + destination + "-" + netIf1.getVlanTag();
                             int vtag = Integer.valueOf(netIf1.getVlanTag());
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());

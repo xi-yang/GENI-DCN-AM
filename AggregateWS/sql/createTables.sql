@@ -36,9 +36,9 @@ CREATE TABLE `rspecs` (
 
 DROP TABLE IF EXISTS `capabilities`;
 CREATE TABLE `capabilities` (
+  `id` int(11) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL,
   `urn` varchar(255) NOT NULL,
-  `id` int(11) NOT NULL auto_increment,
   `description` text NOT NULL,
   `controllerURL` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`,`urn`)
@@ -63,11 +63,31 @@ CREATE TABLE `front_end` (
 
 DROP TABLE IF EXISTS `nodes`;
 CREATE TABLE `nodes` (
-  `urn` varchar(255) NOT NULL,
   `id` int(11) NOT NULL,
+  `nodeId` int(11) NOT NULL,
+  `urn` varchar(255) NOT NULL,
   `description` text NOT NULL,
-  `capabilities` text,
-  PRIMARY KEY  (`id`,`urn`)
+  `capabilities` text NOT NULL,
+  PRIMARY KEY  (`id`,`nodeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+--
+-- Table structure for table `interfaces`
+--
+
+DROP TABLE IF EXISTS `interfaces`;
+CREATE TABLE `interfaces` (
+  `id` int(11) NOT NULL,
+  `pnid` int(11) NOT NULL,
+  `urn` varchar(255) NOT NULL,
+  `deviceName` varchar(255) NOT NULL,
+  `capacity` varchar(255) NOT NULL,
+  `ipAddress` varchar(255) NOT NULL,
+  `vlanRanges`  text NOT NULL,
+  `attachedLinks`  text NOT NULL,
+  `peerInterfaces`  text NOT NULL,
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -76,8 +96,9 @@ CREATE TABLE `nodes` (
 
 DROP TABLE IF EXISTS `slices`;
 CREATE TABLE `slices` (
-  `sliceName` varchar(255) NOT NULL default '',
   `id` int(11) NOT NULL,
+  `sliceId` int(11) NOT NULL,
+  `sliceName` varchar(255) NOT NULL default '',
   `url` text NOT NULL,
   `description` text NOT NULL,
   `users` text NOT NULL,
@@ -86,7 +107,7 @@ CREATE TABLE `slices` (
   `createdTime` bigint(20) default NULL,
   `expiredTime` bigint(20) default NULL,
   `status` varchar(255) NOT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`, `sliceId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -133,7 +154,7 @@ CREATE TABLE `networks` (
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `firstName` varchar(40) NOT NULL default '',
   `lastName` varchar(40) NOT NULL default '',

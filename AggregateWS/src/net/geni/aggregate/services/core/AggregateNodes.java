@@ -10,11 +10,12 @@ import org.apache.log4j.*;
 
 /**
  *
- * @author jflidr
+ * @author jflidr, Xi Yang
  */
 public class AggregateNodes {
     private Session session;
     private org.apache.log4j.Logger log;
+    private List<AggregateNode> cachedNodes = null;
 
     public AggregateNodes() {
         this.session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -140,5 +141,43 @@ public class AggregateNodes {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String getNodeIds(String[] nodes) {
+        if (cachedNodes == null)
+            cachedNodes = this.getAll();
+        String ret = "";
+        if (cachedNodes == null)
+            return ret;
+        for (String node: nodes) {
+            AggregateNode aggrNode = null;
+            if (node.matches("urn:.+")) { //url
+                for (AggregateNode n: cachedNodes) {
+                    if (n.getUrn().equalsIgnoreCase(node)) {
+                        aggrNode = n;
+                        break;
+                    }
+                }
+            } else if (node.matches("\\d")) { //id
+                for (AggregateNode n: cachedNodes) {
+                    if (n.getId() == Integer.valueOf(node)) {
+                        aggrNode = n;
+                        break;
+                    }
+                }
+            } else if (node.matches("[a-zA-Z0-9\\.\\s]+")) {
+                for (AggregateNode n: cachedNodes) {
+                    if (n.getDescription().equalsIgnoreCase(node)) {
+                        aggrNode = n;
+                        break;
+                    }
+                }
+            }
+            if (aggrNode != null)
+                ret = ret + ", " + Integer.toString(aggrNode.getNodeId());
+        }
+        if (!ret.isEmpty())
+            ret = ret.substring(2);
+        return ret;
     }
 }

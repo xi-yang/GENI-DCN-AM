@@ -20,12 +20,7 @@ import net.es.oscars.oscars.AAAFaultMessage;
 import net.es.oscars.oscars.BSSFaultMessage;
 import net.es.oscars.wsdlTypes.*;
 import net.es.oscars.client.Client;
-import org.ogf.schema.network.topology.ctrlplane.CtrlPlanePathContent;
-import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneHopContent;
-import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneLinkContent;
-import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwcapContent;
-import org.ogf.schema.network.topology.ctrlplane.CtrlPlaneSwitchingCapabilitySpecificInfo;
-
+import org.ogf.schema.network.topology.ctrlplane.*;
 /**
  *
  * @author xyang
@@ -49,11 +44,11 @@ public class AggregateIDCClient {
     /**
      * get an IDCCLient instance
      */
-    static AggregateIDCClient getIDCClient(String url, String repo) {
+    public static AggregateIDCClient getIDCClient(String url, String repo) {
         return (new AggregateIDCClient(url, repo));
     }
 
-    static AggregateIDCClient getIDCClient() {
+    public static AggregateIDCClient getIDCClient() {
         return getIDCClient(AggregateState.getIdcURL(), AggregateState.getIdcRepo());
     }
 
@@ -146,7 +141,7 @@ public class AggregateIDCClient {
     }
 
     /**
-     * set queryReservation
+     * queryReservation
      * 
      */
     public HashMap queryReservation(String aGri)
@@ -201,4 +196,60 @@ public class AggregateIDCClient {
         hmRet.put("ERO", ero);
         return hmRet;
     }
+
+    /**
+     * retrieveNetworkTopology
+     *
+     */
+    public String retrieveNetworkTopology(String domain)
+        throws AxisFault, AAAFaultMessage, BSSFaultMessage, RemoteException, Exception {
+        Client client = new Client();
+
+        /* Initialize client instance */
+        client.setUp(true, idcURL, idcRepo);
+        GetTopologyContent request = new GetTopologyContent();
+        request.setTopologyType(domain);
+        GetTopologyResponseContent response = client.getNetworkTopology(request);
+
+        CtrlPlaneTopologyContent topology = response.getTopology();
+        CtrlPlaneDomainContent[] domains = topology.getDomain();
+
+        /* extract topology from response */
+        String ret = "<topology id=\"" +topology.getId()+"\">";
+        for (CtrlPlaneDomainContent d : domains) {
+            ret = ret + "<domain id=\"" +d.getId()+"\">";
+            CtrlPlaneNodeContent[] nodes = d.getNode();
+            for (CtrlPlaneNodeContent n : nodes) {
+                ret = ret + "<node id=\"" +n.getId()+"\">";
+                ret = ret + "<address>" +n.getAddress()+"</address>";
+                CtrlPlanePortContent[] ports = n.getPort();
+                for (CtrlPlanePortContent p : ports) {
+                    ret = ret + "<port id=\"" +p.getId()+"\">";
+                    ret = ret + "<capacity>" +p.getCapacity()+"</capacity>";
+                    ret = ret + "<maximumReservableCapacity>" +p.getMaximumReservableCapacity()+"</maximumReservableCapacity>";
+                    ret = ret + "<minimumReservableCapacity>" +p.getMinimumReservableCapacity()+"</minimumReservableCapacity>";
+                    ret = ret + "<granularity>" +p.getGranularity()+"</granularity>";
+                    CtrlPlaneLinkContent[] links = p.getLink();
+                    if (links != null) {
+                        for (CtrlPlaneLinkContent l : links) {
+                            ret = ret + "<link id=\"" +l.getId()+"\">";
+                            ret = ret + "<remoteLinkId>" +l.getRemoteLinkId()+"</remoteLinkId>";
+                            ret = ret + "<trafficEngineeringMetric>" +l.getTrafficEngineeringMetric()+"</trafficEngineeringMetric>";
+                            ret = ret + "<capacity>" +l.getCapacity()+"</capacity>";
+                            ret = ret + "<maximumReservableCapacity>" +l.getMaximumReservableCapacity()+"</maximumReservableCapacity>";
+                            ret = ret + "<minimumReservableCapacity>" +l.getMinimumReservableCapacity()+"</minimumReservableCapacity>";
+                            ret = ret + "<granularity>" +l.getGranularity()+"</granularity>";
+                            ret += "</link>";
+                        }
+                    }
+                    ret += "</port>";
+                }
+                ret += "</node>";
+            }
+            ret += "</domain>";
+        }
+        ret += "</topology>";
+        return ret;
+    }
+
 }

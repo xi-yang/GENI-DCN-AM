@@ -32,7 +32,7 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         + "slice_data['description'] = '<_descr_>';"
         + "slice_data['instantiation'] = 'plc-instantiated';"
         + "slice_id = api_server.AddSlice(auth, slice_data);"
-        + "ret1 = api_server.AddPersonToSlice(auth, '<_user_>', slice_id);"
+        + "ret1 = api_server.AddPersonToSlice(auth, <_user_>, slice_id);"
         + "nodes = <_node_list_>;"
         + "ret2 = api_server.AddSliceToNodes(auth, '<_name_>', nodes);"
         + "print ret1, ret2;"; //success pattern: "1 1"
@@ -125,8 +125,7 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
     }
 
     /*commands for PLC slice operations*/
-
-    public int createSlice(String sliceName, String url, String descr, String user, String[] nodes) {
+    public int createSlice(String sliceName, String url, String descr, String user, String nodes) {
         if (!alive()) {
             if (!login())
                 return -1;
@@ -136,14 +135,13 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         createSliceCmd = createSliceCmd.replaceFirst("<_url_>", url);
         createSliceCmd = createSliceCmd.replaceFirst("<_descr_>", descr);
         createSliceCmd = createSliceCmd.replaceFirst("<_user_>", user);
-        String nodeArray = AggregateUtils.makePyArrayString(nodes);
-        createSliceCmd = createSliceCmd.replaceAll("<_node_list_>", nodeArray);
+        createSliceCmd = createSliceCmd.replaceAll("<_node_list_>", "["+nodes+"]");
         this.sendCommand(createSliceCmd);
         log.debug("createSlice dump #1: " + createSliceCmd);
         int ret = this.readPattern("^1\\s1", ".*Fault|.*Error", promptPattern);
         log.debug("createSlice dump #2: " + this.buffer);
         if (ret != 1) {
-            log.error("plcapi server failed to create Slice '" + sliceName +"' on Nodes: " + nodeArray);
+            log.error("plcapi server failed to create Slice '" + sliceName +"' on Nodes: " + nodes);
             logoff();
         }
         return ret;
@@ -180,7 +178,7 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         return false;
     }
 
-    public int updateSlice(String sliceName, String url, String descr, int expires, String[] users, String[] nodes) {
+    public int updateSlice(String sliceName, String url, String descr, int expires, String users, String nodes) {
         if (!alive()) {
             if (!login())
                 return -1;
@@ -195,16 +193,14 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         updateSliceCmd = updateSliceCmd.replaceFirst("<_url_>", url);
         updateSliceCmd = updateSliceCmd.replaceFirst("<_descr_>", descr);
         updateSliceCmd = updateSliceCmd.replaceFirst("<_expires_>", Integer.toString(expires));
-        String userArray = AggregateUtils.makePyArrayString(users);
-        updateSliceCmd = updateSliceCmd.replaceAll("<_user_list_>", userArray);
-        String nodeArray = AggregateUtils.makePyArrayString(nodes);
-        updateSliceCmd = updateSliceCmd.replaceAll("<_node_list_>", nodeArray);
+        updateSliceCmd = updateSliceCmd.replaceAll("<_user_list_>", "["+users+"]");
+        updateSliceCmd = updateSliceCmd.replaceAll("<_node_list_>", "["+nodes+"]");
         this.sendCommand(updateSliceCmd);
         int ret = this.readPattern("^1", ".*Fault|.*Error", promptPattern);
         if (ret == 1) {
             ;
         } else {
-            log.error("plcapi server failed to update Slice '" + sliceName +"' on Nodes: " + nodeArray);
+            log.error("plcapi server failed to update Slice '" + sliceName +"' on Nodes: " + nodes);
             logoff();
         }
         return ret;

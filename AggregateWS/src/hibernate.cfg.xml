@@ -6,7 +6,6 @@
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
     <property name="hibernate.connection.url">jdbc:mysql://localhost/aggregate</property>
     <property name="current_session_context_class">thread</property>
-    <mapping resource="net/geni/aggregate/services/core/AggregateNode.hbm.xml"/>
     <mapping resource="net/geni/aggregate/services/core/AggregateCapability.hbm.xml"/>
     <mapping resource="net/geni/aggregate/services/core/AggregateUser.hbm.xml"/>
     <mapping resource="net/geni/aggregate/services/core/AggregateRspec.hbm.xml"/>

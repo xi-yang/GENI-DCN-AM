@@ -94,6 +94,7 @@ public class AggregateSlices {
                 if (!session.isOpen()) {
                     session = HibernateUtil.getSessionFactory().getCurrentSession();
                 }
+                org.hibernate.Transaction tx = session.beginTransaction();
                 return (AggregateSlice) session.get(AggregateSlice.class, id);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -157,9 +158,12 @@ public class AggregateSlices {
     }
 
     public synchronized AggregateSlice createSlice(String sliceName, String url, String description, String user, String[] nodes) {
+        String[] users = {user};
+        String userId = AggregateState.getAggregateUsers().getUserIds(users);
+        String nodeIds = AggregateState.getAggregateNodes().getNodeIds(nodes);
         //create slice wit PLC
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
-        int ret = plcClient.createSlice(sliceName, url, description, user, nodes);
+        int ret = plcClient.createSlice(sliceName, url, description, userId, nodeIds);
         AggregateSlice slice = null;
 
         if (ret == 1) { //slice successfully craeted with PLC
@@ -174,7 +178,7 @@ public class AggregateSlices {
                 long created = Integer.parseInt((String)hmV.get(0).get("created"));
                 long expires = Integer.parseInt((String)hmV.get(0).get("expires"));
                 slice = new AggregateSlice(sliceName, slice_id, url,
-                        description, user, AggregateUtils.makeArrayString(nodes), creator_person_id, created, expires);
+                        description, userId, nodeIds, creator_person_id, created, expires);
                 this.add(slice);
             }
         }
@@ -197,17 +201,20 @@ public class AggregateSlices {
             return ret;
         }
 
+        String userIds = AggregateState.getAggregateUsers().getUserIds(users);
+        String nodeIds = AggregateState.getAggregateNodes().getNodeIds(nodes);
+
         //update slice wit PLC
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
-        ret = plcClient.updateSlice(sliceName, url, descr, expires, users, nodes);
+        ret = plcClient.updateSlice(sliceName, url, descr, expires, userIds, nodeIds);
 
         if (ret == 1) { //slice successfully updateded with PLC
             //update slice in aggregate DB
             slice.setUrl(url);
             slice.setDescription(descr);
             slice.setExpiredTime(expires);
-            slice.setUsers(AggregateUtils.makeArrayString(users));
-            slice.setNodes(AggregateUtils.makeArrayString(nodes));
+            slice.setUsers(userIds);
+            slice.setNodes(nodeIds);
             this.update(slice);
         } else {
             log.error("Failed to update slice '"+sliceName+"' with the PLC");
