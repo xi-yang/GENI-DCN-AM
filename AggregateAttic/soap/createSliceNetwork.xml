@@ -17,10 +17,10 @@ Content-Length: CONTENT_LENGTH
 <rspec id="xi_rspec_slice1">
     <aggregate>geni.maxgigapop.net</aggregate>
     <description>Xi's test rspec</description>
-    <CtrlPlane:lifetime id="time-1271533930-1271563981">
+    <lifetime id="time-1271533930-1271563981">
         <start>1271174406</start>
         <end>1271563981</end>
-    </CtrlPlane:lifetime>
+    </lifetime>
     <computeResource id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1">
         <planetlabNodeSliver id="urn:aggregate=geni.maxgigapop.net:rspec=my-test-max-rspec-slice1:domain=dragon.maxgigapop.net:node=planetlab3">
             <address>206.196.176.55</address>

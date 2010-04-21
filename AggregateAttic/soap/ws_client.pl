@@ -69,6 +69,8 @@ sub process_opts($$) {
 
 sub print_xml_pretty($$) {
 	my ($text, $noheader) = @_;
+	$text =~ s/&lt;/</gs;
+	$text =~ s/&gt;/>/gs;
 	$text =~ s/></>\n</gs;
 	my $indent = 0;
 	my $bottom = 0;

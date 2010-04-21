@@ -11,8 +11,8 @@
         WARNING: THIS IS NOT THE OFFICIAL SCHEMA DOCUMENT FOR THE NMWG CONTROL PLANE TOPOLOGY SCHEMA.
         This document is used by OSCARS to generate Java classes with Axis2. Due to some software
         limitations this version of the schema is used to generate those classes. It assumes all 
-        elements are given in the order defined because it uses xsd:sequence elements instead of
-        xsd:choice elements. It also does not yet include the bidirectionalPath element. The Path 
+        elements are given in the order defined because it uses xs:sequence elements instead of
+        xs:choice elements. It also does not yet include the bidirectionalPath element. The Path 
         element is that most heavily used by OSCARS and for XML requests that use more of the 
         topology schema it is recommended a non Axis2 cient is used for best results. 
       </xs:documentation>
