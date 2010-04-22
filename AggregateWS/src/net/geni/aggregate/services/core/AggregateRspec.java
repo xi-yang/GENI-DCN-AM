@@ -585,7 +585,6 @@ public class AggregateRspec implements java.io.Serializable {
             }
         }
         xml +=  "</computeResource>";
-        log.debug(xml); //@@@@
         return xml;
     }
 
