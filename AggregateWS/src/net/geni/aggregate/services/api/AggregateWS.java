@@ -91,20 +91,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "id int(11) NOT NULL, " + // resource ID
                     "nodeId int(11) NOT NULL, " + // node ID by PLC
                     "urn VARCHAR(255) NOT NULL, " +
-                    "description TEXT NOT NULL, " +
-                    "capabilities TEXT, " +
-                    "PRIMARY KEY (id, nodeId)" +
-                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
-        } catch(AggregateException ex) {
-            ex.printStackTrace();
-            return;
-        }
-        try {
-            //init the nodes table
-            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getNodesTab() + " ( " +
-                    "id int(11) NOT NULL, " + // resource ID
-                    "nodeId int(11) NOT NULL, " + // node ID by PLC
-                    "urn VARCHAR(255) NOT NULL, " +
+                    "address VARCHAR(255) NOT NULL, " +
                     "description TEXT NOT NULL, " +
                     "capabilities TEXT, " +
                     "PRIMARY KEY (id, nodeId)" +
@@ -119,6 +106,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "id int(11) NOT NULL, " + // resource ID
                     "pnid int(11) NOT NULL, " + // parent node resource ID
                     "urn varchar(255) NOT NULL, " +
+                    "deviceType varchar(255) NOT NULL, " +
                     "deviceName varchar(255) NOT NULL, " +
                     "capacity varchar(255) NOT NULL, " +
                     "ipAddress varchar(255) NOT NULL, " +
@@ -126,6 +114,26 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "attachedLinks  text NOT NULL, " +
                     "peerInterfaces  text NOT NULL, " +
                     "PRIMARY KEY (id)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
+        } catch(AggregateException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        try {
+            //init the slices table
+          AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getSlicesTab() + " ( " +
+                    "id int(11) NOT NULL, " +
+                    "sliceId int(11) NOT NULL, " +
+                    "sliceName varchar(255) NOT NULL default '', " +
+                    "url text NOT NULL, " +
+                    "description text NOT NULL, " +
+                    "users text NOT NULL, " +
+                    "nodes text NOT NULL, " +
+                    "creatorId int(11) NOT NULL, " +
+                    "createdTime bigint(20) default NULL, " +
+                    "expiredTime bigint(20) default NULL, " +
+                    "status varchar(255) NOT NULL default '', " +
+                    "PRIMARY KEY (id, sliceid)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
         } catch(AggregateException ex) {
             ex.printStackTrace();

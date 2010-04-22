@@ -12,6 +12,7 @@
       <key column="id"/>
       <property column="nodeId" name="nodeId"/>
       <property column="urn" name="urn"/>
+      <property column="address" name="address"/>
       <property column="description" name="description"/>
       <property column="capabilities" name="capabilities"/>
     </joined-subclass>
@@ -19,6 +20,7 @@
       <key column="id"/>
       <property column="pnid" name="pnid"/>
       <property column="urn" name="urn"/>
+      <property column="deviceType" name="deviceType"/>
       <property column="deviceName" name="deviceName"/>
       <property column="capacity" name="capacity"/>
       <property column="ipAddress" name="ipAddress"/>

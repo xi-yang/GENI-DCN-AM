@@ -66,6 +66,7 @@ CREATE TABLE `nodes` (
   `id` int(11) NOT NULL,
   `nodeId` int(11) NOT NULL,
   `urn` varchar(255) NOT NULL,
+  `address` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `capabilities` text NOT NULL,
   PRIMARY KEY  (`id`,`nodeId`)
@@ -81,6 +82,7 @@ CREATE TABLE `interfaces` (
   `id` int(11) NOT NULL,
   `pnid` int(11) NOT NULL,
   `urn` varchar(255) NOT NULL,
+  `deviceType` varchar(255) NOT NULL,
   `deviceName` varchar(255) NOT NULL,
   `capacity` varchar(255) NOT NULL,
   `ipAddress` varchar(255) NOT NULL,

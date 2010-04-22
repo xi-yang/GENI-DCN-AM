@@ -14,15 +14,12 @@ import net.geni.aggregate.services.api.NodeDescriptorTypeSequence_type0;
  */
 public class AggregateNode extends AggregateResource {
     private int nodeId = 0;
-    private String urn;
-    private String description;
-    private String capabilities;
+    private String urn = "";
+    private String address = "";
+    private String description = "";
+    private String capabilities = "";
 
-    public AggregateNode() {
-        urn = "";
-        description = "";
-        capabilities = "";
-    }
+    public AggregateNode() {}
 
     public AggregateNode(String u, int i, String d, String c) {
         urn = u;
@@ -37,6 +34,14 @@ public class AggregateNode extends AggregateResource {
 
     public int getNodeId() {
         return this.nodeId;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAddress() {
+        return this.address;
     }
 
     public void setDescription(String description) {

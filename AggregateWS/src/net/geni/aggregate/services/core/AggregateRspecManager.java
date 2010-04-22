@@ -241,11 +241,9 @@ public class AggregateRspecManager extends Thread{
             //get compute resources
             if (scope.equalsIgnoreCase("all") || scope.contains("compute")) {
                 if (aggrRspecGlobal != null) {
-                    computeResource = aggrRspecGlobal.getXml();
+                    computeResource = aggrRspecGlobal.getResourcesXml();
                 }
                 if (computeResource != null && !computeResource.isEmpty()) {
-                    log.debug("computeResource XML: " + computeResource);
-                    computeResource = computeResource.replaceAll("\n\\s*", "");
                     len++;
                 }
             }
@@ -292,7 +290,7 @@ public class AggregateRspecManager extends Thread{
                 synchronized (aggrRspecs) {
                     for (String name: rspecNames) {
                         for (AggregateRspec rspec: aggrRspecs) {
-                            if (rspec.getRspecName().equalsIgnoreCase(name) && rspec.getXml() != null) {
+                            if (rspec.getRspecName().equalsIgnoreCase(name) && rspec.getResourcesXml() != null) {
                                 retRspecs.add(rspec);
                             }
                         }
@@ -301,7 +299,7 @@ public class AggregateRspecManager extends Thread{
                 len = retRspecs.size();
                 statements = new String[len];
                 for (int i = 0; i < len; i++) {
-                    statements[i] = retRspecs.get(i).getXml().replaceAll("\n\\s*", "");
+                    statements[i] = retRspecs.get(i).getResourcesXml();
                 }
         }
 

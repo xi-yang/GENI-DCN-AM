@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class AggregateNetworkInterface extends AggregateResource {
     String urn = "";
+    String deviceType = "";
     String deviceName = "";
     String ipAddress = "";
     String vlanTag = "";
@@ -26,6 +27,14 @@ public class AggregateNetworkInterface extends AggregateResource {
     
     public AggregateNetworkInterface(String urn) {
         this.urn = urn;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 
     public String getDeviceName() {

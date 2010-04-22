@@ -37,7 +37,7 @@ public class AggregateRspec implements java.io.Serializable {
     private List<String> users = null;
     private List<AggregateResource> resources = null;
     private String status = "";
-    private String xml = "";
+    private String xml = null;
 
     public AggregateRspec() {
         log = org.apache.log4j.Logger.getLogger(this.getClass());
@@ -50,11 +50,6 @@ public class AggregateRspec implements java.io.Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getXml() {
-        //TODO if xml == null --> generate XML from resources!
-        return xml;
     }
 
     public void setAggregateName(String aggregateName) {
@@ -119,10 +114,9 @@ public class AggregateRspec implements java.io.Serializable {
     }
 
     public void parseRspec(String rspec) throws AggregateException {
-        this.xml = rspec.trim();
+        xml = rspec.trim().replaceAll("\n\\s*","");
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-
             //validating document with schemas
             if (AggregateState.getAggregateConfDir() != null) {
                 /*
@@ -146,7 +140,7 @@ public class AggregateRspec implements java.io.Serializable {
 
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             InputSource is = new InputSource();
-            is.setCharacterStream(new StringReader(this.xml));
+            is.setCharacterStream(new StringReader(rspec.trim()));
             //TODO: docBuilder.setErrorHandler ... 
             Document rspecXMLDoc = docBuilder.parse(is);
 
@@ -241,6 +235,7 @@ public class AggregateRspec implements java.io.Serializable {
     AggregateNode parseAddComputeNode(Node compNodeRoot) throws AggregateException {
         int nodeId = 0;
         String urn = compNodeRoot.getAttributes().getNamedItem("id").getTextContent().trim();
+        String address = "";
         String caps = "";
         String descr = "";
         Vector<AggregateNetworkInterface> myNetIfs = new Vector<AggregateNetworkInterface>();
@@ -248,7 +243,9 @@ public class AggregateRspec implements java.io.Serializable {
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             String nodeName = child.getNodeName();
-            if (nodeName != null && nodeName.equalsIgnoreCase("plId")) {
+            if (nodeName != null && nodeName.equalsIgnoreCase("address")) {
+                address = child.getTextContent().trim();
+            } else if (nodeName != null && nodeName.equalsIgnoreCase("plId")) {
                 nodeId = Integer.valueOf(child.getTextContent().trim());
             } else if (nodeName != null && nodeName.equalsIgnoreCase("capabilities")) {
                 caps = child.getTextContent().trim();
@@ -263,6 +260,7 @@ public class AggregateRspec implements java.io.Serializable {
         AggregateNode aggrNode= AggregateState.getAggregateNodes().getByUrn(urn);
         if (aggrNode == null) {
             aggrNode = new AggregateNode(urn, nodeId, descr, caps);
+            aggrNode.setAddress(address);
             aggrNode.setType(compNodeRoot.getNodeName());
             aggrNode.setRspecId(this.id); 
             if (AggregateState.getAggregateNodes().add(aggrNode) == false) {
@@ -289,7 +287,6 @@ public class AggregateRspec implements java.io.Serializable {
             String nodeName = child.getNodeName();
             if (nodeName != null && nodeName.equalsIgnoreCase("address")) {
                 address = child.getTextContent().trim();
-                //TODO: add address field in node structure
             } else if (nodeName != null && nodeName.equalsIgnoreCase("computeCapability")) {
                 parseComputeCapability(child);
             } else if (nodeName != null && nodeName.equalsIgnoreCase("networkInterface")) {
@@ -304,9 +301,8 @@ public class AggregateRspec implements java.io.Serializable {
         if (aggrNode == null) {
             throw new AggregateException("unknown aggregateNode "+urn+" (extracted from "+sliverId+")");
         }
-        aggrNode.setType(plNodeRoot.getNodeName());
+        //aggrNode.setType(plNodeRoot.getNodeName());
         aggrNode.setRspecId(this.id); //rspec entry has been created in db
-        //AggregateState.getAggregateNodes().update(aggrNode);
         resources.add(aggrNode);
         for (AggregateNetworkInterface netIf: myNetIfs)
             netIf.setParentNode(aggrNode);
@@ -327,6 +323,7 @@ public class AggregateRspec implements java.io.Serializable {
     AggregateNetworkInterface parseNetworkInterface(Node netIfRoot) throws AggregateException {
         //assuming planetlab node and VLAN interface for now
         String netIfId = netIfRoot.getAttributes().getNamedItem("id").getTextContent().trim();
+        String deviceType = "";
         String deviceName = "";
         String ipAddress = "";
         String vlanTag = "";
@@ -337,7 +334,9 @@ public class AggregateRspec implements java.io.Serializable {
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             String nodeName = child.getNodeName();
-            if (nodeName != null && nodeName.equalsIgnoreCase("deviceName")) {
+            if (nodeName != null && nodeName.equalsIgnoreCase("deviceType")) {
+                deviceType = child.getTextContent().trim();
+            } else if (nodeName != null && nodeName.equalsIgnoreCase("deviceName")) {
                 deviceName = child.getTextContent().trim();
             } else if (nodeName != null && nodeName.equalsIgnoreCase("ipAddress")) {
                 ipAddress = child.getTextContent().trim();
@@ -357,6 +356,7 @@ public class AggregateRspec implements java.io.Serializable {
 
         //AggregateNetworkInterface(s) will be future processed to create P2PVlans
         AggregateNetworkInterface aggrNetIf = new AggregateNetworkInterface(netIfId);
+        aggrNetIf.setDeviceType(deviceType);
         aggrNetIf.setDeviceName(deviceName);
         aggrNetIf.setIpAddress(ipAddress);
         aggrNetIf.setVlanTag(vlanTag);
@@ -451,7 +451,7 @@ public class AggregateRspec implements java.io.Serializable {
                    break;
                }
             }
-
+            /*
             TransformerFactory factory = TransformerFactory.newInstance();
             if (computeResourceNode != null) {
                 try {
@@ -465,6 +465,21 @@ public class AggregateRspec implements java.io.Serializable {
                 } catch (TransformerException e) {
                     log.error("AggregateRspec::configRspecFromFile failed to generate xml string -- TransformerException:" + e.getMessage());
                 }
+            }
+            */
+            //reload resources
+            resources.clear();
+            List<AggregateNode> nodeList = AggregateState.getAggregateNodes().getAll();
+            for (AggregateNode an: nodeList)
+                resources.add((AggregateResource)an);
+            List<AggregateNetworkInterface> interfaceList = AggregateState.getAggregateInterfaces().getAll();
+            for (AggregateNetworkInterface ai: interfaceList) {
+                for (AggregateNode an: nodeList) 
+                    if (an.getId() == ai.getPnid()) {
+                        ai.setParentNode(an);
+                        break;
+                    }
+                resources.add((AggregateResource)ai);
             }
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
@@ -511,6 +526,66 @@ public class AggregateRspec implements java.io.Serializable {
             if (AggregateState.getAggregateUsers().add(aggrUser) == false)
                 throw new AggregateException("Cannot add user:" + name +"(email:"+email+") to DB ");
         }
+    }
+
+    String getResourcesXml() {
+        if (xml != null)
+            return xml;
+        xml = "<computeResource id=\"+urn:aggregate="+this.aggregateName+":rspec="+this.rspecName+"\">";
+        for (AggregateResource rc: resources) {
+            if (rc.getType().equalsIgnoreCase("computeNode")) {
+                AggregateNode an = (AggregateNode)rc;
+                xml = xml + "<computeNode id=\""+an.getUrn()+"\">";
+                xml = xml + "<plId>"+Integer.toString(an.getNodeId())+"</plId>";
+                for (int i = 0; i < resources.size(); i++) {
+                    if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
+                        AggregateNetworkInterface ai = (AggregateNetworkInterface)resources.get(i);
+                        if (ai.getPnid() == an.getId()) {
+                            xml = xml + "<networkInterface id=\""+ai.getUrn()+"\">";
+                            xml = xml + "<pnid>"+Integer.toString(ai.getPnid())+"</pnid>";
+                            xml = xml + "<deviceType>"+ai.getDeviceType()+"</deviceType>";
+                            xml = xml + "<deviceName>"+ai.getDeviceName()+"</deviceName>";
+                            xml = xml + "<capacity>"+ai.getCapacity()+"</capacity>";
+                            xml = xml + "<ipAddress>"+ai.getIpAddress()+"</ipAddress>";
+                            xml = xml + "<vlanRange>"+ai.getVlanTag()+"</vlanRange>";
+                            xml = xml + "<attachedLinkUrn>"+ai.getAttachedLinkUrns()+"</attachedLinkUrn>";
+                            xml +=  "</networkInterface>";
+                        }
+                    }
+                }
+                xml +=  "</computeNode>";
+            } else if (rc.getType().equalsIgnoreCase("computeSlice")) {
+                AggregateSlice as = (AggregateSlice)rc;
+                xml = xml + "<computeSlice id=\""+as.getSliceName()+"\">";
+                xml = xml + "<node_ids>"+as.getNodes()+"</node_ids>";
+                xml = xml + "<user_ids>"+as.getUsers()+"</user_ids>";
+                xml = xml + "<expires>"+Long.toString(as.getExpiredTime())+"</expires>";
+                xml +=  "</computeSlice>";
+            } else if (rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
+                AggregateNode an = (AggregateNode)rc;
+                xml = xml + "<planetlabNodeSliver id=\""+an.getUrn()+"\">";
+                xml = xml + "<address>"+an.getAddress()+"</address>";
+                xml = xml + "<computeCapacity>";
+                //xml = xml + "<cpuType>" + an.getComputeCapacity().??? + "</cpuType>";
+                xml +=  "</computeCapacity>";
+                for (int i = 0; i < resources.size(); i++) {
+                    if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
+                        AggregateNetworkInterface ai = (AggregateNetworkInterface)resources.get(i);
+                        xml = xml + "<networkInterface id=\""+ai.getUrn()+"\">";
+                        xml = xml + "<deviceType>"+ai.getDeviceType()+"</deviceType>";
+                        xml = xml + "<deviceName>"+ai.getDeviceName()+"</deviceName>";
+                        xml = xml + "<capacity>"+ai.getCapacity()+"</capacity>";
+                        xml = xml + "<ipAddress>"+ai.getIpAddress()+"</ipAddress>";
+                        xml = xml + "<vlanRange>"+ai.getVlanTag()+"</vlanRange>";
+                        xml = xml + "<peerNetworkInterface>"+ai.getPeerInterfaces()+"</peerNetworkInterface>";
+                        xml +=  "</networkInterface>";
+                    }
+                }
+                xml +=  "</planetlabNodeSliver>";
+            }
+        }
+        xml +=  "</computeResource>";
+        return xml;
     }
 
     void dumpRspec() {
