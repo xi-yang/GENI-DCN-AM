@@ -99,6 +99,15 @@ For users who deploy from scrach
    *Note: root_ssh_key.rsa in the 'aggregate.plc.ssh.execprefix' specifies the SSH key that the PLC 
    server uses to connect to PlanetLab nodes. Update its name and location if needed.
 
+-- prepare compute resource database (CRDB) config file
+   configure aggregate.properties for CRDB xml file path.
+
+       aggregate.crdb.path=/usr/local/geni-aggregate/AggregateAttic/conf/repo/crdb.xml
+
+   Edit the crdb.xml to reflect the actual resource manifest, including Planetlab nodes, network 
+   interfaces and users etc. under your aggregate. When used with Planetlab resources, make sure 
+   the node 'plId' and user 'id' match up with the node_id and person_id in PLC.
+
 4. Start GENI AggregateWS Services
 
 -- cd $CATALINA_HOME/bin
