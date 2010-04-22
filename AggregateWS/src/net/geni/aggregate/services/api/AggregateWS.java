@@ -190,19 +190,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             ex.printStackTrace();
             return;
         }
-        // TODO: no need for the front_end table?
-        try {
-            //init the database
-            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + "front_end" + " ( " +
-                    "requestID VARCHAR(255) NOT NULL, " + // job ID 1
-                    "status VARCHAR(255) NOT NULL DEFAULT 'no such job', " + // job status
-                    "statusMsg VARCHAR(255) NOT NULL DEFAULT '', " + // status message if any
-                    "PRIMARY KEY (requestID)" +
-                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
-        } catch(AggregateException ex) {
-            ex.printStackTrace();
-            return;
-        }
         
         // Web Services handnling thread
         aggregateWSRunner = new AggregateWSRunner();

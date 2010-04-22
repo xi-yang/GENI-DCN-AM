@@ -78,6 +78,7 @@ public class AggregateNetworkInterface extends AggregateResource {
         this.pnid = parentNode.getId();
     }
 
+    //for XML config
     public ArrayList<String> getLinks() {
         return attachedLinkUrns;
     }
@@ -102,6 +103,7 @@ public class AggregateNetworkInterface extends AggregateResource {
         this.capacity = capacity;
     }
 
+    //for hibernate
     public void setAttachedLinkUrns(String links) {
         attachedLinkUrns = new ArrayList();
         attachedLinkUrns.toArray(links.split("[\\s,]"));
@@ -124,7 +126,7 @@ public class AggregateNetworkInterface extends AggregateResource {
 
     public String getPeerInterfaces() {
         String ret = "";
-        for (String link: attachedLinkUrns) {
+        for (String link: peerInterfaces) {
             ret = ret + ", " + link;
         }
         if (!ret.isEmpty())
@@ -158,4 +160,18 @@ public class AggregateNetworkInterface extends AggregateResource {
         return ret;
     }
 
+    public AggregateNetworkInterface duplicate() {
+        AggregateNetworkInterface ai = new AggregateNetworkInterface(urn);
+        ai.setCapacity(capacity);
+        ai.setDeviceType(deviceType);
+        ai.setDeviceName(deviceName);
+        ai.setIpAddress(ipAddress);
+        ai.setParentNode(parentNode);
+        ai.setPnid(pnid);
+        ai.setVlanTag(vlanTag);
+        ai.setLinks(this.getLinks());
+        ai.setPeers(this.getPeers());
+        ai.setType(type);
+        return ai;
+    }
 }

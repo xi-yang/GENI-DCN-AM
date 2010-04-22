@@ -15,7 +15,6 @@ public abstract class AggregateResource implements java.io.Serializable {
     protected int id = 0;
     protected String type = "";
     protected int rspecId = 0;
-    protected boolean inDB = false;
 
     public AggregateResource() {}
 
@@ -47,13 +46,5 @@ public abstract class AggregateResource implements java.io.Serializable {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public boolean isInDB() {
-        return inDB;
-    }
-
-    public void setInDB(boolean inDB) {
-        this.inDB = inDB;
     }
 }

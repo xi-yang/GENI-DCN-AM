@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rspec id="physical_crdb">
+    <aggregate>geni.maxgigapop.net</aggregate>
+    <user id="20" name="testUser" email="test@hpn.east.isi.edu" firstName="Test" lastName="User" />
+    <user id="21" name="testUser2" email="test2@hpn.east.isi.edu" firstName="Test" lastName="User2" />
+    <computeResource id="urn:aggregate=geni.maxgigapop.net:rspec=crdb">
+        <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab2">
+            <plId>2</plId>
+            <address>206.196.176.45</address>
+            <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab</capabilities>
+            <description>planetlab2.dragon.maxgigapop.net</description>
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress></ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
+            </networkInterface>
+        </computeNode>
+        <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab3">
+            <plId>5</plId>
+            <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab</capabilities>
+            <description>planetlab3.dragon.maxgigapop.net</description>
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress></ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
+            </networkInterface>
+        </computeNode>
+        <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab4">
+            <plId>3</plId>
+            <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab</capabilities>
+            <description>planetlab4.dragon.maxgigapop.net</description>
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab4:interface=eth1">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress></ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
+            </networkInterface>
+        </computeNode>
+        <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab5">
+            <plId>1</plId>
+            <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab</capabilities>
+            <description>planetlab5.dragon.maxgigapop.net</description>
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress></ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
+            </networkInterface>
+        </computeNode>
+        <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=IDC">
+            <plId>0</plId>
+            <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon</capabilities>
+            <description>MAX-DRAGON InterDomain Controller</description>
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress></ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
+            </networkInterface>
+        </computeNode>
+        <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=STYX">
+            <plId>0</plId>
+            <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=netfpga</capabilities>
+            <description>Node with 2 NetFPGA cards</description>
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress></ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
+            </networkInterface>
+        </computeNode>
+    </computeResource>
+</rspec>
+

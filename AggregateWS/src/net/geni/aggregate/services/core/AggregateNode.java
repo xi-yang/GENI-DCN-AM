@@ -10,7 +10,7 @@ import net.geni.aggregate.services.api.NodeDescriptorTypeSequence_type0;
 
 /**
  *
- * @author jflidr
+ * @author jflidr, Xi Yang
  */
 public class AggregateNode extends AggregateResource {
     private int nodeId = 0;
@@ -95,5 +95,12 @@ public class AggregateNode extends AggregateResource {
         }
         ndT.setCapability((CapabilityType[]) ctV.toArray(new CapabilityType[]{}));
         return ndT;
+    }
+
+    public AggregateNode duplicate() {
+        AggregateNode an = new AggregateNode(urn, nodeId, description, capabilities);
+        an.setAddress(address);
+        an.setType(type);
+        return an;
     }
 }

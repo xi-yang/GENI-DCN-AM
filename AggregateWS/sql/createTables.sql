@@ -45,19 +45,6 @@ CREATE TABLE `capabilities` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Table structure for table `front_end`
---
-
-DROP TABLE IF EXISTS `front_end`;
-CREATE TABLE `front_end` (
-  `requestID` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL default 'no such job',
-  `statusMsg` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`requestID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
---
 -- Table structure for table `nodes`
 --
 

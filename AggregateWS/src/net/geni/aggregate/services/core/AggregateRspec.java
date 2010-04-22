@@ -301,11 +301,12 @@ public class AggregateRspec implements java.io.Serializable {
         if (aggrNode == null) {
             throw new AggregateException("unknown aggregateNode "+urn+" (extracted from "+sliverId+")");
         }
-        //aggrNode.setType(plNodeRoot.getNodeName());
-        aggrNode.setRspecId(this.id); //rspec entry has been created in db
-        resources.add(aggrNode);
+        AggregateNode newNode = aggrNode.duplicate();
+        newNode.setType(plNodeRoot.getNodeName());
+        newNode.setRspecId(this.id); //rspec entry has been created in db
+        resources.add(newNode);
         for (AggregateNetworkInterface netIf: myNetIfs)
-            netIf.setParentNode(aggrNode);
+            netIf.setParentNode(newNode);
     }
 
     void parseEucalyptusNodeSliver(Node eucaNodeRoot) throws AggregateException {
@@ -542,7 +543,6 @@ public class AggregateRspec implements java.io.Serializable {
                         AggregateNetworkInterface ai = (AggregateNetworkInterface)resources.get(i);
                         if (ai.getPnid() == an.getId()) {
                             xml = xml + "<networkInterface id=\""+ai.getUrn()+"\">";
-                            xml = xml + "<pnid>"+Integer.toString(ai.getPnid())+"</pnid>";
                             xml = xml + "<deviceType>"+ai.getDeviceType()+"</deviceType>";
                             xml = xml + "<deviceName>"+ai.getDeviceName()+"</deviceName>";
                             xml = xml + "<capacity>"+ai.getCapacity()+"</capacity>";
@@ -585,6 +585,7 @@ public class AggregateRspec implements java.io.Serializable {
             }
         }
         xml +=  "</computeResource>";
+        log.debug(xml); //@@@@
         return xml;
     }
 
