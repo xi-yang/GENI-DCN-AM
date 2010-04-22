@@ -28,7 +28,7 @@ public class AggregateRspecManager extends Thread{
     public AggregateRspecManager() {
         super();
         log = org.apache.log4j.Logger.getLogger(this.getClass());
-        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+        this.session = HibernateUtil.getSessionFactory().openSession();
         aggrRspecs = new ArrayList<AggregateRspec>();
         rspecThreads = new ArrayList<AggregateRspecRunner>();
     }

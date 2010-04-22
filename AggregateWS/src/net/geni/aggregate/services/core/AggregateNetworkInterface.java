@@ -106,7 +106,9 @@ public class AggregateNetworkInterface extends AggregateResource {
     //for hibernate
     public void setAttachedLinkUrns(String links) {
         attachedLinkUrns = new ArrayList();
-        attachedLinkUrns.toArray(links.split("[\\s,]"));
+        String[] sa = links.split(",\\s*");
+        for (String s: sa)
+            attachedLinkUrns.add(s);
     }
 
     public String getAttachedLinkUrns() {
@@ -121,7 +123,9 @@ public class AggregateNetworkInterface extends AggregateResource {
 
     public void setPeerInterfaces(String peers) {
         peerInterfaces = new ArrayList();
-        peerInterfaces.toArray(peers.split("[\\s,]"));
+        String[] sa = peers.split(",\\s*");
+        for (String s: sa)
+            peerInterfaces.add(s);
     }
 
     public String getPeerInterfaces() {

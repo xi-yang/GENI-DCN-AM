@@ -15,7 +15,7 @@
                 <capacity>1000Mbps</capacity>
                 <ipAddress></ipAddress>
                 <vlanRange>1001-2000</vlanRange>
-                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-9:link=*</attachedLinkUrn>
             </networkInterface>
         </computeNode>
         <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab3">
@@ -28,7 +28,7 @@
                 <capacity>1000Mbps</capacity>
                 <ipAddress></ipAddress>
                 <vlanRange>1001-2000</vlanRange>
-                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-0-4:link=*</attachedLinkUrn>
             </networkInterface>
         </computeNode>
         <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab4">
@@ -41,7 +41,7 @@
                 <capacity>1000Mbps</capacity>
                 <ipAddress></ipAddress>
                 <vlanRange>1001-2000</vlanRange>
-                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-0-6:link=*</attachedLinkUrn>
             </networkInterface>
         </computeNode>
         <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab5">
@@ -54,33 +54,29 @@
                 <capacity>1000Mbps</capacity>
                 <ipAddress></ipAddress>
                 <vlanRange>1001-2000</vlanRange>
-                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-5:link=*</attachedLinkUrn>
             </networkInterface>
         </computeNode>
         <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=IDC">
-            <plId>0</plId>
             <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon</capabilities>
             <description>MAX-DRAGON InterDomain Controller</description>
-            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1">
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=idc:interface=eth0">
                 <deviceType>Ethernet</deviceType>
-                <deviceName>eth1</deviceName>
+                <deviceName>eth0</deviceName>
                 <capacity>1000Mbps</capacity>
-                <ipAddress></ipAddress>
+                <ipAddress>206.196.176.151/26</ipAddress>
                 <vlanRange>1001-2000</vlanRange>
-                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
             </networkInterface>
         </computeNode>
         <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=STYX">
-            <plId>0</plId>
             <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=netfpga</capabilities>
             <description>Node with 2 NetFPGA cards</description>
-            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1">
+            <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=styx:interface=eth0">
                 <deviceType>Ethernet</deviceType>
-                <deviceName>eth1</deviceName>
+                <deviceName>eth0</deviceName>
                 <capacity>1000Mbps</capacity>
-                <ipAddress></ipAddress>
+                <ipAddress>65.114.168.198/27</ipAddress>
                 <vlanRange>1001-2000</vlanRange>
-                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</attachedLinkUrn>
             </networkInterface>
         </computeNode>
     </computeResource>
