@@ -14,28 +14,29 @@ import org.apache.log4j.*;
  * @author root
  */
 public class AggregateUsers {
-    private Session session;
+    private static Session session;
+    private static org.hibernate.Transaction tx;
     private org.apache.log4j.Logger log;
     private List<AggregateUser> cachedUsers = null;
 
     public AggregateUsers() {
-        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
         log = org.apache.log4j.Logger.getLogger(this.getClass());
     }
 
     public boolean add(AggregateUser u) {
-        synchronized (this) {
+        synchronized(this) {
             if (!(u.getName() == null || u.getLastName() == null || u.getFirstName() == null || u.getEmail() == null || u.getId() == 0)) {
                 try {
-                    if (!session.isOpen()) {
-                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-                    }
-                    org.hibernate.Transaction tx = session.beginTransaction();
+                    session = HibernateUtil.getSessionFactory().openSession();
+                    tx = session.beginTransaction();
                     session.save(u);
                     tx.commit();
                 } catch (Exception e) {
+                    tx.rollback();
                     e.printStackTrace();
                     return false;
+                } finally {
+                    if (session.isOpen()) session.close();
                 }
             } else {
                 throw new IllegalArgumentException("all the fields in the User object must be specified");
@@ -45,12 +46,10 @@ public class AggregateUsers {
     }
 
     public boolean delete(String name) {
-        synchronized (this) {
+        synchronized(this) {
             try {
-                if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-                }
-                org.hibernate.Transaction tx = session.beginTransaction();
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
                 AggregateUser s = this.getByName(name);
                 if (s == null) {
                     return false;
@@ -58,78 +57,86 @@ public class AggregateUsers {
                 session.delete(s);
                 tx.commit();
             } catch (Exception e) {
+                tx.rollback();
                 e.printStackTrace();
                 return false;
+            } finally {
+                if (session.isOpen()) session.close();
             }
         }
         return true;
     }
 
     public AggregateUser getById(int id) {
-        synchronized (this) {
+        synchronized(this) {
             try {
-                if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-                }
-                org.hibernate.Transaction tx = session.beginTransaction();
+                this.session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
                 return (AggregateUser) session.get(AggregateUser.class, id);
             } catch (Exception e) {
+                tx.rollback();
                 e.printStackTrace();
+            } finally {
+                if (session.isOpen()) session.close();
             }
         }
         return null;
     }
 
     public synchronized List<AggregateUser> getAll() {
-        synchronized (this) {
+        synchronized(this) {
             try {
-                if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-                }
-                org.hibernate.Transaction tx = session.beginTransaction();
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateUser");
                 if (q.list().size() == 0) {
                     return null;
                 }
                 return (List<AggregateUser>) q.list();
             } catch (Exception e) {
+                tx.rollback();
                 e.printStackTrace();
+            } finally {
+                if (session.isOpen()) session.close();
             }
         }
         return null;
     }
 
     public synchronized AggregateUser getByName(String name) {
-        synchronized (this) {
+        synchronized(this) {
             try {
-                if (!session.isOpen()) {
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-                }
-                org.hibernate.Transaction tx = session.beginTransaction();
+                this.session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateUser as user where user.name='" + name + "'");
                 if (q.list().size() == 0) {
                     return null;
                 }
                 return (AggregateUser) q.list().get(0);
             } catch (Exception e) {
+                tx.rollback();
                 e.printStackTrace();
+            } finally {
+                if (session.isOpen()) session.close();
             }
         }
         return null;
     }
 
     public synchronized AggregateUser getByEmail(String email) {
-        synchronized (this) {
+        synchronized(this) {
             try {
-                if (!session.isOpen())
-                    this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-                org.hibernate.Transaction tx = session.beginTransaction();
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateUser as user where user.email='" + email + "'");
                 if (q.list().size() == 0)
                     return null;
                 return (AggregateUser) q.list().get(0);
             } catch (Exception e) {
+                tx.rollback();
                 e.printStackTrace();
+            } finally {
+                if (session.isOpen()) session.close();
             }
         }
         return null;

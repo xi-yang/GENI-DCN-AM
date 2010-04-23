@@ -15,26 +15,27 @@ import org.apache.log4j.*;
  */
 public class AggregateP2PVlans {
     private static Session session;
+    private static org.hibernate.Transaction tx;
     private org.apache.log4j.Logger log;
 
     public AggregateP2PVlans() {
-        session = HibernateUtil.getSessionFactory().openSession();
         log = org.apache.log4j.Logger.getLogger(this.getClass());
     }
 
     public boolean add(AggregateP2PVlan p2pv) {
-        synchronized (this) {
+        synchronized(this) {
             if (!(p2pv.getSliceName() == null)) {
                 try {
-                    if (!session.isOpen()) {
-                        session = HibernateUtil.getSessionFactory().getCurrentSession();
-                    }
-                    org.hibernate.Transaction tx = session.beginTransaction();
+                    session = HibernateUtil.getSessionFactory().openSession();
+                    tx = session.beginTransaction();
                     session.save(p2pv);
                     tx.commit();
                 } catch (Exception e) {
+                    tx.rollback();
                     e.printStackTrace();
                     return false;
+                } finally {
+                    if (session.isOpen()) session.close();
                 }
             } else {
                 throw new IllegalArgumentException("the P2PVlan object must be associated with a valid sliceName");
@@ -45,18 +46,19 @@ public class AggregateP2PVlans {
 
 
     public boolean update(AggregateP2PVlan p2pv) {
-        synchronized (this) {
+        synchronized(this) {
             if (!(p2pv.getSliceName() == null)) {
                 try {
-                    if (!session.isOpen()) {
-                        session = HibernateUtil.getSessionFactory().getCurrentSession();
-                    }
-                    org.hibernate.Transaction tx = session.beginTransaction();
+                    session = HibernateUtil.getSessionFactory().openSession();
+                    tx = session.beginTransaction();
                     session.update(p2pv);
                     tx.commit();
                 } catch (Exception e) {
+                    tx.rollback();
                     e.printStackTrace();
                     return false;
+                } finally {
+                    if (session.isOpen()) session.close();
                 }
             } else {
                 throw new IllegalArgumentException("the P2PVlan object must be associated with a valid sliceName");
@@ -68,29 +70,28 @@ public class AggregateP2PVlans {
     public boolean delete(AggregateP2PVlan p2pv) {
         if (p2pv == null)
             return false;
-        synchronized (this) {
+        synchronized(this) {
             try {
-                if (!session.isOpen()) {
-                    session = HibernateUtil.getSessionFactory().getCurrentSession();
-                }
-                org.hibernate.Transaction tx = session.beginTransaction();
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
                 session.delete(p2pv);
                 tx.commit();
             } catch (Exception e) {
+                tx.rollback();
                 e.printStackTrace();
                 return false;
+            } finally {
+                if (session.isOpen()) session.close();
             }
         }
         return true;
     }
 
     public boolean delete(String name, int vtag) {
-        synchronized (this) {
+        synchronized(this) {
             try {
-                if (!session.isOpen()) {
-                    session = HibernateUtil.getSessionFactory().getCurrentSession();
-                }
-                org.hibernate.Transaction tx = session.beginTransaction();
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
                 AggregateP2PVlan p2pv = this.getBySliceAndVtag(name, vtag);
                 if (p2pv == null) {
                     return false;
@@ -98,62 +99,68 @@ public class AggregateP2PVlans {
                 session.delete(p2pv);
                 tx.commit();
             } catch (Exception e) {
+                tx.rollback();
                 e.printStackTrace();
                 return false;
+            } finally {
+                if (session.isOpen()) session.close();
             }
         }
         return true;
     }
 
     public List<AggregateP2PVlan> getAll() {
-        synchronized (this) {
-        try {
-                if (!session.isOpen()) {
-                    session = HibernateUtil.getSessionFactory().getCurrentSession();
-                }
-                org.hibernate.Transaction tx = session.beginTransaction();
+        synchronized(this) {
+            try {
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateP2PVlan");
                 return (List<AggregateP2PVlan>) q.list();
             } catch (Exception e) {
+                tx.rollback();
                 e.printStackTrace();
+            } finally {
+                if (session.isOpen()) session.close();
             }
         }
         return null;
     }
 
     public AggregateP2PVlan getBySliceAndVtag(String name, int vtag) {
-        synchronized (this) {
+        synchronized(this) {
             try {
-                if (!session.isOpen()) {
-                    session = HibernateUtil.getSessionFactory().getCurrentSession();
-                }
-                org.hibernate.Transaction tx = session.beginTransaction();
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateP2PVlan as p2pvlan where p2pvlan.sliceName='" + name + "' and p2pvlan.vtag=" + Integer.toString(vtag));
                 if (q.list().size() == 0) {
                     return null;
                 }
                 return (AggregateP2PVlan) q.list().get(0);
             } catch (Exception e) {
+                tx.rollback();
                 e.printStackTrace();
+            } finally {
+                if (session.isOpen()) session.close();
             }
         }
         return null;
     }
 
     public AggregateP2PVlan getByGRI(String gri) {
-        synchronized (this) {
+        synchronized(this) {
             try {
-                if (!session.isOpen()) {
-                    session = HibernateUtil.getSessionFactory().getCurrentSession();
-                }
-                org.hibernate.Transaction tx = session.beginTransaction();
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
                 Query q = session.createQuery("from AggregateP2PVlan as p2pvlan where p2pvlan.globalReservationId='" + gri + "'");
                 if (q.list().size() == 0) {
                     return null;
                 }
                 return (AggregateP2PVlan) q.list().get(0);
             } catch (Exception e) {
+                tx.rollback();
                 e.printStackTrace();
+            } finally {
+                if (session.isOpen()) session.close();
             }
         }
         return null;

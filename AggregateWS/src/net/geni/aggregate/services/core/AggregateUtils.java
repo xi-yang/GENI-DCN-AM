@@ -17,19 +17,21 @@ import net.geni.aggregate.services.api.AggregateFaultMessageExt;
  */
 public class AggregateUtils
 {
-    static private Session session = null;
+    private static Session session;
+    private static org.hibernate.Transaction tx;
 
     public static void executeDirectStatement(String sql) throws AggregateException {
         try {
-            if (session == null || !session.isOpen()) {
-                session = HibernateUtil.getSessionFactory().getCurrentSession();
-            }
-            org.hibernate.Transaction tx = session.beginTransaction();
+            session = HibernateUtil.getSessionFactory().openSession();
+            tx = session.beginTransaction();
             SQLQuery q = session.createSQLQuery(sql);
             q.executeUpdate();
             tx.commit();
         } catch (Exception e) {
+            tx.rollback();
             throw new AggregateException(e, AggregateException.FATAL);
+        } finally {
+            if (session.isOpen()) session.close();
         }
     }
 

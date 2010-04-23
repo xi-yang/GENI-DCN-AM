@@ -19,6 +19,9 @@ import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+//import org.jdom.*;
+//import org.jdom.input.SAXBuilder;
+
 import net.geni.aggregate.services.api.VlanReservationDescriptorType;
 import net.geni.aggregate.services.api.VlanReservationResultType;
 
@@ -119,13 +122,6 @@ public class AggregateRspec implements java.io.Serializable {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             //validating document with schemas
             if (AggregateState.getAggregateConfDir() != null) {
-                /*
-                URL schemaUrl = getClass().getClassLoader().getResource("max-rspec.xsd");
-                final String rspecSchema = schemaUrl.toString();
-                schemaUrl = getClass().getClassLoader().getResource("nmtopo-ctrlp.xsd");
-                log.debug("shcema URL:"+ rspecSchema);
-                final String ctrlpSchema = schemaUrl.toString();
-                */
                 final String ctrlpSchema = "file:" + AggregateState.getAggregateConfDir() + "schema/nmtopo-ctrlp.xsd";
                 final String rspecSchema = "file:" + AggregateState.getAggregateConfDir() + "schema/max-rspec.xsd";
                 final String[] schemas = {ctrlpSchema, rspecSchema};

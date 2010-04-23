@@ -23,12 +23,12 @@ public class AggregateRspecManager extends Thread{
     private volatile List<AggregateRspecRunner> rspecThreads;
     private AggregateRspec aggrRspecGlobal = null;
     private static Session session;
+    private static org.hibernate.Transaction tx;
     private org.apache.log4j.Logger log;
 
     public AggregateRspecManager() {
         super();
         log = org.apache.log4j.Logger.getLogger(this.getClass());
-        this.session = HibernateUtil.getSessionFactory().openSession();
         aggrRspecs = new ArrayList<AggregateRspec>();
         rspecThreads = new ArrayList<AggregateRspecRunner>();
     }
@@ -61,17 +61,18 @@ public class AggregateRspecManager extends Thread{
 
     public void reloadFromDB() {
         try {
-            if (!session.isOpen()) {
-                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-            }
-            org.hibernate.Transaction tx = session.beginTransaction();
+            session = HibernateUtil.getSessionFactory().openSession();
+            tx = session.beginTransaction();
             Query q = session.createQuery("from AggregateRspec");
             if (q.list().size() == 0) {
                 return;
             }
             aggrRspecs = (List<AggregateRspec>)q.list();
         } catch (Exception e) {
+            tx.rollback();
             e.printStackTrace();
+        } finally {
+            if (session.isOpen()) session.close();
         }
 
         List<AggregateSlice> slices = AggregateState.getAggregateSlices().getAll();
@@ -115,15 +116,16 @@ public class AggregateRspecManager extends Thread{
                       || rspec.getStatus().equalsIgnoreCase("rollbacked")) {
                         //rollbacked thread may get diff. treatment?
                         try {
-                            if (!session.isOpen()) {
-                                this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-                            }
-                            org.hibernate.Transaction tx = session.beginTransaction();
+                            session = HibernateUtil.getSessionFactory().openSession();
+                            tx = session.beginTransaction();
                             session.delete(rspec);
                             session.flush();
                             tx.commit();
                         } catch (Exception e) {
+                            tx.rollback();
                             e.printStackTrace();
+                        } finally {
+                            if (session.isOpen()) session.close();
                         }
                         rspecThreads.remove(rspecThread);
                         aggrRspecs.remove(rspec);
@@ -150,20 +152,21 @@ public class AggregateRspecManager extends Thread{
         }
 
         aggrRspec.setStatus("starting");
-        synchronized (this) {
+        synchronized(this) {
             if (!(aggrRspec.getRspecName().isEmpty() || aggrRspec.getAggregateName().isEmpty()
               || aggrRspec.getResources().size() == 0)) {
                 try {
-                    if (!session.isOpen()) {
-                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-                    }
-                    org.hibernate.Transaction tx = session.beginTransaction();
+                    session = HibernateUtil.getSessionFactory().openSession();
+                    tx = session.beginTransaction();
                     session.save(aggrRspec);
                     session.flush();
                     tx.commit();
                 } catch (Exception e) {
+                    tx.rollback();
                     e.printStackTrace();
                     return "failed";
+                } finally {
+                    if (session.isOpen()) session.close();
                 }
             } else {
                 throw new IllegalArgumentException("Rspec needs to have rspecName, aggregateName and at least one resource item.");
@@ -206,20 +209,21 @@ public class AggregateRspecManager extends Thread{
 
 
     public synchronized void updateRspec(AggregateRspec aggrRspec) {
-        synchronized (this) {
+        synchronized(this) {
             if (!(aggrRspec.getRspecName().isEmpty() || aggrRspec.getAggregateName().isEmpty()
               || aggrRspec.getResources().size() == 0)) {
                 try {
-                    if (!session.isOpen()) {
-                        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
-                    }
-                    org.hibernate.Transaction tx = session.beginTransaction();
+                    session = HibernateUtil.getSessionFactory().openSession();
+                    tx = session.beginTransaction();
                     session.update(aggrRspec);
                     session.flush();
                     tx.commit();
                 } catch (Exception e) {
+                    tx.rollback();
                     e.printStackTrace();
                     log.error("AggregateRspecManager.updateRspec (status=" + aggrRspec.getStatus()+") Exception:" + e.getMessage());
+                } finally {
+                    if (session.isOpen()) session.close();
                 }
             } else {
                 throw new IllegalArgumentException("Rspec needs to have rspecName, aggregateName and at least one resource item.");
