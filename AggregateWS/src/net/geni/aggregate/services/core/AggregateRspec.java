@@ -19,9 +19,6 @@ import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-//import org.jdom.*;
-//import org.jdom.input.SAXBuilder;
-
 import net.geni.aggregate.services.api.VlanReservationDescriptorType;
 import net.geni.aggregate.services.api.VlanReservationResultType;
 
@@ -197,11 +194,11 @@ public class AggregateRspec implements java.io.Serializable {
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             String nodeName = child.getNodeName();
-            if (nodeName != null && nodeName.equalsIgnoreCase("start")) {
+            if (nodeName != null && nodeName.equalsIgnoreCase("CtrlPlane:start")) {
                 startTime = Integer.valueOf(child.getTextContent().trim());
-            } else if (nodeName != null && nodeName.equalsIgnoreCase("end")) {
+            } else if (nodeName != null && nodeName.equalsIgnoreCase("CtrlPlane:end")) {
                 endTime = Integer.valueOf(child.getTextContent().trim());
-            } else if (nodeName != null && nodeName.equalsIgnoreCase("duration")) {
+            } else if (nodeName != null && nodeName.equalsIgnoreCase("CtrlPlane:duration")) {
                 endTime = startTime + Integer.valueOf(child.getTextContent().trim());
             }
         }
@@ -379,23 +376,7 @@ public class AggregateRspec implements java.io.Serializable {
                     vlanResults = new Vector<VlanReservationResultType>();
                     hm.put("vlanResults", vlanResults);
                 }
-                VlanReservationDescriptorType vlanDescr = new VlanReservationDescriptorType();
-                vlanDescr.setDescription(p2pvlan.getDescription());
-                vlanDescr.setSourceNode(p2pvlan.getSource());
-                vlanDescr.setSrcInterface(p2pvlan.getSrcInterface());
-                vlanDescr.setSrcIpAndMask(p2pvlan.getSrcIpAndMask());
-                vlanDescr.setDestinationNode(p2pvlan.getDestination());
-                vlanDescr.setDstInterface(p2pvlan.getDstInterface());
-                vlanDescr.setDstIpAndMask(p2pvlan.getDstIpAndMask());
-                vlanDescr.setBandwidth(p2pvlan.getBandwidth());
-                vlanDescr.setVlan(p2pvlan.getVtag());
-
-                VlanReservationResultType vlanResult = new VlanReservationResultType();
-                vlanResult.setReservation(vlanDescr);
-                vlanResult.setGlobalReservationId(p2pvlan.getGlobalReservationId());
-                vlanResult.setStatus(p2pvlan.getStatus());
-                vlanResult.setMessage(p2pvlan.getErrorMessage());
-                vlanResults.add(vlanResult);
+                vlanResults.add(p2pvlan.getVlanResvResult());
             }
         }
         return hm;
@@ -448,22 +429,7 @@ public class AggregateRspec implements java.io.Serializable {
                    break;
                }
             }
-            /*
-            TransformerFactory factory = TransformerFactory.newInstance();
-            if (computeResourceNode != null) {
-                try {
-                    Transformer transformer = factory.newTransformer();
-                    StringWriter writer = new StringWriter();
-                    Result result = new StreamResult(writer);
-                    Source source = new DOMSource(computeResourceNode);
-                    transformer.transform(source, result);
-                    writer.close();
-                    this.xml = writer.toString();
-                } catch (TransformerException e) {
-                    log.error("AggregateRspec::configRspecFromFile failed to generate xml string -- TransformerException:" + e.getMessage());
-                }
-            }
-            */
+
             //reload resources
             resources.clear();
             List<AggregateNode> nodeList = AggregateState.getAggregateNodes().getAll();
@@ -528,7 +494,7 @@ public class AggregateRspec implements java.io.Serializable {
     String getResourcesXml() {
         if (xml != null)
             return xml;
-        xml = "<computeResource id=\"+urn:aggregate="+this.aggregateName+":rspec="+this.rspecName+"\">";
+        xml = "<computeResource id=\"urn:aggregate="+this.aggregateName+":rspec="+this.rspecName+"\">";
         for (AggregateResource rc: resources) {
             if (rc.getType().equalsIgnoreCase("computeNode")) {
                 AggregateNode an = (AggregateNode)rc;

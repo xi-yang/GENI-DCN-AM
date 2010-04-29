@@ -16,6 +16,10 @@ import net.es.oscars.wsdlTypes.*;
 import net.es.oscars.client.Client;
 import net.es.oscars.PropHandler;
 
+
+import net.geni.aggregate.services.api.VlanReservationDescriptorType;
+import net.geni.aggregate.services.api.VlanReservationResultType;
+
 /**
  *
  * @author xyang
@@ -202,11 +206,11 @@ public class AggregateP2PVlan extends AggregateResource {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         else if (!gri.equals("")) {
-            status = "failed";
+            status = "FAILED";
             errMessage = "Error: cannot recreate an existing circuit";
             return status;
         }
-        status = "failed";
+        status = "FAILED";
         try {
             status = apiClient.createReservation(source, destination, vtag, bandwidth, description, startTime, endTime);
             errMessage = "";
@@ -224,9 +228,9 @@ public class AggregateP2PVlan extends AggregateResource {
             errMessage = "OSCARSStub threw exception in createReservation: " +e.getMessage();
         }
 
-        if (!status.equalsIgnoreCase("failed") && !setVlanOnNodes(true)) {
-            status = "failed";
-            errMessage = "setupVlan failed to add VLAN interface on source or destination node";
+        if (!status.equalsIgnoreCase("FAILED") && !setVlanOnNodes(true)) {
+            status = "FAILED";
+            errMessage = "setupVlan FAILED to add VLAN interface on source or destination node";
         }
 
         return status;
@@ -240,9 +244,12 @@ public class AggregateP2PVlan extends AggregateResource {
      public String teardownVlan() {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
-        status = "failed";
+        status = "FAILED";
         try {
             status = apiClient.cancelReservation(gri);
+            if (status.contains("Reservation cancellation status: ")) {
+                status = status.replaceAll("Reservation cancellation status:\\s", "").toUpperCase();
+            }
             errMessage = "";
         }
         catch (AxisFault e) {
@@ -258,7 +265,7 @@ public class AggregateP2PVlan extends AggregateResource {
         }
 
         if (!setVlanOnNodes(false)) {
-            status = "failed";
+            status = "FAILED";
             errMessage += "teardownVlan failed to delete VLAN interface on source or destination node";
         }
 
@@ -270,11 +277,31 @@ public class AggregateP2PVlan extends AggregateResource {
      * @param
      * @return
      */
-     public HashMap queryVlan() {
+    public VlanReservationResultType getVlanResvResult() {
+        VlanReservationDescriptorType vlanDescr = new VlanReservationDescriptorType();
+        vlanDescr.setDescription(this.description);
+        vlanDescr.setSourceNode(this.source);
+        vlanDescr.setSrcInterface(this.srcInterface);
+        vlanDescr.setSrcIpAndMask(this.srcIpAndMask);
+        vlanDescr.setDestinationNode(this.destination);
+        vlanDescr.setDstInterface(this.dstInterface);
+        vlanDescr.setDstIpAndMask(this.dstIpAndMask);
+        vlanDescr.setBandwidth(this.bandwidth);
+        vlanDescr.setVlan(this.vtag);
+
+        VlanReservationResultType vlanResult = new VlanReservationResultType();
+        vlanResult.setReservation(vlanDescr);
+        vlanResult.setGlobalReservationId(this.getGlobalReservationId());
+        vlanResult.setStatus(this.status);
+        vlanResult.setMessage(this.errMessage);
+        return vlanResult;
+    }
+
+     public VlanReservationResultType queryVlan() {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         HashMap hmRet = new HashMap();
-        status = "unknown"; //?
+        status = "unknown";
         hmRet.put("status", status);
         try {
             hmRet = apiClient.queryReservation(gri);
@@ -292,12 +319,17 @@ public class AggregateP2PVlan extends AggregateResource {
             errMessage = "OSCARSStub threw exception in queryReservation: " +e.getMessage();
         }
 
-        return hmRet;
+        return getVlanResvResult();
      }
 
     private boolean setVlanOnNodes(boolean add) {
         //login to PLC-ssh (new AggregatePLC_SSHClient)
         AggregatePLC_SSHClient client = AggregatePLC_SSHClient.getPLCClient();
+        if (srcInterface.isEmpty() && dstInterface.isEmpty()){
+            log.info("No interface deviceName avaible for either source or destination node -- skip vlan interface configuration.");
+            return true;
+        }
+
         if (client == null || !client.login()) {
             log.error("cannot instantiate AggregatePLC_SSHClient connection to PLC server");
             return false;
@@ -306,9 +338,10 @@ public class AggregateP2PVlan extends AggregateResource {
         boolean ret = true;
 
         //TODO: verify the devices exist for srcInterface and dstInterface
-        
-        //add/delete source vtag interface
-        if (client.vconfigVlan(source, srcInterface, Integer.toString(vtag), add)) {
+        if (srcInterface.isEmpty()){
+            log.info("Source interface deviceName unknown: skip "+(add?"adding":"deleting") + " vlan interface to source node.");
+        }      //add/delete source vtag interface
+        else if (client.vconfigVlan(source, srcInterface, Integer.toString(vtag), add)) {
             log.info((add?"added":"deleted") + " vlan interface to node "+ source + "on "+ srcInterface + "."  + Integer.toString(vtag));
         }
         else {
@@ -317,13 +350,19 @@ public class AggregateP2PVlan extends AggregateResource {
                 log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
 
         }
-        if (add && !client.ifconfigIp(source, srcInterface + "." + Integer.toString(vtag), srcIpAndMask)) {
+        if (srcInterface.isEmpty() || srcIpAndMask.isEmpty()){
+            log.info("Source interface deviceName or IP address unknown: skip configuring IP address on source node.");
+        }
+        else if (add && !client.ifconfigIp(source, srcInterface + "." + Integer.toString(vtag), srcIpAndMask)) {
             log.error("failed to configure IP address on node " + source + " " + srcInterface + "." + Integer.toString(vtag));
             ret = false;
         }
 
         //add/delete destination vtag interface
-        if (client.vconfigVlan(destination, dstInterface, Integer.toString(vtag), add)) {
+        if (dstInterface.isEmpty()){
+            log.info("Destination interface deviceName unknown: skip "+(add?"adding":"deleting") + " vlan interface to destination node.");
+        }      //add/delete source vtag interface
+        else if (client.vconfigVlan(destination, dstInterface, Integer.toString(vtag), add)) {
             log.info((add?"added":"deleted") + " vlan interface to node "+ destination + "on "+ dstInterface + "." + Integer.toString(vtag));
         }
         else {
@@ -331,7 +370,10 @@ public class AggregateP2PVlan extends AggregateResource {
             if (add)
                 log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
         }
-        if (add && !client.ifconfigIp(destination, dstInterface + "." + Integer.toString(vtag), dstIpAndMask)) {
+        if (dstInterface.isEmpty() || dstIpAndMask.isEmpty()){
+            log.info("Destination interface deviceName or IP address unknown: skip configuring IP address on destination node.");
+        }
+        else if (add && !client.ifconfigIp(destination, dstInterface + "." + Integer.toString(vtag), dstIpAndMask)) {
             log.error("failed to configure IP address on node " + destination + " " + dstInterface + "." + Integer.toString(vtag));
             ret = false;
         }

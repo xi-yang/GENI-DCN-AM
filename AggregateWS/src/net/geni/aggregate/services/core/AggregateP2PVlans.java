@@ -173,7 +173,7 @@ public class AggregateP2PVlans {
         String status = "";
         String message = "";
         if (p2pvlan != null && p2pvlan.getVtag() == vtag) {
-            status = "failed";
+            status = "FAILED";
             message = "GRI=" + p2pvlan.getGlobalReservationId() + ", Status=" + p2pvlan.getStatus() +
                     "\nNote: You may delete the VLAN and re-create.";
         } else {
@@ -186,28 +186,28 @@ public class AggregateP2PVlans {
                 if (slice.getExpiredTime() > endTime) {
                     endTime = slice.getExpiredTime();
                 } else {//the slice has already expired
-                    status = "failed";
+                    status = "FAILED";
                     message = "Slice=" + sliceName + " has already expired. No VLAN created.";
                 }
             } else {
-                status = "failed";
+                status = "FAILED";
                 message = "Slice=" + sliceName + " does not exist. No VLAN created.";
             }
-            if (!status.matches("failed")) {
+            if (!status.matches("FAILED")) {
                 p2pvlan = new AggregateP2PVlan(sliceName, source, destination, vtag, bw, description, startTime, endTime);
                 p2pvlan.setSrcInterface(srcInterface);
                 p2pvlan.setSrcIpAndMask(srcIpAndMask);
                 p2pvlan.setDstInterface(dstInterface);
                 p2pvlan.setDstIpAndMask(dstIpAndMask);
                 status = p2pvlan.setupVlan();
-                if (status.equalsIgnoreCase("failed")) {
+                if (status.equalsIgnoreCase("FAILED")) {
                     message = "Error=" + p2pvlan.getErrorMessage();
                 } else {
                     message = "GRI=" + p2pvlan.getGlobalReservationId();
                 }
                 //DB insert
                 if (!AggregateState.getAggregateP2PVlans().add(p2pvlan)) {
-                    status = "failed";
+                    status = "FAILED";
                     message += "\nFailed to add the p2pvlan into database";
                 }
             }
@@ -226,7 +226,7 @@ public class AggregateP2PVlans {
         if (p2pvlan != null && p2pvlan.getVtag() == vtag) {
             status = p2pvlan.teardownVlan();
 
-            if (status.matches("(?i)failed")) {
+            if (status.matches("(?i)FAILED")) {
                 message = "Error=" + p2pvlan.getErrorMessage();
             } else {
                 message = "GRI=" + p2pvlan.getGlobalReservationId();
@@ -237,11 +237,11 @@ public class AggregateP2PVlans {
             }
             //DB delete
             if (!AggregateState.getAggregateP2PVlans().delete(p2pvlan)) {
-                status = "failed";
+                status = "FAILED";
                 message += "\nFailed to delete the p2pvlan from database";
             }
         } else {
-            status = "failed";
+            status = "FAILED";
             message = "Unkown SliceVLAN: " + sliceName + Integer.toString(vtag);
         }
         ret.put("status", status);

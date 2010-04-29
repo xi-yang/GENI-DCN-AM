@@ -49,7 +49,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         AggregateSlices slices = AggregateState.getAggregateSlices();
         AggregateSlice slice = slices.createSlice(sliceName, url, description, user, nodes);
-        String status = (slice == null?"failed":"successful");
+        String status = (slice == null?"FAILED":"SUCCESSFUL");
 
         //form response
         CreateSliceResponseType createSliceResponseType = new CreateSliceResponseType();
@@ -86,7 +86,17 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //form response
         UpdateSliceResponseType updateSliceResponseType = new UpdateSliceResponseType();
         UpdateSliceResponse updateSliceResponse = new UpdateSliceResponse();
-        updateSliceResponseType.setStatus("retCode="+Integer.toString(ret));
+        String status = "";
+        switch (ret) {
+            case 1: 
+                status = "SUCCESSFUL";
+                break;
+            case 2: 
+                status = "FAILED";
+                break;
+            default: status = "FAILED";
+        }
+        updateSliceResponseType.setStatus(status);
         updateSliceResponse.setUpdateSliceResponse(updateSliceResponseType);
         return updateSliceResponse;
     }
@@ -112,7 +122,18 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //form response
         DeleteSliceResponseType deleteSliceResponseType = new DeleteSliceResponseType();
         DeleteSliceResponse deleteSliceResponse = new DeleteSliceResponse();
-        deleteSliceResponseType.setStatus("retCode="+Integer.toString(ret));
+        String status = "";
+        switch (ret) {
+            case 1: 
+                status = "SUCCESSFUL";
+                break;
+            case 2: 
+                status = "FAILED";
+                break;
+            default: status = "FAILED";
+        }
+
+        deleteSliceResponseType.setStatus(status);
         deleteSliceResponse.setDeleteSliceResponse(deleteSliceResponseType);
         return deleteSliceResponse;
     }
@@ -176,7 +197,17 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //form response
         StartSliceResponseType startSliceResponseType = new StartSliceResponseType();
         StartSliceResponse startSliceResponse = new StartSliceResponse();
-        startSliceResponseType.setStatus("retCode="+Integer.toString(ret));
+        String status = "";
+        switch (ret) {
+            case 1: 
+                status = "SUCCESSFUL";
+                break;
+            case 2: 
+                status = "FAILED";
+                break;
+            default: status = "FAILED";
+        }
+        startSliceResponseType.setStatus(status);
         startSliceResponse.setStartSliceResponse(startSliceResponseType);
         return startSliceResponse;
     }
@@ -202,7 +233,17 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //form response
         StopSliceResponseType stopSliceResponseType = new StopSliceResponseType();
         StopSliceResponse stopSliceResponse = new StopSliceResponse();
-        stopSliceResponseType.setStatus("retCode="+Integer.toString(ret));
+        String status = "";
+        switch (ret) {
+            case 1: 
+                status = "SUCCESSFUL";
+                break;
+            case 2: 
+                status = "FAILED";
+                break;
+            default: status = "FAILED";
+        }
+        stopSliceResponseType.setStatus(status);
         stopSliceResponse.setStopSliceResponse(stopSliceResponseType);
         return stopSliceResponse;
     }
@@ -384,13 +425,12 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String sliceId = deleteSliceVlan.getSliceID();
         int vlan = deleteSliceVlan.getVlan();
 
-        HashMap hm = new HashMap();
-        // look for slice
         // TODO: re-sync IDC and AggregateDB
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
         AggregateP2PVlan p2pvlan = p2pvlans.getBySliceAndVtag(sliceId, vlan);
+        VlanReservationResultType vlanResvResult = null;
         if (p2pvlan != null && p2pvlan.getVtag() == vlan) {
-            hm = p2pvlan.queryVlan();
+            vlanResvResult = p2pvlan.queryVlan();
             p2pvlans.update(p2pvlan);
         } else {
             throw new AggregateFaultMessage("Unkown SliceVLAN: " + sliceId + Integer.toString(vlan));
@@ -399,8 +439,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         //form response
         QuerySliceVlanResponseType querySliceVlanResponseType = new QuerySliceVlanResponseType();
         QuerySliceVlanResponse querySliceVlanResponse = new QuerySliceVlanResponse();
-        querySliceVlanResponseType.setStatus(hm.get("status").toString());
-        querySliceVlanResponseType.setMessage("Query Result: " + hm.toString());
+        querySliceVlanResponseType.setVlanResvResult(vlanResvResult);
         querySliceVlanResponse.setQuerySliceVlanResponse(querySliceVlanResponseType);
         return querySliceVlanResponse;
     }
@@ -454,9 +493,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String message = "";
         try {
             status = AggregateState.getRspecManager().createRspec(rspecXml);
-            message = "none";
+            message = "";
         } catch (AggregateException e) {
-            status = "failed:";
+            status = "FAILED";
             message = e.getMessage();
         }
 
@@ -485,9 +524,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String message = "";
         try {
             status = AggregateState.getRspecManager().deleteRspec(rspecName);
-            message = "none";
+            message = "";
         } catch (AggregateException e) {
-            status = "failed:";
+            status = "FAILED";
             message = e.getMessage();
         }
 
@@ -526,7 +565,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         QuerySliceNetworkResponse querySliceNetworkResponse = new QuerySliceNetworkResponse();
         String status = (String)hmRet.get("sliceStatus");
         if (status == null)
-            status = "pending";
+            status = "PENDING";
         querySliceNetworkResponseType.setSliceStatus(status);
         Vector<VlanReservationResultType> vlanResvResults = (Vector<VlanReservationResultType>)hmRet.get("vlanResults");
         if (vlanResvResults != null)

@@ -82,12 +82,6 @@
             <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/ListCapabilities/Fault/AggregateException</faultActionMapping>
             <faultActionMapping faultName="AggregateFaultMessage">urn:ListCapabilitiesAggregateFaultMessage</faultActionMapping>
         </operation>
-        <operation name="ResetSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
-            <actionMapping>ResetSlice</actionMapping>
-            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/ResetSliceResponse</outputActionMapping>
-            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/ResetSlice/Fault/AggregateException</faultActionMapping>
-            <faultActionMapping faultName="AggregateFaultMessage">urn:ResetSliceAggregateFaultMessage</faultActionMapping>
-        </operation>
         <operation name="QuerySliceNetwork" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <actionMapping>QuerySliceNetwork</actionMapping>
             <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/QuerySliceNetworkResponse</outputActionMapping>

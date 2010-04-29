@@ -32,74 +32,30 @@
         
 
                         /**
-                        * field for Status
+                        * field for VlanResvResult
                         */
 
                         
-                                    protected java.lang.String localStatus ;
+                                    protected net.geni.aggregate.services.api.VlanReservationResultType localVlanResvResult ;
                                 
 
                            /**
                            * Auto generated getter method
-                           * @return java.lang.String
+                           * @return net.geni.aggregate.services.api.VlanReservationResultType
                            */
-                           public  java.lang.String getStatus(){
-                               return localStatus;
+                           public  net.geni.aggregate.services.api.VlanReservationResultType getVlanResvResult(){
+                               return localVlanResvResult;
                            }
 
                            
                         
                             /**
                                * Auto generated setter method
-                               * @param param Status
+                               * @param param VlanResvResult
                                */
-                               public void setStatus(java.lang.String param){
+                               public void setVlanResvResult(net.geni.aggregate.services.api.VlanReservationResultType param){
                             
-                                            this.localStatus=param;
-                                    
-
-                               }
-                            
-
-                        /**
-                        * field for Message
-                        */
-
-                        
-                                    protected java.lang.String localMessage ;
-                                
-                           /*  This tracker boolean wil be used to detect whether the user called the set method
-                          *   for this attribute. It will be used to determine whether to include this field
-                           *   in the serialized XML
-                           */
-                           protected boolean localMessageTracker = false ;
-                           
-
-                           /**
-                           * Auto generated getter method
-                           * @return java.lang.String
-                           */
-                           public  java.lang.String getMessage(){
-                               return localMessage;
-                           }
-
-                           
-                        
-                            /**
-                               * Auto generated setter method
-                               * @param param Message
-                               */
-                               public void setMessage(java.lang.String param){
-                            
-                                       if (param != null){
-                                          //update the setting tracker
-                                          localMessageTracker = true;
-                                       } else {
-                                          localMessageTracker = false;
-                                              
-                                       }
-                                   
-                                            this.localMessage=param;
+                                            this.localVlanResvResult=param;
                                     
 
                                }
@@ -202,74 +158,12 @@
                
                    }
                
-                                    namespace = "http://aggregate.geni.net/services/api/";
-                                    if (! namespace.equals("")) {
-                                        prefix = xmlWriter.getPrefix(namespace);
-
-                                        if (prefix == null) {
-                                            prefix = generatePrefix(namespace);
-
-                                            xmlWriter.writeStartElement(prefix,"status", namespace);
-                                            xmlWriter.writeNamespace(prefix, namespace);
-                                            xmlWriter.setPrefix(prefix, namespace);
-
-                                        } else {
-                                            xmlWriter.writeStartElement(namespace,"status");
-                                        }
-
-                                    } else {
-                                        xmlWriter.writeStartElement("status");
-                                    }
-                                
-
-                                          if (localStatus==null){
-                                              // write the nil attribute
-                                              
-                                                     throw new org.apache.axis2.databinding.ADBException("status cannot be null!!");
-                                                  
-                                          }else{
-
+                                            if (localVlanResvResult==null){
+                                                 throw new org.apache.axis2.databinding.ADBException("vlanResvResult cannot be null!!");
+                                            }
+                                           localVlanResvResult.serialize(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","vlanResvResult"),
+                                               factory,xmlWriter);
                                         
-                                                   xmlWriter.writeCharacters(localStatus);
-                                            
-                                          }
-                                    
-                                   xmlWriter.writeEndElement();
-                              if (localMessageTracker){
-                                    namespace = "http://aggregate.geni.net/services/api/";
-                                    if (! namespace.equals("")) {
-                                        prefix = xmlWriter.getPrefix(namespace);
-
-                                        if (prefix == null) {
-                                            prefix = generatePrefix(namespace);
-
-                                            xmlWriter.writeStartElement(prefix,"message", namespace);
-                                            xmlWriter.writeNamespace(prefix, namespace);
-                                            xmlWriter.setPrefix(prefix, namespace);
-
-                                        } else {
-                                            xmlWriter.writeStartElement(namespace,"message");
-                                        }
-
-                                    } else {
-                                        xmlWriter.writeStartElement("message");
-                                    }
-                                
-
-                                          if (localMessage==null){
-                                              // write the nil attribute
-                                              
-                                                     throw new org.apache.axis2.databinding.ADBException("message cannot be null!!");
-                                                  
-                                          }else{
-
-                                        
-                                                   xmlWriter.writeCharacters(localMessage);
-                                            
-                                          }
-                                    
-                                   xmlWriter.writeEndElement();
-                             }
                     xmlWriter.writeEndElement();
                
 
@@ -432,24 +326,15 @@
                  java.util.ArrayList attribList = new java.util.ArrayList();
 
                 
-                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
-                                                                      "status"));
-                                 
-                                        if (localStatus != null){
-                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localStatus));
-                                        } else {
-                                           throw new org.apache.axis2.databinding.ADBException("status cannot be null!!");
-                                        }
-                                     if (localMessageTracker){
-                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
-                                                                      "message"));
-                                 
-                                        if (localMessage != null){
-                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localMessage));
-                                        } else {
-                                           throw new org.apache.axis2.databinding.ADBException("message cannot be null!!");
-                                        }
+                            elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "vlanResvResult"));
+                            
+                            
+                                    if (localVlanResvResult==null){
+                                         throw new org.apache.axis2.databinding.ADBException("vlanResvResult cannot be null!!");
                                     }
+                                    elementList.add(localVlanResvResult);
+                                
 
                 return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
             
@@ -528,12 +413,9 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","status").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","vlanResvResult").equals(reader.getName())){
                                 
-                                    java.lang.String content = reader.getElementText();
-                                    
-                                              object.setStatus(
-                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                                object.setVlanResvResult(net.geni.aggregate.services.api.VlanReservationResultType.Factory.parse(reader));
                                               
                                         reader.next();
                                     
@@ -543,25 +425,7 @@
                                     // A start element we are not expecting indicates an invalid parameter was passed
                                     throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                                 }
-                            
-                                    
-                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
-                                
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","message").equals(reader.getName())){
-                                
-                                    java.lang.String content = reader.getElementText();
-                                    
-                                              object.setMessage(
-                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
-                                              
-                                        reader.next();
-                                    
-                              }  // End of if for expected property start element
-                                
-                                    else {
-                                        
-                                    }
-                                  
+                              
                             while (!reader.isStartElement() && !reader.isEndElement())
                                 reader.next();
                             

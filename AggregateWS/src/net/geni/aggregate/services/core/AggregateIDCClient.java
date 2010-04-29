@@ -126,7 +126,7 @@ public class AggregateIDCClient {
     public String cancelReservation(String aGri)
         throws AxisFault, AAAFaultMessage, BSSFaultMessage, RemoteException, Exception {
         if (gri == null)
-            return "failed";
+            return "FAILED";
 
         Client client = new Client();
 
@@ -150,7 +150,7 @@ public class AggregateIDCClient {
         HashMap hmRet = new HashMap();
         if (gri == null) {
             hmRet.put("GRI","unknown");
-            hmRet.put("status", "failed");
+            hmRet.put("status", "FAILED");
             return hmRet;
         }
 

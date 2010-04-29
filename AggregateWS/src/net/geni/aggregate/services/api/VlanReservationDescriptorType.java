@@ -98,6 +98,12 @@
                         
                                     protected java.lang.String localSrcInterface ;
                                 
+                           /*  This tracker boolean wil be used to detect whether the user called the set method
+                          *   for this attribute. It will be used to determine whether to include this field
+                           *   in the serialized XML
+                           */
+                           protected boolean localSrcInterfaceTracker = false ;
+                           
 
                            /**
                            * Auto generated getter method
@@ -115,6 +121,14 @@
                                */
                                public void setSrcInterface(java.lang.String param){
                             
+                                       if (param != null){
+                                          //update the setting tracker
+                                          localSrcInterfaceTracker = true;
+                                       } else {
+                                          localSrcInterfaceTracker = false;
+                                              
+                                       }
+                                   
                                             this.localSrcInterface=param;
                                     
 
@@ -128,6 +142,12 @@
                         
                                     protected java.lang.String localSrcIpAndMask ;
                                 
+                           /*  This tracker boolean wil be used to detect whether the user called the set method
+                          *   for this attribute. It will be used to determine whether to include this field
+                           *   in the serialized XML
+                           */
+                           protected boolean localSrcIpAndMaskTracker = false ;
+                           
 
                            /**
                            * Auto generated getter method
@@ -145,6 +165,14 @@
                                */
                                public void setSrcIpAndMask(java.lang.String param){
                             
+                                       if (param != null){
+                                          //update the setting tracker
+                                          localSrcIpAndMaskTracker = true;
+                                       } else {
+                                          localSrcIpAndMaskTracker = false;
+                                              
+                                       }
+                                   
                                             this.localSrcIpAndMask=param;
                                     
 
@@ -188,6 +216,12 @@
                         
                                     protected java.lang.String localDstInterface ;
                                 
+                           /*  This tracker boolean wil be used to detect whether the user called the set method
+                          *   for this attribute. It will be used to determine whether to include this field
+                           *   in the serialized XML
+                           */
+                           protected boolean localDstInterfaceTracker = false ;
+                           
 
                            /**
                            * Auto generated getter method
@@ -205,6 +239,14 @@
                                */
                                public void setDstInterface(java.lang.String param){
                             
+                                       if (param != null){
+                                          //update the setting tracker
+                                          localDstInterfaceTracker = true;
+                                       } else {
+                                          localDstInterfaceTracker = false;
+                                              
+                                       }
+                                   
                                             this.localDstInterface=param;
                                     
 
@@ -218,6 +260,12 @@
                         
                                     protected java.lang.String localDstIpAndMask ;
                                 
+                           /*  This tracker boolean wil be used to detect whether the user called the set method
+                          *   for this attribute. It will be used to determine whether to include this field
+                           *   in the serialized XML
+                           */
+                           protected boolean localDstIpAndMaskTracker = false ;
+                           
 
                            /**
                            * Auto generated getter method
@@ -235,6 +283,14 @@
                                */
                                public void setDstIpAndMask(java.lang.String param){
                             
+                                       if (param != null){
+                                          //update the setting tracker
+                                          localDstIpAndMaskTracker = true;
+                                       } else {
+                                          localDstIpAndMaskTracker = false;
+                                              
+                                       }
+                                   
                                             this.localDstIpAndMask=param;
                                     
 
@@ -460,7 +516,7 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                              if (localSrcInterfaceTracker){
                                     namespace = "http://aggregate.geni.net/services/api/";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -494,7 +550,7 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                             } if (localSrcIpAndMaskTracker){
                                     namespace = "http://aggregate.geni.net/services/api/";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -528,7 +584,7 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                             }
                                     namespace = "http://aggregate.geni.net/services/api/";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -562,7 +618,7 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                              if (localDstInterfaceTracker){
                                     namespace = "http://aggregate.geni.net/services/api/";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -596,7 +652,7 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                             } if (localDstIpAndMaskTracker){
                                     namespace = "http://aggregate.geni.net/services/api/";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -630,7 +686,7 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                             }
                                     namespace = "http://aggregate.geni.net/services/api/";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -870,7 +926,7 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("sourceNode cannot be null!!");
                                         }
-                                    
+                                     if (localSrcInterfaceTracker){
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "srcInterface"));
                                  
@@ -879,7 +935,7 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("srcInterface cannot be null!!");
                                         }
-                                    
+                                    } if (localSrcIpAndMaskTracker){
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "srcIpAndMask"));
                                  
@@ -888,7 +944,7 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("srcIpAndMask cannot be null!!");
                                         }
-                                    
+                                    }
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "destinationNode"));
                                  
@@ -897,7 +953,7 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("destinationNode cannot be null!!");
                                         }
-                                    
+                                     if (localDstInterfaceTracker){
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "dstInterface"));
                                  
@@ -906,7 +962,7 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("dstInterface cannot be null!!");
                                         }
-                                    
+                                    } if (localDstIpAndMaskTracker){
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "dstIpAndMask"));
                                  
@@ -915,7 +971,7 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("dstIpAndMask cannot be null!!");
                                         }
-                                    
+                                    }
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "bandwidth"));
                                  
@@ -1058,11 +1114,10 @@
                                     
                               }  // End of if for expected property start element
                                 
-                                else{
-                                    // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
-                                }
-                            
+                                    else {
+                                        
+                                    }
+                                
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
@@ -1077,11 +1132,10 @@
                                     
                               }  // End of if for expected property start element
                                 
-                                else{
-                                    // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
-                                }
-                            
+                                    else {
+                                        
+                                    }
+                                
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
@@ -1115,11 +1169,10 @@
                                     
                               }  // End of if for expected property start element
                                 
-                                else{
-                                    // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
-                                }
-                            
+                                    else {
+                                        
+                                    }
+                                
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
@@ -1134,11 +1187,10 @@
                                     
                               }  // End of if for expected property start element
                                 
-                                else{
-                                    // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
-                                }
-                            
+                                    else {
+                                        
+                                    }
+                                
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 

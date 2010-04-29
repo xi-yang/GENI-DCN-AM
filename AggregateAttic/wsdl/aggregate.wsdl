@@ -75,11 +75,11 @@
 				<xs:sequence>
 					<xs:element name="vlan" type="xs:int"/>
 					<xs:element name="sourceNode" type="xs:string"/>
-					<xs:element name="srcInterface" type="xs:string"/>
-					<xs:element name="srcIpAndMask" type="xs:string"/>
+					<xs:element name="srcInterface" type="xs:string" minOccurs="0"/>
+					<xs:element name="srcIpAndMask" type="xs:string" minOccurs="0"/>
 					<xs:element name="destinationNode" type="xs:string"/>
-					<xs:element name="dstInterface" type="xs:string"/>
-					<xs:element name="dstIpAndMask" type="xs:string"/>
+					<xs:element name="dstInterface" type="xs:string" minOccurs="0"/>
+					<xs:element name="dstIpAndMask" type="xs:string" minOccurs="0"/>
 					<xs:element name="bandwidth" type="xs:float"/>
 					<xs:element name="description" type="xs:string"/>
 				</xs:sequence>
@@ -337,8 +337,7 @@
 			<xs:element name="QuerySliceVlanResponse" type="tns:QuerySliceVlanResponseType"/>
 			<xs:complexType name="QuerySliceVlanResponseType">
 				<xs:sequence>
-					<xs:element name="status" type="xs:string"/>
-					<xs:element name="message" type="xs:string" minOccurs="0"/>
+					<xs:element name="vlanResvResult" type="tns:VlanReservationResultType"/>
 				</xs:sequence>
 			</xs:complexType>
 

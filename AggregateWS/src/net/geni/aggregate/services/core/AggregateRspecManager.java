@@ -108,12 +108,12 @@ public class AggregateRspecManager extends Thread{
             synchronized(rspecThreads) {
                 for (AggregateRspecRunner rspecThread: rspecThreads) {
                     AggregateRspec rspec = rspecThread.getRspec();
-                    if (rspec.getStatus().equalsIgnoreCase("working")) {
+                    if (rspec.getStatus().equalsIgnoreCase("WORKING")) {
                         //rspec in working state, polling interval increased
                         if (rspecThread.getPollInterval() < extendedPollInterval)
                             rspecThread.setPollInterval(extendedPollInterval);
-                    } else if (rspec.getStatus().equalsIgnoreCase("terminated")
-                      || rspec.getStatus().equalsIgnoreCase("rollbacked")) {
+                    } else if (rspec.getStatus().equalsIgnoreCase("TERMINATED")
+                      || rspec.getStatus().equalsIgnoreCase("ROLLBACKED")) {
                         //rollbacked thread may get diff. treatment?
                         try {
                             session = HibernateUtil.getSessionFactory().openSession();
@@ -151,7 +151,7 @@ public class AggregateRspecManager extends Thread{
                     throw new AggregateException("Rspec name:"+rspec.getRspecName()+" has already existed!");
         }
 
-        aggrRspec.setStatus("starting");
+        aggrRspec.setStatus("STARTING");
         synchronized(this) {
             if (!(aggrRspec.getRspecName().isEmpty() || aggrRspec.getAggregateName().isEmpty()
               || aggrRspec.getResources().size() == 0)) {
@@ -164,7 +164,7 @@ public class AggregateRspecManager extends Thread{
                 } catch (Exception e) {
                     tx.rollback();
                     e.printStackTrace();
-                    return "failed";
+                    return "FAILED";
                 } finally {
                     if (session.isOpen()) session.close();
                 }
@@ -189,7 +189,7 @@ public class AggregateRspecManager extends Thread{
                 if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecName)) {
                     rspecThread.setGoRun(false);
                     rspecThread.interrupt();
-                    return "stopping";
+                    return "STOPPING";
                 }
             }
         }
