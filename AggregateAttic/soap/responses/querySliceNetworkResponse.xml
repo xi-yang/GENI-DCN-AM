@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<ns1:QuerySliceNetworkResponse xmlns:ns1="http://aggregate.geni.net/services/api/">
+			<ns1:sliceStatus>CREATED</ns1:sliceStatus>
+				<ns1:vlanResvResult>
+					<ns1:reservation>
+					<ns1:vlan>1001</ns1:vlan>
+					<ns1:sourceNode>planetlab3.dragon.maxgigapop.net</ns1:sourceNode>
+					<ns1:srcInterface>eth1</ns1:srcInterface>
+					<ns1:srcIpAndMask>10.10.10.2/24</ns1:srcIpAndMask>
+					<ns1:destinationNode>planetlab2.dragon.maxgigapop.net</ns1:destinationNode>
+					<ns1:dstInterface>eth1</ns1:dstInterface>
+					<ns1:dstIpAndMask>10.10.10.1/24</ns1:dstIpAndMask>
+					<ns1:bandwidth>100.0</ns1:bandwidth>
+					<ns1:description>xi_rspec_slice1 p2pvlan-planetlab3.dragon.maxgigapop.net-planetlab2.dragon.maxgigapop.net-1001</ns1:description>
+				</ns1:reservation>
+				<ns1:globalReservationId>dragon.maxgigapop.net-1274</ns1:globalReservationId>
+				<ns1:status>ACTIVE</ns1:status>
+					<ns1:message>
+				</ns1:message>
+			</ns1:vlanResvResult>
+			<ns1:vlanResvResult>
+				<ns1:reservation>
+					<ns1:vlan>107</ns1:vlan>
+					<ns1:sourceNode>planetlab3.dragon.maxgigapop.net</ns1:sourceNode>
+					<ns1:srcInterface>eth1</ns1:srcInterface>
+					<ns1:srcIpAndMask>10.10.30.1/24</ns1:srcIpAndMask>
+					<ns1:destinationNode>planetlab5.dragon.maxgigapop.net</ns1:destinationNode>
+					<ns1:dstInterface>eth1</ns1:dstInterface>
+					<ns1:dstIpAndMask>10.10.30.2/24</ns1:dstIpAndMask>
+					<ns1:bandwidth>100.0</ns1:bandwidth>
+					<ns1:description>xi_rspec_slice1 p2pvlan-planetlab3.dragon.maxgigapop.net-planetlab5.dragon.maxgigapop.net-107</ns1:description>
+				</ns1:reservation>
+				<ns1:globalReservationId>dragon.maxgigapop.net-1275</ns1:globalReservationId>
+				<ns1:status>ACTIVE</ns1:status>
+					<ns1:message>
+				</ns1:message>
+			</ns1:vlanResvResult>
+			<ns1:vlanResvResult>
+				<ns1:reservation>
+					<ns1:vlan>312</ns1:vlan>
+					<ns1:sourceNode>planetlab5.dragon.maxgigapop.net</ns1:sourceNode>
+					<ns1:srcInterface>eth1</ns1:srcInterface>
+					<ns1:srcIpAndMask>10.10.20.2/24</ns1:srcIpAndMask>
+					<ns1:destinationNode>planetlab2.dragon.maxgigapop.net</ns1:destinationNode>
+					<ns1:dstInterface>eth1</ns1:dstInterface>
+					<ns1:dstIpAndMask>10.10.20.1/24</ns1:dstIpAndMask>
+					<ns1:bandwidth>100.0</ns1:bandwidth>
+					<ns1:description>xi_rspec_slice1 p2pvlan-planetlab5.dragon.maxgigapop.net-planetlab2.dragon.maxgigapop.net-312</ns1:description>
+				</ns1:reservation>
+				<ns1:globalReservationId>dragon.maxgigapop.net-1276</ns1:globalReservationId>
+				<ns1:status>ACTIVE</ns1:status>
+					<ns1:message>
+				</ns1:message>
+			</ns1:vlanResvResult>
+		</ns1:QuerySliceNetworkResponse>
+	</soapenv:Body>
+</soapenv:Envelope>

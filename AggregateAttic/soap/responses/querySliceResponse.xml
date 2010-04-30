@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<ns1:QuerySliceResponse xmlns:ns1="http://aggregate.geni.net/services/api/">
+			<ns1:queryResult>{peer_id=None, creator_person_id=1, slice_id=1, node_ids=[], person_ids=[], slice_tag_ids=[1, 2, 3], site_id=1, peer_slice_id=None, url=http://localhost.localdomain/, slice_attribute_ids=[1, 2, 3], instantiation=plc-instantiated, expires=2147415247, max_nodes=100, created=1245706565, description=PlanetFlow Traffic Auditing Service.  Logs, captured in the root context using fprobe-ulogd, are stored in a directory in the root context which is bind mounted to the planetflow slice.  The Planetflow Central service then periodically rsyncs these logs from the planetflow slice for aggregation., name=pl_netflow}</ns1:queryResult>
+			<ns1:queryResult>{peer_id=None, creator_person_id=19, slice_id=178, node_ids=[2, 5], person_ids=[18, 19], slice_tag_ids=[], site_id=1, peer_slice_id=None, url=http://www.east.isi.edu, slice_attribute_ids=[], instantiation=plc-instantiated, expires=1273882467, max_nodes=100, created=1272644067, description=Test slice for AM development, name=maxpl_xi_test4}</ns1:queryResult>
+		</ns1:QuerySliceResponse>
+	</soapenv:Body>
+</soapenv:Envelope>

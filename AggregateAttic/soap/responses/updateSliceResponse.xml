@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<ns1:UpdateSliceResponse xmlns:ns1="http://aggregate.geni.net/services/api/">
+			<ns1:status>FAILED</ns1:status>
+		</ns1:UpdateSliceResponse>
+	</soapenv:Body>
+</soapenv:Envelope>
