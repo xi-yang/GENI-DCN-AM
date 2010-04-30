@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<ns1:QuerySliceVlanResponse xmlns:ns1="http://aggregate.geni.net/services/api/">
+			<ns1:vlanResvResult>
+				<ns1:reservation>
+					<ns1:vlan>3033</ns1:vlan>
+					<ns1:sourceNode>planetlab3.dragon.maxgigapop.net</ns1:sourceNode>
+					<ns1:srcInterface>eth1</ns1:srcInterface>
+					<ns1:srcIpAndMask>10.10.11.1/30</ns1:srcIpAndMask>
+					<ns1:destinationNode>planetlab2.dragon.maxgigapop.net</ns1:destinationNode>
+					<ns1:dstInterface>eth1</ns1:dstInterface>
+					<ns1:dstIpAndMask>10.10.11.2/30</ns1:dstIpAndMask>
+					<ns1:bandwidth>100.0</ns1:bandwidth>
+					<ns1:description>VLAN3033 between planetlab2 and planetlab3</ns1:description>
+				</ns1:reservation>
+				<ns1:globalReservationId>dragon.maxgigapop.net-1273</ns1:globalReservationId>
+				<ns1:status>ACTIVE</ns1:status>
+					<ns1:message>
+				</ns1:message>
+			</ns1:vlanResvResult>
+		</ns1:QuerySliceVlanResponse>
+	</soapenv:Body>
+</soapenv:Envelope>
