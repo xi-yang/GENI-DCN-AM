@@ -259,5 +259,6 @@ public class AggregateSlices {
             }
             this.update(slice);
         }
+        plcClient.logoff();
     }
 }
