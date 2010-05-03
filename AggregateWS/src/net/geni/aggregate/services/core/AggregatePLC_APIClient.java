@@ -75,6 +75,10 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         return getPLCClient(AggregateState.getPlcURL(), AggregateState.getPlcPI(), AggregateState.getPlcPassword());
     }
 
+    public void finalize() {
+        logoff();
+    }
+
     public boolean login() {
         if (!super.login("expect", "-c", "spawn python", "-c", "interact"))
             return false;

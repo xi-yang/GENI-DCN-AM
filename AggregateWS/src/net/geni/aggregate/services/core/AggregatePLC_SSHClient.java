@@ -43,6 +43,10 @@ public class AggregatePLC_SSHClient extends AggregateCLIClient {
                 AggregateState.getPlcSshKeypass(), AggregateState.getPlcSshExecPrefix()));
     }
 
+    public void finalize() {
+        logoff();
+    }
+
     public boolean login() {
         if (!super.login("expect", "-c", "spawn ssh -i "+sshKeyfile +" -p "+sshPort+" -l "+plcLogin+" "+plcHost, "-c", "interact"))
             return false;

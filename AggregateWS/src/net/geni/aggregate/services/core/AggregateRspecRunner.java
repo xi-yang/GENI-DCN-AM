@@ -279,8 +279,8 @@ public class AggregateRspecRunner extends Thread {
         } catch (AggregateException e) {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
             e.printStackTrace();
-            rspec.setStatus("ROLLBACKED");
         }
+        rspec.setStatus("ROLLBACKED");
         log.debug("end - rolling back rspec: "+ rspec.getRspecName());
     }
 

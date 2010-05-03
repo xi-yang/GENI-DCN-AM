@@ -76,6 +76,7 @@ public class AggregateCLIClient {
     }
 
     public boolean logoff(String exitString) {
+        //log.debug("CLICLient::logoff w/ " + exitString);
         if (!alive())
             return false;
         try {
