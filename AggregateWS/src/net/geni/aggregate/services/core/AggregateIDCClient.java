@@ -106,9 +106,9 @@ public class AggregateIDCClient {
 
         /* Send Request */
         CreateReply response = client.createReservation(content);
+        client.cleanUp();
+
         /* Extract repsponse information */
-
-
         gri.setGri(response.getGlobalReservationId());
 
         return response.getStatus();
@@ -136,6 +136,7 @@ public class AggregateIDCClient {
         if (!aGri.equals(""))
             gri.setGri(aGri);
         String status = client.cancelReservation(this.gri);
+        client.cleanUp();
         /* Extract repsponse information */
         return status;
     }
@@ -162,6 +163,7 @@ public class AggregateIDCClient {
         if (!aGri.equals(""))
             gri.setGri(aGri);
         ResDetails response = client.queryReservation(this.gri);
+        client.cleanUp();
         PathInfo pathInfo = response.getPathInfo();
         Layer2Info layer2Info = pathInfo.getLayer2Info();
         /* Extract repsponse information */
@@ -210,6 +212,7 @@ public class AggregateIDCClient {
         GetTopologyContent request = new GetTopologyContent();
         request.setTopologyType(domain);
         GetTopologyResponseContent response = client.getNetworkTopology(request);
+        client.cleanUp();
 
         CtrlPlaneTopologyContent topology = response.getTopology();
         CtrlPlaneDomainContent[] domains = topology.getDomain();
