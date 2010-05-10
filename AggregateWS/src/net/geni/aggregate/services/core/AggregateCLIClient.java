@@ -61,6 +61,7 @@ public class AggregateCLIClient {
         log = org.apache.log4j.Logger.getLogger(this.getClass());
         try {
             proc = new ProcessBuilder(argv).start();
+            ProcessBuilder pb = new ProcessBuilder(argv);
             in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             out = new PrintStream(proc.getOutputStream());
             if (proc==null || in==null || out==null) {
@@ -81,7 +82,7 @@ public class AggregateCLIClient {
             return false;
         try {
             sendCommand(exitString);
-            in.close(); out.close();
+            in.close(); out.close(); proc.destroy();
         } catch (IOException e) {
             log.error("CLICLient::logoff IO error: " + e.getMessage());
         }
