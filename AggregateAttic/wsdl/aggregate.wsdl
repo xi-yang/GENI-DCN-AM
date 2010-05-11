@@ -73,7 +73,7 @@
 
 			<xs:complexType name="VlanReservationDescriptorType">
 				<xs:sequence>
-					<xs:element name="vlan" type="xs:int"/>
+					<xs:element name="vlan" type="xs:string"/>
 					<xs:element name="sourceNode" type="xs:string"/>
 					<xs:element name="srcInterface" type="xs:string" minOccurs="0"/>
 					<xs:element name="srcIpAndMask" type="xs:string" minOccurs="0"/>
@@ -311,7 +311,7 @@
 			<xs:complexType name="DeleteSliceVlanType">
 				<xs:sequence>
 					<xs:element name="sliceID" type="xs:string"/>
-					<xs:element name="vlan" type="xs:int"/>
+					<xs:element name="vlan" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 
@@ -329,7 +329,7 @@
 			<xs:complexType name="QuerySliceVlanType">
 				<xs:sequence>
 					<xs:element name="sliceID" type="xs:string"/>
-					<xs:element name="vlan" type="xs:int"/>
+					<xs:element name="vlan" type="xs:string"/>
 				</xs:sequence>
 			</xs:complexType>
 

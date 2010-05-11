@@ -143,7 +143,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             //init the p2pvlans table
           AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getP2PVlansTab() + " ( " +
                     "id int(11) NOT NULL, " +
-                    "vlanTag int(11) NOT NULL, " +
+                    "vlanTag varchar(11) NOT NULL, " +
                     "sliceName varchar(255) NOT NULL, " +
                     "description varchar(255) NOT NULL default '', " +
                     "source varchar(255) NOT NULL default '', " +
