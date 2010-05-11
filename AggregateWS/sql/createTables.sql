@@ -107,7 +107,7 @@ CREATE TABLE `slices` (
 DROP TABLE IF EXISTS `p2pvlans`;
 CREATE TABLE `p2pvlans` (
   `id` int(11) NOT NULL,
-  `vlanTag` int(11) NOT NULL,
+  `vlanTag` varchar(11) NOT NULL,
   `sliceName` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL default '',
   `source` varchar(255) NOT NULL default '',

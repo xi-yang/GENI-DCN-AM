@@ -181,4 +181,13 @@ public class AggregateUtils
         }
         return ret;
     }
+
+    public static void justSleep(int secs) {
+        long t0, t1;
+        t0 =  System.currentTimeMillis();
+        do{
+            t1 = System.currentTimeMillis();
+        }
+        while ((t1 - t0) < (secs*1000));
+    }
 }

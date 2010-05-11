@@ -87,7 +87,7 @@ public class AggregateP2PVlans {
         return true;
     }
 
-    public boolean delete(String name, int vtag) {
+    public boolean delete(String name, String vtag) {
         synchronized(this) {
             try {
                 session = HibernateUtil.getSessionFactory().openSession();
@@ -126,12 +126,15 @@ public class AggregateP2PVlans {
         return null;
     }
 
-    public AggregateP2PVlan getBySliceAndVtag(String name, int vtag) {
+    public AggregateP2PVlan getBySliceAndVtag(String name, String vtag) {
         synchronized(this) {
             try {
                 session = HibernateUtil.getSessionFactory().openSession();
                 tx = session.beginTransaction();
-                Query q = session.createQuery("from AggregateP2PVlan as p2pvlan where p2pvlan.sliceName='" + name + "' and p2pvlan.vtag=" + Integer.toString(vtag));
+                String hql = "from AggregateP2PVlan as p2pvlan where p2pvlan.sliceName='" + name + "'";
+                if (!vtag.equalsIgnoreCase("any"))
+                    hql = hql + " and p2pvlan.vtag='" + vtag + "'";
+                Query q = session.createQuery(hql);
                 if (q.list().size() == 0) {
                     return null;
                 }
@@ -168,11 +171,11 @@ public class AggregateP2PVlans {
 
     public synchronized AggregateP2PVlan createVlan(String sliceName, String source, String srcInterface,
             String srcIpAndMask, String destination, String dstInterface, String dstIpAndMask,
-            int vtag, float bw, String description, long startTime, long endTime, HashMap hm) {
+            String vtag, float bw, String description, long startTime, long endTime, HashMap hm) {
         AggregateP2PVlan p2pvlan = this.getBySliceAndVtag(sliceName, vtag);
         String status = "";
         String message = "";
-        if (p2pvlan != null && p2pvlan.getVtag() == vtag) {
+        if (p2pvlan != null && !vtag.equalsIgnoreCase("any")) {
             status = "FAILED";
             message = "GRI=" + p2pvlan.getGlobalReservationId() + ", Status=" + p2pvlan.getStatus() +
                     "\nNote: You may delete the VLAN and re-create.";
@@ -203,7 +206,7 @@ public class AggregateP2PVlans {
                 if (status.equalsIgnoreCase("FAILED")) {
                     message = "Error=" + p2pvlan.getErrorMessage();
                 } else {
-                    message = "GRI=" + p2pvlan.getGlobalReservationId();
+                    message = "GRI=" + p2pvlan.getGlobalReservationId() + ",VLAN=" + p2pvlan.getVtag();
                 }
                 //DB insert
                 if (!AggregateState.getAggregateP2PVlans().add(p2pvlan)) {
@@ -217,13 +220,13 @@ public class AggregateP2PVlans {
         return p2pvlan;
     }
 
-    public synchronized HashMap deleteVlan(String sliceName, int vtag) {
+    public synchronized HashMap deleteVlan(String sliceName, String vtag) {
         HashMap ret = new HashMap();
         // look for slice
         AggregateP2PVlan p2pvlan = this.getBySliceAndVtag(sliceName, vtag);
         String status = "";
         String message = "";
-        if (p2pvlan != null && p2pvlan.getVtag() == vtag) {
+        if (p2pvlan != null) {
             status = p2pvlan.teardownVlan();
 
             if (status.matches("(?i)FAILED")) {
@@ -242,7 +245,7 @@ public class AggregateP2PVlans {
             }
         } else {
             status = "FAILED";
-            message = "Unkown SliceVLAN: " + sliceName + Integer.toString(vtag);
+            message = "Unkown SliceVLAN: " + sliceName + vtag;
         }
         ret.put("status", status);
         ret.put("message", message);

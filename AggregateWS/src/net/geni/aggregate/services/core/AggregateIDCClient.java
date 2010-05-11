@@ -30,8 +30,8 @@ import org.ogf.schema.network.topology.ctrlplane.*;
 
 public class AggregateIDCClient {
 
-    private String idcURL;
-    private String idcRepo;
+    private String idcURL = "";
+    private String idcRepo = "";
     private GlobalReservationId gri;
     private Logger log;
 
@@ -55,7 +55,7 @@ public class AggregateIDCClient {
     /**
      * createReservation
      */
-    public String createReservation(String src, String dst, int vtag, float bw, String descr, long startTime, long endTime)
+    public String createReservation(String src, String dst, String vtag, float bw, String descr, long startTime, long endTime)
         throws AxisFault, AAAFaultMessage, BSSFaultMessage, RemoteException, Exception {
 
         Client client = new Client();
@@ -80,18 +80,15 @@ public class AggregateIDCClient {
 
         layer2Info.setSrcEndpoint(src);
         layer2Info.setDestEndpoint(dst);
-        String vlanTag = "any";
-        if (vtag == 0)
-            vlanTag = "0";
-        else if (vtag > 1 && vtag < 4096)
-            vlanTag = Integer.toString(vtag);
+        if (vtag.equalsIgnoreCase("untagged"))
+            vtag = "0";
         VlanTag srcVtag = new VlanTag();
-        srcVtag.setString(vlanTag);
+        srcVtag.setString(vtag);
         srcVtag.setTagged(true);
         layer2Info.setSrcVtag(srcVtag);
         VlanTag destVtag = new VlanTag();
         // same as srcVtag for now
-        destVtag.setString(vlanTag);
+        destVtag.setString(vtag);
         destVtag.setTagged(true);
         layer2Info.setDestVtag(destVtag);
 
@@ -109,8 +106,7 @@ public class AggregateIDCClient {
         client.cleanUp();
 
         /* Extract repsponse information */
-        gri.setGri(response.getGlobalReservationId());
-
+        this.gri.setGri(response.getGlobalReservationId());
         return response.getStatus();
     }
 
@@ -177,6 +173,7 @@ public class AggregateIDCClient {
         hmRet.put("description", response.getDescription());
         hmRet.put("source", layer2Info.getSrcEndpoint());
         hmRet.put("destination", layer2Info.getDestEndpoint());
+        hmRet.put("vlanTag", layer2Info.getSrcVtag());
         /* Get path ERO */
         String ero = " ";
         CtrlPlanePathContent path = pathInfo.getPath();

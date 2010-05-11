@@ -202,7 +202,7 @@ public class AggregateRspecRunner extends Thread {
                             String destination = AggregateUtils.getUrnField(netIf2.getUrn(), "node")
                                 +"."+AggregateUtils.getUrnField(netIf1.getUrn(), "domain");
                             String description = rspec.getRspecName() + " p2pvlan-" + source + "-" + destination + "-" + netIf1.getVlanTag();
-                            int vtag = Integer.valueOf(netIf1.getVlanTag());
+                            String vtag = netIf1.getVlanTag();
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());
                             HashMap hmRet = new HashMap<String,String>();
                             AggregateP2PVlan p2pvlan = AggregateState.getAggregateP2PVlans().createVlan(

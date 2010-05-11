@@ -387,7 +387,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String destination = vlanResvDescr.getDestinationNode();
         String dstInterface = vlanResvDescr.getDstInterface();
         String dstIpAndMask = vlanResvDescr.getDstIpAndMask();
-        int vlan = vlanResvDescr.getVlan();
+        String vlan = vlanResvDescr.getVlan();
         float bw = vlanResvDescr.getBandwidth();
         
         String description = vlanResvDescr.getDescription();
@@ -423,17 +423,17 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         QuerySliceVlanType deleteSliceVlan = querySliceVlan26.getQuerySliceVlan();
         String sliceId = deleteSliceVlan.getSliceID();
-        int vlan = deleteSliceVlan.getVlan();
+        String vlan = deleteSliceVlan.getVlan();
 
         // TODO: re-sync IDC and AggregateDB
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
         AggregateP2PVlan p2pvlan = p2pvlans.getBySliceAndVtag(sliceId, vlan);
         VlanReservationResultType vlanResvResult = null;
-        if (p2pvlan != null && p2pvlan.getVtag() == vlan) {
+        if (p2pvlan != null) {
             vlanResvResult = p2pvlan.queryVlan();
             p2pvlans.update(p2pvlan);
         } else {
-            throw new AggregateFaultMessage("Unkown SliceVLAN: " + sliceId + Integer.toString(vlan));
+            throw new AggregateFaultMessage("Unkown SliceVLAN: " + sliceId + vlan);
         }
 
         //form response
@@ -456,7 +456,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         DeleteSliceVlanType deleteSliceVlan = deleteSliceVlan28.getDeleteSliceVlan();
         String sliceId = deleteSliceVlan.getSliceID();
-        int vlan = deleteSliceVlan.getVlan();
+        String vlan = deleteSliceVlan.getVlan();
 
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
         HashMap hm = p2pvlans.deleteVlan(sliceId, vlan);

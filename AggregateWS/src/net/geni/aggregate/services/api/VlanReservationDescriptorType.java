@@ -36,14 +36,14 @@
                         */
 
                         
-                                    protected int localVlan ;
+                                    protected java.lang.String localVlan ;
                                 
 
                            /**
                            * Auto generated getter method
-                           * @return int
+                           * @return java.lang.String
                            */
-                           public  int getVlan(){
+                           public  java.lang.String getVlan(){
                                return localVlan;
                            }
 
@@ -53,7 +53,7 @@
                                * Auto generated setter method
                                * @param param Vlan
                                */
-                               public void setVlan(int param){
+                               public void setVlan(java.lang.String param){
                             
                                             this.localVlan=param;
                                     
@@ -473,13 +473,18 @@
                                         xmlWriter.writeStartElement("vlan");
                                     }
                                 
-                                               if (localVlan==java.lang.Integer.MIN_VALUE) {
-                                           
-                                                         throw new org.apache.axis2.databinding.ADBException("vlan cannot be null!!");
-                                                      
-                                               } else {
-                                                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localVlan));
-                                               }
+
+                                          if (localVlan==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("vlan cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localVlan);
+                                            
+                                          }
                                     
                                    xmlWriter.writeEndElement();
                              
@@ -915,9 +920,12 @@
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "vlan"));
                                  
-                                elementList.add(
-                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localVlan));
-                            
+                                        if (localVlan != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localVlan));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("vlan cannot be null!!");
+                                        }
+                                    
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "sourceNode"));
                                  
@@ -1070,7 +1078,7 @@
                                     java.lang.String content = reader.getElementText();
                                     
                                               object.setVlan(
-                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(content));
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
                                               
                                         reader.next();
                                     
