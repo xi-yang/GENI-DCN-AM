@@ -42,6 +42,13 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             return;
         }
 
+        // create 'aggregate' database
+        try {
+            AggregateUtils.executeDirectStatement("CREATE DATABASE IF NOT EXISTS aggregate");
+        } catch(AggregateException ex) {
+            ex.printStackTrace();
+            return;
+        }
         // initialize database tables
         try {
             //init the resources table
