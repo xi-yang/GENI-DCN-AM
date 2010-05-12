@@ -189,6 +189,7 @@ public class AggregateSlices {
                 this.add(slice);
             }
         }
+        plcClient.logoff();
         return slice;
     }
 
@@ -197,6 +198,7 @@ public class AggregateSlices {
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         int ret = plcClient.deleteSlice(sliceName);
         this.delete(sliceName);
+        plcClient.logoff();
         return ret;
     }
     
@@ -226,6 +228,7 @@ public class AggregateSlices {
         } else {
             log.error("Failed to update slice '"+sliceName+"' with the PLC");
         }
+        plcClient.logoff();
         return ret;
     }
 

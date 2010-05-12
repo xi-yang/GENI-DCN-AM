@@ -158,6 +158,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         Vector<HashMap> hmSlices = new Vector<HashMap>();
         plcClient.querySlice(sliceNames, hmSlices);
+        plcClient.logoff();
         if (hmSlices.isEmpty() || hmSlices.get(0).isEmpty()) {
             throw new AggregateFaultMessage("Unkown Slice '" + sliceNames[0] + "' or Failure in retrieve slice data from PLC");
         }
