@@ -24,7 +24,8 @@ public class HibernateUtil {
             Properties props = new Properties();
             props.put("hibernate.connection.username", AggregateState.getDbUser());
             props.put("hibernate.connection.password", AggregateState.getDbPwd());
-            props.put("hibernate.connection.autoreconnect", "true");
+            props.put("hibernate.connection.autoReconnect", "true");
+            props.put("hibernate.connection.autoReconnectForPools", "true");
             Configuration cfg = new Configuration();
             cfg.setProperties(props);
             sessionFactory = cfg.configure().buildSessionFactory();

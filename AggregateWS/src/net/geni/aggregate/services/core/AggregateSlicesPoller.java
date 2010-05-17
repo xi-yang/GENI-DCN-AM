@@ -10,7 +10,7 @@ package net.geni.aggregate.services.core;
  * @author Xi Yang
  */
 public class AggregateSlicesPoller extends Thread {
-    private volatile int pollInterval = 90000; //90 secs by default
+    private volatile int pollInterval = 301000; //301 secs by default
     private volatile boolean goRun = true;
     public void run() {
         while (goRun) {
