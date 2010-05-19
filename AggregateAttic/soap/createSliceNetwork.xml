@@ -17,6 +17,7 @@ Content-Length: CONTENT_LENGTH
 <rspec id="xi_rspec_slice1" xmlns="http://geni.maxgigapop.net/aggregate/rspec/20100412/" xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20080828/">
     <aggregate>geni.maxgigapop.net</aggregate>
     <description>Xi's test rspec</description>
+    <user email="tlehman@east.isi.edu"/>
     <lifetime id="time-1271533930-1271563981">
         <CtrlPlane:start type="CtrlPlane:TimeContent">1271174406</CtrlPlane:start>
         <CtrlPlane:end type="CtrlPlane:TimeContent">1271563981</CtrlPlane:end>
