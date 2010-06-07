@@ -36,10 +36,6 @@ INSERT INTO `resources` VALUES (6, 'computeNode', 0);
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` VALUES (18, 'TomLehman', 'Tom', 'Lehman', 'tlehman@east.isi.edu', 'Project Leader at USC/ISI East');
-INSERT INTO `users` VALUES (19, 'xyang', 'Xi', 'Yang', 'xyang@east.isi.edu', 'Computer Scientist at USC/ISI East');
-
-
 --
 -- Dumping data for table `resources`
 --

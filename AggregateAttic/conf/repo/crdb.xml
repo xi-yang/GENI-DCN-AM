@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rspec id="physical_crdb">
     <aggregate>geni.maxgigapop.net</aggregate>
-    <user id="20" name="testUser" email="test@hpn.east.isi.edu" firstName="Test" lastName="User" />
-    <user id="21" name="testUser2" email="test2@hpn.east.isi.edu" firstName="Test" lastName="User2" />
+    <user id="18" name="TomLehman" email="tlehman@east.isi.edu" firstName="Tom" lastName="Lehman" role="PI" certSubject="Unknown" description="GENI Test User"/>
+    <user id="19" name="xyang" email="xyang@east.isi.edu" firstName="Xi" lastName="Yang" role="PI" certSubject="" description="GENI Test PI User" />
     <computeResource id="urn:aggregate=geni.maxgigapop.net:rspec=crdb">
         <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab2">
             <plId>2</plId>

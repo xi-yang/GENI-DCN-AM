@@ -14,9 +14,9 @@ import java.io.Serializable;
 public class AggregateUser implements java.io.Serializable {
     int id = 0;
     String name = "";
+    String certSubject = "";
     String password = "";
     String role = "";
-    String certSubject = "";
     String firstName = "";
     String lastName = "";
     String email = "";

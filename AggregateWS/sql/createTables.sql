@@ -145,8 +145,8 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `password` vchar(255) NOT NULL default '',
-  `role` vchar(40) NOT NULL default '',
+  `password` varchar(255) NOT NULL default '',
+  `role` varchar(40) NOT NULL default '',
   `certSubject` varchar(255) NOT NULL default '',
   `firstName` varchar(40) NOT NULL default '',
   `lastName` varchar(40) NOT NULL default '',
