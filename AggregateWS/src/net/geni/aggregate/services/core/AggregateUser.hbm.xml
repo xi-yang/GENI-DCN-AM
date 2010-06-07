@@ -4,6 +4,9 @@
   <class name="net.geni.aggregate.services.core.AggregateUser" table="users">
       <id column="id" name="id"/>
       <property column="name" name="name"/>
+      <property column="password" name="p"/>
+      <property column="role" name="role"/>
+      <property column="certSubject" name="certSubject"/>
       <property column="firstName" name="firstName"/>
       <property column="lastName" name="lastName"/>
       <property column="email" name="email"/>

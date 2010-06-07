@@ -6,9 +6,16 @@
  */
 package net.geni.aggregate.services.api;
 
-import java.util.List;
-import java.util.Vector;
-import java.util.HashMap;
+import java.util.*;
+import java.security.Principal;
+import java.security.cert.X509Certificate;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.context.*;
+import org.apache.ws.security.handler.*;
+import org.apache.ws.security.WSSecurityEngineResult;
+import org.apache.ws.security.WSConstants;
+
 import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateCapabilities;
@@ -47,6 +54,12 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String user = createSlice.getUser();
         String[] nodes = createSlice.getNode();
 
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+        if (!user.equalsIgnoreCase(authUser.getName())){
+            throw new AggregateFaultMessage("CreateSlice: user " + user + " is not the message signer");
+        }
+
         AggregateSlices slices = AggregateState.getAggregateSlices();
         AggregateSlice slice = slices.createSlice(sliceName, url, description, user, nodes);
         String status = (slice == null?"FAILED":"SUCCESSFUL");
@@ -79,6 +92,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String[] users = updateSlice.getUser();
         String[] nodes = updateSlice.getNode();
         int expires = updateSlice.getExpires();
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
 
         AggregateSlices slices = AggregateState.getAggregateSlices();
         int ret = slices.updateSlice(sliceName, url, description, expires, users, nodes);
@@ -115,6 +131,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
             sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
         }
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
 
         AggregateSlices slices = AggregateState.getAggregateSlices();
         int ret = slices.deleteSlice(sliceName);
@@ -154,7 +173,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
                 sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
             }
         }
-        //TODO: re-sync PLC and Aggregate DB (then query directly from AggregateDB)
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         Vector<HashMap> hmSlices = new Vector<HashMap>();
         plcClient.querySlice(sliceNames, hmSlices);
@@ -191,6 +213,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
             sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
         }
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         //The below logic wil be moved into AggregateSlices
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         int ret = plcClient.startStopSlice(sliceName, true);
@@ -227,6 +253,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
             sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
         }
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         //The below logic wil be moved into AggregateSlices
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
         int ret = plcClient.startStopSlice(sliceName, false);
@@ -263,6 +293,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         ListNodesResponse listNodesResponse = new ListNodesResponse();
         ListNodesResponseType listNodesResponseType = new ListNodesResponseType();
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
 
         Vector<String> capURNs = new Vector<String>();
         for (int i = 0; i < listNodesSeq.length; i++) {
@@ -303,6 +336,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         ListSlicesType listSlices = listSlices16.getListSlices();
         ListSlicesTypeSequence[] listSlicesSeq = listSlices.getListSlicesTypeSequence();
         String filter = listSlicesSeq[0].getFilter();
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         //form response
         ListSlicesResponseType listSlicesResponseType = new ListSlicesResponseType();
         ListSlicesResponse listSlicesResponse = new ListSlicesResponse();
@@ -346,6 +383,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throws AggregateFaultMessage {
         ListCapabilitiesType listCaps = listCapabilities20.getListCapabilities();
         String filter = listCaps.getFilter();
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         //form response
         ListCapabilitiesResponseType listCapResponseType = new ListCapabilitiesResponseType();
         ListCapabilitiesResponse listCapResponse = new ListCapabilitiesResponse();
@@ -395,6 +436,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         long startTime = System.currentTimeMillis()/1000;
         long endTime = System.currentTimeMillis()/1000;
 
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         // look for existing sliceVlan
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
         HashMap hm = new HashMap<String, String>();
@@ -425,6 +469,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         QuerySliceVlanType deleteSliceVlan = querySliceVlan26.getQuerySliceVlan();
         String sliceId = deleteSliceVlan.getSliceID();
         String vlan = deleteSliceVlan.getVlan();
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
 
         // TODO: re-sync IDC and AggregateDB
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
@@ -459,6 +506,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String sliceId = deleteSliceVlan.getSliceID();
         String vlan = deleteSliceVlan.getVlan();
 
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         AggregateP2PVlans p2pvlans = AggregateState.getAggregateP2PVlans();
         HashMap hm = p2pvlans.deleteVlan(sliceId, vlan);
         String status = (String)hm.get("status");
@@ -490,10 +540,25 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         for (String s: rspecTopo.getStatement()) {
             rspecXml += s;
         }
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         String status = "";
         String message = "";
         try {
             status = AggregateState.getRspecManager().createRspec(rspecXml);
+            List<String> users = AggregateState.getRspecManager().getAggrRspecs().get(AggregateState.getRspecManager().getAggrRspecs().size()-1).getUsers();
+            boolean hasUser = false;
+            for (String u: users) {
+                if (u.equalsIgnoreCase(authUser.getName())) {
+                    AggregateState.getRspecManager().getAggrRspecs().get(AggregateState.getRspecManager().getAggrRspecs().size()-1).getUsers().remove(u);
+                    hasUser = true;
+                    break;
+                }
+            }
+            //add the authorized user as the first user to rspec users list
+            AggregateState.getRspecManager().getAggrRspecs().get(AggregateState.getRspecManager().getAggrRspecs().size()-1).getUsers().add(0, authUser.getName());
             message = "";
         } catch (AggregateException e) {
             status = "FAILED";
@@ -520,6 +585,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throws AggregateFaultMessage {
         DeleteSliceNetworkType deleteSliceNework = deleteSliceNetwork4.getDeleteSliceNetwork();
         String rspecName = deleteSliceNework.getRspecID();
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
 
         String status = "";
         String message = "";
@@ -561,6 +629,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
                 + " AggregateException: " + e.getMessage());
         }
 
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         //form response
         QuerySliceNetworkResponseType querySliceNetworkResponseType = new QuerySliceNetworkResponseType();
         QuerySliceNetworkResponse querySliceNetworkResponse = new QuerySliceNetworkResponse();
@@ -589,6 +660,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String scope = getResourceTopology.getScope();
         String [] rspecNames = getResourceTopology.getRspec();
 
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         String[] statements = null;
         try {
             statements = AggregateState.getRspecManager().getResourceTopologyXML(scope, rspecNames);
@@ -605,4 +679,86 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         getResourceTopologyResponse.setGetResourceTopologyResponse(getResourceTopologyResponseType);
         return getResourceTopologyResponse;
     }
+
+    /**
+     * Borrowed from OSCARS Project to get the DN out of the message context.
+     *
+     * @param opContext includes the MessageContext containing the message
+     *                  signer
+     */
+    private HashMap<String, Principal> getSecurityPrincipals() {
+        HashMap<String, Principal> result = new HashMap<String, Principal>();
+
+        try {
+            MessageContext inContext = MessageContext.getCurrentMessageContext();
+            // opContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            if (inContext == null) {
+                return null;
+            }
+            Vector results = (Vector) inContext.getProperty(WSHandlerConstants.RECV_RESULTS);
+
+            for (int i = 0; results != null && i < results.size(); i++) {
+                WSHandlerResult hResult = (WSHandlerResult) results.get(i);
+                Vector hResults = hResult.getResults();
+                for (int j = 0; j < hResults.size(); j++) {
+                    WSSecurityEngineResult eResult = (WSSecurityEngineResult) hResults.get(j);
+                    // An encryption or timestamp action does not have an
+                    // associated principal. Only Signature and UsernameToken
+                    // actions return a principal.
+                    if ((((java.lang.Integer) eResult.get(
+                            WSSecurityEngineResult.TAG_ACTION)).intValue() == WSConstants.SIGN) ||
+                        (((java.lang.Integer) eResult.get(
+                            WSSecurityEngineResult.TAG_ACTION)).intValue() == WSConstants.UT)) {
+                        Principal subjectDN = ((X509Certificate) eResult.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE)).getSubjectDN();
+                        Principal issuerDN = ((X509Certificate) eResult.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE)).getIssuerDN();
+                        result.put("subject", subjectDN);
+                        result.put("issuer", issuerDN);
+                        return result;
+                    } else if (((java.lang.Integer) eResult.get(
+                                WSSecurityEngineResult.TAG_ACTION)).intValue() == WSConstants.ENCR) {
+                        // Encryption action returns what ?
+                        return null;
+                    } else if (((java.lang.Integer) eResult.get(
+                                WSSecurityEngineResult.TAG_ACTION)).intValue() == WSConstants.TS) {
+                        // Timestamp action returns a Timestamp
+                        //System.out.println("Timestamp created: " +
+                        //eResult.getTimestamp().getCreated());
+                        //System.out.println("Timestamp expires: " +
+                        //eResult.getTimestamp().getExpires());
+                        return null;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+
+        return result;
+    }
+
+    /**
+     *
+     * @return AggregateUser that has certSubject Distiguished Name (DN) matching the message signer
+     * @throws AggregateFaultMessage
+     */
+    public AggregateUser getAuthorizedUser() throws AggregateFaultMessage {
+        AggregateUser authUser = null;
+        HashMap<String, Principal> principals = getSecurityPrincipals();
+
+        if (principals == null) {
+            throw new AggregateFaultMessage("getAuthorizedUser: failed to get security prinfipals");
+        } else if (principals.get("subject") == null){
+            throw new AggregateFaultMessage("getAuthorizedUser: no certSubject found in message");
+        }
+
+        // lookup up using input DN first
+        String origDN = principals.get("subject").getName();
+
+        authUser = AggregateState.getAggregateUsers().getByCertSubject(origDN);
+        if (authUser == null) {
+            throw new AggregateFaultMessage("getAuthorizedUser: unregistered user DN");
+        }
+        return authUser;
+    }
+
 }

@@ -14,6 +14,9 @@ import java.io.Serializable;
 public class AggregateUser implements java.io.Serializable {
     int id = 0;
     String name = "";
+    String password = "";
+    String role = "";
+    String certSubject = "";
     String firstName = "";
     String lastName = "";
     String email = "";
@@ -21,11 +24,13 @@ public class AggregateUser implements java.io.Serializable {
 
     public AggregateUser() { }
 
-    public AggregateUser(int i, String n, String f, String l, String e, String d) {
+    public AggregateUser(int i, String n, String f, String l, String r, String s, String e, String d) {
         id = i;
         name = n;
         firstName = f;
         lastName = l;
+        role = r;
+        certSubject = s;
         email = e;
         description = d;
     }
@@ -76,5 +81,29 @@ public class AggregateUser implements java.io.Serializable {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getCertSubject() {
+        return certSubject;
+    }
+
+    public void setCertSubject(String certSubject) {
+        this.certSubject = certSubject;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

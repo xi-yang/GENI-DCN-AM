@@ -142,6 +142,25 @@ public class AggregateUsers {
         return null;
     }
 
+    public synchronized AggregateUser getByCertSubject(String dn) {
+        synchronized(this) {
+            try {
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
+                Query q = session.createQuery("from AggregateUser as user where user.certSubject='" + dn + "'");
+                if (q.list().size() == 0)
+                    return null;
+                return (AggregateUser) q.list().get(0);
+            } catch (Exception e) {
+                tx.rollback();
+                e.printStackTrace();
+            } finally {
+                if (session.isOpen()) session.close();
+            }
+        }
+        return null;
+    }
+
     public String getUserIds(String[] users) {
         if (cachedUsers == null)
             cachedUsers = this.getAll();

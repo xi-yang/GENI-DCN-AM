@@ -187,6 +187,9 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getUsersTab() + " ( " +
                     "id int(11) NOT NULL, " +
                     "name varchar(40) NOT NULL default '', " +
+                    "password vchar(255) NOT NULL default '', " +
+                    "role vchar(40) NOT NULL default '', " +
+                    "certSubject varchar(255) NOT NULL default '', " +
                     "firstName varchar(40) NOT NULL default '', " +
                     "lastName varchar(40) NOT NULL default '', " +
                     "email varchar(40) NOT NULL default '', " +
@@ -197,7 +200,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             ex.printStackTrace();
             return;
         }
-        
+
         // Web Services handnling thread
         aggregateWSRunner = new AggregateWSRunner();
         aggregateServerThread = new Thread(aggregateWSRunner);
@@ -213,7 +216,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         //aggregateSlicesPoller.setPollInterval(AggregateState.getPollInterval());
         aggregateSlicesPoller.start();
         AggregateState.setSlicesPoller(aggregateSlicesPoller);
-
 
         log.info("AggregateWS init() finished!");
     }

@@ -459,6 +459,8 @@ public class AggregateRspec implements java.io.Serializable {
     void parseAddUser(Node userRoot) throws AggregateException {
         int id = 0;
         String name = "";
+        String role = "";
+        String certSubject = "";
         String email = "";
         String firstName = "";
         String lastName = "";
@@ -469,6 +471,12 @@ public class AggregateRspec implements java.io.Serializable {
         }
         if (userRoot.getAttributes().getNamedItem("name") != null) {
             name = userRoot.getAttributes().getNamedItem("name").getTextContent().trim();
+        }
+        if (userRoot.getAttributes().getNamedItem("role") != null) {
+            role = userRoot.getAttributes().getNamedItem("role").getTextContent().trim();
+        }
+        if (userRoot.getAttributes().getNamedItem("certSubject") != null) {
+            certSubject = userRoot.getAttributes().getNamedItem("certSubject").getTextContent().trim();
         }
         if (userRoot.getAttributes().getNamedItem("email") != null) {
             email = userRoot.getAttributes().getNamedItem("email").getTextContent().trim();
@@ -485,7 +493,7 @@ public class AggregateRspec implements java.io.Serializable {
 
         AggregateUser aggrUser = AggregateState.getAggregateUsers().getById(id);
         if (aggrUser == null) {
-            aggrUser = new AggregateUser(id, name, firstName, lastName, email, descr);
+            aggrUser = new AggregateUser(id, name, firstName, lastName, role, certSubject, email, descr);
             if (AggregateState.getAggregateUsers().add(aggrUser) == false)
                 throw new AggregateException("Cannot add user:" + name +"(email:"+email+") to DB ");
         }
