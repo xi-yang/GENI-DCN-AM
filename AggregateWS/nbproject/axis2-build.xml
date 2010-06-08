@@ -98,7 +98,11 @@
     <target name="axis2-aar" depends="compile">
         <mkdir dir="${build.dir}/axis2/WEB-INF/services"/>
         <jar destfile="${build.dir}/axis2/WEB-INF/services/${ant.project.name}.aar">
-            <fileset excludes="**/Test.class" dir="${build.dir}/classes"/>
+            <fileset excludes="**/Test.class" dir="${build.dir}/classes">
+                <include name="log4j.properties"/>
+                <include name="hibernate.cfg.xml"/>
+                <include name="net/geni/aggregate/services/**/*"/>
+            </fileset>
             <fileset dir="${basedir}/xml-resources/axis2">
                 <include name="**/*.wsdl"/>
                 <include name="**/*.xsd"/>
@@ -167,4 +171,5 @@
         </jar>
     </target>
     <target name="axis2-deploy" depends="axis2-deploy-dir, axis2-deploy-war"/>
+
 </project>

@@ -756,7 +756,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         authUser = AggregateState.getAggregateUsers().getByCertSubject(origDN);
         if (authUser == null) {
-            throw new AggregateFaultMessage("getAuthorizedUser: unregistered user DN");
+            throw new AggregateFaultMessage("getAuthorizedUser: unregistered user DN: '"+origDN+"'");
         }
         return authUser;
     }

@@ -467,6 +467,57 @@ is divided into following sections:
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="init,compile,-pre-jar,-do-jar-with-manifest,-do-jar-without-manifest,-do-jar-with-mainclass,-do-jar-with-libraries,-do-jar-with-libraries-without-manifest,-post-jar,axis2-aar" description="Build JAR." name="jar"/>
+
+    <!--
+                ==================
+                CLIENT JAR SECTION
+                ==================
+            -->
+
+    <target name="-wsdl2java-stub-env-dir-" if="haveEnvDir">
+        <delete dir="${build.dir}/axis2/src/net/geni/aggregate/client"/>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <arg line="-uri file:${env.AGGREGATE_HOME}/AggregateAttic/wsdl/aggregate.wsdl"/>
+            <arg line="-s"/>
+            <arg line="-p net.geni.aggregate.client"/>
+            <arg line="-d adb"/>
+            <arg line="-o ${build.dir}/axis2"/>
+            <classpath path="${javac.classpath}"/>
+        </java>
+        <copy toDir="${src.dir}" overwrite="true">
+            <fileset dir="${build.dir}/axis2/src">
+                <include name="net/geni/aggregate/client/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="-wsdl2java-stub-abs-dir-" unless="haveEnvDir">
+        <delete dir="${build.dir}/axis2/src/net/geni/aggregate/client"/>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <arg line="-uri file:/usr/local/geni-aggregate/AggregateAttic/wsdl/aggregate.wsdl"/>
+            <arg line="-s"/>
+            <arg line="-p net.geni.aggregate.client"/>
+            <arg line="-d adb"/>
+            <arg line="-o ${build.dir}/axis2"/>
+            <classpath path="${javac.classpath}"/>
+        </java>
+        <copy toDir="${src.dir}" overwrite="true">
+            <fileset dir="${build.dir}/axis2/src">
+                <include name="net/geni/aggregate/client/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="client-api-jar" description="Create jar with client API classes" depends="init,-wsdl2java-stub-env-dir-,-wsdl2java-stub-abs-dir-,compile">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="dist/AggregateWS-client-api.jar">
+            <fileset dir="${build.classes.dir}/net/geni/aggregate/client/" includes="log4j.properties"/>
+            <fileset dir="${build.classes.dir}" excludes="net/geni/aggregate/client/log4j.properties" includes="net/geni/aggregate/client/**/*"/>
+            <metainf dir="${basedir}/../AggregateAttic/wsdl" includes="*.wsdl"/>
+            <metainf dir="${basedir}/../AggregateAttic/conf/schema" includes="*.xsd"/>
+            <metainf dir="${basedir}/../AggregateAttic/conf/repo" includes="services.xml"/>
+        </jar>
+    </target>
+
     <!--
                 =================
                 EXECUTION SECTION
