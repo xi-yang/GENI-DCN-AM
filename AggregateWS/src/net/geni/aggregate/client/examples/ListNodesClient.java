@@ -33,7 +33,7 @@ public class ListNodesClient extends ExampleClient {
         try {
             // Prompt for input parameters
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            capUrn = Args.getArg(br, "Rspec ID/Name", capUrn);
+            capUrn = Args.getArg(br, "Type by Capability (URN)", capUrn);
             br.close();
         } catch (IOException ioe) {
             System.out.println("IO error reading input");
