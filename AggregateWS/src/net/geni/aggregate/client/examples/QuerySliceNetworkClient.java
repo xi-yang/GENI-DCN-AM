@@ -8,14 +8,14 @@ import net.geni.aggregate.client.AggregateGENIStub.*;
  *
  * @author Xi Yang
  */
-public class QuerySliceNetwork extends ExampleClient {
+public class QuerySliceNetworkClient extends ExampleClient {
     public static void main(String[] args) {
         try {
-            QuerySliceNetwork cl = new QuerySliceNetwork();
-            cl.QuerySliceNetwork(args);
+            QuerySliceNetworkClient cl = new QuerySliceNetworkClient();
+            cl.QuerySliceNetworkClient(args);
         } catch (AggregateFaultMessage e) {
             System.out.println(
-                    "AggregateFaultMessage from QuerySliceNetwork");
+                    "AggregateFaultMessage from QuerySliceNetworkClient");
             System.out.println(e.getFaultMessage().getMsg());
         } catch (Exception e) {
             System.out.println("AggregateGENIStub threw exception");
@@ -24,7 +24,7 @@ public class QuerySliceNetwork extends ExampleClient {
         }
     }
 
-    public void QuerySliceNetwork(String[] args)
+    public void QuerySliceNetworkClient(String[] args)
             throws AggregateFaultMessage, Exception {
         super.init(args);
 

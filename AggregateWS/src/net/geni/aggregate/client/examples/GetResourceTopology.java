@@ -34,7 +34,7 @@ public class GetResourceTopology extends ExampleClient {
             // Prompt for input parameters
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             scope = Args.getArg(br, "Resource Topology Scope", "all");
-            name = Args.getArg(br, "Resource Topology Name", "substrate");
+            name = Args.getArg(br, "RSpec Name (Enter for 'substrate')", "");
             br.close();
         } catch (IOException ioe) {
             System.out.println("IO error reading input");
@@ -42,7 +42,7 @@ public class GetResourceTopology extends ExampleClient {
         }
         // make the call to the server
         String rspecNames[] = {name};
-        GetResourceTopologyResponseType response = this.getClient().getResourceTopology(scope, rspecNames[0].equals("substrate") ? null: rspecNames);
+        GetResourceTopologyResponseType response = this.getClient().getResourceTopology(scope, rspecNames[0].isEmpty() ? null: rspecNames);
         this.outputResponse(response);
         super.cleanup();
     }
@@ -52,8 +52,7 @@ public class GetResourceTopology extends ExampleClient {
         System.out.println("\t Status => " + response.getStatus());
         String[] statementList = response.getResourceTopology().getStatement();
         for (String statement: statementList) {
-            System.out.println("\t  Statement => " + statement);
-            System.out.println();
+            System.out.println("\t Statement => " + statement);
         }
     }
 }

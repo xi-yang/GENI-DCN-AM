@@ -8,14 +8,14 @@ import net.geni.aggregate.client.AggregateGENIStub.*;
  *
  * @author Xi Yang
  */
-public class CreateSliceNetwork extends ExampleClient {
+public class CreateSliceNetworkClient extends ExampleClient {
     public static void main(String[] args) {
         try {
-            CreateSliceNetwork cl = new CreateSliceNetwork();
-            cl.createSliceNetwork(args);
+            CreateSliceNetworkClient cl = new CreateSliceNetworkClient();
+            cl.CreateSliceNetworkClient(args);
         } catch (AggregateFaultMessage e) {
             System.out.println(
-                    "AggregateFaultMessage from CreateSliceNetwork");
+                    "AggregateFaultMessage from CreateSliceNetworkClient");
             System.out.println(e.getFaultMessage().getMsg());
         } catch (Exception e) {
             System.out.println("AggregateGENIStub threw exception");
@@ -24,7 +24,7 @@ public class CreateSliceNetwork extends ExampleClient {
         }
     }
 
-    public void createSliceNetwork(String[] args)
+    public void CreateSliceNetworkClient(String[] args)
             throws AggregateFaultMessage, Exception {
         super.init(args);
 
