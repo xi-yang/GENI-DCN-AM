@@ -548,7 +548,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String message = "";
         try {
             //TODO pass authUser into createRspec!
-            status = AggregateState.getRspecManager().createRspec(rspecXml, authUser.getName());
+            status = AggregateState.getRspecManager().createRspec(rspecXml, authUser.getEmail());
             message = "";
         } catch (AggregateException e) {
             status = "FAILED";
@@ -608,6 +608,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             net.geni.aggregate.services.api.QuerySliceNetwork querySliceNetwork24)
             throws AggregateFaultMessage {
         QuerySliceNetworkType querySliceNework = querySliceNetwork24.getQuerySliceNetwork();
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
         String rspecName = querySliceNework.getRspecID();
         HashMap hmRet = null;
         try {
@@ -618,9 +622,6 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throw new AggregateFaultMessage("Failed to query Rsepc:"+rspecName
                 + " AggregateException: " + e.getMessage());
         }
-
-        //get authorized/registered user. AggregateFaultMessage thrown if failed
-        AggregateUser authUser = this.getAuthorizedUser();
 
         //form response
         QuerySliceNetworkResponseType querySliceNetworkResponseType = new QuerySliceNetworkResponseType();
