@@ -108,12 +108,14 @@ public class AggregateClient {
         return querySliceNetResponse.getQuerySliceNetworkResponse();
     }
 
-    public GetResourceTopologyResponseType getResourceTopo(String scope, String rspecNames[])
+    public GetResourceTopologyResponseType getResourceTopology(String scope, String rspecNames[])
            throws AggregateFaultMessage, Exception {
         GetResourceTopology getResourceTopo = new GetResourceTopology();
         GetResourceTopologyType getResourceTopoType = new GetResourceTopologyType();
         getResourceTopoType.setScope(scope);
-        getResourceTopoType.setRspec(rspecNames);
+        if (rspecNames != null) {
+            getResourceTopoType.setRspec(rspecNames);
+        }
         getResourceTopo.setGetResourceTopology(getResourceTopoType);
         GetResourceTopologyResponse getResourceTopoResponse = this.stub.GetResourceTopology(getResourceTopo);
         return getResourceTopoResponse.getGetResourceTopologyResponse();
