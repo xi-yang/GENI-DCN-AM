@@ -1,9 +1,5 @@
 package net.geni.aggregate.client.examples;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import net.geni.aggregate.client.*;
 import net.geni.aggregate.client.AggregateGENIStub.*;
 /**
@@ -37,6 +33,7 @@ public class ListCapabilitiesClient extends ExampleClient {
     }
 
     public void outputResponse(ListCapabilitiesResponseType response) {
+        System.out.println("============ ListCapabilities Response =========== ");
         ListCapabilitiesResponseTypeSequence[] listCapsTypeSeq = response.getListCapabilitiesResponseTypeSequence();
         for (ListCapabilitiesResponseTypeSequence listCapsType: listCapsTypeSeq) {
             CapabilityType cap = listCapsType.getCapability();

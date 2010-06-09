@@ -25,7 +25,7 @@ public class AggregateClient {
 
     public void setUp(boolean useKeyStore, String url, String repo)
             throws AxisFault {
-        this.setUp(useKeyStore, url, null, repo);
+        this.setUp(useKeyStore, url, repo, null);
     }
 
     public void setUp(boolean useKeyStore, String url, String repo,
@@ -75,4 +75,48 @@ public class AggregateClient {
         ListCapabilitiesResponse listCapsResponse = this.stub.ListCapabilities(listCaps);
         return listCapsResponse.getListCapabilitiesResponse();
     }
+
+    public CreateSliceNetworkResponseType createSliceNetwork(String rsepcXml[])
+           throws AggregateFaultMessage, Exception {
+        CreateSliceNetwork createSliceNet = new CreateSliceNetwork();
+        CreateSliceNetworkType createSliceNetType = new CreateSliceNetworkType();
+        RSpecTopologyType rspecTopoType = new RSpecTopologyType();
+        rspecTopoType.setStatement(rsepcXml);
+        createSliceNetType.setRspecNetwork(rspecTopoType);
+        createSliceNet.setCreateSliceNetwork(createSliceNetType);
+        CreateSliceNetworkResponse createSliceNetResponse = this.stub.CreateSliceNetwork(createSliceNet);
+        return createSliceNetResponse.getCreateSliceNetworkResponse();
+    }
+
+    public DeleteSliceNetworkResponseType deleteSliceNetwork(String rspecName)
+           throws AggregateFaultMessage, Exception {
+        DeleteSliceNetwork deleteSliceNet = new DeleteSliceNetwork();
+        DeleteSliceNetworkType deleteSliceNetType = new DeleteSliceNetworkType();
+        deleteSliceNetType.setRspecID(rspecName);
+        deleteSliceNet.setDeleteSliceNetwork(deleteSliceNetType);
+        DeleteSliceNetworkResponse deleteSliceNetResponse = this.stub.DeleteSliceNetwork(deleteSliceNet);
+        return deleteSliceNetResponse.getDeleteSliceNetworkResponse();
+    }
+
+    public QuerySliceNetworkResponseType querySliceNetwork(String rspecName)
+           throws AggregateFaultMessage, Exception {
+        QuerySliceNetwork querySliceNet = new QuerySliceNetwork();
+        QuerySliceNetworkType querySliceNetType = new QuerySliceNetworkType();
+        querySliceNetType.setRspecID(rspecName);
+        querySliceNet.setQuerySliceNetwork(querySliceNetType);
+        QuerySliceNetworkResponse querySliceNetResponse = this.stub.QuerySliceNetwork(querySliceNet);
+        return querySliceNetResponse.getQuerySliceNetworkResponse();
+    }
+
+    public GetResourceTopologyResponseType getResourceTopo(String scope, String rspecNames[])
+           throws AggregateFaultMessage, Exception {
+        GetResourceTopology getResourceTopo = new GetResourceTopology();
+        GetResourceTopologyType getResourceTopoType = new GetResourceTopologyType();
+        getResourceTopoType.setScope(scope);
+        getResourceTopoType.setRspec(rspecNames);
+        getResourceTopo.setGetResourceTopology(getResourceTopoType);
+        GetResourceTopologyResponse getResourceTopoResponse = this.stub.GetResourceTopology(getResourceTopo);
+        return getResourceTopoResponse.getGetResourceTopologyResponse();
+    }
+
 }
