@@ -137,8 +137,15 @@ public class AggregateRspecManager extends Thread{
         }
     }
 
-    public synchronized String createRspec(String rspecXML) throws AggregateException {
+    public synchronized String createRspec(String rspecXML, String authUser) throws AggregateException {
         AggregateRspec aggrRspec = new AggregateRspec();
+
+        //set the 1st user to the WSS policy authorized user
+        if (authUser != null) { 
+            List<String> users = new ArrayList<String>();
+            users.add(authUser);
+            aggrRspec.setUsers(users);
+        }
         aggrRspec.parseRspec(rspecXML);
 
         if (aggrRspec.getRspecName().isEmpty() || aggrRspec.getStartTime() == 0

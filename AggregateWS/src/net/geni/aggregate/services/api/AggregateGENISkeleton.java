@@ -547,18 +547,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String status = "";
         String message = "";
         try {
-            status = AggregateState.getRspecManager().createRspec(rspecXml);
-            List<String> users = AggregateState.getRspecManager().getAggrRspecs().get(AggregateState.getRspecManager().getAggrRspecs().size()-1).getUsers();
-            boolean hasUser = false;
-            for (String u: users) {
-                if (u.equalsIgnoreCase(authUser.getName())) {
-                    AggregateState.getRspecManager().getAggrRspecs().get(AggregateState.getRspecManager().getAggrRspecs().size()-1).getUsers().remove(u);
-                    hasUser = true;
-                    break;
-                }
-            }
-            //add the authorized user as the first user to rspec users list
-            AggregateState.getRspecManager().getAggrRspecs().get(AggregateState.getRspecManager().getAggrRspecs().size()-1).getUsers().add(0, authUser.getName());
+            //TODO pass authUser into createRspec!
+            status = AggregateState.getRspecManager().createRspec(rspecXml, authUser.getName());
             message = "";
         } catch (AggregateException e) {
             status = "FAILED";
