@@ -92,6 +92,7 @@ public class AggregateClient {
         if (capUrns != null) {
             ListNodesTypeSequence[] listNodesTypeSeq = new ListNodesTypeSequence[capUrns.length];
             for (int i = 0; i < capUrns.length; i++) {
+                listNodesTypeSeq[i] = new ListNodesTypeSequence();
                 listNodesTypeSeq[i].setCapabilityURN(capUrns[i]);
             }
             listNodesType.setListNodesTypeSequence(listNodesTypeSeq);
@@ -115,6 +116,22 @@ public class AggregateClient {
         createSlice.setCreateSlice(createSliceType);
         CreateSliceResponse createSliceResponse = this.stub.CreateSlice(createSlice);
         return createSliceResponse.getCreateSliceResponse();
+    }
+
+    public UpdateSliceResponseType updateSlice(String sliceName, String[] users,
+            String url, String[] nodes, int expire, String descr)
+           throws AggregateFaultMessage, Exception {
+        UpdateSlice updateSlice = new UpdateSlice();
+        UpdateSliceType updateSliceType = new UpdateSliceType();
+        updateSliceType.setSliceID(sliceName);
+        updateSliceType.setUser(users);
+        updateSliceType.setUrl(url);
+        updateSliceType.setNode(nodes);
+        updateSliceType.setExpires(expire);
+        updateSliceType.setDescription(descr);
+        updateSlice.setUpdateSlice(updateSliceType);
+        UpdateSliceResponse updateSliceResponse = this.stub.UpdateSlice(updateSlice);
+        return updateSliceResponse.getUpdateSliceResponse();
     }
 
     // Obsolete

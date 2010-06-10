@@ -37,9 +37,9 @@ public class CreateSliceClient extends ExampleClient {
             // Prompt for input parameters
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             sliceName = Args.getArg(br, "Slice ID/Name", sliceName);
-            user = Args.getArg(br, "Slice User", user);
+            user = Args.getArg(br, "User Email", user);
             url = Args.getArg(br, "Slice URL", url);
-            nodes = Args.getArg(br, "Slice Nodes", nodes);
+            nodes = Args.getArg(br, "Node URNs", nodes);
             descr = Args.getArg(br, "Description", descr);
             br.close();
         } catch (IOException ioe) {
