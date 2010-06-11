@@ -44,7 +44,7 @@ public class UpdateSliceClient extends ExampleClient {
             url = Args.getArg(br, "New URL", url);
             users = Args.getArg(br, "New Users", users);
             nodes = Args.getArg(br, "New Node URNs", nodes);
-            expires = Args.getArg(br, "New Expiration (dd/mm/yyyy hh:mm:ss)", expires);
+            expires = Args.getArg(br, "New Expiration (yyyy-mm-dd hh:mm:ss)", expires);
             descr = Args.getArg(br, "New Description", descr);
             br.close();
         } catch (IOException ioe) {

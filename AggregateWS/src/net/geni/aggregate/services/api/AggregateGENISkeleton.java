@@ -56,7 +56,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         //get authorized/registered user. AggregateFaultMessage thrown if failed
         AggregateUser authUser = this.getAuthorizedUser();
-        if (!user.equalsIgnoreCase(authUser.getName())){
+        if (!(user.equalsIgnoreCase(authUser.getName()) || user.equalsIgnoreCase(authUser.getEmail()))){
             throw new AggregateFaultMessage("CreateSlice: user " + user + " is not the message signer");
         }
 
@@ -95,6 +95,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         //get authorized/registered user. AggregateFaultMessage thrown if failed
         AggregateUser authUser = this.getAuthorizedUser();
+        //TODO: verify the authUser is the creator of the slice
 
         AggregateSlices slices = AggregateState.getAggregateSlices();
         int ret = slices.updateSlice(sliceName, url, description, expires, users, nodes);
@@ -134,6 +135,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         //get authorized/registered user. AggregateFaultMessage thrown if failed
         AggregateUser authUser = this.getAuthorizedUser();
+        //TODO: verify the authUser is the creator of the slice
 
         AggregateSlices slices = AggregateState.getAggregateSlices();
         int ret = slices.deleteSlice(sliceName);
@@ -168,9 +170,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throws AggregateFaultMessage {
         QuerySliceType querySlice = querySlice6.getQuerySlice();
         String[] sliceNames = querySlice.getSliceID();
-        for (String sliceName: sliceNames) {
-            if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
-                sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        for (int i = 0; i < sliceNames.length; i++) {
+            if (!sliceNames[i].contains(AggregateState.getPlcPrefix()+"_")) {
+                sliceNames[i] = AggregateState.getPlcPrefix() + "_" + sliceNames[i];
             }
         }
 
@@ -422,6 +424,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         CreateSliceVlanType createSliceVlan = createSliceVlan30.getCreateSliceVlan();
         String sliceId = createSliceVlan.getSliceID();
+        if (!sliceId.contains(AggregateState.getPlcPrefix()+"_")) {
+            sliceId = AggregateState.getPlcPrefix() + "_" + sliceId;
+        }
         VlanReservationDescriptorType vlanResvDescr = createSliceVlan.getVlanReservation();
         String source = vlanResvDescr.getSourceNode();
         String srcInterface = vlanResvDescr.getSrcInterface();
@@ -468,6 +473,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         QuerySliceVlanType deleteSliceVlan = querySliceVlan26.getQuerySliceVlan();
         String sliceId = deleteSliceVlan.getSliceID();
+        if (!sliceId.contains(AggregateState.getPlcPrefix()+"_")) {
+            sliceId = AggregateState.getPlcPrefix() + "_" + sliceId;
+        }
         String vlan = deleteSliceVlan.getVlan();
 
         //get authorized/registered user. AggregateFaultMessage thrown if failed
@@ -481,7 +489,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             vlanResvResult = p2pvlan.queryVlan();
             p2pvlans.update(p2pvlan);
         } else {
-            throw new AggregateFaultMessage("Unkown SliceVLAN: " + sliceId + vlan);
+            throw new AggregateFaultMessage("Unkown SliceVLAN: " + sliceId + ":" + vlan);
         }
 
         //form response
@@ -504,6 +512,9 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         DeleteSliceVlanType deleteSliceVlan = deleteSliceVlan28.getDeleteSliceVlan();
         String sliceId = deleteSliceVlan.getSliceID();
+        if (!sliceId.contains(AggregateState.getPlcPrefix()+"_")) {
+            sliceId = AggregateState.getPlcPrefix() + "_" + sliceId;
+        }
         String vlan = deleteSliceVlan.getVlan();
 
         //get authorized/registered user. AggregateFaultMessage thrown if failed

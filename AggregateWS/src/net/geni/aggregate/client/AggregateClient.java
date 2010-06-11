@@ -178,7 +178,7 @@ public class AggregateClient {
 
     public CreateSliceVlanResponseType createSliceVlan(String sliceName, String vlan,
             float bw, String srcNode, String srcInterface, String srcIP,
-            String dstNode, String dstInterface, String dstIP)
+            String dstNode, String dstInterface, String dstIP, String descr)
            throws AggregateFaultMessage, Exception {
         CreateSliceVlan createSliceVlan = new CreateSliceVlan();
         CreateSliceVlanType createSliceVlanType = new CreateSliceVlanType();
@@ -192,6 +192,7 @@ public class AggregateClient {
         vlanResvDescr.setDestinationNode(dstNode);
         vlanResvDescr.setDstInterface(dstInterface);
         vlanResvDescr.setDstIpAndMask(dstIP);
+        vlanResvDescr.setDescription(descr);
         createSliceVlanType.setVlanReservation(vlanResvDescr);
         createSliceVlan.setCreateSliceVlan(createSliceVlanType);
         CreateSliceVlanResponse createSliceVlanResponse = this.stub.CreateSliceVlan(createSliceVlan);

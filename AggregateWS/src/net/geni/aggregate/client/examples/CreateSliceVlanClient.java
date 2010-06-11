@@ -37,6 +37,7 @@ public class CreateSliceVlanClient extends ExampleClient {
         String dstNode = "";
         String dstInterface = "eth1";
         String dstIP = "10.1.1.2/30";
+        String descr = "";
         try {
             // Prompt for input parameters
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -50,6 +51,7 @@ public class CreateSliceVlanClient extends ExampleClient {
             dstNode =  Args.getArg(br, "Destination Node", dstNode);
             dstInterface =  Args.getArg(br, "Destination Interface", dstInterface);
             dstIP =  Args.getArg(br, "Destination IP/Mask", dstIP);
+            descr = Args.getArg(br, "Description", descr);
             br.close();
         } catch (IOException ioe) {
             System.out.println("IO error reading input");
@@ -58,7 +60,7 @@ public class CreateSliceVlanClient extends ExampleClient {
 
         // make the call to the server
         CreateSliceVlanResponseType response = this.getClient().createSliceVlan(sliceName,
-            vlan, bw, srcNode, srcInterface, srcIP, dstNode, dstInterface, dstIP);
+            vlan, bw, srcNode, srcInterface, srcIP, dstNode, dstInterface, dstIP, descr);
         this.outputResponse(response);
         super.cleanup();
     }
