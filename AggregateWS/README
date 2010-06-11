@@ -58,6 +58,10 @@ For users who deploy from scrach
    create tables and import sample data using the sql files under
    $AGGREGATE_HOME/AggregateWS/sql
 
+-- configure WS Security
+   edit $AGGREGATE_HOME/AggregateAttic/conf/repo/services.xml to point to the path of the rampConfig.xml file this Aggregate Manager server.
+   edit the rampConfig.xml file to point to the path of the keystore file for the Aggregate Manager server. Also set the correct keystore password.
+
 -- configure authentication for IDC/OSCARS 
    generate a certificate signing request (default keystore passphrase: password)
 
