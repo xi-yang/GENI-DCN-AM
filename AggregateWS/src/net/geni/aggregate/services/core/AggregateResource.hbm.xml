@@ -56,5 +56,14 @@
       <property column="globalReservationId" name="gri"/>
       <property column="status" name="status"/>
     </joined-subclass>
+    <joined-subclass name="net.geni.aggregate.services.core.AggregateExternalResource" table="ext_resources">
+      <key column="id"/>
+      <property column="urn" name="urn"/>
+      <property column="subType" name="subType"/>
+      <property column="smUri" name="smUri"/>
+      <property column="amUri" name="amURI"/>
+      <property column="rspecData" name="rspecData"/>
+      <property column="status" name="status"/>
+    </joined-subclass>
   </class>
 </hibernate-mapping>

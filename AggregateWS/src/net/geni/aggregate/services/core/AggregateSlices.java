@@ -132,7 +132,7 @@ public class AggregateSlices {
             try {
                 session = HibernateUtil.getSessionFactory().openSession();
                 tx = session.beginTransaction();
-                Query q = session.createQuery("from AggregateSlice as slice where slice.url=" + url + "");
+                Query q = session.createQuery("from AggregateSlice as slice where slice.url='" + url + "'");
                 if (q.list().size() == 0) {
                     return null;
                 }

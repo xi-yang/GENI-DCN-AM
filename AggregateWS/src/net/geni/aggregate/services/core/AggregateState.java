@@ -38,6 +38,7 @@ public class AggregateState
     private static String usersTab = "users";
     private static String p2pvlansTab = "p2pvlans";
     private static String networksTab = "networks";
+    private static String extResourcesTab = "ext_resources";
     private static String idcURL = "";
     private static String idcRepo = "";
     private static String plcURL = "";
@@ -50,6 +51,10 @@ public class AggregateState
     private static String plcSshKeyfile = "";
     private static String plcSshKeypass = "";
     private static String plcSshExecPrefix = "";
+    private static String protoGeniSmUrn = "";
+    private static String protoGeniAmUrn = "";
+    private static String protoGeniSslCert = "";
+    private static String protoGeniSslPass = "";
 
     // Resrouces
     private static AggregateCapabilities aggregateCaps = null;
@@ -57,6 +62,7 @@ public class AggregateState
     private static AggregateNetworkInterfaces aggregateInterfaces = null;
     private static AggregateSlices aggregateSlices = null;
     private static AggregateP2PVlans aggregateP2PVlans = null;
+    private static AggregateExternalResources aggregateExtResources = null;
     private static AggregateUsers aggregateUsers = null;
     
     // Global states
@@ -102,6 +108,11 @@ public class AggregateState
         plcSshExecPrefix = aggregateProps.getProperty("aggregate.plc.ssh.execprefix", "");
         plcSshExecPrefix = plcSshExecPrefix.replaceAll("[\\'\\\"]", "");
 
+        protoGeniSslCert = aggregateProps.getProperty("aggregate.external.protogeni.ssl_cert_path", "");
+        protoGeniSslPass = aggregateProps.getProperty("aggregate.external.protogeni.ssl_password", "");
+        protoGeniSmUrn = aggregateProps.getProperty("aggregate.external.protogeni.sm_urn", "https://www.emulab.net:443/protogeni/xmlrpc/sa");
+        protoGeniAmUrn = aggregateProps.getProperty("aggregate.external.protogeni.am_urn", "https://www.emulab.net:443/protogeni/xmlrpc/cm");
+
         //init hibernate
         HibernateUtil.initSessionFactory();
 
@@ -111,6 +122,7 @@ public class AggregateState
         aggregateInterfaces = new AggregateNetworkInterfaces();
         aggregateSlices = new AggregateSlices();
         aggregateP2PVlans = new AggregateP2PVlans();
+        aggregateExtResources = new AggregateExternalResources();
         aggregateUsers = new AggregateUsers();
     }
 
@@ -171,6 +183,10 @@ public class AggregateState
         return aggregateP2PVlans;
     }
 
+    public static AggregateExternalResources getAggregateExtResources() {
+        return aggregateExtResources;
+    }
+
     public static AggregateUsers getAggregateUsers() {
         return aggregateUsers;
     }
@@ -219,6 +235,10 @@ public class AggregateState
         return networksTab;
     }
 
+    public static String getExtResourcesTab() {
+        return extResourcesTab;
+    }
+
     public static String getIdcURL() {
         return idcURL;
     }
@@ -265,6 +285,23 @@ public class AggregateState
 
     public static String getPlcSshExecPrefix() {
         return plcSshExecPrefix;
+    }
+
+    public static String getProtoGeniSmUrn() {
+        return protoGeniSmUrn;
+    }
+
+
+    public static String getProtoGeniAmUrn() {
+        return protoGeniAmUrn;
+    }
+
+    public static String getProtoGeniSslCertPath() {
+        return protoGeniSslCert;
+    }
+
+    public static String getProtoGeniSslPassword() {
+        return protoGeniSslPass;
     }
 
     public static String getAggregateCRDBFilePath() { //computeResource DB file

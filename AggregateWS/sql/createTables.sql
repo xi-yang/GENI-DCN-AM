@@ -136,7 +136,21 @@ CREATE TABLE `networks` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Table structure for table `ext_resources`
+--
 
+DROP TABLE IF EXISTS `ext_resources`;
+CREATE TABLE `ext_resources` (
+  `id` int(11) NOT NULL,
+  `urn` varchar(255) NOT NULL,
+  `subType` varchar(255) NOT NULL,
+  `smUri` varchar(255) NOT NULL,
+  `amUri` varchar(255) NOT NULL,
+  `rspecData` text NOT NULL,
+  `status` varchar(255) NOT NULL default '',
+  PRIMARY KEY (`id`),
+ ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 --
 -- Table structure for table `users`
 --

@@ -172,6 +172,9 @@ public class AggregateRspec implements java.io.Serializable {
                        else if (nodeName != null && nodeName.equalsIgnoreCase("topology")) {
                            parseNetworkTopology(child);
                        }
+                       else if (nodeName != null && nodeName.equalsIgnoreCase("externalResource")) {
+                           parseExternalResources(child);
+                       }
                    }
 
                    break;
@@ -496,6 +499,50 @@ public class AggregateRspec implements java.io.Serializable {
             aggrUser = new AggregateUser(id, name, firstName, lastName, role, certSubject, email, descr);
             if (AggregateState.getAggregateUsers().add(aggrUser) == false)
                 throw new AggregateException("Cannot add user:" + name +"(email:"+email+") to DB ");
+        }
+    }
+
+
+    void parseExternalResources(Node extRoot) throws AggregateException {
+        String urn = "";
+        String subType = "";
+        String smUri = "";
+        String amUri = "";
+        String rspecData = "";
+
+
+        if (extRoot.getAttributes().getNamedItem("id") != null) {
+            urn = extRoot.getAttributes().getNamedItem("id").getTextContent().trim();
+        }
+        if (extRoot.getAttributes().getNamedItem("type") != null) {
+            subType = extRoot.getAttributes().getNamedItem("type").getTextContent().trim();
+        }
+
+        NodeList children = extRoot.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            String nodeName = child.getNodeName();
+            if (nodeName != null && nodeName.equalsIgnoreCase("sliceManager")) {
+                smUri = child.getAttributes().getNamedItem("uri").getTextContent().trim();
+                //TODO: optional args
+            } else if (nodeName != null && nodeName.equalsIgnoreCase("aggregateManager")) {
+                amUri = child.getAttributes().getNamedItem("uri").getTextContent().trim();
+                //TODO: optional args
+            } else if (nodeName != null && nodeName.equalsIgnoreCase("rspecData")) {
+                rspecData = child.getAttributes().getNamedItem("rspecData").getTextContent().trim();
+            }
+        }
+        if (!urn.isEmpty() && !subType.isEmpty()&& !amUri.isEmpty() && !rspecData.isEmpty()) {
+            AggregateExternalResource aggrER = new AggregateExternalResource();
+            aggrER.setUrn(urn);
+            aggrER.setSubType(subType);
+            aggrER.setAmUri(amUri);
+            aggrER.setSmUri(smUri);
+            aggrER.setRspecData(rspecData);
+            if (AggregateState.getAggregateExtResources().add(aggrER) == false) {
+                throw new AggregateException("Cannot add externalResourcece (URN:" + urn +") to DB ");
+            }
+            resources.add((AggregateResource)aggrER);
         }
     }
 

@@ -183,6 +183,22 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             return;
         }
         try {
+            //init the networks table
+            AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getExtResourcesTab() + " ( " +
+                    "id int(11) NOT NULL auto_increment, " +
+                    "urn varchar(255) NOT NULL, " +
+                    "subType varchar(255) NOT NULL, " +
+                    "smUri varchar(255) NOT NULL, " +
+                    "amUri varchar(255) NOT NULL, " +
+                    "rspecData text NOT NULL, " +
+                    "status varchar(255) NOT NULL default '', " +
+                    "PRIMARY KEY (id)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
+        } catch(AggregateException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        try {
             //init the users table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getUsersTab() + " ( " +
                     "id int(11) NOT NULL, " +

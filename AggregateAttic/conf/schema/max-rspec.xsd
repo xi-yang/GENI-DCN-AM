@@ -28,6 +28,7 @@
       <xs:element minOccurs="0" maxOccurs="unbounded" name="user" type="MaxRspec:UserContent"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:topology"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:computeResource"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:externalResource"/>
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string"/>
   </xs:complexType>
@@ -146,6 +147,26 @@
     <xs:attribute name="firstName" use="optional" type="xs:string"/>
     <xs:attribute name="lastName" use="optional" type="xs:string"/>
     <xs:attribute name="description" use="optional" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Compute Resource -->
+  <xs:element name="externalResource" type="MaxRspec:externalResourceContent"/>
+
+  <xs:complexType name="externalResourceContent">
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sliceManager" type="MaxRspec:ExternalAggregateAccess"/>
+        <xs:element name="aggregateManager" type="MaxRspec:ExternalAggregateAccess"/>
+        <xs:element name="rspecData" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="id" use="required" type="xs:string"/>
+    <xs:attribute name="type" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="ExternalAggreggateAccess">
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="arg" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="uri" use="required" type="xs:string"/>
   </xs:complexType>
 
 </xs:schema>
