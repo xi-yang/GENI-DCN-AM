@@ -72,6 +72,21 @@ public class AggregateRspecRunner extends Thread {
 
     public void run() {
         if (!reloaded) {
+            rspec.setStatus("EXT-SLIVER-STARTING");
+            manager.updateRspec(rspec);
+            try {
+                this.createExternalSliver();
+            } catch (AggregateException e) {
+                log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
+                e.printStackTrace();
+                rspec.setStatus("EXT-SLIVER-FAILED");
+                manager.updateRspec(rspec);
+            }
+            if (rspec.getStatus().equalsIgnoreCase("EXT-SLIVER-FAILED")) {
+                rollback(); //revert
+                return;
+            }
+            rspec.prepareStitchingExternalResources();
             rspec.setStatus("SLICE-STARTING");
             manager.updateRspec(rspec);
             try {
@@ -266,15 +281,61 @@ public class AggregateRspecRunner extends Thread {
         }
     }
 
+
+    private void createExternalSliver() throws AggregateException {
+        List<AggregateResource> resources = rspec.getResources();
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getType().equalsIgnoreCase("externalResource")) {
+                AggregateExternalResource aggrER = (AggregateExternalResource)resources.get(i);
+                if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
+                    String status = aggrER.createResource();
+                    if (status.toLowerCase().contains("failed")) {
+                        rspec.setStatus("EXT-SLIVER-FAILED");
+                        throw (new AggregateException("Failed to allocate externalResource:"+aggrER.getUrn()));
+                    }
+                    aggrER.setStatus("CREATED");
+                    if (AggregateState.getAggregateExtResources().add(aggrER) == false) {
+                        throw new AggregateException("Cannot add externalResource:" + aggrER.getUrn() +" to DB ");
+                    }
+                }
+            }
+        }
+    }
+
+    private void deleteExternalSliver() throws AggregateException {
+        List<AggregateResource> resources = rspec.getResources();
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getType().equalsIgnoreCase("externalResource")) {
+                AggregateExternalResource aggrER = (AggregateExternalResource)resources.get(i);
+                if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
+                    String status = aggrER.deleteResource();
+                    if (status.toLowerCase().contains("failed")) {
+                        rspec.setStatus("EXT-SLIVER-FAILED");
+                        throw (new AggregateException("Failed to delete externalResource:"+aggrER.getUrn()));
+                    }
+                    aggrER.setStatus("DELETED");
+                    if (AggregateState.getAggregateExtResources().delete(aggrER.getUrn()) == false) {
+                        throw new AggregateException("Cannot add externalResource:" + aggrER.getUrn() +" to DB ");
+                    }
+                }
+            }
+        }
+    }
+
     private void rollback() {
         log.debug("start - rolling back rspec: "+ rspec.getRspecName());
         try {
             if (rspec.getStatus().matches("^VLANS") || rspec.getStatus().equalsIgnoreCase("VLANS-FAILED")) {
                 deleteP2PVlans();
                 deleteSlice();
+                deleteExternalSliver();
             }
             if (rspec.getStatus().matches("^SLICE")) {
                 deleteSlice();
+                deleteExternalSliver();
+            }
+            if (rspec.getStatus().matches("^EXT-SLIVER")) {
+                deleteExternalSliver();
             }
         } catch (AggregateException e) {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
@@ -289,6 +350,7 @@ public class AggregateRspecRunner extends Thread {
         try {
             deleteP2PVlans();
             deleteSlice();
+            deleteExternalSliver();
         } catch (AggregateException e) {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
             e.printStackTrace();

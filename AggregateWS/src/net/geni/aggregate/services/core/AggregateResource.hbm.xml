@@ -61,7 +61,7 @@
       <property column="urn" name="urn"/>
       <property column="subType" name="subType"/>
       <property column="smUri" name="smUri"/>
-      <property column="amUri" name="amURI"/>
+      <property column="amUri" name="amUri"/>
       <property column="rspecData" name="rspecData"/>
       <property column="status" name="status"/>
     </joined-subclass>

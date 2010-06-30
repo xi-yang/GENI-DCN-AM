@@ -149,7 +149,7 @@ CREATE TABLE `ext_resources` (
   `amUri` varchar(255) NOT NULL,
   `rspecData` text NOT NULL,
   `status` varchar(255) NOT NULL default '',
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`id`)
  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 --
 -- Table structure for table `users`

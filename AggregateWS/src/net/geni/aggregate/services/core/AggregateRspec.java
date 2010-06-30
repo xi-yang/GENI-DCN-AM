@@ -529,21 +529,26 @@ public class AggregateRspec implements java.io.Serializable {
                 amUri = child.getAttributes().getNamedItem("uri").getTextContent().trim();
                 //TODO: optional args
             } else if (nodeName != null && nodeName.equalsIgnoreCase("rspecData")) {
-                rspecData = child.getAttributes().getNamedItem("rspecData").getTextContent().trim();
+                rspecData = child.getTextContent().trim();
             }
         }
         if (!urn.isEmpty() && !subType.isEmpty()&& !amUri.isEmpty() && !rspecData.isEmpty()) {
             AggregateExternalResource aggrER = new AggregateExternalResource();
+            aggrER.setType("externalResource");
+            aggrER.setRspecId(this.getId());
             aggrER.setUrn(urn);
             aggrER.setSubType(subType);
             aggrER.setAmUri(amUri);
             aggrER.setSmUri(smUri);
             aggrER.setRspecData(rspecData);
-            if (AggregateState.getAggregateExtResources().add(aggrER) == false) {
-                throw new AggregateException("Cannot add externalResourcece (URN:" + urn +") to DB ");
-            }
             resources.add((AggregateResource)aggrER);
         }
+    }
+
+    void prepareStitchingExternalResources() {
+        //looking for external resources
+            //if protogeni sliver getVLAN
+                //if available update all interface vlans (temp solution)
     }
 
     String getResourcesXml() {
