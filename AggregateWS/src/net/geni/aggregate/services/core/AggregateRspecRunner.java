@@ -164,6 +164,10 @@ public class AggregateRspecRunner extends Thread {
                     nodes += ":";
             }
         }
+        if (nodes.isEmpty()) {
+            rspec.setStatus("SLICE-SKIPPED");
+            return;
+        }
         //TODO: Regulate the slicename (limit-length, no dashes etc.)
         String sliceName = AggregateState.getPlcPrefix()+"_"+rspec.getRspecName();
         String url = "http://" + rspec.getAggregateName();
@@ -288,8 +292,9 @@ public class AggregateRspecRunner extends Thread {
             if (resources.get(i).getType().equalsIgnoreCase("externalResource")) {
                 AggregateExternalResource aggrER = (AggregateExternalResource)resources.get(i);
                 if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
+                    log.debug("start - create external protoGENI sliver: "+ aggrER.getUrn());
                     String status = aggrER.createResource();
-                    if (status.toLowerCase().contains("failed")) {
+                    if (status.toUpperCase().contains("FAILED")) {
                         rspec.setStatus("EXT-SLIVER-FAILED");
                         throw (new AggregateException("Failed to allocate externalResource:"+aggrER.getUrn()));
                     }
@@ -297,6 +302,7 @@ public class AggregateRspecRunner extends Thread {
                     if (AggregateState.getAggregateExtResources().add(aggrER) == false) {
                         throw new AggregateException("Cannot add externalResource:" + aggrER.getUrn() +" to DB ");
                     }
+                    log.debug("end - create external protoGENI sliver: "+ aggrER.getUrn());
                 }
             }
         }
@@ -308,15 +314,10 @@ public class AggregateRspecRunner extends Thread {
             if (resources.get(i).getType().equalsIgnoreCase("externalResource")) {
                 AggregateExternalResource aggrER = (AggregateExternalResource)resources.get(i);
                 if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
+                    log.debug("start - delete external protoGENI sliver: "+ aggrER.getUrn());
                     String status = aggrER.deleteResource();
-                    if (status.toLowerCase().contains("failed")) {
-                        rspec.setStatus("EXT-SLIVER-FAILED");
-                        throw (new AggregateException("Failed to delete externalResource:"+aggrER.getUrn()));
-                    }
-                    aggrER.setStatus("DELETED");
-                    if (AggregateState.getAggregateExtResources().delete(aggrER.getUrn()) == false) {
-                        throw new AggregateException("Cannot add externalResource:" + aggrER.getUrn() +" to DB ");
-                    }
+                    AggregateState.getAggregateExtResources().delete(aggrER.getUrn());
+                    log.debug("end - delete external protoGENI sliver: "+ aggrER.getUrn());
                 }
             }
         }

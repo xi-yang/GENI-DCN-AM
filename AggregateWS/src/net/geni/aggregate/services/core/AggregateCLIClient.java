@@ -241,10 +241,16 @@ public class AggregateCLIClient {
                     }
                 }
             } catch (InterruptedException e) {
-                exit = -1;
+                if (ret == 0)
+                    exit = -1;
+                else
+                    exit = ret;
                 return;
             } catch (IOException e) {
-                exit = -1;
+                if (ret == 0)
+                    exit = -1;
+                else
+                    exit = ret;
                 return;
             }
         }
