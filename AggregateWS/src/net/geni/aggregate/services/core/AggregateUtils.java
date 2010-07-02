@@ -164,6 +164,19 @@ public class AggregateUtils
         return urn.substring(start, end);
     }
 
+    public static String extractString(String aStr, String openStr, String closeStr) {
+        int start = aStr.indexOf(openStr);
+        if (start == -1)
+            return null;
+        start += openStr.length()+1;
+        int end = -1;
+        if (closeStr != null)
+            end = aStr.indexOf(closeStr);
+        if (end == -1 )
+            end = aStr.length();
+        return aStr.substring(start, end);
+    }
+
     public static float convertBandwdithToMbps(String bwString) {
         float ret = 0;
         Pattern pattern = Pattern.compile("(\\d+)([mM]|[gG]|[kK]|[bB]).*");

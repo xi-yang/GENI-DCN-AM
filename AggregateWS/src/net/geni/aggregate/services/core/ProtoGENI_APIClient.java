@@ -274,7 +274,7 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
         + "    Fatal('Could not get sliver status')\n"
         + "    pass\n"
         + "\n"
-        + "print str(response['value'])\n"
+        + "print '<query_status>'+str(response['value'])+'</query_status>'\n"
         + "print 'DONE!'\n";
 
     private ProtoGENI_APIClient() {
@@ -386,8 +386,6 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
         this.sendCommand(createSliceCmd);
         log.debug("createSlice sendCommand: " + createSliceCmd);
         int ret = 0;
-        //TODO $$$$ parsing output
-        // get currentVlanTag if any
         this.setTimeout(180000);
         ret = this.readPattern("FATAL", null, promptPattern);
         log.debug("createSlice response: " + this.buffer);
@@ -395,6 +393,11 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
         if (ret != 0) {
             log.error("ProtoGENI failed to create Slice '" + sliceName +"' on for Rspec: " + rspecData);
             logoff();
+        }
+        else {
+            String vlanTagStr = AggregateUtils.extractString(this.buffer, "<vlantag>", "</vlantag>");
+            if (vlanTagStr != null)
+                this.currentVlanTag = Integer.valueOf(vlanTagStr);
         }
         return ret;
     }
@@ -409,7 +412,6 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
         this.sendCommand(deleteSliceCmd);
         log.debug("deleteSlice sendCommand: " + deleteSliceCmd);
         int ret = 0;
-        //TODO $$$$ parsing output
         ret = this.readPattern("FATAL", null, promptPattern);
         log.debug("deleteSlice response: " + this.buffer);
         log.debug("deleteSlice retCode: " + Integer.toString(ret));
@@ -425,21 +427,34 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
      * @param sliceName
      * @return HashMap
      */
-    public HashMap querySlice(String sliceName) {
+    public String querySlice(String sliceName) {
         if (!alive()) {
             if (!login())
                 return null;
         }
 
-        HashMap hmRet = new HashMap();
+        String status = "";
         querySliceCmd = querySliceCmd.replaceAll("<_slice_name_>", sliceName);
         this.sendCommand(querySliceCmd);
         log.debug("querySlice sendCommand: " + querySliceCmd);
 
         this.setTimeout(60000);
+        int ret = this.readPattern("FATAL", null, promptPattern);
+        log.debug("querySlice response: " + this.buffer);
+        log.debug("querySlice retCode: " + Integer.toString(ret));
+        if (ret != 0) {
+            log.error("ProtoGENI failed to query the slice '" + sliceName +"'");
+            logoff();
+            status = "FAILED";
+        }
+        else {
+            status = AggregateUtils.extractString(this.buffer, "<query_status>", "</query_status>");
+            if (status == null)
+                status = "UNKNOWN";
+            else
+                status = status.toUpperCase();
+        }
 
-        //TODO $$$$ parsing output
-
-        return hmRet;
+        return status;
     }
 }

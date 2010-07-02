@@ -153,12 +153,16 @@ public class AggregateExternalResources {
             return;
         for (AggregateExternalResource er: extResources) {
             String urn = er.getUrn();
-            HashMap hm = new HashMap();
+            String status;
             int ret = -1;
             if (er.getSubType().equalsIgnoreCase("ProtoGENI")) {
                 ProtoGENI_APIClient apiClient = ProtoGENI_APIClient.getAPIClient();
-                hm = apiClient.querySlice(urn);
-                //TODO: parse hm and update er attributes ...
+                status = apiClient.querySlice(urn);
+                if (!status.equalsIgnoreCase("FAILED") && !status.equalsIgnoreCase("UNKNOWN")) {
+                    status = AggregateUtils.extractString(status, "{'status': '", "', 'state':"); //first match
+                    if (status == null)
+                        status = "UNKNOWN";
+                }
                 apiClient.logoff();
             }
             this.update(er);

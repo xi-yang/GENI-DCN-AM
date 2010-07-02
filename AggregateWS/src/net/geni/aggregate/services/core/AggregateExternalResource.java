@@ -121,17 +121,15 @@ public class AggregateExternalResource extends AggregateResource {
     }
 
     public String queryResource() {
-        String status = "SUCCESSFUL";
+        String status = "UNKNOWN";
         if (this.getSubType().equalsIgnoreCase("ProtoGENI")) {
             ProtoGENI_APIClient apiClient = ProtoGENI_APIClient.getAPIClient();
             String sliceName = getNameFromUrn();
             if (sliceName == null) {
-                //TODO ERR:
+                status = "FAILED";
             }
             else {
-                //TODO HashMap parsing
-                apiClient.querySlice(sliceName);
-                //TODO ret status
+                status = apiClient.querySlice(sliceName);
             }
             apiClient.logoff();
         }

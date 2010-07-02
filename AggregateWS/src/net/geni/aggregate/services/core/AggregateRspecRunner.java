@@ -86,7 +86,7 @@ public class AggregateRspecRunner extends Thread {
                 rollback(); //revert
                 return;
             }
-            rspec.prepareStitchingExternalResources();
+            rspec.stitchExternalResources();
             rspec.setStatus("SLICE-STARTING");
             manager.updateRspec(rspec);
             try {

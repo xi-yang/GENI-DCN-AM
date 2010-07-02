@@ -545,10 +545,25 @@ public class AggregateRspec implements java.io.Serializable {
         }
     }
 
-    void prepareStitchingExternalResources() {
-        //looking for external resources
-            //if protogeni sliver getVLAN
-                //if available update all interface vlans (temp solution)
+    void stitchExternalResources() {
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getType().equalsIgnoreCase("externalResource")) {
+                AggregateExternalResource aggrER = (AggregateExternalResource)resources.get(i);
+                if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
+                    if (!(aggrER.getVlanTag() > 0 && aggrER.getVlanTag() < 4096))
+                        continue;
+                    log.debug("start - stitch external protoGENI sliver: "+ aggrER.getUrn());
+                    for (int j = 0; j < resources.size(); j++) {
+                        if (resources.get(j).getType().equalsIgnoreCase("p2pvlan")) {
+                            AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(j);
+                            p2pvlan.setVtag(Integer.toString(aggrER.getVlanTag()));
+                        }
+                    }
+                    log.debug("end - stitch external protoGENI sliver: "+ aggrER.getUrn());
+                    break; //we can only switch one protoGENI sliver that has assigned VLAN tag
+                }
+            }
+        }
     }
 
     String getResourcesXml() {

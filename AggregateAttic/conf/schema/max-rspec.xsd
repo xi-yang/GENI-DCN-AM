@@ -162,7 +162,7 @@
     <xs:attribute name="type" use="required" type="xs:string"/>
   </xs:complexType>
 
-  <xs:complexType name="ExternalAggreggateAccess">
+  <xs:complexType name="ExternalAggregateAccess">
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" name="arg" type="xs:string"/>
     </xs:sequence>
