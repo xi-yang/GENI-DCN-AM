@@ -151,7 +151,7 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
 
     private String createSliceCmd = "SLICENAME='<_slice_name_>'\n"
         + "SLICEURN = 'urn:publicid:IDN+' + DOMAIN + '+slice+' + SLICENAME\n"
-        + "RSPEC = '<_rspec_>'\n"
+        + "RSPEC = '<_rspec_>\\n'\n"
         + "params = {}\n"
         + "params['credential'] = mycredential\n"
         + "rval,response = do_method('sa', 'GetKeys', params)\n"
@@ -381,13 +381,12 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
 
         createSliceCmd = createSliceCmd.replaceAll("<_slice_name_>", sliceName);
         rspecData = rspecData.replaceAll("[\r\n]", ""); //make rspecData single line
-        rspecData = rspecData.replaceAll("\"", "\\\\\""); //escape quotes in rspecData
+        rspecData = rspecData.replace("\"", "\\\\\""); //escape quotes in rspecData
         createSliceCmd = createSliceCmd.replaceFirst("<_rspec_>", rspecData);
         this.sendCommand(createSliceCmd);
         log.debug("createSlice sendCommand: " + createSliceCmd);
-        int ret = 0;
         this.setTimeout(180000);
-        ret = this.readPattern("FATAL", null, promptPattern);
+        int ret = this.readPattern("FATAL", null, promptPattern);
         log.debug("createSlice response: " + this.buffer);
         log.debug("createSlice retCode: " + Integer.toString(ret));
         if (ret != 0) {
@@ -395,8 +394,8 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
             logoff();
         }
         else {
-            String vlanTagStr = AggregateUtils.extractString(this.buffer, "<vlantag>", "</vlantag>");
-            if (vlanTagStr != null)
+            String vlanTagStr = AggregateUtils.extractString(this.buffer, "vlantag=\"", "\">");
+            if (vlanTagStr != null && !vlanTagStr.isEmpty())
                 this.currentVlanTag = Integer.valueOf(vlanTagStr);
         }
         return ret;
@@ -411,8 +410,7 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
         this.setTimeout(120000);
         this.sendCommand(deleteSliceCmd);
         log.debug("deleteSlice sendCommand: " + deleteSliceCmd);
-        int ret = 0;
-        ret = this.readPattern("FATAL", null, promptPattern);
+        int ret = this.readPattern("FATAL", null, promptPattern);
         log.debug("deleteSlice response: " + this.buffer);
         log.debug("deleteSlice retCode: " + Integer.toString(ret));
         if (ret != 0) {

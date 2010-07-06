@@ -380,6 +380,9 @@ public class AggregateRspec implements java.io.Serializable {
                     hm.put("vlanResults", vlanResults);
                 }
                 vlanResults.add(p2pvlan.getVlanResvResult());
+            } else if (rc.getType().equalsIgnoreCase("externalResource")) {
+                AggregateExternalResource ER = (AggregateExternalResource)rc;
+                hm.put("externalResourceStatus", ER.getSubType()+":"+ER.getUrn()+":"+ER.getStatus());
             }
         }
         return hm;
@@ -554,9 +557,9 @@ public class AggregateRspec implements java.io.Serializable {
                         continue;
                     log.debug("start - stitch external protoGENI sliver: "+ aggrER.getUrn());
                     for (int j = 0; j < resources.size(); j++) {
-                        if (resources.get(j).getType().equalsIgnoreCase("p2pvlan")) {
-                            AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(j);
-                            p2pvlan.setVtag(Integer.toString(aggrER.getVlanTag()));
+                        if (resources.get(j).getType().equalsIgnoreCase("networkInterface")) {
+                            AggregateNetworkInterface aggrNetIf = (AggregateNetworkInterface)resources.get(j);
+                            aggrNetIf.setVlanTag(Integer.toString(aggrER.getVlanTag()));
                         }
                     }
                     log.debug("end - stitch external protoGENI sliver: "+ aggrER.getUrn());
@@ -619,6 +622,15 @@ public class AggregateRspec implements java.io.Serializable {
                     }
                 }
                 xml +=  "</planetlabNodeSliver>";
+            } else if (rc.getType().equalsIgnoreCase("externalResource")) {
+                AggregateExternalResource er = (AggregateExternalResource)rc;
+                xml = xml + "<externalResource id=\""+er.getUrn()+"\" type=\""+er.getSubType()+"\">";
+                if (!er.getSmUri().isEmpty())
+                    xml = xml + "<sliceManager>"+er.getSmUri()+"</sliceManager>";
+                if (!er.getAmUri().isEmpty())
+                    xml = xml + "<aggregateManager>"+er.getAmUri()+"</aggregateManager>";
+                xml = xml + "<rspecData>"+er.getRspecData()+"</rspecData>";
+                xml +=  "</externalResource>";
             }
         }
         xml +=  "</computeResource>";

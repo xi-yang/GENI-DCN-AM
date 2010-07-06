@@ -14,7 +14,7 @@ import net.es.oscars.oscars.BSSFaultMessage;
 
 /**
  *
- * @author root
+ * @author Xi Yang
  */
 public class AggregateRspecManager extends Thread{
     final int extendedPollInterval = 900000; // 15 minutes
@@ -77,6 +77,7 @@ public class AggregateRspecManager extends Thread{
 
         List<AggregateSlice> slices = AggregateState.getAggregateSlices().getAll();
         List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
+        List<AggregateExternalResource> ERs = AggregateState.getAggregateExtResources().getAll();
 
         for (AggregateRspec aggrRspec: aggrRspecs) {
             //reload computeSlices
@@ -88,6 +89,11 @@ public class AggregateRspecManager extends Thread{
             for (AggregateP2PVlan p2pvlan: p2pvlans) {
                 if (p2pvlan.getRspecId() == aggrRspec.getId())
                     aggrRspec.getResources().add(p2pvlan);
+            }
+            //reload p2pVlans
+            for (AggregateExternalResource ER: ERs) {
+                if (ER.getRspecId() == aggrRspec.getId())
+                    aggrRspec.getResources().add(ER);
             }
             AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
             synchronized (rspecThreads) {

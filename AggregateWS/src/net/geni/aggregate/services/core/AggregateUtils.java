@@ -168,10 +168,10 @@ public class AggregateUtils
         int start = aStr.indexOf(openStr);
         if (start == -1)
             return null;
-        start += openStr.length()+1;
+        start += openStr.length();
         int end = -1;
         if (closeStr != null)
-            end = aStr.indexOf(closeStr);
+            end = aStr.indexOf(closeStr, start);
         if (end == -1 )
             end = aStr.length();
         return aStr.substring(start, end);
