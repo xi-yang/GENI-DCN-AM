@@ -90,7 +90,7 @@ public class AggregateRspecManager extends Thread{
                 if (p2pvlan.getRspecId() == aggrRspec.getId())
                     aggrRspec.getResources().add(p2pvlan);
             }
-            //reload p2pVlans
+            //reload ext_resources
             for (AggregateExternalResource ER: ERs) {
                 if (ER.getRspecId() == aggrRspec.getId())
                     aggrRspec.getResources().add(ER);

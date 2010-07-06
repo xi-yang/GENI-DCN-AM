@@ -299,6 +299,7 @@ public class AggregateRspecRunner extends Thread {
                         throw (new AggregateException("Failed to allocate externalResource:"+aggrER.getUrn()));
                     }
                     aggrER.setStatus("CREATED");
+                    aggrER.setRspecId(rspec.getId());
                     if (AggregateState.getAggregateExtResources().add(aggrER) == false) {
                         throw new AggregateException("Cannot add externalResource:" + aggrER.getUrn() +" to DB ");
                     }

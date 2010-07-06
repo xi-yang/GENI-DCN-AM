@@ -383,6 +383,8 @@ public class AggregateRspec implements java.io.Serializable {
             } else if (rc.getType().equalsIgnoreCase("externalResource")) {
                 AggregateExternalResource ER = (AggregateExternalResource)rc;
                 hm.put("externalResourceStatus", ER.getSubType()+":"+ER.getUrn()+":"+ER.getStatus());
+                if (hm.containsKey("sliceStatus"))
+                    hm.put("sliceStatus", hm.get("sliceStatus")+" { + externalResource: "+hm.get("externalResourceStatus")+"}");
             }
         }
         return hm;
@@ -538,7 +540,7 @@ public class AggregateRspec implements java.io.Serializable {
         if (!urn.isEmpty() && !subType.isEmpty()&& !amUri.isEmpty() && !rspecData.isEmpty()) {
             AggregateExternalResource aggrER = new AggregateExternalResource();
             aggrER.setType("externalResource");
-            aggrER.setRspecId(this.getId());
+            //aggrER.setRspecId(this.getId());
             aggrER.setUrn(urn);
             aggrER.setSubType(subType);
             aggrER.setAmUri(amUri);
