@@ -183,7 +183,19 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
         + "    pass\n"
         + "\n"
         + "\n"
-        + "#TODO: renew if expire too early\n"
+        + "secs_to_expire=<_expire_time_>\n"
+        + "if secs_to_expire>21600: \n"
+        + "    valid_until = time.strftime('%Y%m%dT%H:%M:%S', time.gmtime(time.time() + secs_to_expire))\n"
+        + "    params = {}\n"
+        + "    params['credential'] = myslice\n"
+        + "    params['expiration'] = valid_until\n"
+        + "    rval,response = do_method('sa', 'RenewSlice', params)\n"
+        + "    if rval:\n"
+        + "        Fatal('Could not change slice expiration time at the SA ')\n"
+        + "        pass\n"
+        + "    pass\n"
+        + "\n"
+        + "\n"
         + "params = {}\n"
         + "params['credentials'] = (myslice,)\n"
         + "params['slice_urn']   = SLICEURN\n"
@@ -197,7 +209,7 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
         + "\n"
         + "sliver,manifest = response['value']\n"
         + "print 'Created the sliver'\n"
-        + "print str(manifest)\n"
+        + "print '<MANIFEST'+'>'+str(manifest)+'</'+'MANIFEST>'\n"
         + "print 'DONE!'\n";
 
     private String deleteSliceCmd = "SLICENAME='<_slice_name_>'\n"
@@ -347,42 +359,19 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
         return super.logoff("sys.exit(0)");
     }
 
-    /**
-     *
-     * @param hm the hashmap to return the buffer content
-     */
-    /*
-    private HashMap[] extractHashMapFromBuffer() {
-        buffer = buffer.replaceFirst(promptPattern + "\n*", "");
-        String[] chunks = buffer.split("\\s*\\[\\{|\\},\\s*\\{|\\}\\]\\s*"); //split [{A}, {B}]
-        HashMap[] hms = new HashMap[chunks.length-1];
-        for (int i = 1; i < chunks.length; i++) { //ignore first chunk
-            String[] blocks = chunks[i].split(", '");
-            hms[i-1] = new HashMap();
-            for (String block: blocks) {
-                if (block.contains("':")) {
-                    String[] pair = block.split("':");
-                    pair[0] = pair[0].replaceAll("'|^(\\s+)", "");
-                    pair[1] = pair[1].replaceAll("'|^(\\s+)", "");
-                    hms[i-1].put(pair[0], pair[1]);
-                }
-            }
-        }
-        return hms;
-    }
-    */
-
     /*commands for ProtoGENI slice operations*/
-    public int createSlice(String sliceName, String rspecData) {
+    public String createSlice(String sliceName, String rspecData, long expireTime) {
         if (!alive()) {
             if (!login())
-                return -1;
+                return null;
         }
 
         createSliceCmd = createSliceCmd.replaceAll("<_slice_name_>", sliceName);
         rspecData = rspecData.replaceAll("[\r\n]", ""); //make rspecData single line
         rspecData = rspecData.replace("\"", "\\\\\""); //escape quotes in rspecData
         createSliceCmd = createSliceCmd.replaceFirst("<_rspec_>", rspecData);
+        long secsToExpire = expireTime - System.currentTimeMillis()/1000;
+        createSliceCmd = createSliceCmd.replaceFirst("<_expire_time_>", Long.toString(secsToExpire));
         this.sendCommand(createSliceCmd);
         log.debug("createSlice sendCommand: " + createSliceCmd);
         this.setTimeout(180000);
@@ -392,13 +381,15 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
         if (ret != 0) {
             log.error("ProtoGENI failed to create Slice '" + sliceName +"' on for Rspec: " + rspecData);
             logoff();
+            return null;
         }
         else {
             String vlanTagStr = AggregateUtils.extractString(this.buffer, "vlantag=\"", "\">");
             if (vlanTagStr != null && !vlanTagStr.isEmpty())
                 this.currentVlanTag = Integer.valueOf(vlanTagStr);
         }
-        return ret;
+        rspecData = AggregateUtils.extractString(this.buffer, "<MANIFEST>", "</MANIFEST>");
+        return rspecData;
     }
 
     public int deleteSlice(String sliceName) {

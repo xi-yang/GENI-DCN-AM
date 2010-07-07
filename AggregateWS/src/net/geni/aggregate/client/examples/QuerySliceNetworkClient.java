@@ -61,5 +61,7 @@ public class QuerySliceNetworkClient extends ExampleClient {
             System.out.println("\t\t Bandwidth => " + vlanResult.getReservation().getBandwidth());
             System.out.println("\t\t Description => " + vlanResult.getReservation().getDescription());
         }
+        if (response.getExternalResourceStatus() != null && response.getExternalResourceStatus().length > 0)
+            System.out.println("\t = ExternalResource Status =\n\t  " + response.getExternalResourceStatus()[0]);
     }
 }

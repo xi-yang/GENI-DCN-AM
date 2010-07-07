@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  *
- * @author root
+ * @author Xi Yang
  */
 public class AggregateNetworkInterface extends AggregateResource {
     String urn = "";
@@ -22,6 +22,8 @@ public class AggregateNetworkInterface extends AggregateResource {
     ArrayList<String> peerInterfaces = null;
     AggregateNode parentNode = null;
     int pnid = 0;
+
+    private String stitchingResourceId = "";
 
     public AggregateNetworkInterface() {}
     
@@ -144,6 +146,14 @@ public class AggregateNetworkInterface extends AggregateResource {
 
     public void setPnid(int pnid) {
         this.pnid = pnid;
+    }
+
+    public String getStitchingResourceId() {
+        return stitchingResourceId;
+    }
+
+    public void setStitchingResourceId(String stitchingResourceId) {
+        this.stitchingResourceId = stitchingResourceId;
     }
 
     public int[] pairupInterfaces(AggregateNetworkInterface peer) {

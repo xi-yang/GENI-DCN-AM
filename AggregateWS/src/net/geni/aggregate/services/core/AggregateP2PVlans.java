@@ -182,6 +182,7 @@ public class AggregateP2PVlans {
         } else {
             AggregateSlices slices = AggregateState.getAggregateSlices();
             AggregateSlice slice = slices.getByName(sliceName);
+            //TODO update with RSPEC times
             if (slice != null) {
                 if (slice.getCreatedTime() > startTime) {
                     startTime = slice.getCreatedTime();

@@ -645,6 +645,10 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         if (vlanResvResults != null)
             for (VlanReservationResultType r: vlanResvResults)
                 querySliceNetworkResponseType.addVlanResvResult(r);
+        if (hmRet.containsKey("externalResourceStatus")) {
+            String[] extResStatus = {(String)hmRet.get("externalResourceStatus")};
+            querySliceNetworkResponseType.setExternalResourceStatus(extResStatus);
+        }
         querySliceNetworkResponse.setQuerySliceNetworkResponse(querySliceNetworkResponseType);
         return querySliceNetworkResponse;
     }

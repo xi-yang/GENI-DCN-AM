@@ -449,6 +449,7 @@
                 <xs:sequence>
                     <xs:element name="sliceStatus" type="xs:string"/>
                     <xs:element name="vlanResvResult" type="tns:VlanReservationResultType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="externalResourceStatus" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:complexType>
 

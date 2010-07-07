@@ -18,6 +18,7 @@ public class AggregateExternalResource extends AggregateResource {
     private String rspecData = "";
     private String status = "";
     private int vlanTag = -1;
+    private long expireTime = 0;
 
     public AggregateExternalResource() {}
 
@@ -77,6 +78,14 @@ public class AggregateExternalResource extends AggregateResource {
         this.vlanTag = vlanTag;
     }
 
+    public long getExpireTime() {
+        return expireTime;
+    }
+
+    public void setExpireTime(long expireTime) {
+        this.expireTime = expireTime;
+    }
+
     private String getNameFromUrn() {
         if (urn.isEmpty())
             return null;
@@ -92,10 +101,13 @@ public class AggregateExternalResource extends AggregateResource {
                 status = "FAILED";
             }
             else {
-                int ret = apiClient.createSlice(sliceName, rspecData);
-                vlanTag = apiClient.getCurrentVlanTag();
-                if (ret != 0)
+                String newRspec = apiClient.createSlice(sliceName, rspecData, expireTime);
+                if (newRspec == null)
                     status = "FAILED";
+                else {
+                    this.rspecData = newRspec;
+                    this.vlanTag = apiClient.getCurrentVlanTag();
+                }
             }
             apiClient.logoff();
         }

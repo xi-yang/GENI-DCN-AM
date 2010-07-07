@@ -149,24 +149,36 @@
     <xs:attribute name="description" use="optional" type="xs:string"/>
   </xs:complexType>
 
-  <!-- Compute Resource -->
+  <!-- External Resource -->
   <xs:element name="externalResource" type="MaxRspec:externalResourceContent"/>
 
   <xs:complexType name="externalResourceContent">
-      <xs:sequence>
-        <xs:element minOccurs="0" name="sliceManager" type="MaxRspec:ExternalAggregateAccess"/>
-        <xs:element name="aggregateManager" type="MaxRspec:ExternalAggregateAccess"/>
-        <xs:element name="rspecData" type="xs:string"/>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="sliceManager" type="MaxRspec:ExternalAggregateAccess"/>
+      <xs:element name="aggregateManager" type="MaxRspec:ExternalAggregateAccess"/>
+      <xs:element name="rspecData" type="xs:string"/>
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string"/>
     <xs:attribute name="type" use="required" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="ExternalAggregateAccess">
-      <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="arg" type="xs:string"/>
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="arg" type="xs:string"/>
     </xs:sequence>
     <xs:attribute name="uri" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Stitching Resource -->
+  <xs:element name="stitchingResource" type="MaxRspec:stitchingResourceContent"/>
+
+  <xs:complexType name="stitchingResourceContent">
+    <xs:attribute name="id" use="required" type="xs:string"/>
+    <!-- type: 'p2pvlan' or 'stub'. A p2pvlan will need two networkInterfaceUrn and stub just one -->
+    <xs:attribute name="type" use="required" type="xs:string"/>
+    <xs:sequence>
+      <xs:element maxOccurs="2" name="networkInterfaceUrn" type="xs:string"/>
+    </xs:sequence>
   </xs:complexType>
 
 </xs:schema>

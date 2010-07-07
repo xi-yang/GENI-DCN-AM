@@ -382,9 +382,7 @@ public class AggregateRspec implements java.io.Serializable {
                 vlanResults.add(p2pvlan.getVlanResvResult());
             } else if (rc.getType().equalsIgnoreCase("externalResource")) {
                 AggregateExternalResource ER = (AggregateExternalResource)rc;
-                hm.put("externalResourceStatus", ER.getSubType()+":"+ER.getUrn()+":"+ER.getStatus());
-                if (hm.containsKey("sliceStatus"))
-                    hm.put("sliceStatus", hm.get("sliceStatus")+" { + externalResource: "+hm.get("externalResourceStatus")+"}");
+                hm.put("externalResourceStatus", ER.getSubType()+":"+ER.getUrn()+":"+ER.getStatus()+":"+ER.getRspecData());
             }
         }
         return hm;
@@ -546,6 +544,7 @@ public class AggregateRspec implements java.io.Serializable {
             aggrER.setAmUri(amUri);
             aggrER.setSmUri(smUri);
             aggrER.setRspecData(rspecData);
+            aggrER.setExpireTime(this.endTime);
             resources.add((AggregateResource)aggrER);
         }
     }
