@@ -32,7 +32,7 @@ public class AggregateIDCClient {
 
     private String idcURL = "";
     private String idcRepo = "";
-    private GlobalReservationId gri;
+    private GlobalReservationId gri = null;
     private Logger log;
 
     AggregateIDCClient(String url, String repo) {

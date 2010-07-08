@@ -398,7 +398,7 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
                 return -1;
         }
         deleteSliceCmd = deleteSliceCmd.replaceAll("<_slice_name_>", sliceName);
-        this.setTimeout(120000);
+        this.setTimeout(180000);
         this.sendCommand(deleteSliceCmd);
         log.debug("deleteSlice sendCommand: " + deleteSliceCmd);
         int ret = this.readPattern("FATAL", null, promptPattern);

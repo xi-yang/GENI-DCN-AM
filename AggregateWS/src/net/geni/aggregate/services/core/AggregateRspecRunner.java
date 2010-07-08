@@ -86,7 +86,7 @@ public class AggregateRspecRunner extends Thread {
                 rollback(); //revert
                 return;
             }
-            rspec.stitchExternalResources();
+
             rspec.setStatus("SLICE-STARTING");
             manager.updateRspec(rspec);
             try {
@@ -101,6 +101,22 @@ public class AggregateRspecRunner extends Thread {
                 rollback(); //revert
                 return;
             }
+
+            rspec.setStatus("STITCHING-STARTING");
+            manager.updateRspec(rspec);
+            try {
+                this.createStitchingResources();
+            } catch (AggregateException e) {
+                log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
+                e.printStackTrace();
+                rspec.setStatus("STITCHING-FAILED");
+                manager.updateRspec(rspec);
+            }
+            if (rspec.getStatus().equalsIgnoreCase("STITCHING-FAILED")) {
+                rollback();
+                return;
+            }
+
             rspec.setStatus("VLANS-STARTING");
             manager.updateRspec(rspec);
             try {
@@ -277,6 +293,8 @@ public class AggregateRspecRunner extends Thread {
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("p2pVlan")) {
                 AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(i);
+                if (!p2pvlan.getStitchingResourceId().isEmpty())
+                    continue; //have been taken care of by deleteStitchingResources()
                 log.debug("start - delete p2pvlan: "+ p2pvlan.getDescription());
                 AggregateState.getAggregateP2PVlans().delete(p2pvlan);
                 p2pvlan.teardownVlan();
@@ -314,29 +332,103 @@ public class AggregateRspecRunner extends Thread {
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("externalResource")) {
                 AggregateExternalResource aggrER = (AggregateExternalResource)resources.get(i);
+                log.debug("externalResource = "+ aggrER.getUrn()); //xxxx
                 if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
                     log.debug("start - delete external protoGENI sliver: "+ aggrER.getUrn());
-                    String status = aggrER.deleteResource();
                     AggregateState.getAggregateExtResources().delete(aggrER.getUrn());
+                    aggrER.deleteResource();
                     log.debug("end - delete external protoGENI sliver: "+ aggrER.getUrn());
                 }
             }
         }
     }
 
+
+    void createStitchingResources() throws AggregateException {
+        List<AggregateResource> resources = rspec.getResources();
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getType().equalsIgnoreCase("p2pvlan")) {
+                AggregateP2PVlan p2pvlan = (AggregateP2PVlan) resources.get(i);
+                if (!p2pvlan.getExternalResourceId().isEmpty()) {
+                    for (int j = 0; j < resources.size(); j++) {
+                        if (resources.get(j).getType().equalsIgnoreCase("externalResource")) {
+                            AggregateExternalResource aggrER = (AggregateExternalResource) resources.get(j);
+                            if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
+                                if (p2pvlan.getExternalResourceId().equalsIgnoreCase(aggrER.getUrn()) && (aggrER.getVlanTag() > 0 && aggrER.getVlanTag() < 4096)) {
+                                    p2pvlan.setVtag(Integer.toString(aggrER.getVlanTag()));
+                                    log.debug("stitching p2pvlan by using obtained vlan " + p2pvlan.getVtag() + " from external resource: " + aggrER.getUrn());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    log.debug("start - creating stitching p2pvlan");
+                    p2pvlan.setRspecId(rspec.getId());
+                    String sliceName = AggregateState.getPlcPrefix() + "_" + rspec.getRspecName();
+                    p2pvlan.setSliceName(sliceName);
+                    AggregateSlice slice = AggregateState.getAggregateSlices().getByName(sliceName);
+                    long startTime = rspec.getStartTime();
+                    long endTime = rspec.getEndTime();
+                    if (slice != null) {
+                        startTime = System.currentTimeMillis()/1000;
+                        if (slice.getExpiredTime() >= endTime) {
+                            endTime = slice.getExpiredTime();
+                        } else {//the slice would expire bfore VLAN
+                            throw (new AggregateException("Failed to create stitching P2PVlan for an expired internal slice: " + sliceName));
+                        }
+                    } else {
+                        throw (new AggregateException("Failed to create stitching P2PVlan without finding the internal slice: " + sliceName));
+                    }
+                    p2pvlan.setStartTime(startTime);
+                    p2pvlan.setEndTime(endTime);
+                    p2pvlan.setDescription(rspec.getRspecName() + " stitching-resource: p2pvlan-" + p2pvlan.getSource() + "-" + p2pvlan.getDestination() + "-vlan-" + p2pvlan.getVtag());
+                    String status = p2pvlan.setupVlan();
+                    AggregateState.getAggregateP2PVlans().add(p2pvlan);
+                    if (status.equalsIgnoreCase("FAILED")) {
+                        throw (new AggregateException("Failed to create stitching P2PVlan:" + p2pvlan.getDescription()));
+                    }
+                    log.debug("end - creating stitching p2pvlan: " + p2pvlan.getDescription());
+                }
+            }
+        }
+        //TODO: provision the stub inerface using PLC SSH client
+    }
+
+    void deleteStitchingResources() throws AggregateException {
+        List<AggregateResource> resources = rspec.getResources();
+        for (int j = 0; j < resources.size(); j++) {
+            if (resources.get(j).getType().equalsIgnoreCase("p2pvlan")) {
+                AggregateP2PVlan p2pvlan = (AggregateP2PVlan) resources.get(j);
+                log.debug("p2pvlan = "+p2pvlan.getDescription()); //xxxx
+                if (!p2pvlan.getStitchingResourceId().isEmpty()) {
+                    log.debug("start - deleting stitching p2pvlan: " + p2pvlan.getDescription());
+                    AggregateState.getAggregateP2PVlans().delete(p2pvlan);
+                    p2pvlan.teardownVlan();
+                    log.debug("end - deleting stitching p2pvlan: " + p2pvlan.getDescription());
+                }
+            }
+        }
+    }
+
     private void rollback() {
-        log.debug("start - rolling back rspec: "+ rspec.getRspecName());
+        log.debug("start - rolling back rspec: "+ rspec.getRspecName() + " with status:" + rspec.getStatus());
         try {
-            if (rspec.getStatus().matches("^VLANS") || rspec.getStatus().equalsIgnoreCase("VLANS-FAILED")) {
+            if (rspec.getStatus().matches("^VLANS.*")) {
                 deleteP2PVlans();
+                deleteStitchingResources();
                 deleteSlice();
                 deleteExternalSliver();
             }
-            if (rspec.getStatus().matches("^SLICE")) {
+            if (rspec.getStatus().matches("^STITCHING.*")) {
+                deleteStitchingResources();
                 deleteSlice();
                 deleteExternalSliver();
             }
-            if (rspec.getStatus().matches("^EXT-SLIVER")) {
+            if (rspec.getStatus().matches("^SLICE.*")) {
+                deleteSlice();
+                deleteExternalSliver();
+            }
+            if (rspec.getStatus().matches("^EXT-SLIVER.*")) {
                 deleteExternalSliver();
             }
         } catch (AggregateException e) {
@@ -351,6 +443,7 @@ public class AggregateRspecRunner extends Thread {
         log.debug("start - terminating rspec: "+ rspec.getRspecName());
         try {
             deleteP2PVlans();
+            deleteStitchingResources();
             deleteSlice();
             deleteExternalSliver();
         } catch (AggregateException e) {

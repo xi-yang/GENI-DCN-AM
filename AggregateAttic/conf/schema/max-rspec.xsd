@@ -29,6 +29,7 @@
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:topology"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:computeResource"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:externalResource"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:stitchingResource"/>
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string"/>
   </xs:complexType>
@@ -172,13 +173,14 @@
   <!-- Stitching Resource -->
   <xs:element name="stitchingResource" type="MaxRspec:stitchingResourceContent"/>
 
+  <!-- type: 'p2pvlan' or 'stub'. A p2pvlan will need two networkInterfaceUrn and stub just one -->
   <xs:complexType name="stitchingResourceContent">
-    <xs:attribute name="id" use="required" type="xs:string"/>
-    <!-- type: 'p2pvlan' or 'stub'. A p2pvlan will need two networkInterfaceUrn and stub just one -->
-    <xs:attribute name="type" use="required" type="xs:string"/>
     <xs:sequence>
       <xs:element maxOccurs="2" name="networkInterfaceUrn" type="xs:string"/>
+      <xs:element minOccurs="0" name="externalResourceId" type="xs:string"/>
     </xs:sequence>
+    <xs:attribute name="id" use="required" type="xs:string"/>
+    <xs:attribute name="type" use="required" type="xs:string"/>
   </xs:complexType>
 
 </xs:schema>

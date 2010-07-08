@@ -45,6 +45,9 @@ public class AggregateP2PVlan extends AggregateResource {
     String errMessage = "";
     String status = "";
 
+    private String stitchingResourceId = "";
+    private String externalResourceId = "";
+
     private org.apache.log4j.Logger log;
     /**
     * constructors
@@ -144,6 +147,22 @@ public class AggregateP2PVlan extends AggregateResource {
         return vtag;
     }
 
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
     public String getGlobalReservationId() {
         if (!gri.equals(""))
             return gri;
@@ -197,6 +216,22 @@ public class AggregateP2PVlan extends AggregateResource {
         this.srcIpAndMask = srcIpAndMask;
     }
 
+    public String getExternalResourceId() {
+        return externalResourceId;
+    }
+
+    public void setExternalResourceId(String externalResourceId) {
+        this.externalResourceId = externalResourceId;
+    }
+
+    public String getStitchingResourceId() {
+        return stitchingResourceId;
+    }
+
+    public void setStitchingResourceId(String stitchingResourceId) {
+        this.stitchingResourceId = stitchingResourceId;
+    }
+
     /**
      * setup p2p vlan
      * @param
@@ -228,15 +263,23 @@ public class AggregateP2PVlan extends AggregateResource {
             errMessage = "OSCARSStub threw exception in createReservation: " +e.getMessage();
         }
 
-        if (vtag.equalsIgnoreCase("any")) {
-            //wait for 3 seconds for IDC to compute path and vlan tag
-            AggregateUtils.justSleep(3);
-            this.queryVlan();
-        }
+        log.debug("setupVlan: gri="+gri+" source="+source+", destination="+destination+",vtag="+vtag+",startTime="+Long.toString(startTime)+",endTime="+Long.toString(endTime));
 
-        if (!status.equalsIgnoreCase("FAILED") && !setVlanOnNodes(true)) {
+        if (gri == null || gri.isEmpty()) {
             status = "FAILED";
-            errMessage = "setupVlan FAILED to add VLAN interface on source or destination node";
+            errMessage = "IDC_APIClient::createReservation returned null GRI.";
+        }
+        else {
+            if (vtag.equalsIgnoreCase("any")) {
+                //wait for 3 seconds for IDC to compute path and vlan tag
+                AggregateUtils.justSleep(3);
+                this.queryVlan();
+            }
+
+            if (!status.equalsIgnoreCase("FAILED") && !setVlanOnNodes(true)) {
+                status = "FAILED";
+                errMessage = "setupVlan FAILED to add VLAN interface on source or destination node";
+            }
         }
 
         return status;

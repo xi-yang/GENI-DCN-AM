@@ -175,6 +175,9 @@ public class AggregateRspec implements java.io.Serializable {
                        else if (nodeName != null && nodeName.equalsIgnoreCase("externalResource")) {
                            parseExternalResources(child);
                        }
+                       else if (nodeName != null && nodeName.equalsIgnoreCase("stitchingResource")) {
+                           parseStitchingResources(child);
+                       }
                    }
 
                    break;
@@ -549,25 +552,93 @@ public class AggregateRspec implements java.io.Serializable {
         }
     }
 
-    void stitchExternalResources() {
-        for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).getType().equalsIgnoreCase("externalResource")) {
-                AggregateExternalResource aggrER = (AggregateExternalResource)resources.get(i);
-                if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
-                    if (!(aggrER.getVlanTag() > 0 && aggrER.getVlanTag() < 4096))
-                        continue;
-                    log.debug("start - stitch external protoGENI sliver: "+ aggrER.getUrn());
-                    for (int j = 0; j < resources.size(); j++) {
-                        if (resources.get(j).getType().equalsIgnoreCase("networkInterface")) {
-                            AggregateNetworkInterface aggrNetIf = (AggregateNetworkInterface)resources.get(j);
-                            aggrNetIf.setVlanTag(Integer.toString(aggrER.getVlanTag()));
-                        }
-                    }
-                    log.debug("end - stitch external protoGENI sliver: "+ aggrER.getUrn());
-                    break; //we can only switch one protoGENI sliver that has assigned VLAN tag
-                }
+    void parseStitchingResources(Node srRoot) throws AggregateException {
+        String srId = "";
+        String erId = "";
+        String srType = "";
+        List<String> netIfUrns = new ArrayList<String>();
+
+        if (srRoot.getAttributes().getNamedItem("id") != null) {
+            srId = srRoot.getAttributes().getNamedItem("id").getTextContent().trim();
+        }
+        if (srRoot.getAttributes().getNamedItem("type") != null) {
+            srType = srRoot.getAttributes().getNamedItem("type").getTextContent().trim();
+        }
+
+        NodeList children = srRoot.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            String nodeName = child.getNodeName();
+            if (nodeName != null && nodeName.equalsIgnoreCase("networkInterfaceUrn")) {
+                netIfUrns.add(child.getTextContent().trim());
+            }
+            else if (nodeName != null && nodeName.equalsIgnoreCase("externalResourceId")) {
+                erId = child.getTextContent().trim();
             }
         }
+        if (netIfUrns.size() ==2 && srType.equalsIgnoreCase("p2pvlan")) {
+            AggregateNetworkInterface netIf1 = null;
+            AggregateNetworkInterface netIf2 = null;
+            for (AggregateResource rc: this.resources) {
+                if (rc.getType().equalsIgnoreCase("networkInterface")) {
+                    AggregateNetworkInterface netIf = (AggregateNetworkInterface)rc;
+                    if (netIf.getUrn().equalsIgnoreCase(netIfUrns.get(0))) {
+                        netIf1 = netIf;
+                    }
+                    else if (netIf.getUrn().equalsIgnoreCase(netIfUrns.get(1))) {
+                        netIf2 = netIf;
+                    }
+                    else
+                        continue;
+                    netIf.setStitchingResourceId(srId);
+                    netIf.setExternalResourceId(erId);
+                }
+            }
+            //create p2pvlan
+            AggregateP2PVlan stitchingP2PVlan = new AggregateP2PVlan();
+            stitchingP2PVlan.setSource(netIfUrns.get(0));
+            stitchingP2PVlan.setDestination(netIfUrns.get(1));
+            stitchingP2PVlan.setVtag("any");
+            stitchingP2PVlan.setBandwidth(50);//50M by default
+            if (netIf1 != null) {
+                stitchingP2PVlan.setSource(AggregateUtils.getUrnField(netIf1.getUrn(), "node") +"."+AggregateUtils.getUrnField(netIf1.getUrn(), "domain"));
+                stitchingP2PVlan.setSrcInterface(netIf1.getDeviceName());
+                stitchingP2PVlan.setSrcIpAndMask(netIf1.getIpAddress());
+                stitchingP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity()));
+                if (!netIf1.getVlanTag().isEmpty())
+                    stitchingP2PVlan.setVtag(netIf1.getVlanTag());
+            }
+            if (netIf2 != null) {
+                stitchingP2PVlan.setDestination(AggregateUtils.getUrnField(netIf2.getUrn(), "node") +"."+AggregateUtils.getUrnField(netIf2.getUrn(), "domain"));
+                stitchingP2PVlan.setDstInterface(netIf2.getDeviceName());
+                stitchingP2PVlan.setDstIpAndMask(netIf2.getIpAddress());
+                if (netIf1 == null) {
+                    stitchingP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity()));
+                    if (!netIf2.getVlanTag().isEmpty())
+                        stitchingP2PVlan.setVtag(netIf2.getVlanTag());
+                }
+            }
+            stitchingP2PVlan.setStitchingResourceId(srId);
+            stitchingP2PVlan.setExternalResourceId(erId);
+            resources.add((AggregateResource)stitchingP2PVlan);
+        }
+        else if (netIfUrns.size() ==1 && srType.equalsIgnoreCase("stub")) {
+            boolean noParentNode = true;
+            for (AggregateResource rc: this.resources) {
+                if (rc.getType().equalsIgnoreCase("networkInterface")) {
+                    AggregateNetworkInterface netIf = (AggregateNetworkInterface)rc;
+                    if (!netIf.getUrn().equalsIgnoreCase(netIfUrns.get(0)))
+                        continue;
+                    netIf.setStitchingResourceId(srId);
+                    netIf.setExternalResourceId(erId);
+                    noParentNode = false;
+                }
+            }
+            if (noParentNode)
+                throw new AggregateException("stub' stitching resource needs URN network interface on an existing compute node.");
+        }
+        else
+            throw new AggregateException("unknown stiching resource type or malformatted stitching resource information.");
     }
 
     String getResourcesXml() {

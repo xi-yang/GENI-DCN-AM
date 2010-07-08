@@ -22,8 +22,8 @@ public class AggregateNetworkInterface extends AggregateResource {
     ArrayList<String> peerInterfaces = null;
     AggregateNode parentNode = null;
     int pnid = 0;
-
     private String stitchingResourceId = "";
+    private String externalResourceId = "";
 
     public AggregateNetworkInterface() {}
     
@@ -154,6 +154,14 @@ public class AggregateNetworkInterface extends AggregateResource {
 
     public void setStitchingResourceId(String stitchingResourceId) {
         this.stitchingResourceId = stitchingResourceId;
+    }
+
+    public String getExternalResourceId() {
+        return externalResourceId;
+    }
+
+    public void setExternalResourceId(String externalResourceId) {
+        this.externalResourceId = externalResourceId;
     }
 
     public int[] pairupInterfaces(AggregateNetworkInterface peer) {
