@@ -256,6 +256,12 @@ public class AggregateRspecRunner extends Thread {
                             AggregateState.getAggregateP2PVlans().update(p2pvlan);
                             if (p2pvlan.getStatus().equalsIgnoreCase("FAILED"))
                                 throw (new AggregateException("Failed to setup P2PVlan:"+description));
+                            if(netIf1.getVlanTag().equalsIgnoreCase("any") && !p2pvlan.getVtag().equalsIgnoreCase("any")) {
+                                netIf1.setVlanTag("any("+p2pvlan.getVtag()+")");
+                            }
+                            if(netIf2.getVlanTag().equalsIgnoreCase("any") && !p2pvlan.getVtag().equalsIgnoreCase("any")) {
+                                netIf2.setVlanTag("any("+p2pvlan.getVtag()+")");
+                            }
                             log.debug("end - create vlan: "+description+" return status: "+hmRet);
                         }
                     }

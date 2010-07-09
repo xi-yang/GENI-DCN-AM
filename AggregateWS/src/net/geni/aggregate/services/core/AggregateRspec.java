@@ -642,10 +642,11 @@ public class AggregateRspec implements java.io.Serializable {
     }
 
     String getResourcesXml() {
-        if (xml != null)
-            return xml;
+        //if (xml != null)
+        //  return xml;
         xml = "<computeResource id=\"urn:aggregate="+this.aggregateName+":rspec="+this.rspecName+"\">";
-        for (AggregateResource rc: resources) {
+        for (int n = 0; n < resources.size(); n++) {
+            AggregateResource rc = resources.get(n);
             if (rc.getType().equalsIgnoreCase("computeNode")) {
                 AggregateNode an = (AggregateNode)rc;
                 xml = xml + "<computeNode id=\""+an.getUrn()+"\">";
@@ -665,6 +666,31 @@ public class AggregateRspec implements java.io.Serializable {
                         }
                     }
                 }
+                for (int i = 0; i < resources.size(); i++) {
+                    if (resources.get(i).getType().equalsIgnoreCase("p2pvlan")) {
+                        AggregateP2PVlan ppv = (AggregateP2PVlan)resources.get(i);
+                        if (ppv.getSource().equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node") +"."+AggregateUtils.getUrnField(an.getUrn(), "domain"))) {
+                            xml = xml + "<networkInterface id=\""+ppv.getId() + ":interface=src" +"\">";
+                            xml = xml + "<deviceType>ethernet</deviceType>";
+                            xml = xml + "<deviceName>"+ppv.getSrcInterface()+"</deviceName>";
+                            xml = xml + "<capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</capacity>";
+                            xml = xml + "<ipAddress>"+ppv.getSrcIpAndMask()+"</ipAddress>";
+                            xml = xml + "<vlanRange>"+ppv.getVtag()+"</vlanRange>";
+                            xml = xml + "<peerNetworkInterface>"+ppv.getId() + ":interface=dst"+"</peerNetworkInterface>";
+                            xml +=  "</networkInterface>";
+                        }
+                        if (ppv.getDestination().equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node") +"."+AggregateUtils.getUrnField(an.getUrn(), "domain"))) {
+                            xml = xml + "<networkInterface id=\""+ppv.getId() + ":interface=dst" +"\">";
+                            xml = xml + "<deviceType>ethernet</deviceType>";
+                            xml = xml + "<deviceName>"+ppv.getDstInterface()+"</deviceName>";
+                            xml = xml + "<capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</capacity>";
+                            xml = xml + "<ipAddress>"+ppv.getDstIpAndMask()+"</ipAddress>";
+                            xml = xml + "<vlanRange>"+ppv.getVtag()+"</vlanRange>";
+                            xml = xml + "<peerNetworkInterface>"+ppv.getId() + ":interface=src"+"</peerNetworkInterface>";
+                            xml +=  "</networkInterface>";
+                        }
+                    }
+                }
                 xml +=  "</computeNode>";
             } else if (rc.getType().equalsIgnoreCase("computeSlice")) {
                 AggregateSlice as = (AggregateSlice)rc;
@@ -673,6 +699,22 @@ public class AggregateRspec implements java.io.Serializable {
                 xml = xml + "<user_ids>"+as.getUsers()+"</user_ids>";
                 xml = xml + "<expires>"+Long.toString(as.getExpiredTime())+"</expires>";
                 xml +=  "</computeSlice>";
+                String[] nodes = as.getNodes().split("[,\\s]");
+                for (String nodeId: nodes) {
+                    if (nodeId.isEmpty())
+                        continue;
+                    AggregateNode an = AggregateState.getAggregateNodes().getByNodeId(Integer.valueOf(nodeId));
+                    if (an != null) {
+                        boolean found = false;
+                        for (AggregateResource rc1: resources) {
+                            if ((rc1.getType().equalsIgnoreCase("computeNode") || rc1.getType().equalsIgnoreCase("planetlabNodeSliver"))
+                                    && ((AggregateNode)rc1).getNodeId() == Integer.valueOf(nodeId))
+                                found = true;
+                        }
+                        if (!found)
+                            resources.add(an);
+                    }
+                }
             } else if (rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
                 AggregateNode an = (AggregateNode)rc;
                 xml = xml + "<planetlabNodeSliver id=\""+an.getUrn()+"\">";

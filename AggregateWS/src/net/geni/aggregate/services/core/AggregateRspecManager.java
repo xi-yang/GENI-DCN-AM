@@ -307,7 +307,7 @@ public class AggregateRspecManager extends Thread{
                 synchronized (aggrRspecs) {
                     for (String name: rspecNames) {
                         for (AggregateRspec rspec: aggrRspecs) {
-                            if (rspec.getRspecName().equalsIgnoreCase(name) && rspec.getResourcesXml() != null) {
+                            if (rspec.getRspecName().equalsIgnoreCase(name) && rspec.getResources().size() > 0) {
                                 retRspecs.add(rspec);
                             }
                         }

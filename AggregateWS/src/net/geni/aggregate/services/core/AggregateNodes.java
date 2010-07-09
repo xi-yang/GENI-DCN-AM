@@ -128,12 +128,12 @@ public class AggregateNodes {
     /**
      * get by ID
      */
-    public synchronized AggregateNode getByUrn(int id) {
+    public synchronized AggregateNode getByNodeId(int nid) {
         synchronized(this) {
             try {
                 session = HibernateUtil.getSessionFactory().openSession();
                 tx = session.beginTransaction();
-                Query q = session.createQuery("from AggregateNode as node where node.id=" + Integer.toBinaryString(id));
+                Query q = session.createQuery("from AggregateNode as node where node.nodeId=" + Integer.toString(nid));
                 if (q.list().size() == 0) {
                     return null;
                 }
