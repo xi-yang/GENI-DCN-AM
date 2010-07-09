@@ -725,14 +725,16 @@ public class AggregateRspec implements java.io.Serializable {
                 for (int i = 0; i < resources.size(); i++) {
                     if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
                         AggregateNetworkInterface ai = (AggregateNetworkInterface)resources.get(i);
-                        xml = xml + "<networkInterface id=\""+ai.getUrn()+"\">";
-                        xml = xml + "<deviceType>"+ai.getDeviceType()+"</deviceType>";
-                        xml = xml + "<deviceName>"+ai.getDeviceName()+"</deviceName>";
-                        xml = xml + "<capacity>"+ai.getCapacity()+"</capacity>";
-                        xml = xml + "<ipAddress>"+ai.getIpAddress()+"</ipAddress>";
-                        xml = xml + "<vlanRange>"+ai.getVlanTag()+"</vlanRange>";
-                        xml = xml + "<peerNetworkInterface>"+ai.getPeerInterfaces()+"</peerNetworkInterface>";
-                        xml +=  "</networkInterface>";
+                        if (ai.getPnid() == an.getId()) {
+                            xml = xml + "<networkInterface id=\""+ai.getUrn()+"\">";
+                            xml = xml + "<deviceType>"+ai.getDeviceType()+"</deviceType>";
+                            xml = xml + "<deviceName>"+ai.getDeviceName()+"</deviceName>";
+                            xml = xml + "<capacity>"+ai.getCapacity()+"</capacity>";
+                            xml = xml + "<ipAddress>"+ai.getIpAddress()+"</ipAddress>";
+                            xml = xml + "<vlanRange>"+ai.getVlanTag()+"</vlanRange>";
+                            xml = xml + "<peerNetworkInterface>"+ai.getPeerInterfaces()+"</peerNetworkInterface>";
+                            xml +=  "</networkInterface>";
+                        }
                     }
                 }
                 xml +=  "</planetlabNodeSliver>";
