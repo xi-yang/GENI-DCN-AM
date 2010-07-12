@@ -271,9 +271,10 @@ public class AggregateP2PVlan extends AggregateResource {
         }
         else {
             if (vtag.equalsIgnoreCase("any")) {
-                //wait for 3 seconds for IDC to compute path and vlan tag
-                AggregateUtils.justSleep(3);
+                //wait for 5 seconds for IDC to compute path and vlan tag
+                AggregateUtils.justSleep(5);
                 this.queryVlan();
+                log.debug("new vlantag="+vtag+" error:"+errMessage);
             }
 
             if (!status.equalsIgnoreCase("FAILED") && !setVlanOnNodes(true)) {
