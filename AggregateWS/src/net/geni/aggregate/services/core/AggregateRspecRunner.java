@@ -360,6 +360,7 @@ public class AggregateRspecRunner extends Thread {
                         if (resources.get(j).getType().equalsIgnoreCase("externalResource")) {
                             AggregateExternalResource aggrER = (AggregateExternalResource) resources.get(j);
                             if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
+                                log.debug("externalresource-Protogeni: URN=" + aggrER.getUrn() + " VlanTag:" + Integer.toString(aggrER.getVlanTag()));
                                 if (p2pvlan.getExternalResourceId().equalsIgnoreCase(aggrER.getUrn()) && (aggrER.getVlanTag() > 0 && aggrER.getVlanTag() < 4096)) {
                                     p2pvlan.setVtag(Integer.toString(aggrER.getVlanTag()));
                                     log.debug("stitching p2pvlan by using obtained vlan " + p2pvlan.getVtag() + " from external resource: " + aggrER.getUrn());

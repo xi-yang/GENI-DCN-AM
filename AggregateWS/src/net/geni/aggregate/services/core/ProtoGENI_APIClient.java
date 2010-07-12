@@ -374,7 +374,7 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
         createSliceCmd = createSliceCmd.replaceFirst("<_expire_time_>", Long.toString(secsToExpire));
         this.sendCommand(createSliceCmd);
         log.debug("createSlice sendCommand: " + createSliceCmd);
-        this.setTimeout(180000);
+        this.setTimeout(240000);
         int ret = this.readPattern("FATAL", null, promptPattern);
         log.debug("createSlice response: " + this.buffer);
         log.debug("createSlice retCode: " + Integer.toString(ret));
