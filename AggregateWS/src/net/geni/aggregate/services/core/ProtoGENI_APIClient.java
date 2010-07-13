@@ -151,7 +151,7 @@ public class ProtoGENI_APIClient extends AggregateCLIClient {
 
     private String createSliceCmd = "SLICENAME='<_slice_name_>'\n"
         + "SLICEURN = 'urn:publicid:IDN+' + DOMAIN + '+slice+' + SLICENAME\n"
-        + "RSPEC = '<_rspec_>\\n'\n"
+        + "RSPEC = '<_rspec_>'\n"
         + "params = {}\n"
         + "params['credential'] = mycredential\n"
         + "rval,response = do_method('sa', 'GetKeys', params)\n"
