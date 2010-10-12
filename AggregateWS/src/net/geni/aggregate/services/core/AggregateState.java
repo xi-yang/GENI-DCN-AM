@@ -47,6 +47,7 @@ public class AggregateState
     private static String plcPrefix = "";
     private static String plcSshHost = "";
     private static String plcSshLogin = "";
+    private static String plcSshVserver = "";
     private static String plcSshPort = "";
     private static String plcSshKeyfile = "";
     private static String plcSshKeypass = "";
@@ -102,6 +103,7 @@ public class AggregateState
         plcPrefix = aggregateProps.getProperty("aggregate.plc.base", "maxpl");
         plcSshHost = aggregateProps.getProperty("aggregate.plc.ssh.host", "max-myplc.dragon.maxgigapop.net");
         plcSshLogin = aggregateProps.getProperty("aggregate.plc.ssh.login", "root");
+        plcSshVserver = aggregateProps.getProperty("aggregate.plc.ssh.vserver", null);
         plcSshPort = aggregateProps.getProperty("aggregate.plc.ssh.port", "22");
         plcSshKeyfile = aggregateProps.getProperty("aggregate.plc.ssh.keyfile", idcRepo + "/plc-ssh.pkey");
         plcSshKeypass = aggregateProps.getProperty("aggregate.plc.ssh.keypass", idcRepo + "");
@@ -269,6 +271,10 @@ public class AggregateState
 
     public static String getPlcSshLogin() {
         return plcSshLogin;
+    }
+
+    public static String getPlcSshVserver() {
+        return plcSshVserver;
     }
 
     public static String getPlcSshPort() {

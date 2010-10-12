@@ -125,10 +125,12 @@ public class AggregateRspec implements java.io.Serializable {
                 final String JAXP_SHCEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
                 final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
                 final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
+		final String JAXP_SCHEMA_NONAME_LOCATION = "http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation";
                 docFactory.setNamespaceAware(true);
                 docFactory.setValidating(true);
                 docFactory.setAttribute(JAXP_SHCEMA_LANGUAGE, W3C_XML_SCHEMA);
                 docFactory.setAttribute(JAXP_SCHEMA_SOURCE, schemas);
+                docFactory.setAttribute(JAXP_SCHEMA_NONAME_LOCATION, ctrlpSchema);
             }
 
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();

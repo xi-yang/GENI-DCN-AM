@@ -17,6 +17,7 @@ import java.util.HashMap;
 public class AggregatePLC_SSHClient extends AggregateCLIClient {
     private String plcHost;
     private String plcLogin;
+    private String plcVserver;
     private String sshPort;
     private String sshKeyfile;
     private String sshKeypass;
@@ -26,10 +27,11 @@ public class AggregatePLC_SSHClient extends AggregateCLIClient {
         super("[^#]*#\\s");
     }
 
-    public AggregatePLC_SSHClient(String h, String l, String p, String kf, String kp, String ep) {
+    public AggregatePLC_SSHClient(String h, String l, String v, String p, String kf, String kp, String ep) {
         super("[^#]*#\\s");
         plcHost = h;
         plcLogin = l;
+	plcVserver = v;
         sshPort = p;
         sshKeyfile = kf;
         sshKeypass = kp;
@@ -39,7 +41,7 @@ public class AggregatePLC_SSHClient extends AggregateCLIClient {
 
     static public AggregatePLC_SSHClient getPLCClient() {
         return (new AggregatePLC_SSHClient(AggregateState.getPlcSshHost(), AggregateState.getPlcSshLogin(),
-                AggregateState.getPlcSshPort(), AggregateState.getPlcSshKeyfile(),
+                AggregateState.getPlcSshVserver(), AggregateState.getPlcSshPort(), AggregateState.getPlcSshKeyfile(),
                 AggregateState.getPlcSshKeypass(), AggregateState.getPlcSshExecPrefix()));
     }
 
@@ -63,7 +65,10 @@ public class AggregatePLC_SSHClient extends AggregateCLIClient {
             readUntil(promptPattern);
             log.debug("PLCSSH login dump#3 " + buffer);
         }
-
+	if (plcVserver != null && !plcVserver.isEmpty()) {
+            sendCommand("vserver " + plcVserver + " enter");
+            readUntil(promptPattern);
+	}
         return true;
     }
 
