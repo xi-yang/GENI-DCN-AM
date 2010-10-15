@@ -36,6 +36,7 @@ public class AggregateRspec implements java.io.Serializable {
     private long endTime = 0;
     private List<String> users = null;
     private List<AggregateResource> resources = null;
+    private boolean addPlcSlice = false;
     private String status = "";
     private String xml = null;
 
@@ -103,6 +104,14 @@ public class AggregateRspec implements java.io.Serializable {
 
     public List<AggregateResource> getResources() {
         return resources;
+    }
+
+    public boolean isAddPlcSlice() {
+        return addPlcSlice;
+    }
+
+    public void setAddPlcSlice(boolean addPlcSlice) {
+        this.addPlcSlice = addPlcSlice;
     }
 
     public String getStatus() {

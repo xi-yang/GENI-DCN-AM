@@ -164,13 +164,14 @@ public class AggregateSlices {
         return null;
     }
 
-    public synchronized AggregateSlice createSlice(String sliceName, String url, String description, String user, String[] nodes) {
+    public synchronized AggregateSlice createSlice(String sliceName, String url,
+            String description, String user, String[] nodes, boolean isAddPlcSlice) {
         String[] users = {user};
         String userId = AggregateState.getAggregateUsers().getUserIds(users);
         String nodeIds = AggregateState.getAggregateNodes().getNodeIds(nodes);
         //create slice wit PLC
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
-        int ret = plcClient.createSlice(sliceName, url, description, userId, nodeIds);
+        int ret = plcClient.createSlice(sliceName, url, description, userId, nodeIds, isAddPlcSlice);
         AggregateSlice slice = null;
 
         if (ret == 1) { //slice successfully craeted with PLC

@@ -38,24 +38,39 @@ public class CreateSliceVlanClient extends ExampleClient {
         String dstInterface = "eth1";
         String dstIP = "10.1.1.2/30";
         String descr = "";
-        try {
-            // Prompt for input parameters
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            sliceName = Args.getArg(br, "Slice ID/Name", sliceName);
-            vlan =  Args.getArg(br, "Vlan ID (2-4094, any)", vlan);
-            String bandwidth =  Args.getArg(br, "Bandwidth (Mbps)", "100.0");
+        if (args.length == 12) {
+            //args[0] for repo; args[1] for service_url;
+            sliceName = args[2];
+            vlan = args[3];
+            String bandwidth = args[4];
             bw = Float.valueOf(bandwidth);
-            srcNode =  Args.getArg(br, "Source Node", srcNode);
-            srcInterface =  Args.getArg(br, "Source Interface", srcInterface);
-            srcIP =  Args.getArg(br, "Source IP/Mask", srcIP);
-            dstNode =  Args.getArg(br, "Destination Node", dstNode);
-            dstInterface =  Args.getArg(br, "Destination Interface", dstInterface);
-            dstIP =  Args.getArg(br, "Destination IP/Mask", dstIP);
-            descr = Args.getArg(br, "Description", descr);
-            br.close();
-        } catch (IOException ioe) {
-            System.out.println("IO error reading input");
-            System.exit(1);
+            srcNode = args[5];
+            srcInterface = args[6];
+            srcIP = args[7];
+            dstNode = args[8];
+            dstInterface = args[9];
+            dstIP = args[10];
+            descr = args[11];
+        } else {
+            try {
+                // Prompt for input parameters
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                sliceName = Args.getArg(br, "Slice ID/Name", sliceName);
+                vlan =  Args.getArg(br, "Vlan ID (2-4094, any)", vlan);
+                String bandwidth =  Args.getArg(br, "Bandwidth (Mbps)", "100.0");
+                bw = Float.valueOf(bandwidth);
+                srcNode =  Args.getArg(br, "Source Node", srcNode);
+                srcInterface =  Args.getArg(br, "Source Interface", srcInterface);
+                srcIP =  Args.getArg(br, "Source IP/Mask", srcIP);
+                dstNode =  Args.getArg(br, "Destination Node", dstNode);
+                dstInterface =  Args.getArg(br, "Destination Interface", dstInterface);
+                dstIP =  Args.getArg(br, "Destination IP/Mask", dstIP);
+                descr = Args.getArg(br, "Description", descr);
+                br.close();
+            } catch (IOException ioe) {
+                System.out.println("IO error reading input");
+                System.exit(1);
+            }
         }
 
         // make the call to the server

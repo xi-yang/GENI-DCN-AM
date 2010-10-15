@@ -28,11 +28,11 @@ public class ExampleClient {
             repo = args[0];
             if (args.length > 1) {
                 url = args[1];
+            } else {
+                // Prompt for input parameters
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                url = Args.getArg(br, "Service URL", url);
             }
-            // Prompt for input parameters
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            url = Args.getArg(br, "Requested service URL", url);
-            System.out.println("Service URL is: " + url);
         } catch (IOException ioe) {
             System.out.println("IO error reading input");
             System.exit(1);

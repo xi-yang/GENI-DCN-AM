@@ -26,13 +26,14 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         + "authorized = api_server.AuthCheck(auth);"
         + "print authorized;";
 
-    private String createSliceCmd = "slice_data = {};"
+    private String addSliceCmd = "slice_data = {};"
         + "slice_data['name'] = '<_name_>';"
         + "slice_data['url'] = '<_url_>';"
         + "slice_data['description'] = '<_descr_>';"
         + "slice_data['instantiation'] = 'plc-instantiated';"
-        + "slice_id = api_server.AddSlice(auth, slice_data);"
-        + "ret1 = api_server.AddPersonToSlice(auth, <_user_>, slice_id);"
+        + "slice_id = api_server.AddSlice(auth, slice_data);";
+    private String fillSliceCmd =
+        "ret1 = api_server.AddPersonToSlice(auth, <_user_>, slice_id);"
         + "nodes = <_node_list_>;"
         + "ret2 = api_server.AddSliceToNodes(auth, '<_name_>', nodes);"
         + "print ret1, ret2;"; //success pattern: "1 1"
@@ -129,17 +130,22 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
     }
 
     /*commands for PLC slice operations*/
-    public int createSlice(String sliceName, String url, String descr, String user, String nodes) {
+    public int createSlice(String sliceName, String url, String descr, String user, String nodes, boolean isAddPlcSlice) {
         if (!alive()) {
             if (!login())
                 return -1;
         }
 
+        String createSliceCmd = "";
+        if (isAddPlcSlice) {
+            createSliceCmd = addSliceCmd;
+        }
+        createSliceCmd += fillSliceCmd;
         createSliceCmd = createSliceCmd.replaceAll("<_name_>", sliceName);
         createSliceCmd = createSliceCmd.replaceFirst("<_url_>", url);
         createSliceCmd = createSliceCmd.replaceFirst("<_descr_>", descr);
         createSliceCmd = createSliceCmd.replaceFirst("<_user_>", user);
-        createSliceCmd = createSliceCmd.replaceAll("<_node_list_>", "["+nodes+"]");
+        createSliceCmd = createSliceCmd.replaceAll("<_node_list_>", "[" + nodes + "]");
         this.sendCommand(createSliceCmd);
         log.debug("createSlice dump #1: " + createSliceCmd);
         int ret = this.readPattern("^1\\s1", ".*Fault|.*Error", promptPattern);

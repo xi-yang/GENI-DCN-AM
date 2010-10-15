@@ -29,14 +29,19 @@ public class QuerySliceNetworkClient extends ExampleClient {
         super.init(args);
 
         String rspecName = "";
-        try {
-            // Prompt for input parameters
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            rspecName = Args.getArg(br, "Rspec ID/Name", rspecName);
-            br.close();
-        } catch (IOException ioe) {
-            System.out.println("IO error reading input");
-            System.exit(1);
+        if (args.length == 3) {
+            //args[0] for repo; args[1] for service_url;
+            rspecName = args[2];
+        } else {
+            try {
+                // Prompt for input parameters
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                rspecName = Args.getArg(br, "Rspec ID/Name", rspecName);
+                br.close();
+            } catch (IOException ioe) {
+                System.out.println("IO error reading input");
+                System.exit(1);
+            }
         }
         // make the call to the server
         QuerySliceNetworkResponseType response = this.getClient().querySliceNetwork(rspecName);

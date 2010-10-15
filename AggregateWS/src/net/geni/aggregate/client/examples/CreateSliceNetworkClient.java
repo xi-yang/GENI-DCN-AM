@@ -29,15 +29,25 @@ public class CreateSliceNetworkClient extends ExampleClient {
         super.init(args);
 
         String rspecFile = "";
-        try {
-            // Prompt for input parameters
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            rspecFile = Args.getArg(br, "Rspec XML file path", rspecFile);
-            br.close();
-        } catch (IOException ioe) {
-            System.out.println("IO error reading input");
-            System.exit(1);
+        boolean addingPlcSlice = false;
+        if (args.length == 3) {
+            //args[0] for repo; args[1] for service_url;
+            rspecFile = args[2];
+        } else {
+            try {
+                // Prompt for input parameters
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                rspecFile = Args.getArg(br, "Rspec XML file path", rspecFile);
+                String yn = Args.getArg(br, "Adding PLC slice (y/n)?", "y");
+                if (yn.equalsIgnoreCase("y"))
+                    addingPlcSlice = true;
+                br.close();
+            } catch (IOException ioe) {
+                System.out.println("IO error reading input");
+                System.exit(1);
+            }
         }
+
         File file = new File(rspecFile);
         if (!file.exists()) {
             System.out.println("Cannot open Rspec file: " + rspecFile);
@@ -54,7 +64,7 @@ public class CreateSliceNetworkClient extends ExampleClient {
         String rspecXml[] = {(new String(buffer))};
 
         // make the call to the server
-        CreateSliceNetworkResponseType response = this.getClient().createSliceNetwork(rspecXml);
+        CreateSliceNetworkResponseType response = this.getClient().createSliceNetwork(rspecXml, addingPlcSlice);
         this.outputResponse(response);
         super.cleanup();
     }

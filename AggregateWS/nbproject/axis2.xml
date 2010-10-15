@@ -2,7 +2,7 @@
 <axis2 xmlns="http://www.netbeans.org/ns/axis2/1">
     <service name="AggregateGENI">
         <service-class>aggregate.geni.net.AggregateWS</service-class>
-        <wsdl-url>file:/usr/local/aggregate/AggregateAttic/wsdl/aggregate.wsdl</wsdl-url>
+        <wsdl-url>file:/usr/local/geni-aggregate/AggregateAttic/wsdl/aggregate.wsdl</wsdl-url>
         <java-generator databindingName="adb" serviceName="AggregateGENI" portName="AggregateGENIPort" packageName="net.geni.aggregate.services.api" sei="true" options="-s"/>
     </service>
 </axis2>

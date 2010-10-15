@@ -30,15 +30,21 @@ public class QuerySliceVlanClient extends ExampleClient {
 
         String sliceName = "";
         String vlan = "";
-        try {
-            // Prompt for input parameters
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            sliceName = Args.getArg(br, "Slice ID/Name", sliceName);
-            vlan = Args.getArg(br, "VLAN ID (2-4094)", vlan);
-            br.close();
-        } catch (IOException ioe) {
-            System.out.println("IO error reading input");
-            System.exit(1);
+        if (args.length == 4) {
+            //args[0] for repo; args[1] for service_url;
+            sliceName = args[2];
+            vlan = args[3];
+        } else {
+            try {
+                // Prompt for input parameters
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                sliceName = Args.getArg(br, "Slice ID/Name", sliceName);
+                vlan = Args.getArg(br, "VLAN ID (2-4094)", vlan);
+                br.close();
+            } catch (IOException ioe) {
+                System.out.println("IO error reading input");
+                System.exit(1);
+            }
         }
         // make the call to the server
         QuerySliceVlanResponseType response = this.getClient().querySliceVlan(sliceName, vlan);

@@ -189,7 +189,8 @@ public class AggregateRspecRunner extends Thread {
         String url = "http://" + rspec.getAggregateName();
         String description = "Rspec:" + rspec.getRspecName() + " on aggregate:" + rspec.getAggregateName();
         AggregateSlice aggrSlice = AggregateState.getAggregateSlices().createSlice(sliceName, url, description,
-                ((rspec.getUsers()==null || rspec.getUsers().isEmpty())?AggregateState.getPlcPI():rspec.getUsers().get(0)), nodes.split(":"));
+                ((rspec.getUsers()==null || rspec.getUsers().isEmpty())?AggregateState.getPlcPI():rspec.getUsers().get(0)), 
+                nodes.split(":"), rspec.isAddPlcSlice());
         if (aggrSlice != null) {
             aggrSlice.setStatus("CREATED");
             aggrSlice.setType("computeSlice");

@@ -33979,6 +33979,37 @@
                                }
                             
 
+                        /**
+                        * field for AddPlcSlice
+                        */
+
+                        
+                                    protected boolean localAddPlcSlice =
+                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBoolean("true");
+                                
+
+                           /**
+                           * Auto generated getter method
+                           * @return boolean
+                           */
+                           public  boolean getAddPlcSlice(){
+                               return localAddPlcSlice;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param AddPlcSlice
+                               */
+                               public void setAddPlcSlice(boolean param){
+                            
+                                            this.localAddPlcSlice=param;
+                                    
+
+                               }
+                            
+
      /**
      * isReaderMTOMAware
      * @return true if the reader supports MTOM
@@ -34082,6 +34113,35 @@
                                            localRspecNetwork.serialize(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","rspecNetwork"),
                                                factory,xmlWriter);
                                         
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
+                                            xmlWriter.writeStartElement(prefix,"addPlcSlice", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"addPlcSlice");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("addPlcSlice");
+                                    }
+                                
+                                               if (false) {
+                                           
+                                                         throw new org.apache.axis2.databinding.ADBException("addPlcSlice cannot be null!!");
+                                                      
+                                               } else {
+                                                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localAddPlcSlice));
+                                               }
+                                    
+                                   xmlWriter.writeEndElement();
+                             
                     xmlWriter.writeEndElement();
                
 
@@ -34253,6 +34313,12 @@
                                     }
                                     elementList.add(localRspecNetwork);
                                 
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "addPlcSlice"));
+                                 
+                                elementList.add(
+                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localAddPlcSlice));
+                            
 
                 return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
             
@@ -34334,6 +34400,25 @@
                                     if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","rspecNetwork").equals(reader.getName())){
                                 
                                                 object.setRspecNetwork(RSpecTopologyType.Factory.parse(reader));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                else{
+                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                }
+                            
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","addPlcSlice").equals(reader.getName())){
+                                
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setAddPlcSlice(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBoolean(content));
                                               
                                         reader.next();
                                     

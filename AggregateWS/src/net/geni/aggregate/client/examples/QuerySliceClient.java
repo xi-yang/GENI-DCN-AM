@@ -29,14 +29,19 @@ public class QuerySliceClient extends ExampleClient {
         super.init(args);
 
         String sliceName = "";
-        try {
-            // Prompt for input parameters
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            sliceName = Args.getArg(br, "Slice ID/Name", sliceName);
-            br.close();
-        } catch (IOException ioe) {
-            System.out.println("IO error reading input");
-            System.exit(1);
+        if (args.length == 3) {
+            //args[0] for repo; args[1] for service_url;
+            sliceName = args[2];
+        } else {
+            try {
+                // Prompt for input parameters
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                sliceName = Args.getArg(br, "Slice ID/Name", sliceName);
+                br.close();
+            } catch (IOException ioe) {
+                System.out.println("IO error reading input");
+                System.exit(1);
+            }
         }
         // make the call to the server
         String[] sliceNames = {sliceName};

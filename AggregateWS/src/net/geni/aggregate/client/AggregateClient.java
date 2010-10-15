@@ -221,13 +221,14 @@ public class AggregateClient {
         return querySliceVlanResponse.getQuerySliceVlanResponse();
     }
 
-    public CreateSliceNetworkResponseType createSliceNetwork(String rsepcXml[])
+    public CreateSliceNetworkResponseType createSliceNetwork(String rsepcXml[], boolean addPlcSlice)
            throws AggregateFaultMessage, Exception {
         CreateSliceNetwork createSliceNet = new CreateSliceNetwork();
         CreateSliceNetworkType createSliceNetType = new CreateSliceNetworkType();
         RSpecTopologyType rspecTopoType = new RSpecTopologyType();
         rspecTopoType.setStatement(rsepcXml);
         createSliceNetType.setRspecNetwork(rspecTopoType);
+        createSliceNetType.setAddPlcSlice(addPlcSlice);
         createSliceNet.setCreateSliceNetwork(createSliceNetType);
         CreateSliceNetworkResponse createSliceNetResponse = this.stub.CreateSliceNetwork(createSliceNet);
         return createSliceNetResponse.getCreateSliceNetworkResponse();

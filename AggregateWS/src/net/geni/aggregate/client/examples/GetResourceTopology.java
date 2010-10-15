@@ -30,15 +30,21 @@ public class GetResourceTopology extends ExampleClient {
 
         String scope = "";
         String name = "";
-        try {
-            // Prompt for input parameters
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            scope = Args.getArg(br, "Resource Topology Scope", "all");
-            name = Args.getArg(br, "RSpec Name (Enter for 'substrate')", "");
-            br.close();
-        } catch (IOException ioe) {
-            System.out.println("IO error reading input");
-            System.exit(1);
+        if (args.length == 4) {
+            //args[0] for repo; args[1] for service_url;
+            scope = args[2];
+            name = args[3];
+        } else {
+            try {
+                // Prompt for input parameters
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                scope = Args.getArg(br, "Resource Topology Scope", "all");
+                name = Args.getArg(br, "RSpec Name (Enter for 'substrate')", "");
+                br.close();
+            } catch (IOException ioe) {
+                System.out.println("IO error reading input");
+                System.exit(1);
+            }
         }
         // make the call to the server
         String rspecNames[] = {name};

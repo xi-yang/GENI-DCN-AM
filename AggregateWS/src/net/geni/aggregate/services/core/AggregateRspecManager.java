@@ -143,7 +143,7 @@ public class AggregateRspecManager extends Thread{
         }
     }
 
-    public synchronized String createRspec(String rspecXML, String authUser) throws AggregateException {
+    public synchronized String createRspec(String rspecXML, String authUser, boolean addPlcSlice) throws AggregateException {
         AggregateRspec aggrRspec = new AggregateRspec();
 
         //set the 1st user to the WSS policy authorized user
@@ -153,6 +153,7 @@ public class AggregateRspecManager extends Thread{
             aggrRspec.setUsers(users);
         }
         aggrRspec.parseRspec(rspecXML);
+        aggrRspec.setAddPlcSlice(addPlcSlice);
 
         if (aggrRspec.getRspecName().isEmpty() || aggrRspec.getStartTime() == 0
             || aggrRspec.getStartTime() == 0 || aggrRspec.getResources().size() == 0)

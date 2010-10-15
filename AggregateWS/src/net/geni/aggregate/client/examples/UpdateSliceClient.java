@@ -37,19 +37,29 @@ public class UpdateSliceClient extends ExampleClient {
         String nodes = "";
         String expires = "";
         String descr = "";
-        try {
-            // Prompt for input parameters
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            sliceName = Args.getArg(br, "Slice ID/Name", sliceName);
-            url = Args.getArg(br, "New URL", url);
-            users = Args.getArg(br, "New Users", users);
-            nodes = Args.getArg(br, "New Node URNs", nodes);
-            expires = Args.getArg(br, "New Expiration (yyyy-mm-dd hh:mm:ss)", expires);
-            descr = Args.getArg(br, "New Description", descr);
-            br.close();
-        } catch (IOException ioe) {
-            System.out.println("IO error reading input");
-            System.exit(1);
+        if (args.length == 8) {
+            //args[0] for repo; args[1] for service_url;
+            sliceName = args[2];
+            users = args[3];
+            url = args[4];
+            nodes = args[5];
+            expires = args[6];
+            descr = args[7];
+        } else {
+            try {
+                // Prompt for input parameters
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                sliceName = Args.getArg(br, "Slice ID/Name", sliceName);
+                url = Args.getArg(br, "New URL", url);
+                users = Args.getArg(br, "New Users", users);
+                nodes = Args.getArg(br, "New Node URNs", nodes);
+                expires = Args.getArg(br, "New Expiration (yyyy-mm-dd hh:mm:ss)", expires);
+                descr = Args.getArg(br, "New Description", descr);
+                br.close();
+            } catch (IOException ioe) {
+                System.out.println("IO error reading input");
+                System.exit(1);
+            }
         }
         String[] userArray = users.split("[,\\s]");
         String[] nodeArray = nodes.split("[,\\s]");

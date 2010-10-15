@@ -30,14 +30,19 @@ public class ListNodesClient extends ExampleClient {
         super.init(args);
 
         String capUrn = "";
-        try {
-            // Prompt for input parameters
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            capUrn = Args.getArg(br, "Type by Capability (URN)", capUrn);
-            br.close();
-        } catch (IOException ioe) {
-            System.out.println("IO error reading input");
-            System.exit(1);
+        if (args.length == 3) {
+            //args[0] for repo; args[1] for service_url;
+            capUrn = args[2];
+        } else {
+            try {
+                // Prompt for input parameters
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                capUrn = Args.getArg(br, "Type by Capability (URN)", capUrn);
+                br.close();
+            } catch (IOException ioe) {
+                System.out.println("IO error reading input");
+                System.exit(1);
+            }
         }
         // make the call to the server
         String[] capUrns = {capUrn};

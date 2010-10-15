@@ -61,7 +61,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         }
 
         AggregateSlices slices = AggregateState.getAggregateSlices();
-        AggregateSlice slice = slices.createSlice(sliceName, url, description, user, nodes);
+        AggregateSlice slice = slices.createSlice(sliceName, url, description, user, nodes, true);
         String status = (slice == null?"FAILED":"SUCCESSFUL");
 
         //form response
@@ -551,6 +551,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         for (String s: rspecTopo.getStatement()) {
             rspecXml += s;
         }
+        boolean addPlcSlice = createSliceNework.getAddPlcSlice();
 
         //get authorized/registered user. AggregateFaultMessage thrown if failed
         AggregateUser authUser = this.getAuthorizedUser();
@@ -559,7 +560,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String message = "";
         try {
             //TODO pass authUser into createRspec!
-            status = AggregateState.getRspecManager().createRspec(rspecXml, authUser.getEmail());
+            status = AggregateState.getRspecManager().createRspec(rspecXml, authUser.getEmail(), addPlcSlice);
             message = "";
         } catch (AggregateException e) {
             status = "FAILED";
