@@ -406,6 +406,7 @@
             <xs:complexType name="CreateSliceNetworkType">
                 <xs:sequence>
                     <xs:element name="rspecNetwork" type="tns:RSpecTopologyType"/>
+                    <xs:element name="addPlcSlice" type="xs:boolean" default="true"/>
                 </xs:sequence>
             </xs:complexType>
 
