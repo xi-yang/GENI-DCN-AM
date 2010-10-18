@@ -95,6 +95,7 @@ CREATE TABLE `slices` (
   `creatorId` int(11) NOT NULL,
   `createdTime` bigint(20) default NULL,
   `expiredTime` bigint(20) default NULL,
+  `addedSlice` int(1) default NULL,
   `status` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`, `sliceId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
