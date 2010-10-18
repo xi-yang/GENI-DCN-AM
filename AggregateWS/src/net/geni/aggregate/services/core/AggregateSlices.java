@@ -187,6 +187,7 @@ public class AggregateSlices {
                 long expires = Integer.parseInt((String)hmV.get(0).get("expires"));
                 slice = new AggregateSlice(sliceName, slice_id, url,
                         description, userId, nodeIds, creator_person_id, created, expires);
+                slice.setAddedSlice(isAddPlcSlice);
                 this.add(slice);
             }
         }
@@ -197,12 +198,18 @@ public class AggregateSlices {
     public synchronized int deleteSlice(String sliceName) {
         //create slice wit PLC
         AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
-        int ret = plcClient.deleteSlice(sliceName);
+        AggregateSlice slice = this.getByName(sliceName);
+        int ret = 0;
+        if (slice.getAddedSlice()) {
+            ret = plcClient.deleteSlice(sliceName);
+        } else {
+            ret = plcClient.cleanupSlice(sliceName, slice.getUsers(), slice.getNodes());
+        }
         this.delete(sliceName);
         plcClient.logoff();
         return ret;
     }
-    
+
     public synchronized int updateSlice(String sliceName, String url, String descr, int expires, String[] users, String[] nodes) {
         int ret = -1;
         AggregateSlice slice = this.getByName(sliceName);

@@ -38,6 +38,11 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         + "ret2 = api_server.AddSliceToNodes(auth, '<_name_>', nodes);"
         + "print ret1, ret2;"; //success pattern: "1 1"
 
+    private String cleanupSliceCmd =
+        "ret1 = api_server.DeleteSliceFromNodes (auth, '<_name_>', <_node_list_>);"
+        + "ret2 = api_server.DeletePersonFromSlice(auth, <_user_>, '<_name_>');"
+        + "print ret1, ret2;"; //success pattern: "1 1"
+
     private String updateSliceCmd = "slice_data = {};"
         + "slice_data['name'] = '<_name_>';"
         + "slice_data['url'] = '<_url_>';"
@@ -167,6 +172,24 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         int ret = this.readPattern("^1", ".*Fault|.*Error", promptPattern);
         if (ret != 1) {
             log.error("plcapi server failed to delete the slice '" + sliceName +"'");
+            logoff();
+        }
+        return ret;
+    }
+
+    public int cleanupSlice(String sliceName, String user, String nodes) {
+        if (!alive()) {
+            if (!login())
+                return -1;
+        }
+        cleanupSliceCmd = cleanupSliceCmd.replaceAll("<_name_>", sliceName);
+        cleanupSliceCmd = cleanupSliceCmd.replaceAll("<_user_>", user);
+        cleanupSliceCmd = cleanupSliceCmd.replaceAll("<_node_list_>", "[" + nodes + "]");
+        this.sendCommand(cleanupSliceCmd);
+        int ret = this.readPattern("^1\\s1", ".*Fault|.*Error", promptPattern);
+        log.debug("cleanupSlice dump: " + this.buffer);
+        if (ret != 1) {
+            log.error("plcapi server failed to cleanup Slice '" + sliceName +"' on Nodes: " + nodes + "for User: " + user);
             logoff();
         }
         return ret;

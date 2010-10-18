@@ -19,6 +19,7 @@ public class AggregateSlice extends AggregateResource {
     private int creatorId;
     private long createdTime;
     private long expiredTime;
+    private boolean addedSlice;
     private String status;
 
     public AggregateSlice() {
@@ -31,6 +32,7 @@ public class AggregateSlice extends AggregateResource {
         creatorId = 0;
         createdTime = 0;
         expiredTime = 0;
+        addedSlice = true;
         status = "";
         type = "computeSlice";
     }
@@ -45,6 +47,7 @@ public class AggregateSlice extends AggregateResource {
         creatorId = cI;
         createdTime = cT;
         expiredTime = eT;
+        addedSlice = true;
         status = "";
         type = "computeSlice";
     }
@@ -119,6 +122,14 @@ public class AggregateSlice extends AggregateResource {
 
     public void setExpiredTime(long expiredTime) {
         this.expiredTime = expiredTime;
+    }
+
+    public boolean getAddedSlice() {
+        return addedSlice;
+    }
+
+    public void setAddedSlice(boolean addedSlice) {
+        this.addedSlice = addedSlice;
     }
 
     public String getStatus() {

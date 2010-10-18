@@ -39,6 +39,9 @@
       <property column="creatorId" name="creatorId"/>
       <property column="createdTime" name="createdTime"/>
       <property column="expiredTime" name="expiredTime"/>
+      <property name="addedSlice" not-null="true" >
+        <column sql-type="BOOLEAN" not-null="true" name="addedSlice" />
+      </property>
       <property column="status" name="status"/>
     </joined-subclass>
     <joined-subclass name="net.geni.aggregate.services.core.AggregateP2PVlan" table="p2pvlans">
