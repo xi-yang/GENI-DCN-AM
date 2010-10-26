@@ -13,7 +13,7 @@ import net.geni.aggregate.services.api.NodeDescriptorTypeSequence_type0;
  * @author jflidr, Xi Yang
  */
 public class AggregateNode extends AggregateResource {
-    private int nodeId = 0;
+    private int nodeId = 0; //plNodeId
     private String urn = "";
     private String address = "";
     private String description = "";

@@ -365,7 +365,7 @@ public class AggregateRspec implements java.io.Serializable {
             }
         }
 
-        //AggregateNetworkInterface(s) will be future processed to create P2PVlans
+        //AggregateNetworkInterface(s) will be further processed to create P2PVlans
         AggregateNetworkInterface aggrNetIf = new AggregateNetworkInterface(netIfId);
         aggrNetIf.setDeviceType(deviceType);
         aggrNetIf.setDeviceName(deviceName);
@@ -736,7 +736,7 @@ public class AggregateRspec implements java.io.Serializable {
                 for (int i = 0; i < resources.size(); i++) {
                     if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
                         AggregateNetworkInterface ai = (AggregateNetworkInterface)resources.get(i);
-                        if (ai.getPnid() == an.getId()) {
+                        if (AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
                             xml = xml + "<networkInterface id=\""+ai.getUrn()+"\">";
                             xml = xml + "<deviceType>"+ai.getDeviceType()+"</deviceType>";
                             xml = xml + "<deviceName>"+ai.getDeviceName()+"</deviceName>";
