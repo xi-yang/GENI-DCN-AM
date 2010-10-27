@@ -241,12 +241,15 @@ public class AggregateRspecRunner extends Thread {
                             String vtag = netIf1.getVlanTag();
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());
                             HashMap hmRet = new HashMap<String,String>();
+                            long startTime = rspec.getStartTime();
+                            if (startTime < System.currentTimeMillis()/1000)
+                                    startTime = System.currentTimeMillis()/1000;
+                            long endTime = rspec.getEndTime();
                             AggregateP2PVlan p2pvlan = AggregateState.getAggregateP2PVlans().createVlan(
                                     AggregateState.getPlcPrefix()+"_"+rspec.getRspecName(), //sliceName
                                     source, netIf1.getDeviceName(), netIf1.getIpAddress(),
                                     destination, netIf2.getDeviceName(), netIf2.getIpAddress(),
-                                    vtag, bandwidth, description,
-                                    rspec.getStartTime(), rspec.getEndTime(), hmRet);
+                                    vtag, bandwidth, description, startTime, endTime, hmRet);
                             log.debug("start - create vlan: "+description+" return status: "+hmRet);
                             if (p2pvlan == null) {
                                 throw (new AggregateException("Failed to create P2PVlan:"+description));
