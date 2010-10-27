@@ -242,9 +242,11 @@ public class AggregateRspecRunner extends Thread {
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());
                             HashMap hmRet = new HashMap<String,String>();
                             long startTime = rspec.getStartTime();
-                            if (startTime < System.currentTimeMillis()/1000)
-                                    startTime = System.currentTimeMillis()/1000;
                             long endTime = rspec.getEndTime();
+                            if (startTime < System.currentTimeMillis()/1000) {
+                                    endTime += (System.currentTimeMillis()/1000 - startTime);
+                                    startTime = System.currentTimeMillis()/1000;
+			    }
                             AggregateP2PVlan p2pvlan = AggregateState.getAggregateP2PVlans().createVlan(
                                     AggregateState.getPlcPrefix()+"_"+rspec.getRspecName(), //sliceName
                                     source, netIf1.getDeviceName(), netIf1.getIpAddress(),
