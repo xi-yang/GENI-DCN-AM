@@ -190,8 +190,9 @@ public class AggregateP2PVlans {
                 if (slice.getExpiredTime() >= endTime) {
                     endTime = slice.getExpiredTime();
                 } else {//the slice would expire bfore VLAN
-                    status = "FAILED";
-                    message = "Slice=" + sliceName + " has already expired. No VLAN created.";
+                    //status = "FAILED";
+                    //message = "Slice=" + sliceName + " would be expired before the VLAN ends. No VLAN created.";
+                    log.warn("Slice=" + sliceName + " would be expired before the VLAN ends. but VLAN created anyway.");
                 }
             } else {
                 status = "FAILED";
