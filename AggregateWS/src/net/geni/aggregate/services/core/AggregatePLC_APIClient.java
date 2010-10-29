@@ -33,7 +33,8 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         + "slice_data['instantiation'] = 'plc-instantiated';"
         + "slice_id = api_server.AddSlice(auth, slice_data);";
     private String fillSliceCmd =
-        "ret1 = api_server.AddPersonToSlice(auth, <_user_>, '<_name_>');"
+        "api_server.AddSliceTag(auth, '<_name_>', 'net_share', '1');"
+        + "ret1 = api_server.AddPersonToSlice(auth, <_user_>, '<_name_>');"
         + "nodes = <_node_list_>;"
         + "ret2 = api_server.AddSliceToNodes(auth, '<_name_>', nodes);"
         + "print ret1, ret2;"; //success pattern: "1 1"
