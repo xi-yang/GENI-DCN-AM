@@ -33,15 +33,16 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         + "slice_data['instantiation'] = 'plc-instantiated';"
         + "slice_id = api_server.AddSlice(auth, slice_data);";
     private String fillSliceCmd =
-        "api_server.AddSliceTag(auth, '<_name_>', 'net_share', '1');"
-        + "ret1 = api_server.AddPersonToSlice(auth, <_user_>, '<_name_>');"
+        //"api_server.AddSliceTag(auth, '<_name_>', 'net_share', '1');"
+        "ret1 = api_server.AddPersonToSlice(auth, <_user_>, '<_name_>');"
         + "nodes = <_node_list_>;"
         + "ret2 = api_server.AddSliceToNodes(auth, '<_name_>', nodes);"
         + "print ret1, ret2;"; //success pattern: "1 1"
 
     private String cleanupSliceCmd =
         "ret1 = api_server.DeleteSliceFromNodes (auth, '<_name_>', <_node_list_>);"
-        + "ret2 = api_server.DeletePersonFromSlice(auth, <_user_>, '<_name_>');"
+        //+ "ret2 = api_server.DeletePersonFromSlice(auth, <_user_>, '<_name_>');"
+        + "ret2 = 1;"
         + "print ret1, ret2;"; //success pattern: "1 1"
 
     private String updateSliceCmd = "slice_data = {};"
@@ -184,7 +185,7 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
                 return -1;
         }
         cleanupSliceCmd = cleanupSliceCmd.replaceAll("<_name_>", sliceName);
-        cleanupSliceCmd = cleanupSliceCmd.replaceAll("<_user_>", user);
+        //cleanupSliceCmd = cleanupSliceCmd.replaceAll("<_user_>", user);
         cleanupSliceCmd = cleanupSliceCmd.replaceAll("<_node_list_>", "[" + nodes + "]");
         this.sendCommand(cleanupSliceCmd);
         int ret = this.readPattern("^1\\s1", ".*Fault|.*Error", promptPattern);

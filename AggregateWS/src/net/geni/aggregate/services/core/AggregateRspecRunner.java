@@ -284,6 +284,7 @@ public class AggregateRspecRunner extends Thread {
             if (resources.get(i).getType().equalsIgnoreCase("p2pVlan")) {
                 AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(i);
                 hasP2PVlan = true;
+                log.debug("polling p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
                 p2pvlan.queryVlan();
                 log.debug("polled p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
                 if (p2pvlan.getStatus().equalsIgnoreCase("FAILED"))

@@ -156,8 +156,11 @@ public class AggregateIDCClient {
         /* Initialize client instance */
         client.setUp(true, idcURL, idcRepo);
         /* Send Request */
-        if (!aGri.equals(""))
+        if (aGri != null && !aGri.equals(""))
             gri.setGri(aGri);
+
+	log.debug("#### GRI= "+ gri.getGri());
+
         ResDetails response = client.queryReservation(this.gri);
         client.cleanUp();
         PathInfo pathInfo = response.getPathInfo();

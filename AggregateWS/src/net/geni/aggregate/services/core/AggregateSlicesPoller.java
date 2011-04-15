@@ -16,7 +16,7 @@ public class AggregateSlicesPoller extends Thread {
         while (goRun) {
             try {
                 this.sleep(pollInterval);
-                AggregateState.getAggregateSlices().pollSlices();
+                //AggregateState.getAggregateSlices().pollSlices();
             } catch (InterruptedException e) {
                 if (!goRun) {
                     break;
