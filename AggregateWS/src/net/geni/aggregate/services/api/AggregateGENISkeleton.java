@@ -46,8 +46,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throws AggregateFaultMessage {
         CreateSliceType createSlice = createSlice14.getCreateSlice();
         String sliceName = createSlice.getSliceID();
-        if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
-            sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceName.contains(AggregateState.getPlcPrefix())) {
+            sliceName = AggregateState.getPlcPrefix() + sliceName;
         }
         String url = createSlice.getUrl();
         String description = createSlice.getDescription();
@@ -84,8 +84,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throws AggregateFaultMessage {
         UpdateSliceType updateSlice = updateSlice0.getUpdateSlice();
         String sliceName = updateSlice.getSliceID();
-        if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
-            sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceName.contains(AggregateState.getPlcPrefix())) {
+            sliceName = AggregateState.getPlcPrefix() + sliceName;
         }
         String url = updateSlice.getUrl();
         String description = updateSlice.getDescription();
@@ -129,8 +129,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throws AggregateFaultMessage {
         DeleteSliceType deleteSlice = deleteSlice18.getDeleteSlice();
         String sliceName = deleteSlice.getSliceID();
-        if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
-            sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceName.contains(AggregateState.getPlcPrefix())) {
+            sliceName = AggregateState.getPlcPrefix() + sliceName;
         }
 
         //get authorized/registered user. AggregateFaultMessage thrown if failed
@@ -171,8 +171,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         QuerySliceType querySlice = querySlice6.getQuerySlice();
         String[] sliceNames = querySlice.getSliceID();
         for (int i = 0; i < sliceNames.length; i++) {
-            if (!sliceNames[i].contains(AggregateState.getPlcPrefix()+"_")) {
-                sliceNames[i] = AggregateState.getPlcPrefix() + "_" + sliceNames[i];
+            if (!AggregateState.getPlcPrefix().isEmpty() && !sliceNames[i].contains(AggregateState.getPlcPrefix())) {
+                sliceNames[i] = AggregateState.getPlcPrefix() + sliceNames[i];
             }
         }
 
@@ -212,8 +212,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throws AggregateFaultMessage {
         StartSliceType startSlice = startSlice12.getStartSlice();
         String sliceName = startSlice.getSliceID();
-        if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
-            sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceName.contains(AggregateState.getPlcPrefix())) {
+            sliceName = AggregateState.getPlcPrefix() + sliceName;
         }
 
         //get authorized/registered user. AggregateFaultMessage thrown if failed
@@ -252,8 +252,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             throws AggregateFaultMessage {
         StopSliceType stopSlice = stopSlice2.getStopSlice();
         String sliceName = stopSlice.getSliceID();
-        if (!sliceName.contains(AggregateState.getPlcPrefix()+"_")) {
-            sliceName = AggregateState.getPlcPrefix() + "_" + sliceName;
+        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceName.contains(AggregateState.getPlcPrefix())) {
+            sliceName = AggregateState.getPlcPrefix() + sliceName;
         }
 
         //get authorized/registered user. AggregateFaultMessage thrown if failed
@@ -424,8 +424,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         CreateSliceVlanType createSliceVlan = createSliceVlan30.getCreateSliceVlan();
         String sliceId = createSliceVlan.getSliceID();
-        if (!sliceId.contains(AggregateState.getPlcPrefix()+"_")) {
-            sliceId = AggregateState.getPlcPrefix() + "_" + sliceId;
+        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceId.contains(AggregateState.getPlcPrefix())) {
+            sliceId = AggregateState.getPlcPrefix() + sliceId;
         }
         VlanReservationDescriptorType vlanResvDescr = createSliceVlan.getVlanReservation();
         String source = vlanResvDescr.getSourceNode();
@@ -473,8 +473,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         QuerySliceVlanType deleteSliceVlan = querySliceVlan26.getQuerySliceVlan();
         String sliceId = deleteSliceVlan.getSliceID();
-        if (!sliceId.contains(AggregateState.getPlcPrefix()+"_")) {
-            sliceId = AggregateState.getPlcPrefix() + "_" + sliceId;
+        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceId.contains(AggregateState.getPlcPrefix())) {
+            sliceId = AggregateState.getPlcPrefix() + sliceId;
         }
         String vlan = deleteSliceVlan.getVlan();
 
@@ -512,8 +512,8 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         DeleteSliceVlanType deleteSliceVlan = deleteSliceVlan28.getDeleteSliceVlan();
         String sliceId = deleteSliceVlan.getSliceID();
-        if (!sliceId.contains(AggregateState.getPlcPrefix()+"_")) {
-            sliceId = AggregateState.getPlcPrefix() + "_" + sliceId;
+        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceId.contains(AggregateState.getPlcPrefix())) {
+            sliceId = AggregateState.getPlcPrefix() + sliceId;
         }
         String vlan = deleteSliceVlan.getVlan();
 

@@ -262,7 +262,10 @@ public class AggregateState
     }
 
     public static String getPlcPrefix() {
-        return plcPrefix;
+        if (plcPrefix.isEmpty())
+            return plcPrefix;
+        else 
+            return plcPrefix + '_';
     }
 
     public static String getPlcSshHost() {

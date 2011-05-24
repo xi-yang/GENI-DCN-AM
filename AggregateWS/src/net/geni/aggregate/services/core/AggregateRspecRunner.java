@@ -185,7 +185,7 @@ public class AggregateRspecRunner extends Thread {
             return;
         }
         //TODO: Regulate the slicename (limit-length, no dashes etc.)
-        String sliceName = AggregateState.getPlcPrefix()+"_"+rspec.getRspecName();
+        String sliceName = AggregateState.getPlcPrefix()+rspec.getRspecName();
         String url = "http://" + rspec.getAggregateName();
         String description = "Rspec:" + rspec.getRspecName() + " on aggregate:" + rspec.getAggregateName();
         AggregateSlice aggrSlice = AggregateState.getAggregateSlices().createSlice(sliceName, url, description,
@@ -248,7 +248,7 @@ public class AggregateRspecRunner extends Thread {
                                     startTime = System.currentTimeMillis()/1000;
 			    }
                             AggregateP2PVlan p2pvlan = AggregateState.getAggregateP2PVlans().createVlan(
-                                    AggregateState.getPlcPrefix()+"_"+rspec.getRspecName(), //sliceName
+                                    AggregateState.getPlcPrefix()+rspec.getRspecName(), //sliceName
                                     source, netIf1.getDeviceName(), netIf1.getIpAddress(),
                                     destination, netIf2.getDeviceName(), netIf2.getIpAddress(),
                                     vtag, bandwidth, description, startTime, endTime, hmRet);
@@ -378,7 +378,7 @@ public class AggregateRspecRunner extends Thread {
                     }
                     log.debug("start - creating stitching p2pvlan");
                     p2pvlan.setRspecId(rspec.getId());
-                    String sliceName = AggregateState.getPlcPrefix() + "_" + rspec.getRspecName();
+                    String sliceName = AggregateState.getPlcPrefix() + rspec.getRspecName();
                     p2pvlan.setSliceName(sliceName);
                     AggregateSlice slice = AggregateState.getAggregateSlices().getByName(sliceName);
                     long startTime = rspec.getStartTime();
