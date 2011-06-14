@@ -176,8 +176,9 @@
   <!-- type: 'p2pvlan' or 'stub'. A p2pvlan will need two networkInterfaceUrn and stub just one -->
   <xs:complexType name="stitchingResourceContent">
     <xs:sequence>
-      <xs:element maxOccurs="2" name="networkInterfaceUrn" type="xs:string"/>
-      <xs:element minOccurs="0" name="externalResourceId" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="2" name="networkInterfaceUrn" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="externalResourceId" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="networkInterface" type="MaxRspec:NetworkInterfaceContent" />
       <xs:element minOccurs="0" maxOccurs="unbounded" name="networkInterface" type="MaxRspec:NetworkInterfaceContent" />
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string"/>
