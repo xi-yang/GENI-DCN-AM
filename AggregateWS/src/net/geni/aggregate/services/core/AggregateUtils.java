@@ -170,7 +170,9 @@ public class AggregateUtils
         if (matcher.find()) {
             return matcher.group(4)+"."+matcher.group(3);
         }
-        if (urn.matches("^urn:ogf:network:domain=")) {
+        pattern = Pattern.compile("^urn:ogf:network:domain=([^:]*):node=([^:]*):.*");
+        matcher = pattern.matcher(urn);
+        if (matcher.find()) {
             return urn;
         }
         return null;

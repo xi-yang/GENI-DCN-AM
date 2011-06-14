@@ -194,10 +194,13 @@ public class AggregateP2PVlans {
                     //message = "Slice=" + sliceName + " would be expired before the VLAN ends. No VLAN created.";
                     log.warn("Slice=" + sliceName + " would be expired before the VLAN ends. but VLAN created anyway.");
                 }
-            } else {
-                status = "FAILED";
-                message = "Slice=" + sliceName + " does not exist. No VLAN created.";
-            }
+            } 
+            // We no longer fail the vlanCreate due to nonexistence of slice. 
+            // There is valid cases asking for stitching only p2pVlan. 
+            //else {
+            //    status = "FAILED";
+            //    message = "Slice=" + sliceName + " does not exist. No VLAN created.";
+            //}
             if (!status.matches("FAILED")) {
                 p2pvlan = new AggregateP2PVlan(sliceName, source, destination, vtag, bw, description, startTime, endTime);
                 p2pvlan.setSrcInterface(srcInterface);
