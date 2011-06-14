@@ -77,7 +77,8 @@ public class AggregateNetworkInterface extends AggregateResource {
 
     public void setParentNode(AggregateNode parentNode) {
         this.parentNode = parentNode;
-        this.pnid = parentNode.getId();
+        if (parentNode != null)
+            this.pnid = parentNode.getId();
     }
 
     //for XML config

@@ -234,10 +234,10 @@ public class AggregateRspecRunner extends Thread {
                             netIf2.getPeers().remove(ifIndices[1]);
                             String source = AggregateUtils.getIDCQualifiedUrn(netIf1.getUrn());
                             if (source == null)
-                                throw (new AggregateException("Failed to setup P2PVlan from unrecorgnized srcNode URN:"+netIf1.getUrn()));
+                                throw (new AggregateException("Failed to setup P2PVlan from unrecorgnized srcURN :"+netIf1.getUrn()));
                             String destination = AggregateUtils.getIDCQualifiedUrn(netIf2.getUrn());
                             if (destination == null)
-                                throw (new AggregateException("Failed to setup P2PVlan to unrecorgnized dstNode URN:"+netIf2.getUrn()));
+                                throw (new AggregateException("Failed to setup P2PVlan to unrecorgnized dstURN :"+netIf2.getUrn()));
                             String description = rspec.getRspecName() + " p2pvlan-" + source + "-" + destination + "-" + netIf1.getVlanTag();
                             String vtag = netIf1.getVlanTag();
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());
