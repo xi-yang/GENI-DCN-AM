@@ -220,23 +220,24 @@ public class AggregateRspecRunner extends Thread {
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
                 AggregateNetworkInterface netIf1 = (AggregateNetworkInterface)resources.get(i);
-                if (!netIf1.getParentNode().getCapabilities().contains("capability=dragon"))
+                if (netIf1.getParentNode() != null && !netIf1.getParentNode().getCapabilities().contains("capability=dragon"))
                     continue;
                 for (int j = 0; j < resources.size(); j++) {
                     if (resources.get(j).getType().equalsIgnoreCase("networkInterface")) {
                         //verify dragon capability?
                         AggregateNetworkInterface netIf2 = (AggregateNetworkInterface)resources.get(j);
-                        if (!netIf2.getParentNode().getCapabilities().contains("capability=dragon"))
+                        if (netIf2.getParentNode() != null && !netIf2.getParentNode().getCapabilities().contains("capability=dragon"))
                             continue;
                         int[] ifIndices = netIf1.pairupInterfaces(netIf2);
                         if (ifIndices[0] != -1 && ifIndices[1] != -1) {
                             netIf1.getPeers().remove(ifIndices[0]);
                             netIf2.getPeers().remove(ifIndices[1]);
-                            //lookup service should have names such as planetlab2.dragon.maxgigapop.net
-                            String source = AggregateUtils.getUrnField(netIf1.getUrn(), "node")
-                                +"."+AggregateUtils.getUrnField(netIf1.getUrn(), "domain");
-                            String destination = AggregateUtils.getUrnField(netIf2.getUrn(), "node")
-                                +"."+AggregateUtils.getUrnField(netIf1.getUrn(), "domain");
+                            String source = AggregateUtils.getIDCQualifiedUrn(netIf1.getUrn());
+                            if (source == null)
+                                throw (new AggregateException("Failed to setup P2PVlan from unrecorgnized srcNode URN:"+netIf1.getUrn()));
+                            String destination = AggregateUtils.getIDCQualifiedUrn(netIf2.getUrn());
+                            if (destination == null)
+                                throw (new AggregateException("Failed to setup P2PVlan to unrecorgnized dstNode URN:"+netIf2.getUrn()));
                             String description = rspec.getRspecName() + " p2pvlan-" + source + "-" + destination + "-" + netIf1.getVlanTag();
                             String vtag = netIf1.getVlanTag();
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());

@@ -178,6 +178,7 @@
     <xs:sequence>
       <xs:element maxOccurs="2" name="networkInterfaceUrn" type="xs:string"/>
       <xs:element minOccurs="0" name="externalResourceId" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="networkInterface" type="MaxRspec:NetworkInterfaceContent" />
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string"/>
     <xs:attribute name="type" use="required" type="xs:string"/>

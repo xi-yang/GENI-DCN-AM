@@ -164,6 +164,19 @@ public class AggregateUtils
         return urn.substring(start, end);
     }
 
+    public static String getIDCQualifiedUrn(String urn) {
+        Pattern pattern = Pattern.compile("urn:aggregate=([^:]*):rspec=([^:]):domain=([^:]*):node=([^:]*):.*");
+        Matcher matcher = pattern.matcher(urn);
+        if (matcher.find()) {
+            return matcher.group(4)+"."+matcher.group(3);
+        }
+        pattern = Pattern.compile("urn:ogf:network:domain=([^:]*):node=([^:]*):.*");
+        if (matcher.find()) {
+            return urn;
+        }
+        return null;
+    }
+    
     public static String extractString(String aStr, String openStr, String closeStr) {
         int start = aStr.indexOf(openStr);
         if (start == -1)

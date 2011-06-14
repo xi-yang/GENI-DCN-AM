@@ -568,6 +568,7 @@ public class AggregateRspec implements java.io.Serializable {
         String erId = "";
         String srType = "";
         List<String> netIfUrns = new ArrayList<String>();
+        Vector<AggregateNetworkInterface> myNetIfs = new Vector<AggregateNetworkInterface>();
 
         if (srRoot.getAttributes().getNamedItem("id") != null) {
             srId = srRoot.getAttributes().getNamedItem("id").getTextContent().trim();
@@ -585,6 +586,11 @@ public class AggregateRspec implements java.io.Serializable {
             }
             else if (nodeName != null && nodeName.equalsIgnoreCase("externalResourceId")) {
                 erId = child.getTextContent().trim();
+            }
+            else if (nodeName != null && nodeName.equalsIgnoreCase("networkInterface")) {
+                AggregateNetworkInterface netIf = parseNetworkInterface(child);
+                netIf.setParentNode(null);
+                myNetIfs.add(netIf);
             }
         }
         if (netIfUrns.size() ==2 && srType.equalsIgnoreCase("p2pvlan")) {
@@ -633,7 +639,7 @@ public class AggregateRspec implements java.io.Serializable {
             stitchingP2PVlan.setExternalResourceId(erId);
             resources.add((AggregateResource)stitchingP2PVlan);
         }
-        else if (netIfUrns.size() ==1 && srType.equalsIgnoreCase("stub")) {
+        else if (netIfUrns.size() == 1 && srType.equalsIgnoreCase("stub")) {
             boolean noParentNode = true;
             for (AggregateResource rc: this.resources) {
                 if (rc.getType().equalsIgnoreCase("networkInterface")) {
@@ -648,7 +654,7 @@ public class AggregateRspec implements java.io.Serializable {
             if (noParentNode)
                 throw new AggregateException("stub' stitching resource needs URN network interface on an existing compute node.");
         }
-        else
+        else if (myNetIfs.size() < 2)
             throw new AggregateException("unknown stiching resource type or malformatted stitching resource information.");
     }
 
