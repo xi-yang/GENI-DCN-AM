@@ -640,7 +640,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         QuerySliceNetworkResponse querySliceNetworkResponse = new QuerySliceNetworkResponse();
         String status = (String)hmRet.get("sliceStatus");
         if (status == null)
-            status = "PENDING";
+            status = "NONE";
         querySliceNetworkResponseType.setSliceStatus(status);
         Vector<VlanReservationResultType> vlanResvResults = (Vector<VlanReservationResultType>)hmRet.get("vlanResults");
         if (vlanResvResults != null)
