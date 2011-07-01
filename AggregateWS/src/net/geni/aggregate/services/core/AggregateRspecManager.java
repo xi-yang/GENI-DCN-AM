@@ -269,8 +269,9 @@ public class AggregateRspecManager extends Thread{
             if (scope.equalsIgnoreCase("all") || scope.contains("network")) {
                 AggregateIDCClient client = AggregateIDCClient.getIDCClient();
                 String errMessage = null;
+                String domainId = AggregateState.getIdcDomainId();
                 try {
-                    networkTopology = client.retrieveNetworkTopology("all");
+                    networkTopology = client.retrieveNetworkTopology(domainId);
                 } catch (AxisFault e) {
                     errMessage = "AxisFault from queryReservation: " + e.getMessage();
                 } catch (AAAFaultMessage e) {
