@@ -672,10 +672,10 @@ public class AggregateRspec implements java.io.Serializable {
             if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
                 AggregateNode an = (AggregateNode)rc;
                 xml = xml + "<"+rc.getType()+" id=\""+an.getUrn()+"\">";
-                //xml = xml + "<plId>"+Integer.toString(an.getNodeId())+"</plId>";
                 for (int i = 0; i < resources.size(); i++) {
                     if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
                         AggregateNetworkInterface ai = (AggregateNetworkInterface)resources.get(i);
+                        log.debug("ai.pnid="+Integer.toString(ai.getPnid()) + "; an.id="+Integer.toString(an.getId()));
                         if (ai.getPnid() == an.getId()) {
                             boolean hasP2PVlan = false;
                             for (int j = 0; j < resources.size(); j++) {
@@ -696,7 +696,7 @@ public class AggregateRspec implements java.io.Serializable {
                                         xml += "</networkInterface>";
                                         hasP2PVlan = true;
                                     }
-                                    else if (ppv.getDestination().equalsIgnoreCase(ai.getAttachedLinkUrns())) {
+                                    else if (ai.getAttachedLinkUrns().contains(ppv.getDestination())) {
                                         xml = xml + "<networkInterface id=\"" + ai.getUrn() + "\">";
                                         xml = xml + "<deviceType>ethernet</deviceType>";
                                         xml = xml + "<deviceName>" + ppv.getDstInterface() + "</deviceName>";
