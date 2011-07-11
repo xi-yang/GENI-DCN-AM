@@ -40,6 +40,7 @@ public class AggregateState
     private static String networksTab = "networks";
     private static String extResourcesTab = "ext_resources";
     private static String idcDomainId = "";
+    private static String idcTopoFile = null;
     private static String idcURL = "";
     private static String idcRepo = "";
     private static String plcURL = "";
@@ -95,6 +96,7 @@ public class AggregateState
         dbPwd = aggregateProps.getProperty("aggregate.mysql.pass", "genipass");
         idcDomainId = aggregateProps.getProperty("aggregate.idc.domainid", "all");
         log.info("aggregate.idc.domainid set to " + idcDomainId);
+        idcTopoFile = aggregateProps.getProperty("aggregate.idc.topofile", null);
         idcURL = aggregateProps.getProperty("aggregate.idc.url", "https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS");
         log.info("aggregate.idc.url set to " + idcURL);
         idcRepo = aggregateProps.getProperty("aggregate.idc.repo", "/usr/local/geni-aggregate/AggregateAttic/conf/repo");
@@ -246,6 +248,10 @@ public class AggregateState
 
     public static String getIdcDomainId() {
         return idcDomainId;
+    }
+
+    public static String getIdcTopoFile() {
+        return idcTopoFile;
     }
 
     public static void setIdcDomainId(String idcDomainId) {

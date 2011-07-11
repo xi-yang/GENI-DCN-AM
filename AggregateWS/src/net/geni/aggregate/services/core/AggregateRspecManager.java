@@ -11,6 +11,9 @@ import org.apache.log4j.*;
 import org.apache.axis2.AxisFault;
 import net.es.oscars.oscars.AAAFaultMessage;
 import net.es.oscars.oscars.BSSFaultMessage;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 /**
  *
@@ -267,24 +270,39 @@ public class AggregateRspecManager extends Thread{
             }
             //get nework topology
             if (scope.equalsIgnoreCase("all") || scope.contains("network")) {
-                AggregateIDCClient client = AggregateIDCClient.getIDCClient();
-                String errMessage = null;
-                String domainId = AggregateState.getIdcDomainId();
-                try {
-                    networkTopology = client.retrieveNetworkTopology(domainId);
-                } catch (AxisFault e) {
-                    errMessage = "AxisFault from queryReservation: " + e.getMessage();
-                } catch (AAAFaultMessage e) {
-                    errMessage = "AAAFaultMessage from queryReservation: " + e.getFaultMessage().getMsg();
-                } catch (BSSFaultMessage e) {
-                    errMessage = "BSSFaultMessage from queryReservation: " + e.getFaultMessage().getMsg();
-                } catch (java.rmi.RemoteException e) {
-                    errMessage = "RemoteException returned from queryReservation: " + e.getMessage();
-                } catch (Exception e) {
-                    errMessage = "OSCARSStub threw exception in queryReservation: " + e.getMessage();
+                boolean gotTopoFromFile = false;
+                if (AggregateState.getIdcTopoFile() != null && !AggregateState.getIdcTopoFile().isEmpty()) {
+                    try {
+                        int ch;
+                        FileInputStream in = new FileInputStream(AggregateState.getIdcTopoFile());
+                        while( (ch = in.read()) != -1)
+                            networkTopology += ((char)ch);
+                        in.close();
+                        gotTopoFromFile = true;
+                    } catch (IOException e) {
+                        ; // no op
+                    }
                 }
-                if (errMessage != null) {
-                    throw new AggregateException(errMessage);
+                if (!gotTopoFromFile) {
+                    AggregateIDCClient client = AggregateIDCClient.getIDCClient();
+                    String errMessage = null;
+                    String domainId = AggregateState.getIdcDomainId();
+                    try {
+                        networkTopology = client.retrieveNetworkTopology(domainId);
+                    } catch (AxisFault e) {
+                        errMessage = "AxisFault from queryReservation: " + e.getMessage();
+                    } catch (AAAFaultMessage e) {
+                        errMessage = "AAAFaultMessage from queryReservation: " + e.getFaultMessage().getMsg();
+                    } catch (BSSFaultMessage e) {
+                        errMessage = "BSSFaultMessage from queryReservation: " + e.getFaultMessage().getMsg();
+                    } catch (java.rmi.RemoteException e) {
+                        errMessage = "RemoteException returned from queryReservation: " + e.getMessage();
+                    } catch (Exception e) {
+                        errMessage = "OSCARSStub threw exception in queryReservation: " + e.getMessage();
+                    }
+                    if (errMessage != null) {
+                        throw new AggregateException(errMessage);
+                    }
                 }
                 if (networkTopology != null && !networkTopology.isEmpty()) {
                     len++;
