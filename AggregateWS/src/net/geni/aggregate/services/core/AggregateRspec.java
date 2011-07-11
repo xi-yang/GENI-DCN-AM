@@ -671,7 +671,7 @@ public class AggregateRspec implements java.io.Serializable {
             AggregateResource rc = resources.get(n);
             if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
                 AggregateNode an = (AggregateNode)rc;
-                xml = xml + "<"+rc.getType()+" id=\""+an.getUrn()+"\">";
+                xml = xml + "<computeNode id=\""+an.getUrn()+"\">";
                 for (int i = 0; i < AggregateState.getAggregateInterfaces().getAll().size(); i++) {
                     AggregateNetworkInterface ai = AggregateState.getAggregateInterfaces().getAll().get(i);
                     if (AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
@@ -711,7 +711,7 @@ public class AggregateRspec implements java.io.Serializable {
                         }
                     }
                 }
-                xml +=  "</"+rc.getType()+">";
+                xml +=  "</computeNode>";
             } else if (rc.getType().equalsIgnoreCase("computeSlice")) {
                 AggregateSlice as = (AggregateSlice)rc;
                 xml = xml + "<computeSlice id=\""+as.getSliceName()+"\">";
