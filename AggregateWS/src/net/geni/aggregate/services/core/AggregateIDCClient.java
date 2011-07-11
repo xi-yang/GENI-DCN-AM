@@ -224,12 +224,12 @@ public class AggregateIDCClient {
             CtrlPlaneNodeContent[] nodes = d.getNode();
             for (CtrlPlaneNodeContent n : nodes) {
                 ret = ret + "<node id=\"" +n.getId()+"\">";
-                ret = ret + "<address>" +n.getAddress()+"</address>";
+                //ret = ret + "<address>" +n.getAddress()+"</address>";
                 CtrlPlanePortContent[] ports = n.getPort();
                 for (CtrlPlanePortContent p : ports) {
                     ret = ret + "<port id=\"" +p.getId()+"\">";
                     ret = ret + "<capacity>" +p.getCapacity()+"</capacity>";
-                    ret = ret + "<maximumReservableCapacity>" +p.getMaximumReservableCapacity()+"</maximumReservableCapacity>";
+                    ret = ret + "<maximumReservableCapacity>" +p.getCapacity()+"</maximumReservableCapacity>";
                     ret = ret + "<minimumReservableCapacity>" +p.getMinimumReservableCapacity()+"</minimumReservableCapacity>";
                     ret = ret + "<granularity>" +p.getGranularity()+"</granularity>";
                     CtrlPlaneLinkContent[] links = p.getLink();
@@ -238,10 +238,10 @@ public class AggregateIDCClient {
                             ret = ret + "<link id=\"" +l.getId()+"\">";
                             ret = ret + "<remoteLinkId>" +l.getRemoteLinkId()+"</remoteLinkId>";
                             ret = ret + "<trafficEngineeringMetric>" +l.getTrafficEngineeringMetric()+"</trafficEngineeringMetric>";
-                            ret = ret + "<capacity>" +l.getCapacity()+"</capacity>";
-                            ret = ret + "<maximumReservableCapacity>" +l.getMaximumReservableCapacity()+"</maximumReservableCapacity>";
-                            ret = ret + "<minimumReservableCapacity>" +l.getMinimumReservableCapacity()+"</minimumReservableCapacity>";
-                            ret = ret + "<granularity>" +l.getGranularity()+"</granularity>";
+                            ret = ret + "<capacity>" +p.getCapacity()+"</capacity>";
+                            ret = ret + "<maximumReservableCapacity>" +p.getCapacity()+"</maximumReservableCapacity>";
+                            ret = ret + "<minimumReservableCapacity>" +p.getMinimumReservableCapacity()+"</minimumReservableCapacity>";
+                            ret = ret + "<granularity>" +p.getGranularity()+"</granularity>";
                             ret = ret + "<SwitchingCapabilityDescriptors>";
                             ret = ret + "<switchingcapType>"+l.getSwitchingCapabilityDescriptors().getSwitchingcapType()+"</switchingcapType>";
                             ret = ret + "<encodingType>"+l.getSwitchingCapabilityDescriptors().getEncodingType()+"</encodingType>";
