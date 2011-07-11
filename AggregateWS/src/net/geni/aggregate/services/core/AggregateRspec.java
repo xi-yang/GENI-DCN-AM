@@ -672,9 +672,8 @@ public class AggregateRspec implements java.io.Serializable {
             if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
                 AggregateNode an = (AggregateNode)rc;
                 xml = xml + "<"+rc.getType()+" id=\""+an.getUrn()+"\">";
-                for (int i = 0; i < resources.size(); i++) {
-                    if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
-                        AggregateNetworkInterface ai = (AggregateNetworkInterface)resources.get(i);
+                for (int i = 0; i < AggregateState.getAggregateInterfaces().getAll().size(); i++) {
+                        AggregateNetworkInterface ai = AggregateState.getAggregateInterfaces().getAll().get(i);
                         log.debug("ai.pnid="+Integer.toString(ai.getPnid()) + "; an.id="+Integer.toString(an.getId()));
                         if (ai.getPnid() == an.getId()) {
                             boolean hasP2PVlan = false;
