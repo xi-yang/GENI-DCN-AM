@@ -674,8 +674,8 @@ public class AggregateRspec implements java.io.Serializable {
                 xml = xml + "<computeNode id=\""+an.getUrn()+"\">";
                 for (int i = 0; i < AggregateState.getAggregateInterfaces().getAll().size(); i++) {
                     AggregateNetworkInterface ai = AggregateState.getAggregateInterfaces().getAll().get(i);
-                    if (an.getId() == 0) { // aggregate rspec
-                        if (ai.getPnid() == 0) {
+                    if (AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
+                        if (this.getId() == 0) { // globalAggregate rspec
                             xml = xml + "<networkInterface id=\"" + ai.getUrn() + "\">";
                             xml = xml + "<deviceType>ethernet</deviceType>";
                             xml = xml + "<deviceName>" + ai.getDeviceName() + "</deviceName>";
@@ -683,9 +683,7 @@ public class AggregateRspec implements java.io.Serializable {
                             xml = xml + "<vlanRange>" + ai.getVlanTag() + "</vlanRange>";
                             xml = xml + "<attachedLinkUrn>" + ai.getAttachedLinkUrns() + "</attachedLinkUrn>";
                             xml += "</networkInterface>";
-                        }
-                    } else { // slice/sliver rspecs
-                        if (AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
+                        } else { // slice/sliver rspecs
                             for (int j = 0; j < resources.size(); j++) {
                                 if (resources.get(j).getType().equalsIgnoreCase("p2pvlan")) {
                                     AggregateP2PVlan ppv = (AggregateP2PVlan) resources.get(j);
