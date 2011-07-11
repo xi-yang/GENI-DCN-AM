@@ -99,7 +99,7 @@ public class AggregateNetworkInterfaces {
     /**
      * get by urn id
      */
-    public synchronized AggregateNetworkInterface getByUrn(int urn) {
+    public synchronized AggregateNetworkInterface getByUrn(String urn) {
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
@@ -115,4 +115,14 @@ public class AggregateNetworkInterfaces {
         }
         return null;
     }
+
+    public synchronized AggregateNetworkInterface getByAttachedLink(String urn) {
+        List<AggregateNetworkInterface> infs = getAll();
+        for (AggregateNetworkInterface inf: infs) {
+            if (inf.getAttachedLinkUrns().contains(urn))
+                return inf;
+        }
+        return null;
+    }
+
 }
