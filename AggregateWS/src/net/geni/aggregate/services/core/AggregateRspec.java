@@ -774,7 +774,10 @@ public class AggregateRspec implements java.io.Serializable {
                     xml = xml + "<ipAddress>" + ppv.getSrcIpAndMask() + "</ipAddress>";
                     xml = xml + "<vlanRange>" + ppv.getVtag() + "</vlanRange>";
                     xml = xml + "<attachedLinkUrn>" + ppv.getSource() +"</attachedLinkUrn>";
-                    xml = xml + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=dst" + "</peerNetworkInterface>";
+                    if (ppv.getDstInterface().isEmpty())
+                        xml = xml + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=dst" + "</peerNetworkInterface>";
+                    else
+                        xml = xml + "<peerNetworkInterface>" + ppv.getDestination() + "</peerNetworkInterface>";
                     xml += "</networkInterface>";
                 }
                 if (ppv.getDstInterface().isEmpty()) {
@@ -785,7 +788,10 @@ public class AggregateRspec implements java.io.Serializable {
                     xml = xml + "<ipAddress>" + ppv.getDstIpAndMask() + "</ipAddress>";
                     xml = xml + "<vlanRange>" + ppv.getVtag() + "</vlanRange>";
                     xml = xml + "<attachedLinkUrn>" + ppv.getDestination() +"</attachedLinkUrn>";
-                    xml = xml + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=src" + "</peerNetworkInterface>";
+                    if (ppv.getSrcInterface().isEmpty())
+                        xml = xml + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=src" + "</peerNetworkInterface>";
+                    else 
+                        xml = xml + "<peerNetworkInterface>" + ppv.getSource() + "</peerNetworkInterface>";
                     xml += "</networkInterface>";
                 }
                 if (ppv.getSrcInterface().isEmpty() || ppv.getDstInterface().isEmpty())
