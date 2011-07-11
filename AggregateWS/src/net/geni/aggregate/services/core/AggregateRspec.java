@@ -674,8 +674,7 @@ public class AggregateRspec implements java.io.Serializable {
                 xml = xml + "<"+rc.getType()+" id=\""+an.getUrn()+"\">";
                 for (int i = 0; i < AggregateState.getAggregateInterfaces().getAll().size(); i++) {
                     AggregateNetworkInterface ai = AggregateState.getAggregateInterfaces().getAll().get(i);
-                    log.debug("ai.pnid=" + Integer.toString(ai.getPnid()) + "; an.id=" + Integer.toString(an.getId()));
-                    if (ai.getPnid() == an.getId()) {
+                    if (AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
                         for (int j = 0; j < resources.size(); j++) {
                             if (resources.get(j).getType().equalsIgnoreCase("p2pvlan")) {
                                 AggregateP2PVlan ppv = (AggregateP2PVlan) resources.get(j);
