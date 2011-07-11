@@ -658,6 +658,7 @@ public class AggregateRspec implements java.io.Serializable {
             throw new AggregateException("unknown stiching resource type or malformatted stitching resource information.");
     }
 
+
     String getResourcesXml() {
         //if (xml != null)
         //  return xml;
@@ -672,39 +673,53 @@ public class AggregateRspec implements java.io.Serializable {
                     if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
                         AggregateNetworkInterface ai = (AggregateNetworkInterface)resources.get(i);
                         if (ai.getPnid() == an.getId()) {
-                            xml = xml + "<networkInterface id=\""+ai.getUrn()+"\">";
-                            xml = xml + "<deviceType>"+ai.getDeviceType()+"</deviceType>";
-                            xml = xml + "<deviceName>"+ai.getDeviceName()+"</deviceName>";
-                            xml = xml + "<capacity>"+ai.getCapacity()+"</capacity>";
-                            xml = xml + "<ipAddress>"+ai.getIpAddress()+"</ipAddress>";
-                            xml = xml + "<vlanRange>"+ai.getVlanTag()+"</vlanRange>";
-                            xml = xml + "<attachedLinkUrn>"+ai.getAttachedLinkUrns()+"</attachedLinkUrn>";
-                            xml +=  "</networkInterface>";
-                        }
-                    }
-                }
-                for (int i = 0; i < resources.size(); i++) {
-                    if (resources.get(i).getType().equalsIgnoreCase("p2pvlan")) {
-                        AggregateP2PVlan ppv = (AggregateP2PVlan)resources.get(i);
-                        if (ppv.getSource().equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node") +"."+AggregateUtils.getUrnField(an.getUrn(), "domain"))) {
-                            xml = xml + "<networkInterface id=\""+ppv.getId() + ":interface=src" +"\">";
-                            xml = xml + "<deviceType>ethernet</deviceType>";
-                            xml = xml + "<deviceName>"+ppv.getSrcInterface()+"</deviceName>";
-                            xml = xml + "<capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</capacity>";
-                            xml = xml + "<ipAddress>"+ppv.getSrcIpAndMask()+"</ipAddress>";
-                            xml = xml + "<vlanRange>"+ppv.getVtag()+"</vlanRange>";
-                            xml = xml + "<peerNetworkInterface>p2pvlan-"+ppv.getId() + ":interface=dst"+"</peerNetworkInterface>";
-                            xml +=  "</networkInterface>";
-                        }
-                        if (ppv.getDestination().equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node") +"."+AggregateUtils.getUrnField(an.getUrn(), "domain"))) {
-                            xml = xml + "<networkInterface id=\""+ppv.getId() + ":interface=dst" +"\">";
-                            xml = xml + "<deviceType>ethernet</deviceType>";
-                            xml = xml + "<deviceName>"+ppv.getDstInterface()+"</deviceName>";
-                            xml = xml + "<capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</capacity>";
-                            xml = xml + "<ipAddress>"+ppv.getDstIpAndMask()+"</ipAddress>";
-                            xml = xml + "<vlanRange>"+ppv.getVtag()+"</vlanRange>";
-                            xml = xml + "<peerNetworkInterface>p2pvlan-"+ppv.getId() + ":interface=src"+"</peerNetworkInterface>";
-                            xml +=  "</networkInterface>";
+                            //TODO: add attached link URN field
+                            boolean hasP2PVlan = false;
+                            for (int j = 0; j < resources.size(); j++) {
+                                if (resources.get(j).getType().equalsIgnoreCase("p2pvlan")) {
+                                    AggregateP2PVlan ppv = (AggregateP2PVlan) resources.get(j);
+                                    // look for associated p2pvlan --> to change
+                                    if (!ppv.getSource().isEmpty() && ( AggregateUtils.isSameLinkUrn(ppv.getSource(), ai.getUrn())
+                                            || ppv.getSource().equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node") 
+                                                + "." + AggregateUtils.getUrnField(an.getUrn(), "domain") ) ) ) {
+                                        xml = xml + "<networkInterface id=\"" + ppv.getId() + ":interface=src" + "\">";
+                                        xml = xml + "<deviceType>ethernet</deviceType>";
+                                        xml = xml + "<deviceName>" + ppv.getSrcInterface() + "</deviceName>";
+                                        xml = xml + "<capacity>" + Float.toString(ppv.getBandwidth()) + "Mbps</capacity>";
+                                        xml = xml + "<ipAddress>" + ppv.getSrcIpAndMask() + "</ipAddress>";
+                                        xml = xml + "<vlanRange>" + ppv.getVtag() + "</vlanRange>";
+                                        //TODO <attachedLinkURN>
+                                        xml = xml + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=dst" + "</peerNetworkInterface>";
+                                        xml += "</networkInterface>";
+                                        hasP2PVlan = true;
+                                    }
+                                    // look for associated p2pvlan --> to change
+                                    else if (!ppv.getDestination().isEmpty() && ( AggregateUtils.isSameLinkUrn(ppv.getDestination(), ai.getUrn())
+                                            || ppv.getDestination().equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node") 
+                                                + "." + AggregateUtils.getUrnField(an.getUrn(), "domain") ) ) ) {
+                                        xml = xml + "<networkInterface id=\"" + ppv.getId() + ":interface=dst" + "\">";
+                                        xml = xml + "<deviceType>ethernet</deviceType>";
+                                        xml = xml + "<deviceName>" + ppv.getDstInterface() + "</deviceName>";
+                                        xml = xml + "<capacity>" + Float.toString(ppv.getBandwidth()) + "Mbps</capacity>";
+                                        xml = xml + "<ipAddress>" + ppv.getDstIpAndMask() + "</ipAddress>";
+                                        xml = xml + "<vlanRange>" + ppv.getVtag() + "</vlanRange>";
+                                        //TODO <attachedLinkURN>
+                                        xml = xml + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=src" + "</peerNetworkInterface>";
+                                        xml += "</networkInterface>";
+                                        hasP2PVlan = true;
+                                    }
+                                }
+                            }
+                            if (!hasP2PVlan) {
+                                xml = xml + "<networkInterface id=\""+ai.getUrn()+"\">";
+                                xml = xml + "<deviceType>"+ai.getDeviceType()+"</deviceType>";
+                                xml = xml + "<deviceName>"+ai.getDeviceName()+"</deviceName>";
+                                xml = xml + "<capacity>"+ai.getCapacity()+"</capacity>";
+                                xml = xml + "<ipAddress>"+ai.getIpAddress()+"</ipAddress>";
+                                xml = xml + "<vlanRange>"+ai.getVlanTag()+"</vlanRange>";
+                                xml = xml + "<attachedLinkUrn>"+ai.getAttachedLinkUrns()+"</attachedLinkUrn>";
+                                xml +=  "</networkInterface>";
+                            }
                         }
                     }
                 }

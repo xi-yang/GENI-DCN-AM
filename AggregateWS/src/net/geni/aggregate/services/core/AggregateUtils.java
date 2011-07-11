@@ -164,6 +164,19 @@ public class AggregateUtils
         return urn.substring(start, end);
     }
 
+    public static boolean isSameLinkUrn (String urn1, String urn2) {
+        //cut the extra field
+        String domain1 = AggregateUtils.getUrnField(urn1, "domain");
+        String domain2 = AggregateUtils.getUrnField(urn2, "domain");
+        String node1 = AggregateUtils.getUrnField(urn1, "node");
+        String node2 = AggregateUtils.getUrnField(urn2, "node");
+        String interface1 = AggregateUtils.getUrnField(urn1, "interface");
+        String interface2 = AggregateUtils.getUrnField(urn2, "interface");
+        if (domain1 == domain2 && node1 == node2 && (interface1.startsWith(interface2) || interface2.startsWith(interface1)))
+                return true;
+        return false;
+    }
+    
     public static String getIDCQualifiedUrn(String urn) {
         Pattern pattern = Pattern.compile("^urn:aggregate=([^:]*):rspec=([^:]*):domain=([^:]*):node=([^:]*):.*");
         Matcher matcher = pattern.matcher(urn);
