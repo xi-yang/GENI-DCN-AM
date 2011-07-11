@@ -676,7 +676,6 @@ public class AggregateRspec implements java.io.Serializable {
                     AggregateNetworkInterface ai = AggregateState.getAggregateInterfaces().getAll().get(i);
                     log.debug("ai.pnid=" + Integer.toString(ai.getPnid()) + "; an.id=" + Integer.toString(an.getId()));
                     if (ai.getPnid() == an.getId()) {
-                        boolean hasP2PVlan = false;
                         for (int j = 0; j < resources.size(); j++) {
                             if (resources.get(j).getType().equalsIgnoreCase("p2pvlan")) {
                                 AggregateP2PVlan ppv = (AggregateP2PVlan) resources.get(j);
@@ -694,7 +693,6 @@ public class AggregateRspec implements java.io.Serializable {
                                         xml = xml + "<peerNetworkInterface>" + ai.getPeers().get(0) + "</peerNetworkInterface>";
                                     }
                                     xml += "</networkInterface>";
-                                    hasP2PVlan = true;
                                 } else if (ai.getAttachedLinkUrns().contains(ppv.getDestination())) {
                                     xml = xml + "<networkInterface id=\"" + ai.getUrn() + "\">";
                                     xml = xml + "<deviceType>ethernet</deviceType>";
@@ -709,19 +707,8 @@ public class AggregateRspec implements java.io.Serializable {
                                         xml = xml + "<peerNetworkInterface>" + ai.getPeers().get(0) + "</peerNetworkInterface>";
                                     }
                                     xml += "</networkInterface>";
-                                    hasP2PVlan = true;
                                 }
                             }
-                        }
-                        if (!hasP2PVlan) {
-                            xml = xml + "<networkInterface id=\"" + ai.getUrn() + "\">";
-                            xml = xml + "<deviceType>" + ai.getDeviceType() + "</deviceType>";
-                            xml = xml + "<deviceName>" + ai.getDeviceName() + "</deviceName>";
-                            xml = xml + "<capacity>" + ai.getCapacity() + "</capacity>";
-                            xml = xml + "<ipAddress>" + ai.getIpAddress() + "</ipAddress>";
-                            xml = xml + "<vlanRange>" + ai.getVlanTag() + "</vlanRange>";
-                            xml = xml + "<attachedLinkUrn>" + ai.getAttachedLinkUrns() + "</attachedLinkUrn>";
-                            xml += "</networkInterface>";
                         }
                     }
                 }
