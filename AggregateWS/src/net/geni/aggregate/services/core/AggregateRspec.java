@@ -618,7 +618,9 @@ public class AggregateRspec implements java.io.Serializable {
             stitchingP2PVlan.setVtag("any");
             stitchingP2PVlan.setBandwidth(50);//50M by default
             if (netIf1 != null) {
-                stitchingP2PVlan.setSource(AggregateUtils.getUrnField(netIf1.getUrn(), "node") +"."+AggregateUtils.getUrnField(netIf1.getUrn(), "domain"));
+                String source = netIf1.getLinks().isEmpty() ? AggregateUtils.getIDCQualifiedUrn(netIf1.getUrn())
+                        : AggregateUtils.getIDCQualifiedUrn(netIf1.getLinks().get(0));
+                stitchingP2PVlan.setSource(source);
                 stitchingP2PVlan.setSrcInterface(netIf1.getDeviceName());
                 stitchingP2PVlan.setSrcIpAndMask(netIf1.getIpAddress());
                 stitchingP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity()));
@@ -626,7 +628,9 @@ public class AggregateRspec implements java.io.Serializable {
                     stitchingP2PVlan.setVtag(netIf1.getVlanTag());
             }
             if (netIf2 != null) {
-                stitchingP2PVlan.setDestination(AggregateUtils.getUrnField(netIf2.getUrn(), "node") +"."+AggregateUtils.getUrnField(netIf2.getUrn(), "domain"));
+                String destination = netIf2.getLinks().isEmpty() ? AggregateUtils.getIDCQualifiedUrn(netIf2.getUrn())
+                        : AggregateUtils.getIDCQualifiedUrn(netIf2.getLinks().get(0));
+                stitchingP2PVlan.setDestination(destination);
                 stitchingP2PVlan.setDstInterface(netIf2.getDeviceName());
                 stitchingP2PVlan.setDstIpAndMask(netIf2.getIpAddress());
                 if (netIf1 == null) {
@@ -677,7 +681,7 @@ public class AggregateRspec implements java.io.Serializable {
                             for (int j = 0; j < resources.size(); j++) {
                                 if (resources.get(j).getType().equalsIgnoreCase("p2pvlan")) {
                                     AggregateP2PVlan ppv = (AggregateP2PVlan) resources.get(j);
-                                    if (ppv.getSource().equalsIgnoreCase(ai.getAttachedLinkUrns())) {
+                                    if (ai.getAttachedLinkUrns().contains(ppv.getSource())) {
                                         xml = xml + "<networkInterface id=\"" + ai.getUrn() + "\">";
                                         xml = xml + "<deviceType>ethernet</deviceType>";
                                         xml = xml + "<deviceName>" + ppv.getSrcInterface() + "</deviceName>";
