@@ -242,6 +242,17 @@ public class AggregateIDCClient {
                             ret = ret + "<maximumReservableCapacity>" +l.getMaximumReservableCapacity()+"</maximumReservableCapacity>";
                             ret = ret + "<minimumReservableCapacity>" +l.getMinimumReservableCapacity()+"</minimumReservableCapacity>";
                             ret = ret + "<granularity>" +l.getGranularity()+"</granularity>";
+                            ret = ret + "<SwitchingCapabilityDescriptors>";
+                            ret = ret + "<switchingcapType>"+l.getSwitchingCapabilityDescriptors().getSwitchingcapType()+"</switchingcapType>";
+                            ret = ret + "<encodingType>"+l.getSwitchingCapabilityDescriptors().getEncodingType()+"</encodingType>";
+                            ret = ret + "<switchingCapabilitySpecificInfo>";
+                            ret = ret + "<capacity>"+l.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getCapability()+"</capacity>";
+                            ret = ret + "<interfaceMTU>"+l.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getInterfaceMTU()+"</interfaceMTU>";
+                            ret = ret + "<vlanRangeAvailability>"+l.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability()+"</vlanRangeAvailability>";
+                            ret = ret + "<suggestedVLANRange>"+l.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange()+"</suggestedVLANRange>";
+                            ret = ret + "<vlanTranslation>"+(l.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanTranslation()?"true":"false")+"</vlanTranslation>";
+                            ret = ret + "</switchingCapabilitySpecificInfo>";
+                            ret = ret + "</SwitchingCapabilityDescriptors>";
                             ret += "</link>";
                         }
                     }
