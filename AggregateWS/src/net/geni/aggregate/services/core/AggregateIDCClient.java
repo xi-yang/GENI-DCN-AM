@@ -246,10 +246,8 @@ public class AggregateIDCClient {
                             ret = ret + "<switchingcapType>"+l.getSwitchingCapabilityDescriptors().getSwitchingcapType()+"</switchingcapType>";
                             ret = ret + "<encodingType>"+l.getSwitchingCapabilityDescriptors().getEncodingType()+"</encodingType>";
                             ret = ret + "<switchingCapabilitySpecificInfo>";
-                            ret = ret + "<capacity>"+l.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getCapability()+"</capacity>";
                             ret = ret + "<interfaceMTU>"+l.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getInterfaceMTU()+"</interfaceMTU>";
                             ret = ret + "<vlanRangeAvailability>"+l.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanRangeAvailability()+"</vlanRangeAvailability>";
-                            ret = ret + "<suggestedVLANRange>"+l.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getSuggestedVLANRange()+"</suggestedVLANRange>";
                             ret = ret + "<vlanTranslation>"+(l.getSwitchingCapabilityDescriptors().getSwitchingCapabilitySpecificInfo().getVlanTranslation()?"true":"false")+"</vlanTranslation>";
                             ret = ret + "</switchingCapabilitySpecificInfo>";
                             ret = ret + "</SwitchingCapabilityDescriptors>";
