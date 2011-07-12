@@ -700,7 +700,7 @@ public class AggregateRspec implements java.io.Serializable {
                                         xml = xml + "<deviceName>" + ppv.getSrcInterface() + "</deviceName>";
                                         xml = xml + "<capacity>" + Float.toString(ppv.getBandwidth()) + "Mbps</capacity>";
                                         xml = xml + "<ipAddress>" + ppv.getSrcIpAndMask() + "</ipAddress>";
-                                        xml = xml + "<vlanRange>" + ppv.getVtag() + "</vlanRange>";
+                                        xml = xml + "<vlanRange>" + AggregateUtils.parseVlanTag(ppv.getVtag(), true) + "</vlanRange>";
                                         xml = xml + "<attachedLinkUrn>" + ai.getAttachedLinkUrns() + "</attachedLinkUrn>";
                                         if (ai.getPeers().isEmpty() || ai.getPeers().get(0).isEmpty()) {
                                             xml = xml + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=dst" + "</peerNetworkInterface>";
@@ -714,7 +714,7 @@ public class AggregateRspec implements java.io.Serializable {
                                         xml = xml + "<deviceName>" + ppv.getDstInterface() + "</deviceName>";
                                         xml = xml + "<capacity>" + Float.toString(ppv.getBandwidth()) + "Mbps</capacity>";
                                         xml = xml + "<ipAddress>" + ppv.getDstIpAndMask() + "</ipAddress>";
-                                        xml = xml + "<vlanRange>" + ppv.getVtag() + "</vlanRange>";
+                                        xml = xml + "<vlanRange>" + AggregateUtils.parseVlanTag(ppv.getVtag(), false) + "</vlanRange>";
                                         xml = xml + "<attachedLinkUrn>" + ai.getAttachedLinkUrns() + "</attachedLinkUrn>";
                                         if (ai.getPeers().isEmpty() || ai.getPeers().get(0).isEmpty()) {
                                             xml = xml + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=src" + "</peerNetworkInterface>";
@@ -774,7 +774,7 @@ public class AggregateRspec implements java.io.Serializable {
                     xml = xml + "<deviceName>" + ppv.getSrcInterface() + "</deviceName>";
                     xml = xml + "<capacity>" + Float.toString(ppv.getBandwidth()) + "Mbps</capacity>";
                     xml = xml + "<ipAddress>" + ppv.getSrcIpAndMask() + "</ipAddress>";
-                    xml = xml + "<vlanRange>" + ppv.getVtag() + "</vlanRange>";
+                    xml = xml + "<vlanRange>" + AggregateUtils.parseVlanTag(ppv.getVtag(), true) + "</vlanRange>";
                     xml = xml + "<attachedLinkUrn>" + ppv.getSource() +"</attachedLinkUrn>";
                     AggregateNetworkInterface netIf = AggregateState.getAggregateInterfaces().getByAttachedLink(ppv.getDestination());
                     if (ppv.getDstInterface().isEmpty() || netIf == null)
@@ -789,7 +789,7 @@ public class AggregateRspec implements java.io.Serializable {
                     xml = xml + "<deviceName>" + ppv.getDstInterface() + "</deviceName>";
                     xml = xml + "<capacity>" + Float.toString(ppv.getBandwidth()) + "Mbps</capacity>";
                     xml = xml + "<ipAddress>" + ppv.getDstIpAndMask() + "</ipAddress>";
-                    xml = xml + "<vlanRange>" + ppv.getVtag() + "</vlanRange>";
+                    xml = xml + "<vlanRange>" + AggregateUtils.parseVlanTag(ppv.getVtag(), false) + "</vlanRange>";
                     xml = xml + "<attachedLinkUrn>" + ppv.getDestination() +"</attachedLinkUrn>";
                     AggregateNetworkInterface netIf = AggregateState.getAggregateInterfaces().getByAttachedLink(ppv.getSource());
                     if (ppv.getSrcInterface().isEmpty() || netIf == null)
