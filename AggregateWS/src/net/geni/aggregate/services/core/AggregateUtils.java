@@ -221,6 +221,13 @@ public class AggregateUtils
         }
         return ret;
     }
+    
+    public static String parseVlanTag(String vlanTag, boolean getSrc) {
+        String[] vtags = vlanTag.split("[:-/]");
+        if (!getSrc && vtags.length == 2)
+            return vtags[1];
+        return vtags[0];
+    }
 
     public static void justSleep(int secs) {
         long t0, t1;

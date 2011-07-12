@@ -132,7 +132,7 @@
 
             <xs:complexType name="VlanReservationDescriptorType">
                 <xs:sequence>
-                    <xs:element name="vlan" type="xs:string"/>
+                    <xs:element name="vlan" type="xs:string"/>     <!--  format: srcVlan-dstVlan for translation case -->
                     <xs:element name="sourceNode" type="xs:string"/>
                     <xs:element name="srcInterface" type="xs:string" minOccurs="0"/>
                     <xs:element name="srcIpAndMask" type="xs:string" minOccurs="0"/>

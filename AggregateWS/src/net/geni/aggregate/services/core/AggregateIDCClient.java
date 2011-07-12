@@ -83,12 +83,12 @@ public class AggregateIDCClient {
         if (vtag.equalsIgnoreCase("untagged"))
             vtag = "0";
         VlanTag srcVtag = new VlanTag();
-        srcVtag.setString(vtag);
+        srcVtag.setString(AggregateUtils.parseVlanTag(vtag, true));
         srcVtag.setTagged(true);
         layer2Info.setSrcVtag(srcVtag);
         VlanTag destVtag = new VlanTag();
         // same as srcVtag for now
-        destVtag.setString(vtag);
+        destVtag.setString(AggregateUtils.parseVlanTag(vtag, false));
         destVtag.setTagged(true);
         layer2Info.setDestVtag(destVtag);
 
