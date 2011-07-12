@@ -40,7 +40,8 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         + "print ret1, ret2;"; //success pattern: "1 1"
 
     private String addSliceTagCmd = 
-            "api_server.AddSliceTag(auth, '<_name_>', 'net_share', '1');";
+        "ret1 = api_server.AddSliceTag(auth, '<_name_>', 'net_share', '1');";
+        + "print ret1;"; //success pattern: "1"
 
     private String cleanupSliceCmd =
         "ret1 = api_server.DeleteSliceFromNodes (auth, '<_name_>', <_node_list_>);"
@@ -169,6 +170,7 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         createSliceCmd = addSliceTagCmd;
         createSliceCmd = createSliceCmd.replaceAll("<_name_>", sliceName);
         this.sendCommand(createSliceCmd);
+        this.readPattern("^1\\s1", ".*Fault|.*Error", promptPattern);
 
         return ret;
     }
