@@ -176,7 +176,7 @@ public class AggregateIDCClient {
         hmRet.put("description", response.getDescription());
         hmRet.put("source", layer2Info.getSrcEndpoint());
         hmRet.put("destination", layer2Info.getDestEndpoint());
-        hmRet.put("vlanTag", layer2Info.getSrcVtag());
+        hmRet.put("vlanTag", layer2Info.getSrcVtag()+"-"+layer2Info.getDestVtag());
         /* Get path ERO */
         String ero = " ";
         CtrlPlanePathContent path = pathInfo.getPath();

@@ -240,8 +240,8 @@ public class AggregateRspecRunner extends Thread {
                                     : AggregateUtils.getIDCQualifiedUrn(netIf2.getLinks().get(0));
                             if (destination == null)
                                 throw (new AggregateException("Failed to setup P2PVlan to unrecorgnized dstURN: "+netIf2.getUrn()));
-                            String description = rspec.getRspecName() + " p2pvlan-" + source + "-" + destination + "-" + netIf1.getVlanTag();
                             String vtag = netIf1.getVlanTag()+"-"+netIf2.getVlanTag();
+                            String description = rspec.getRspecName() + " p2pvlan-" + source + "-" + destination + "-" + vtag;
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());
                             HashMap hmRet = new HashMap<String,String>();
                             long startTime = rspec.getStartTime();
@@ -265,10 +265,10 @@ public class AggregateRspecRunner extends Thread {
                             AggregateState.getAggregateP2PVlans().update(p2pvlan);
                             if (p2pvlan.getStatus().equalsIgnoreCase("FAILED"))
                                 throw (new AggregateException("Failed to setup P2PVlan:"+description));
-                            if(netIf1.getVlanTag().equalsIgnoreCase("any") && !p2pvlan.getVtag().equalsIgnoreCase("any")) {
+                            if(netIf1.getVlanTag().equalsIgnoreCase("any") && !AggregateUtils.parseVlanTag(p2pvlan.getVtag(), true).equalsIgnoreCase("any")) {
                                 netIf1.setVlanTag("any("+p2pvlan.getVtag()+")");
                             }
-                            if(netIf2.getVlanTag().equalsIgnoreCase("any") && !p2pvlan.getVtag().equalsIgnoreCase("any")) {
+                            if(netIf2.getVlanTag().equalsIgnoreCase("any") && !AggregateUtils.parseVlanTag(p2pvlan.getVtag(), false).equalsIgnoreCase("any")) {
                                 netIf2.setVlanTag("any("+p2pvlan.getVtag()+")");
                             }
                             log.debug("end - create vlan: "+description+" return status: "+hmRet);
