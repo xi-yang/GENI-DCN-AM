@@ -270,7 +270,7 @@ public class AggregateP2PVlan extends AggregateResource {
             errMessage = "IDC_APIClient::createReservation returned null GRI.";
         }
         else {
-            if (vtag.equalsIgnoreCase("any")) {
+            if (vtag.contains("any")) {
                 //wait for 10 seconds for IDC to compute path and vlan tag
                 AggregateUtils.justSleep(10);
                 this.queryVlan();
@@ -388,17 +388,22 @@ public class AggregateP2PVlan extends AggregateResource {
             return false;
         }
 
+        
+        String srcVlan = AggregateUtils.parseVlanTag(vtag, true);
+        String dstVlan = AggregateUtils.parseVlanTag(vtag, false);
+        
         boolean ret = true;
+        
 
         //TODO: verify the devices exist for srcInterface and dstInterface
         if (srcInterface.isEmpty()){
             log.info("Source interface deviceName unknown: skip "+(add?"adding":"deleting") + " vlan interface to source node.");
         }      //add/delete source vtag interface
-        else if (client.vconfigVlan(source, srcInterface, vtag, add)) {
-            log.info((add?"added":"deleted") + " vlan interface to node "+ source + "on "+ srcInterface + "."  + vtag);
+        else if (client.vconfigVlan(source, srcInterface, srcVlan, add)) {
+            log.info((add?"added":"deleted") + " vlan interface to node "+ source + "on "+ srcInterface + "."  + srcVlan);
         }
         else {
-            log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ source + " " + srcInterface + "." + vtag);
+            log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ source + " " + srcInterface + "." + srcVlan);
             if (add)
                 log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
 
@@ -406,8 +411,8 @@ public class AggregateP2PVlan extends AggregateResource {
         if (srcInterface.isEmpty() || srcIpAndMask.isEmpty()){
             log.info("Source interface deviceName or IP address unknown: skip configuring IP address on source node.");
         }
-        else if (add && !client.ifconfigIp(source, srcInterface + "." + vtag, srcIpAndMask)) {
-            log.error("failed to configure IP address on node " + source + " " + srcInterface + "." + vtag);
+        else if (add && !client.ifconfigIp(source, srcInterface + "." + srcVlan, srcIpAndMask)) {
+            log.error("failed to configure IP address on node " + source + " " + srcInterface + "." + srcVlan);
             ret = false;
         }
 
@@ -415,19 +420,19 @@ public class AggregateP2PVlan extends AggregateResource {
         if (dstInterface.isEmpty()){
             log.info("Destination interface deviceName unknown: skip "+(add?"adding":"deleting") + " vlan interface to destination node.");
         }      //add/delete source vtag interface
-        else if (client.vconfigVlan(destination, dstInterface, vtag, add)) {
-            log.info((add?"added":"deleted") + " vlan interface to node "+ destination + "on "+ dstInterface + "." + vtag);
+        else if (client.vconfigVlan(destination, dstInterface, dstVlan, add)) {
+            log.info((add?"added":"deleted") + " vlan interface to node "+ destination + "on "+ dstInterface + "." + dstVlan);
         }
         else {
-            log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ destination + " " + dstInterface + "." + vtag);
+            log.warn("failed to " + (add?"add":"delete") + " vlan interface on node "+ destination + " " + dstInterface + "." + dstVlan);
             if (add)
                 log.warn("there might be existing vlan interface of the same tag --> continue to try ip config");
         }
         if (dstInterface.isEmpty() || dstIpAndMask.isEmpty()){
             log.info("Destination interface deviceName or IP address unknown: skip configuring IP address on destination node.");
         }
-        else if (add && !client.ifconfigIp(destination, dstInterface + "." + vtag, dstIpAndMask)) {
-            log.error("failed to configure IP address on node " + destination + " " + dstInterface + "." + vtag);
+        else if (add && !client.ifconfigIp(destination, dstInterface + "." + dstVlan, dstIpAndMask)) {
+            log.error("failed to configure IP address on node " + destination + " " + dstInterface + "." + dstVlan);
             ret = false;
         }
 
