@@ -241,7 +241,7 @@ public class AggregateRspecRunner extends Thread {
                             if (destination == null)
                                 throw (new AggregateException("Failed to setup P2PVlan to unrecorgnized dstURN: "+netIf2.getUrn()));
                             String description = rspec.getRspecName() + " p2pvlan-" + source + "-" + destination + "-" + netIf1.getVlanTag();
-                            String vtag = netIf1.getVlanTag();
+                            String vtag = netIf1.getVlanTag()+"-"+netIf2.getVlanTag();
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());
                             HashMap hmRet = new HashMap<String,String>();
                             long startTime = rspec.getStartTime();

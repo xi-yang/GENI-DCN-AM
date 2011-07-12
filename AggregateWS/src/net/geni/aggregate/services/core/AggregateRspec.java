@@ -615,8 +615,8 @@ public class AggregateRspec implements java.io.Serializable {
             AggregateP2PVlan stitchingP2PVlan = new AggregateP2PVlan();
             stitchingP2PVlan.setSource(netIfUrns.get(0));
             stitchingP2PVlan.setDestination(netIfUrns.get(1));
-            stitchingP2PVlan.setVtag("any");
             stitchingP2PVlan.setBandwidth(50);//50M by default
+            stitchingP2PVlan.setVtag("");
             if (netIf1 != null) {
                 String source = netIf1.getLinks().isEmpty() ? AggregateUtils.getIDCQualifiedUrn(netIf1.getUrn())
                         : AggregateUtils.getIDCQualifiedUrn(netIf1.getLinks().get(0));
@@ -635,9 +635,16 @@ public class AggregateRspec implements java.io.Serializable {
                 stitchingP2PVlan.setDstIpAndMask(netIf2.getIpAddress());
                 if (netIf1 == null) {
                     stitchingP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity()));
-                    if (!netIf2.getVlanTag().isEmpty())
-                        stitchingP2PVlan.setVtag(netIf2.getVlanTag());
+                    if (!netIf2.getVlanTag().isEmpty()) {
+                        if (stitchingP2PVlan.getVtag().isEmpty())
+                            stitchingP2PVlan.setVtag(netIf2.getVlanTag());
+                        else 
+                            stitchingP2PVlan.setVtag(netIf1.getVlanTag() + "-" + netIf2.getVlanTag());
+                    }
                 }
+            }
+            if (stitchingP2PVlan.getVtag().isEmpty()) {
+                stitchingP2PVlan.setVtag("any");
             }
             stitchingP2PVlan.setStitchingResourceId(srId);
             stitchingP2PVlan.setExternalResourceId(erId);
