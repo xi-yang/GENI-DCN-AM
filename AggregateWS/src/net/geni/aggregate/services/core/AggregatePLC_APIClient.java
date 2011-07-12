@@ -39,6 +39,9 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         + "ret2 = api_server.AddSliceToNodes(auth, '<_name_>', nodes);"
         + "print ret1, ret2;"; //success pattern: "1 1"
 
+    private String addSliceTagCmd = 
+            "api_server.AddSliceTag(auth, '<_name_>', 'net_share', '1');";
+
     private String cleanupSliceCmd =
         "ret1 = api_server.DeleteSliceFromNodes (auth, '<_name_>', <_node_list_>);"
         //+ "ret2 = api_server.DeletePersonFromSlice(auth, <_user_>, '<_name_>');"
@@ -161,6 +164,12 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
             log.error("plcapi server failed to create Slice '" + sliceName +"' on Nodes: " + nodes);
             logoff();
         }
+
+        // add net_shared=1 tag
+        createSliceCmd = addSliceTagCmd;
+        createSliceCmd = createSliceCmd.replaceAll("<_name_>", sliceName);
+        this.sendCommand(createSliceCmd);
+
         return ret;
     }
 
