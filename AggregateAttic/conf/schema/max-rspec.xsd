@@ -112,7 +112,7 @@
         <xs:element minOccurs="0" name="ipAddress" type="xs:string"/>
         <xs:element minOccurs="0" name="macAddress" type="xs:string"/>
         <xs:element minOccurs="0" name="vlanRange" type="xs:string"/>
-        <xs:element minOccurs="0" name="attachedNetworkLinkUrn" type="xs:string"/>
+        <xs:element minOccurs="0" name="attachedLinkUrn" type="xs:string"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" name="peerNetworkInterface" type="xs:string"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>
@@ -136,7 +136,7 @@
       <xs:sequence>
         <xs:element minOccurs="0" name="portId" type="xs:string"/>
         <xs:element minOccurs="0" name="status" type="xs:string"/>
-        <xs:element minOccurs="0" name="attachedNetworkLinkUrn" type="xs:string"/>
+        <xs:element minOccurs="0" name="attachedLinkUrn" type="xs:string"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>
   </xs:complexType>
