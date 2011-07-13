@@ -416,7 +416,7 @@ public class AggregateP2PVlan extends AggregateResource {
             ret = false;
         }
 
-        if (!client.restartNodeManager(source)) {
+        if (add && !client.restartNodeManager(source)) {
             log.error("failed to restart nodemanager on node " + source);
         }
         
@@ -440,7 +440,7 @@ public class AggregateP2PVlan extends AggregateResource {
             ret = false;
         }
 
-        if (!client.restartNodeManager(destination)) {
+        if (add && !client.restartNodeManager(destination)) {
             log.error("failed to restart nodemanager on node " + destination);
         }
 
