@@ -390,12 +390,12 @@ public class AggregateP2PVlan extends AggregateResource {
 
         String srcNode = source;
         if (srcNode.startsWith("urn:")) {
-            String dstNodeUrn = (AggregateState.getAggregateInterfaces().getByAttachedLink(source)).getParentNode().getUrn();
+            String dstNodeUrn = (AggregateState.getAggregateInterfaces().getByAttachedLink(source)).getUrn();
             srcNode = AggregateUtils.getUrnField(dstNodeUrn, "node").toLowerCase() +"."+AggregateUtils.getUrnField(dstNodeUrn, "domain").toLowerCase();
         }
         String dstNode = destination;
         if (dstNode.startsWith("urn:")) {
-            String dstNodeUrn = (AggregateState.getAggregateInterfaces().getByAttachedLink(destination)).getParentNode().getUrn();
+            String dstNodeUrn = (AggregateState.getAggregateInterfaces().getByAttachedLink(destination)).getUrn();
             dstNode = AggregateUtils.getUrnField(dstNodeUrn, "node").toLowerCase() +"."+AggregateUtils.getUrnField(dstNodeUrn, "domain").toLowerCase();
         }
 
