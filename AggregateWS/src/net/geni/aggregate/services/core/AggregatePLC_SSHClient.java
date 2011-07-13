@@ -117,4 +117,23 @@ public class AggregatePLC_SSHClient extends AggregateCLIClient {
 
         return false;
     }
+
+    public boolean restartNodeManager(String node) {
+        if (!alive()) {
+            if (!login())
+                return false;
+        }
+
+        String cmd = sshExecPrefix + node + " service nm restart";
+        this.sendCommand(cmd);
+        log.debug("restartNodeManager command: "+cmd);
+        int ret = this.readPattern(promptPattern, ".*command not found|.*unrecognized", promptPattern);
+        log.debug("restartNodeManager result: "+buffer);
+        if (ret == 1) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

@@ -416,6 +416,10 @@ public class AggregateP2PVlan extends AggregateResource {
             ret = false;
         }
 
+        if (!client.restartNodeManager(source)) {
+            log.error("failed to restart nodemanager on node " + source);
+        }
+        
         //add/delete destination vtag interface
         if (dstInterface.isEmpty()){
             log.info("Destination interface deviceName unknown: skip "+(add?"adding":"deleting") + " vlan interface to destination node.");
@@ -434,6 +438,10 @@ public class AggregateP2PVlan extends AggregateResource {
         else if (add && !client.ifconfigIp(destination, dstInterface + "." + dstVlan, dstIpAndMask)) {
             log.error("failed to configure IP address on node " + destination + " " + dstInterface + "." + dstVlan);
             ret = false;
+        }
+
+        if (!client.restartNodeManager(destination)) {
+            log.error("failed to restart nodemanager on node " + destination);
         }
 
         return ret;
