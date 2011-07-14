@@ -121,6 +121,10 @@ public class AggregateRspecManager extends Thread{
                         //rspec in working state, polling interval increased
                         if (rspecThread.getPollInterval() < extendedPollInterval)
                             rspecThread.setPollInterval(extendedPollInterval);
+                        if (rspec.getEndTime() <= System.currentTimeMillis()/1000) {
+                            rspecThread.setGoRun(false);
+                            rspecThread.interrupt();
+                        }
                     } else if (rspec.getStatus().equalsIgnoreCase("TERMINATED")
                       || rspec.getStatus().equalsIgnoreCase("ROLLBACKED")) {
                         //rollbacked thread may get diff. treatment?
