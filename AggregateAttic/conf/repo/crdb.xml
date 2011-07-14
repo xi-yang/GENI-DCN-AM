@@ -3,9 +3,11 @@
     <aggregate>geni.maxgigapop.net</aggregate>
     <user id="3" name="xyang" email="xyang@east.isi.edu" firstName="Xi" lastName="Yang" role="PI" certSubject="CN=Xi Yang, OU=ISI, O=USC, L=Arlington, ST=Virginia, C=US" description="GENI Test PI User" />
     <user id="4" name="TomLehman" email="tlehman@east.isi.edu" firstName="Tom" lastName="Lehman" role="PI" certSubject="CN=Tom Lehman, OU=ISI, O=USC, L=Arlington, ST=Virginia, C=US" description="GENI Test User"/>
+    <user id="5" name="JohnDeHart" email="jdd@arl.wustl.edu" firstName="John" lastName="DeHart" role="User" certSubject="" description="WU SPP Demo User"/>
+    <user id="6" name="pangu" email="pangu@cse.unl.edu" firstName="Pragatheeswaran" lastName="Angu" role="User" certSubject="" description="UNL-GPENI MAX Demo User"/>
     <computeResource id="urn:aggregate=geni.maxgigapop.net:rspec=crdb">
         <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab2">
-            <plId>2</plId>
+            <plId>7</plId>
             <address>206.196.176.45</address>
             <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab</capabilities>
             <description>planetlab2.dragon.maxgigapop.net</description>
@@ -32,7 +34,7 @@
             </networkInterface>
         </computeNode>
         <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab4">
-            <plId>1</plId>
+            <plId>8</plId>
             <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab</capabilities>
             <description>planetlab4.dragon.maxgigapop.net</description>
             <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab4:interface=eth1">
@@ -45,7 +47,7 @@
             </networkInterface>
         </computeNode>
         <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab5">
-            <plId>6</plId>
+            <plId>4</plId>
             <capabilities>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon,urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab</capabilities>
             <description>planetlab5.dragon.maxgigapop.net</description>
             <networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1">
@@ -54,7 +56,7 @@
                 <capacity>1000Mbps</capacity>
                 <ipAddress></ipAddress>
                 <vlanRange>1001-2000</vlanRange>
-                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-5:link=*</attachedLinkUrn>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-8:link=*</attachedLinkUrn>
             </networkInterface>
         </computeNode>
         <computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=IDC">
