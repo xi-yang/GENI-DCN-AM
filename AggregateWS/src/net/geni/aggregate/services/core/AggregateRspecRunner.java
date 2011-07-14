@@ -159,6 +159,9 @@ public class AggregateRspecRunner extends Thread {
                     goRun = false;
                 }
             }
+            if (rspec.getEndTime() <= System.currentTimeMillis()/1000) {
+                goRun = false;
+            }
         }
 
         terminate();
