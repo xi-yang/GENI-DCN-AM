@@ -153,7 +153,7 @@ public class AggregateRspecRunner extends Thread {
                 }catch (AggregateException e) {
                     log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
                     e.printStackTrace();
-                    rollback();
+                    //rollback();
                     rspec.setStatus("VLANS-FAILED");
                     manager.updateRspec(rspec);
                     goRun = false;

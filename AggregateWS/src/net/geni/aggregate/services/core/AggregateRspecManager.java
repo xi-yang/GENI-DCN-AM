@@ -345,7 +345,7 @@ public class AggregateRspecManager extends Thread{
         }
 
         if (len == 0) {
-            throw new AggregateException("No resouce found under scope: " + scope);
+            throw new AggregateException("No resource found under scope: " + scope);
         }
 
         return statements;
