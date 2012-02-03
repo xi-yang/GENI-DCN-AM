@@ -420,12 +420,12 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="init,deps-jar,-verify-automatic-build,-pre-pre-compile,-pre-compile,-do-compile,-post-compile" description="Compile project." name="compile"/>
+    <target depends="init,deps-jar,-xsd2java-rspecs-,-verify-automatic-build,-pre-pre-compile,-pre-compile,-do-compile,-post-compile" description="Compile project." name="compile"/>
     <target name="-pre-compile-single">
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="init,deps-jar,-pre-pre-compile" name="-do-compile-single">
+    <target depends="init,deps-jar,-xsd2java-rspecs-,-pre-pre-compile" name="-do-compile-single">
         <fail unless="javac.includes">Must select some files in the IDE or set javac.includes</fail>
         <j2seproject3:force-recompile/>
         <j2seproject3:javac excludes="" gensrcdir="${build.generated.sources.dir}" includes="${javac.includes}" sourcepath="${src.dir}"/>
@@ -541,6 +541,58 @@ is divided into following sections:
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="init,compile,-pre-jar,-do-jar-with-manifest,-do-jar-without-manifest,-do-jar-with-mainclass,-do-jar-with-libraries,-do-jar-with-libraries-without-mainclass,-do-jar-with-libraries-without-manifest,-post-jar,axis2-aar" description="Build JAR." name="jar"/>
+
+    <!--
+                ==================
+                JAXB XSD Building SECTION
+                ==================
+            -->
+
+    <target name="-xsd2java-env-dir-" if="haveEnvDir">
+        <delete dir="${build.dir}/rspecs"/>
+        <copy toDir="${build.dir}/rspecs" overwrite="true">
+            <fileset dir="${env.AGGREGATE_HOME}/AggregateAttic/conf/schema/rspec_v3">
+                <include name="*.xsd"/>
+            </fileset>
+        </copy>        
+    </target>
+    <target name="-xsd2java-abs-dir-" unless="haveEnvDir">
+        <delete dir="${build.dir}/rspecs"/>
+        <copy toDir="${build.dir}/rspecs" overwrite="true">
+            <fileset dir="/usr/local/geni-aggregate/AggregateAttic/conf/schema/rspec_v3">
+                <include name="*.xsd"/>
+            </fileset>
+        </copy>        
+    </target>
+    <target depends="init,-xsd2java-env-dir-,-xsd2java-abs-dir-" name="-xsd2java-rspecs-">
+        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true" output="/tmp/.ant.jaxb4xsd.output">
+            <arg line="ad.xsd"/>
+            <arg line="."/>
+            <classpath path="${javac.classpath}"/>
+        </java>
+        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true" output="/tmp/.ant.jaxb4xsd.output">
+            <arg line="request.xsd"/>
+            <arg line="."/>
+            <classpath path="${javac.classpath}"/>
+        </java>
+        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true" output="/tmp/.ant.jaxb4xsd.output">
+            <arg line="manifest-request.xsd"/>
+            <arg line="."/>
+            <classpath path="${javac.classpath}"/>
+        </java>
+        <!-- some compile error for ths placeholder schema file
+        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true">
+            <arg line="manifest.xsd"/>
+            <arg line="."/>
+            <classpath path="${javac.classpath}"/>
+        </java>
+        -->
+        <copy toDir="${src.dir}" overwrite="true">
+            <fileset dir="${build.dir}/rspecs">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
 
     <!--
                 ==================
