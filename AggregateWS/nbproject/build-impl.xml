@@ -565,18 +565,23 @@ is divided into following sections:
         </copy>        
     </target>
     <target depends="init,-xsd2java-env-dir-,-xsd2java-abs-dir-" name="-xsd2java-rspecs-">
-        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true" output="/tmp/.ant.jaxb4xsd.output">
+        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true" output="/tmp/.ant.jaxb4xsd.output.ad">
             <arg line="ad.xsd"/>
             <arg line="."/>
             <classpath path="${javac.classpath}"/>
         </java>
-        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true" output="/tmp/.ant.jaxb4xsd.output">
+        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true" output="/tmp/.ant.jaxb4xsd.output.requset">
             <arg line="request.xsd"/>
             <arg line="."/>
             <classpath path="${javac.classpath}"/>
         </java>
-        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true" output="/tmp/.ant.jaxb4xsd.output">
+        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true" output="/tmp/.ant.jaxb4xsd.output.manifest-request">
             <arg line="manifest-request.xsd"/>
+            <arg line="."/>
+            <classpath path="${javac.classpath}"/>
+        </java>
+        <java classname="org.apache.axis2.schema.XSD2Java" dir="${build.dir}/rspecs" fork="true" output="/tmp/.ant.jaxb4xsd.output.stitching">
+            <arg line="stitching.xsd"/>
             <arg line="."/>
             <classpath path="${javac.classpath}"/>
         </java>
