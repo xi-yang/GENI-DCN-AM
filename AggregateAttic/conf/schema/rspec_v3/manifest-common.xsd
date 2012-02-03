@@ -193,33 +193,6 @@
     <xs:attribute name="latency"/>
     <xs:attribute name="packet_loss"/>
   </xs:complexType>
-  <xs:complexType name="ComponentHopContents">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:group ref="rspec:AnyExtension"/>
-      <xs:element ref="rspec:component_manager"/>
-      <xs:group ref="rspec:InterfaceMapping"/>
-    </xs:choice>
-    <xs:attributeGroup ref="rspec:AnyExtension"/>
-    <xs:attribute name="component_id"/>
-  </xs:complexType>
-  <xs:element name="component_manager">
-    <xs:complexType>
-      <xs:attribute name="name" use="required"/>
-    </xs:complexType>
-  </xs:element>
-  <xs:group name="InterfaceMapping">
-    <xs:sequence>
-      <xs:element name="interface_ref">
-        <xs:complexType>
-          <xs:group ref="rspec:AnyExtension"/>
-          <xs:attributeGroup ref="rspec:AnyExtension"/>
-          <xs:attribute name="component_id" use="required"/>
-          <xs:attribute name="component_manager_id" use="required"/>
-          <xs:attribute name="client_id"/>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:group>
   <xs:element name="link_type">
     <xs:complexType>
       <xs:group ref="rspec:AnyExtension"/>
