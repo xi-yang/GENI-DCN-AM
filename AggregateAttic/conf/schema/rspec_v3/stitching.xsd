@@ -217,7 +217,7 @@ multipoint-to-multipoint, and paths-with-protection.  This will described in a l
 
   <xs:complexType name="GeniStitchSwitchingCapabilitySpecificInfo_L2sc">
     <xs:sequence>
-      <xs:element minOccurs="0" name="capability" type="xs:string"/>
+      <xs:element minOccurs="0" name="capacity" type="xs:string"/>
       <xs:element  minOccurs="0" name="interfaceMTU" type="xs:int"/>
       <xs:element minOccurs="0" name="vlanRangeAvailability" type="xs:string"/>
       <xs:element minOccurs="0" name="suggestedVLANRange" type="xs:string"/>
