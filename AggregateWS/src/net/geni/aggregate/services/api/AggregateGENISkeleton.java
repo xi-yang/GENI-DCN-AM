@@ -672,7 +672,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
 
         String[] statements = null;
         try {
-            statements = AggregateState.getRspecManager().getResourceTopologyXML(scope, rspecNames);
+            statements = AggregateState.getRspecManager().getManifestXml(scope, rspecNames);
         } catch (AggregateException e) {
             throw new AggregateFaultMessage(e.getMessage());
         }

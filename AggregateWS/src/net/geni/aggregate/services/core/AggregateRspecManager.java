@@ -58,8 +58,12 @@ public class AggregateRspecManager extends Thread{
             log.error("Fatal Error: aggregate.properties file misses the 'aggregate.crdb.path' property!");
             return;
         }
-        aggrRspecGlobal = new AggregateRspec();
-        aggrRspecGlobal.configRspecFromFile(filePath);
+        try {
+            aggrRspecGlobal = AggregateState.getRspecHandler().configRspecFromFile(filePath);
+        } catch (AggregateException e) {
+            e.printStackTrace();
+            log.error("AggregateRspecManager.loadCRDB(" + filePath+") Exception:" + e.getMessage());
+        }
     }
 
     public void reloadFromDB() {
@@ -159,7 +163,7 @@ public class AggregateRspecManager extends Thread{
             users.add(authUser);
             aggrRspec.setUsers(users);
         }
-        aggrRspec.parseRspec(rspecXML);
+        aggrRspec = AggregateState.getRspecHandler().parseRspecXml(rspecXML);
         aggrRspec.setAddPlcSlice(addPlcSlice);
 
         if (aggrRspec.getRspecName().isEmpty() || aggrRspec.getStartTime() == 0
@@ -252,7 +256,7 @@ public class AggregateRspecManager extends Thread{
         }
     }
 
-    public synchronized String[] getResourceTopologyXML(String scope, String[] rspecNames) throws AggregateException {
+    public synchronized String[] getManifestXml(String scope, String[] rspecNames) throws AggregateException {
         if (goRun == false) {
             throw new AggregateException("Initilization not finished yet. Try again later...");
         }
@@ -266,7 +270,7 @@ public class AggregateRspecManager extends Thread{
             //get compute resources
             if (scope.equalsIgnoreCase("all") || scope.contains("compute")) {
                 if (aggrRspecGlobal != null) {
-                    computeResource = aggrRspecGlobal.getResourcesXml();
+                    computeResource = AggregateState.getRspecHandler().getRspecManifest(aggrRspecGlobal);
                 }
                 if (computeResource != null && !computeResource.isEmpty()) {
                     len++;
@@ -340,12 +344,12 @@ public class AggregateRspecManager extends Thread{
                 len = retRspecs.size();
                 statements = new String[len];
                 for (int i = 0; i < len; i++) {
-                    statements[i] = retRspecs.get(i).getResourcesXml();
+                    statements[i] = AggregateState.getRspecHandler().getRspecManifest(retRspecs.get(i));
                 }
         }
 
         if (len == 0) {
-            throw new AggregateException("No resource found under scope: " + scope);
+            throw new AggregateException("No resource found under scope: " + scope); // TODO: comply with GENI v3 format
         }
 
         return statements;

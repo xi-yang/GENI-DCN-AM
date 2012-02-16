@@ -71,6 +71,7 @@ public class AggregateState
     // Global states
     private static AggregateGENISkeleton skeletonAPI = null;
     private static AggregateRspecManager aggregateRspecManager = null;
+    private static AggregateRspecHandler aggregateRspecHandler = null;
     private static AggregateSlicesPoller aggregateSlicesPoller = null;
     private static final int pollInterval = 60000; //miliseconds
 
@@ -119,6 +120,21 @@ public class AggregateState
         protoGeniSslPass = aggregateProps.getProperty("aggregate.external.protogeni.ssl_password", "");
         protoGeniSmUrn = aggregateProps.getProperty("aggregate.external.protogeni.sm_urn", "https://www.emulab.net:443/protogeni/xmlrpc/sa");
         protoGeniAmUrn = aggregateProps.getProperty("aggregate.external.protogeni.am_urn", "https://www.emulab.net:443/protogeni/xmlrpc/cm");
+        
+        //init rspec handler
+        String rspecHandlerClass = aggregateProps.getProperty("aggregate.rspec.handler", "net.geni.aggregate.services.core.RspecHandler_MAX");
+        try {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            Class<?> aClass = null;        
+            aClass = cl.loadClass(rspecHandlerClass);
+            aggregateRspecHandler = (AggregateRspecHandler)aClass.newInstance();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
         //init hibernate
         HibernateUtil.initSessionFactory();
@@ -152,6 +168,10 @@ public class AggregateState
 
     public static AggregateRspecManager getRspecManager() {
         return aggregateRspecManager;
+    }
+
+    public static AggregateRspecHandler getRspecHandler() {
+        return aggregateRspecHandler;
     }
 
     public static AggregateSlicesPoller getSlicesPoller() {
