@@ -180,7 +180,9 @@ multipoint-to-multipoint, and paths-with-protection.  This will described in a l
   <xs:complexType name="GeniStitchAddressContent">
     <xs:simpleContent>
         <xs:extension base="xs:string">
+            <!--
             <xs:attribute use="optional" name="value" type="xs:string"/>
+            -->
             <xs:attribute use="optional" name="type" type="xs:string"/>
         </xs:extension>
     </xs:simpleContent>
@@ -204,14 +206,16 @@ multipoint-to-multipoint, and paths-with-protection.  This will described in a l
 
   <xs:complexType name="GeniStitchSwitchingCapabilitySpecificInfo">
     <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_L2sc" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_L2sc"/>
+      <!-- TBD
       <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc1" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc1"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc2" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc2"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc3" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc3"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc4" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc4"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_L2sc" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_L2sc"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Tdm" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Tdm"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Lsc" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Lsc"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Fsc" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Fsc"/>
+      -->
     </xs:sequence>
   </xs:complexType>
 
