@@ -124,5 +124,16 @@ public class AggregateNetworkInterfaces {
         }
         return null;
     }
+    
+    public synchronized String lookupAttachedLinkByUrn(String urn) {
+        List<AggregateNetworkInterface> infs = getAll();
+        for (AggregateNetworkInterface inf: infs) {
+            List<String> linkUrns = inf.getLinks();
+            if (inf.getUrn().equalsIgnoreCase(urn) && linkUrns != null
+                    && !linkUrns.isEmpty())
+                return linkUrns.get(0);
+        }
+        return null;
+    }
 
 }

@@ -10,6 +10,8 @@ import org.hibernate.*;
 import net.geni.aggregate.services.api.AggregateFault;
 import net.geni.aggregate.services.api.AggregateFaultMessage;
 import net.geni.aggregate.services.api.AggregateFaultMessageExt;
+import org.apache.xerces.dom.ElementNSImpl;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -237,4 +239,37 @@ public class AggregateUtils
         }
         while ((t1 - t0) < (secs*1000));
     }
+    
+    
+    public static String getAnyName(Object anyObj) {
+        return ((ElementNSImpl)anyObj).getLocalName();
+    }
+
+    public static Node getAnyNode(Object anyObj) {
+        return ((ElementNSImpl)anyObj).getFirstChild();
+    }
+ 
+    public static String getAnyText(Object anyObj) {
+        if (((ElementNSImpl)anyObj).getFirstChild() == null)
+            return null;
+        return ((ElementNSImpl)anyObj).getFirstChild().getNodeValue();
+    }
+    public static Node getAnyExtensionNode(ArrayList anyList, String name) {
+        for (Object obj: anyList) {
+            if (getAnyName(obj).equals(name))
+                return getAnyNode(obj);
+        }
+        return null;
+    }
+
+    public static String getAnyExtensionText(ArrayList anyList, String name) {
+        for (Object obj: anyList) {
+            if (getAnyName(obj).equals(name))
+                return getAnyText(obj);
+        }
+        return null;
+    }
+
+    //TODO : assembling methods (makeAnyNode, makeAnyTextNode) and move to Utils
+
 }

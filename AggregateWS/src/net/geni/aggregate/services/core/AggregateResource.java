@@ -14,6 +14,7 @@ import java.io.Serializable;
 public abstract class AggregateResource implements java.io.Serializable {
     protected int id = 0;
     protected String type = "";
+    protected String clientId = "";
     protected int rspecId = 0;
 
     public AggregateResource() {}
@@ -30,6 +31,14 @@ public abstract class AggregateResource implements java.io.Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public int getRspecId() {
