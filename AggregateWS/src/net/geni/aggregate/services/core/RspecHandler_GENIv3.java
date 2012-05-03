@@ -17,6 +17,12 @@ import net.geni.schema.stitching.topology.genistitch._20110220.*;
  * @author xyang
  */
 public class RspecHandler_GENIv3 implements AggregateRspecHandler {
+    private org.apache.log4j.Logger log;
+    
+    public RspecHandler_GENIv3() {
+        log = org.apache.log4j.Logger.getLogger(this.getClass());
+    }
+
     public AggregateRspec parseRspecXml(String rspecXml) throws AggregateException {
         AggregateRspec aggrRspec = new AggregateRspec();
         RSpecContents rspecV3Obj = null;
@@ -78,7 +84,15 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String clientId = node.getClientId();
         String urn = node.getComponentId(); //$$$$ TODO: convert URN format ?
         String amUrn = node.getComponentManagerId();
-        // sub-elements:
+        
+        AggregateNode aggrNode= AggregateState.getAggregateNodes().getByUrn(urn);
+        if (aggrNode == null) {
+            // TODO: log and return -- not an exception
+            log.debug("unknown node:"+urn+" (this node could belong to external aggregate)");
+            return;
+        }
+
+        // sub-elements: interface etc.
         List<AggregateNetworkInterface> myNetIfs = new ArrayList<AggregateNetworkInterface>();
         for (Object obj: node.getAnyOrRelationOrLocation()) {
             if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
@@ -91,6 +105,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     //type = hdc.getName();
                 }
             }
+            // optional:
             if (obj.getClass().getName().contains("ElementNSImpl")) {
                 String elemName = AggregateUtils.getAnyName(obj);
                 if (elemName.equalsIgnoreCase("address")) {
@@ -102,10 +117,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
         }
 
-        AggregateNode aggrNode= AggregateState.getAggregateNodes().getByUrn(urn);
-        if (aggrNode == null) {
-            throw new AggregateException("unknown aggregateNode "+urn+" (extracted from "+urn+")");
-        }
         AggregateNode newNode = aggrNode.duplicate();
         newNode.setClientId(clientId);
         aggrNode.setType("planetlabNodeSliver"); // plab node only
@@ -139,6 +150,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     // assume type="ipv4"
                 }
             }
+            // optional:
             if (obj.getClass().getName().contains("ElementNSImpl")) {
                 String elemName = AggregateUtils.getAnyName(obj);
                 if (elemName.equalsIgnoreCase("attached_link_urn")) {
@@ -196,8 +208,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     InterfaceRefContents irc = (InterfaceRefContents)((JAXBElement)obj).getValue();
                     String netIfClientId = irc.getClientId();
                     AggregateNetworkInterface netIf = lookupInterfaceByClientId(rspec, netIfClientId);
-                    if (netIf == null)
-                        throw new AggregateException("interface_ref (client_id=" + netIfClientId + ") cannot be found.");
+                    if (netIf == null) {
+                        log.debug("interface_ref:" + netIfClientId + " cannot be found (this could be a link to external aggregate)");
+                        return;
+                    }
                     netIfs.add(netIf);
                 } else if (elemName.equalsIgnoreCase("property")) {
                     LinkPropertyContents lpc = (LinkPropertyContents)((JAXBElement)obj).getValue();
@@ -207,6 +221,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 }
 
             }
+            // optional:
             if (obj.getClass().getName().contains("ElementNSImpl")) {
                 String elemName = AggregateUtils.getAnyName(obj);
                 // 'external_urn' is replaced by using the source_id and dest_id in <property>
