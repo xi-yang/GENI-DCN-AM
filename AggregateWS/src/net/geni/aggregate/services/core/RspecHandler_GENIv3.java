@@ -43,13 +43,18 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             throw new AggregateException("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
         }
         // TODO: parse rspecV3Obj and stitchTopoObj to fill up aggrRspec
+            // filter nodes and links only with component_manager_id pointing to current AM
+            // add elements to node/interface and link/property
+            // parse nodes to addComputeNodes and addNetworkInterfaces
+            // parse links to addP2PVlans
+        
+            // set default start and end time
         return aggrRspec;
     }
 
     public AggregateRspec configRspecFromFile(String filePath) throws AggregateException {
-        AggregateRspec rspec = new AggregateRspec();
-        
-        return rspec;
+        throw new AggregateException("RspecHandler_GENIv3::configRspecFromFile not implemented");
+        // loadCRDB only use this method from MAX rspecHandler instance? 
     }
 
     public String getRspecManifest(AggregateRspec rspec) throws AggregateException {

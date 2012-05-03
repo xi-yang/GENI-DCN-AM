@@ -18,6 +18,7 @@ import java.util.*;
 import net.geni.www.resources.rspec._3.*;
 import net.geni.schema.stitching.topology.genistitch._20110220.*;
 import org.apache.xerces.dom.ElementNSImpl;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -64,6 +65,41 @@ public class Rspecv3Test {
             System.err.println("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
             System.exit(-1);
         }
+        LinkContents lc = (LinkContents)((JAXBElement)rspecV3Obj.getAnyOrNodeOrLink().get(2)).getValue();
+        LinkPropertyContents lpc = (LinkPropertyContents)((JAXBElement)lc.getAnyOrPropertyOrLinkType().get(2)).getValue();
+        ElementNSImpl anyObj = (ElementNSImpl)lpc.getAny().get(0);
+        String vlan = anyObj.getFirstChild().getNodeValue();
+    }
+
+    // TODO : assembling methods (makeAnyNode, makeAnyTextNode) and move to Utils
+    
+    private String getAnyName(ElementNSImpl anyObj) {
+        return anyObj.getLocalName();
+    }
+
+    private Node getAnyNode(ElementNSImpl anyObj) {
+        return anyObj.getFirstChild();
+    }
+ 
+    private String getAnyText(ElementNSImpl anyObj) {
+        return anyObj.getFirstChild().getNodeValue();
+    }
+    private Node getAnyExtensionNode(ArrayList anyList, String name) {
+        for (Object obj: anyList) {
+            ElementNSImpl elemObj = (ElementNSImpl)obj;
+            if (getAnyName(elemObj).equals(name))
+                return getAnyNode(elemObj);
+        }
+        return null;
+    }
+
+    private String getAnyExtensionText(ArrayList anyList, String name) {
+        for (Object obj: anyList) {
+            ElementNSImpl elemObj = (ElementNSImpl)obj;
+            if (getAnyName(elemObj).equals(name))
+                return getAnyText(elemObj);
+        }
+        return null;
     }
 
     private static String[] extractStitchingRspec(String rspecXml) {
