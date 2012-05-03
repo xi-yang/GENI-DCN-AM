@@ -59,10 +59,21 @@ public class AggregateRspecManager extends Thread{
             return;
         }
         try {
+            // only use MAX native handler to load aggregate infrastructure RSpec
+            AggregateRspecHandler rspecHandler = AggregateState.getRspecHandler();
+            if (!rspecHandler.getClass().getName().contains("RspecHandler_MAX")) {
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                Class<?> aClass = null;
+                aClass = cl.loadClass("net.geni.aggregate.services.core.RspecHandler_MAX");
+                rspecHandler = (AggregateRspecHandler) aClass.newInstance();
+            }
             aggrRspecGlobal = AggregateState.getRspecHandler().configRspecFromFile(filePath);
         } catch (AggregateException e) {
-            e.printStackTrace();
             log.error("AggregateRspecManager.loadCRDB(" + filePath+") Exception:" + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("AggregateRspecManager.loadCRDB(" + filePath+") Exception:" + e.getMessage());
+            e.printStackTrace();            
         }
     }
 
