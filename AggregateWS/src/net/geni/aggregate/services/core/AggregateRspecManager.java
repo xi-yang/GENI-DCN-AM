@@ -67,7 +67,7 @@ public class AggregateRspecManager extends Thread{
                 aClass = cl.loadClass("net.geni.aggregate.services.core.RspecHandler_MAX");
                 rspecHandler = (AggregateRspecHandler) aClass.newInstance();
             }
-            aggrRspecGlobal = AggregateState.getRspecHandler().configRspecFromFile(filePath);
+            aggrRspecGlobal = rspecHandler.configRspecFromFile(filePath);
         } catch (AggregateException e) {
             log.error("AggregateRspecManager.loadCRDB(" + filePath+") Exception:" + e.getMessage());
             e.printStackTrace();
