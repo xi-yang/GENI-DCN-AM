@@ -145,64 +145,14 @@ public class AggregateUtils
         return retArray;
     }
 
-    public static String getUrnFields(String urn, String[] fields) {
-        String ret = "";
-        for (int i = 0; i < fields.length; i++) {
-            ret+=(fields[i]+"="+getUrnField(urn,fields[i]));
-            if (i != fields.length-1)
-                ret+=":";
-        }
-        return ret;
-    }
-    
-    public static String getUrnField(String urn, String field) {
-        int start = urn.indexOf(field+"=");
-        if (start == -1)
-            return null;
-        start += field.length()+1;
-        int end = urn.indexOf(':', start);
-        if (end == -1 )
-            end = urn.length();
-        return urn.substring(start, end);
-    }
-
-    public static boolean isSameLinkUrn (String urn1, String urn2) {
-        //cut the extra field
-        String domain1 = AggregateUtils.getUrnField(urn1, "domain");
-        String domain2 = AggregateUtils.getUrnField(urn2, "domain");
-        String node1 = AggregateUtils.getUrnField(urn1, "node");
-        String node2 = AggregateUtils.getUrnField(urn2, "node");
-        String interface1 = AggregateUtils.getUrnField(urn1, "interface");
-        String interface2 = AggregateUtils.getUrnField(urn2, "interface");
-        if (domain1 == domain2 && node1 == node2 && (interface1.startsWith(interface2) || interface2.startsWith(interface1)))
-                return true;
+    public static Boolean isGeniUrn(String urn) {
+        if (!urn.contains("urn:publicid:IDN+"))
+            return true;
         return false;
     }
-    
-    public static String getIDCQualifiedUrn(String urn) {
-        // GENI Rspec v3 format
-        try {
-            if (isGeniUrn(urn))
-                return convertGeniToDcnUrn(urn);
-        } catch (AggregateException e) {
-            return null;
-        }
-        //MAX native format
-        Pattern pattern = Pattern.compile("^urn:aggregate=([^:]*):rspec=([^:]*):domain=([^:]*):node=([^:]*):.*");
-        Matcher matcher = pattern.matcher(urn);
-        if (matcher.find()) {
-            return matcher.group(4)+"."+matcher.group(3);
-        }
-        pattern = Pattern.compile("^urn:ogf:network:domain=([^:]*):node=([^:]*):.*");
-        matcher = pattern.matcher(urn);
-        if (matcher.find()) {
-            return urn;
-        }
-        return null;
-    }
 
-    public static Boolean isGeniUrn(String geniUrn) {
-        if (!geniUrn.contains("urn:publicid:IDN+"))
+    public static Boolean isDcnUrn(String urn) {
+        if (!urn.contains("urn:ogf:network:domain"))
             return true;
         return false;
     }
@@ -245,6 +195,96 @@ public class AggregateUtils
             dcnUrn += fields[2];
         }
         return dcnUrn;
+    }
+
+    public static String convertDcnToGeniUrn(String dcnUrn) throws AggregateException {
+        if (!isDcnUrn(dcnUrn))
+            throw new AggregateException("convertDcnToGeniUrn: invalid dcnUrn="+dcnUrn);
+        String node = "";
+        String port = "";
+        String link = "";
+
+        String[] fields = dcnUrn.split(":");
+        String geniUrn = "urn:publicid:IDN+";
+        for (String field: fields) {
+            Pattern pattern = Pattern.compile("^(domain|node|port|link)=(.*)");
+            Matcher matcher = pattern.matcher(field);
+            if (matcher.find()) {
+                if (matcher.group(1).equalsIgnoreCase("domain")) {
+                    //TODO: domain-id resolver - hardcoded for now
+                    if (matcher.group(2).equalsIgnoreCase("dragon.maxgigapop.net")) {
+                        geniUrn += "maxpl";
+                    } else if (matcher.group(2).equalsIgnoreCase("ion.internet2.edu")) {
+                        geniUrn += "ionpl";
+                    } else {
+                        throw new AggregateException("convertDcnToGeniUrn: cannot resolve aggregate for "+field);
+                    }
+                } else if (matcher.group(1).equalsIgnoreCase("node")) {
+                    node = matcher.group(2);
+                } else if (matcher.group(1).equalsIgnoreCase("port")) {
+                    port = matcher.group(2);
+                } else if (matcher.group(1).equalsIgnoreCase("link")) {
+                    link = matcher.group(2);
+                }
+            }
+        }
+        if (node.isEmpty()) {
+            throw new AggregateException("convertDcnToGeniUrn: mailformed dcnUrn "+dcnUrn);            
+        }
+        if (link.isEmpty() && port.isEmpty()) {
+            geniUrn += "+node+";
+            geniUrn += node;
+        } else {
+            geniUrn += "+interface+";            
+            geniUrn += node;
+            geniUrn += ":";
+            geniUrn += port;
+        }
+        if (!link.isEmpty()) {
+            geniUrn += ":";
+            geniUrn += link;
+        }
+        return geniUrn;
+    }
+
+    public static String getUrnField(String urn, String field) {
+        try {
+            if (isGeniUrn(urn)) {
+                urn = convertGeniToDcnUrn(urn);
+            }
+        } catch (AggregateException e) {
+            return null;
+        }
+        int start = urn.indexOf(field+"=");
+        if (start == -1)
+            return null;
+        start += field.length()+1;
+        int end = urn.indexOf(':', start);
+        if (end == -1 )
+            end = urn.length();
+        return urn.substring(start, end);
+    }
+    
+    public static String getIDCQualifiedUrn(String urn) {
+        // GENI Rspec v3 format
+        try {
+            if (isGeniUrn(urn))
+                return convertGeniToDcnUrn(urn);
+        } catch (AggregateException e) {
+            return null;
+        }
+        //MAX native format
+        Pattern pattern = Pattern.compile("^urn:aggregate=([^:]*):rspec=([^:]*):domain=([^:]*):node=([^:]*):.*");
+        Matcher matcher = pattern.matcher(urn);
+        if (matcher.find()) {
+            return matcher.group(4)+"."+matcher.group(3);
+        }
+        pattern = Pattern.compile("^urn:ogf:network:domain=([^:]*):node=([^:]*):.*");
+        matcher = pattern.matcher(urn);
+        if (matcher.find()) {
+            return urn;
+        }
+        return null;
     }
 
     public static String extractString(String aStr, String openStr, String closeStr) {

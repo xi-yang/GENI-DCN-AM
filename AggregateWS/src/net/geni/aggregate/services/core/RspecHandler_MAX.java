@@ -190,7 +190,7 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
     }
 
     void parsePlanetlabNodeSliver(AggregateRspec rspec, Node plNodeRoot) throws AggregateException {
-        String sliverId = plNodeRoot.getAttributes().getNamedItem("id").getTextContent().trim();
+        String nodeUrn = plNodeRoot.getAttributes().getNamedItem("id").getTextContent().trim();
         String address = "";
         NodeList children = plNodeRoot.getChildNodes();
         Vector<AggregateNetworkInterface> myNetIfs = new Vector<AggregateNetworkInterface>();
@@ -208,10 +208,9 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
         }
         //get node URN from sliverId
         String[] fields = {"domain","node"};
-        String urn = "urn:ogf:geni:"+AggregateUtils.getUrnFields(sliverId, fields);
-        AggregateNode aggrNode= AggregateState.getAggregateNodes().getByUrn(urn);
+        AggregateNode aggrNode= AggregateState.getAggregateNodes().getByUrn(nodeUrn);
         if (aggrNode == null) {
-            throw new AggregateException("unknown aggregateNode "+urn+" (extracted from "+sliverId+")");
+            throw new AggregateException("unknown AggregateNode urn="+nodeUrn);
         }
         AggregateNode newNode = aggrNode.duplicate();
         newNode.setType(plNodeRoot.getNodeName());
