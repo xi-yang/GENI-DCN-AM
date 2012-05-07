@@ -180,6 +180,14 @@ public class AggregateUtils
     }
     
     public static String getIDCQualifiedUrn(String urn) {
+        // GENI Rspec v3 format
+        try {
+            if (isGeniUrn(urn))
+                return convertGeniToDcnUrn(urn);
+        } catch (AggregateException e) {
+            return null;
+        }
+        //MAX native format
         Pattern pattern = Pattern.compile("^urn:aggregate=([^:]*):rspec=([^:]*):domain=([^:]*):node=([^:]*):.*");
         Matcher matcher = pattern.matcher(urn);
         if (matcher.find()) {
@@ -192,7 +200,53 @@ public class AggregateUtils
         }
         return null;
     }
-    
+
+    public static Boolean isGeniUrn(String geniUrn) {
+        if (!geniUrn.contains("urn:publicid:IDN+"))
+            return true;
+        return false;
+    }
+
+    public static String convertGeniToDcnUrn(String geniUrn) throws AggregateException {
+        String aggregate = "";
+        String type = "";
+        String value = "";
+
+        Pattern pattern = Pattern.compile("^urn:publicid:IDN+([^+]*)+(node|interface)+([^+]*)");
+        Matcher matcher = pattern.matcher(geniUrn);
+        if (!matcher.find()) {
+            throw new AggregateException("convertGeniToDcnUrn: invalid geniUrn="+geniUrn);            
+        }
+        aggregate = matcher.group(1);
+        type = matcher.group(2);
+        value = matcher.group(3);
+        
+        String dcnUrn = "urn:ogf:network:domain=";
+
+        //TODO: domain-id resolver (additional config file) -  hardcoded for now
+        if (aggregate.equals("maxpl")) {
+            dcnUrn += "dragon.maxgigapop.net";
+        } else if (aggregate.equals("ionpl")) {
+            dcnUrn += "ion.internet2.edu";
+        } else {
+            throw new AggregateException("convertGeniToDcnUrn: cannot resolve domain-id for aggregate="+aggregate);
+        }
+        String[] fields = value.split(":");
+        if (fields.length > 0) {
+            dcnUrn += ":node=";
+            dcnUrn += fields[0];
+        }
+        if (fields.length > 1) {
+            dcnUrn += ":port=";
+            dcnUrn += fields[1];
+        }
+        if (fields.length > 2) {
+            dcnUrn += ":link=";
+            dcnUrn += fields[2];
+        }
+        return dcnUrn;
+    }
+
     public static String extractString(String aStr, String openStr, String closeStr) {
         int start = aStr.indexOf(openStr);
         if (start == -1)

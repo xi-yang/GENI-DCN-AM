@@ -4,17 +4,13 @@
  */
 package net.geni.aggregate.client.examples;
 
-import net.geni.aggregate.client.*;
 import net.geni.aggregate.client.AggregateGENIStub.*;
+import net.geni.aggregate.services.core.RspecHandler_GENIv3;
 
-
-import java.net.URL;
-import java.net.MalformedURLException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBElement;
 import java.io.*;
-import java.util.*;
 import net.geni.www.resources.rspec._3.*;
 import net.geni.schema.stitching.topology.genistitch._20110220.*;
 import org.apache.xerces.dom.ElementNSImpl;
@@ -39,7 +35,13 @@ public class Rspecv3Test {
         String rspecXml = new String(buffer);
         RSpecContents rspecV3Obj = null;
         GeniStitchTopologyContent stitchTopoObj = null;
-        String[] rspecXmls = Rspecv3Test.extractStitchingRspec(rspecXml);
+        String[] rspecXmls = null;
+        try {
+            rspecXmls = RspecHandler_GENIv3.extractStitchingRspec(rspecXml);
+        } catch (Exception e) {
+            System.err.println("Error in extract stitching section from the rspec. " + e.getMessage());
+            System.exit(-1);
+        }
         if (rspecXmls == null) {
             System.err.println("Missing or malformed <stitching> Rspec section.");
             System.exit(-1);
@@ -68,22 +70,5 @@ public class Rspecv3Test {
         LinkPropertyContents lpc = (LinkPropertyContents)((JAXBElement)lc.getAnyOrPropertyOrLinkType().get(2)).getValue();
         ElementNSImpl anyObj = (ElementNSImpl)lpc.getAny().get(0);
         String vlan = anyObj.getFirstChild().getNodeValue();
-    }
-
-    private static String[] extractStitchingRspec(String rspecXml) {
-        String[] rspecs = new String[2];
-        int iStitchOpen1 = rspecXml.indexOf("<stitching");
-        int iStitchOpen2 = rspecXml.indexOf(">", iStitchOpen1);
-        int iStitchClose1 = rspecXml.indexOf("</stitching");
-        int iStitchClose2 = rspecXml.indexOf(">", iStitchClose1);
-        if (iStitchOpen1 == -1 || iStitchOpen2 == -1 
-            || iStitchClose1 == -1 || iStitchClose2 == -1) {
-            return null;
-        }
-        rspecs[0] = rspecXml.substring(0, iStitchOpen1-1);
-        rspecs[0] += rspecXml.substring(iStitchClose2+1);
-        rspecs[1] = rspecXml.substring(iStitchOpen2+1, iStitchClose1-1);
-        rspecs[1] = rspecs[1].replace("<topology", "<topology xmlns=\"http://geni.net/schema/stitching/topology/geniStitch/20110220/\"");
-        return rspecs;
     }
 }

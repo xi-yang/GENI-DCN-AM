@@ -27,6 +27,7 @@ public class AggregateState
 
     //Properties
     private static Properties aggregateProps = new Properties();
+    private static String amUrn;
     private static String dbPwd;
     private static String dbUser;
     private static String resourcesTab = "resources";
@@ -92,6 +93,7 @@ public class AggregateState
             //logging for exception!
         }
         aggregateProps.setProperty("aggregate.conf.dir", aggregateHome);
+        amUrn = aggregateProps.getProperty("aggregate.am.urn", "urn:publicid:IDN+maxpl");
         dbUser = aggregateProps.getProperty("aggregate.mysql.user", "geniuser");
         log.info("aggregate.mysql.user set to " + dbUser);
         dbPwd = aggregateProps.getProperty("aggregate.mysql.pass", "genipass");
@@ -216,6 +218,10 @@ public class AggregateState
 
     public static AggregateUsers getAggregateUsers() {
         return aggregateUsers;
+    }
+
+    public static String getAmUrn() {
+        return amUrn;
     }
 
     public static String getDbPwd() {
