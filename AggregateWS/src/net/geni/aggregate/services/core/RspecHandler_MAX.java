@@ -19,6 +19,11 @@ import org.xml.sax.SAXException;
  * @author xyang
  */
 public class RspecHandler_MAX implements AggregateRspecHandler {
+    private org.apache.log4j.Logger log;
+
+    public RspecHandler_MAX() {
+        log = org.apache.log4j.Logger.getLogger(this.getClass());
+    }
 
     public AggregateRspec parseRspecXml(String rspecXml) throws AggregateException {
         AggregateRspec rspec = new AggregateRspec();
@@ -561,6 +566,7 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
                 rspecMan = rspecMan + "<computeNode id=\""+an.getUrn()+"\">";
                 for (int i = 0; i < AggregateState.getAggregateInterfaces().getAll().size(); i++) {
                     AggregateNetworkInterface ai = AggregateState.getAggregateInterfaces().getAll().get(i);
+                    log.info("AI urn="+ai.getUrn() + " AN urn="+an.getUrn());
                     if (AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
                         if (rspec.getId() == 0) { // globalAggregate rspec
                             rspecMan = rspecMan + "<networkInterface id=\"" + ai.getUrn() + "\">";
