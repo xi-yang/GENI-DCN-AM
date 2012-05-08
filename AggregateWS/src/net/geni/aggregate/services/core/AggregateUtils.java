@@ -162,7 +162,7 @@ public class AggregateUtils
         String type = "";
         String value = "";
 
-        Pattern pattern = Pattern.compile("^urn:publicid:IDN+([^+]*)+(node|interface)+([^+]*)");
+        Pattern pattern = Pattern.compile("^urn:publicid:IDN\\+([^\\+]*)\\+(node|interface)\\+([^\\+]*)");
         Matcher matcher = pattern.matcher(geniUrn);
         if (!matcher.find()) {
             throw new AggregateException("convertGeniToDcnUrn: invalid geniUrn="+geniUrn);            

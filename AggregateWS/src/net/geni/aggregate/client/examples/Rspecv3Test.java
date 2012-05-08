@@ -33,6 +33,10 @@ public class Rspecv3Test {
             System.err.println("Error in reading XML file: "+filePath);
             System.exit(-1);
         }
+        String urn1 = "urn:publicid:IDN+maxpl+interface+planetlab2.dragon.maxgigapop.net:eth1";
+        String urn2 = "urn:publicid:IDN+maxpl+node+planetlab5.dragon.maxgigapop.net";
+        String node1 = AggregateUtils.getUrnField(urn1, "node");
+        String node2 = AggregateUtils.getUrnField(urn2, "node");
         String rspecXml = new String(buffer);
         RSpecContents rspecV3Obj = null;
         GeniStitchTopologyContent stitchTopoObj = null;
