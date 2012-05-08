@@ -396,7 +396,7 @@ public class AggregateP2PVlan extends AggregateResource {
                 return false;
             }
             String srcNodeUrn = srcIf.getUrn();
-            srcNode = AggregateUtils.getUrnField(srcNodeUrn, "node").toLowerCase() +"."+AggregateUtils.getUrnField(srcNodeUrn, "domain").toLowerCase();
+            srcNode = AggregateUtils.getUrnField(srcNodeUrn, "node").toLowerCase();
         }
         String dstNode = destination;
         if (!dstInterface.isEmpty() && dstNode.startsWith("urn:")) {
@@ -406,7 +406,7 @@ public class AggregateP2PVlan extends AggregateResource {
                 return false;
             }
             String dstNodeUrn = (AggregateState.getAggregateInterfaces().getByAttachedLink(destination)).getUrn();
-            dstNode = AggregateUtils.getUrnField(dstNodeUrn, "node").toLowerCase() +"."+AggregateUtils.getUrnField(dstNodeUrn, "domain").toLowerCase();
+            dstNode = AggregateUtils.getUrnField(dstNodeUrn, "node").toLowerCase();
         }
 
         String srcVlan = AggregateUtils.parseVlanTag(vtag, true);

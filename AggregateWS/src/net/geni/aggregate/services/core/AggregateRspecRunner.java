@@ -177,8 +177,7 @@ public class AggregateRspecRunner extends Thread {
                 //verify planetlab capability
                 if (!node.getCapabilities().contains("planetlab"))
                     continue;
-                nodes = nodes + AggregateUtils.getUrnField(node.getUrn(), "node").toLowerCase()
-                        +"."+AggregateUtils.getUrnField(node.getUrn(), "domain").toLowerCase();
+                nodes = nodes + AggregateUtils.getUrnField(node.getUrn(), "node").toLowerCase();
                 if (i < resources.size()-1)
                     nodes += ":";
             }

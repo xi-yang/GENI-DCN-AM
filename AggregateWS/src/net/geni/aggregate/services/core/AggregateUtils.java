@@ -314,7 +314,9 @@ public class AggregateUtils
                 ret /= 1000;
             else if (m.equalsIgnoreCase("b"))
                 ret /= 1000000;
-        }
+        } else {
+            ret = Float.valueOf(bwString)/1000000;
+        }            
         return ret;
     }
     
