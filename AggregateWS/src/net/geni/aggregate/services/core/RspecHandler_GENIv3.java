@@ -72,7 +72,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 throw new AggregateException("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
             }
         }
-        // parse GENI RSpecv3 main section -- nodes
+        // parse GENI RSpecv3 main section -- root params and nodes
         for (Object obj: rspecV3Obj.getAnyOrNodeOrLink()) {
             if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
                 String elemName = ((JAXBElement)obj).getName().getLocalPart();
@@ -98,6 +98,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         // TODO: support optional <lifetime> as anyExtentionin RSpec
         aggrRspec.setStartTime(System.currentTimeMillis()/1000);
         aggrRspec.setEndTime(System.currentTimeMillis()/1000+3600*24);
+        
         return aggrRspec;
     }
 
