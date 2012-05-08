@@ -6,6 +6,7 @@ package net.geni.aggregate.client.examples;
 
 import net.geni.aggregate.client.AggregateGENIStub.*;
 import net.geni.aggregate.services.core.RspecHandler_GENIv3;
+import net.geni.aggregate.services.core.AggregateUtils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;

@@ -146,13 +146,13 @@ public class AggregateUtils
     }
 
     public static Boolean isGeniUrn(String urn) {
-        if (!urn.contains("urn:publicid:IDN+"))
+        if (urn.contains("urn:publicid:IDN+"))
             return true;
         return false;
     }
 
     public static Boolean isDcnUrn(String urn) {
-        if (!urn.contains("urn:ogf:network:domain"))
+        if (urn.contains("urn:ogf:network:domain"))
             return true;
         return false;
     }
