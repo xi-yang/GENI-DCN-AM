@@ -172,7 +172,7 @@ public class AggregateRspecRunner extends Thread {
                 || resources.get(i).getType().equalsIgnoreCase("computeNode")) {
                 AggregateNode node = (AggregateNode)resources.get(i);
                 //verify planetlab capability
-                if (!node.getCapabilities().contains("capability=planetlab"))
+                if (!node.getCapabilities().contains("planetlab"))
                     continue;
                 nodes = nodes + AggregateUtils.getUrnField(node.getUrn(), "node").toLowerCase()
                         +"."+AggregateUtils.getUrnField(node.getUrn(), "domain").toLowerCase();
@@ -220,13 +220,13 @@ public class AggregateRspecRunner extends Thread {
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
                 AggregateNetworkInterface netIf1 = (AggregateNetworkInterface)resources.get(i);
-                if (netIf1.getParentNode() != null && !netIf1.getParentNode().getCapabilities().contains("capability=dragon"))
+                if (netIf1.getParentNode() != null && !netIf1.getParentNode().getCapabilities().contains("dragon"))
                     continue;
                 for (int j = 0; j < resources.size(); j++) {
                     if (resources.get(j).getType().equalsIgnoreCase("networkInterface")) {
                         //verify dragon capability?
                         AggregateNetworkInterface netIf2 = (AggregateNetworkInterface)resources.get(j);
-                        if (netIf2.getParentNode() != null && !netIf2.getParentNode().getCapabilities().contains("capability=dragon"))
+                        if (netIf2.getParentNode() != null && !netIf2.getParentNode().getCapabilities().contains("dragon"))
                             continue;
                         int[] ifIndices = netIf1.pairupInterfaces(netIf2);
                         if (ifIndices[0] != -1 && ifIndices[1] != -1) {

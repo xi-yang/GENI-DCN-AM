@@ -566,7 +566,6 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
                 rspecMan = rspecMan + "<computeNode id=\""+an.getUrn()+"\">";
                 for (int i = 0; i < AggregateState.getAggregateInterfaces().getAll().size(); i++) {
                     AggregateNetworkInterface ai = AggregateState.getAggregateInterfaces().getAll().get(i);
-                    log.info("AI urn="+ai.getUrn() + " AN urn="+an.getUrn());
                     if (AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
                         if (rspec.getId() == 0) { // globalAggregate rspec
                             rspecMan = rspecMan + "<networkInterface id=\"" + ai.getUrn() + "\">";
