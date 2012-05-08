@@ -103,7 +103,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String aggrName = "unknown";
         int ind1 = AggregateState.getAmUrn().indexOf("urn:publicid:IDN+");
         if (ind1 != -1)
-            aggrName = AggregateState.getAmUrn().substring(ind1);
+            aggrName = AggregateState.getAmUrn().substring(ind1+17);
         aggrRspec.setAggregateName(AggregateState.getAmUrn());
         return aggrRspec;
     }
@@ -243,7 +243,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     String netIfClientId = irc.getClientId();
                     AggregateNetworkInterface netIf = lookupInterfaceByClientId(rspec, netIfClientId);
                     if (netIf == null) {
-                        log.debug("interface_ref:" + netIfClientId + " cannot be found (this could be a link to external aggregate)");
+                        log.debug("interface_ref:'" + netIfClientId + "' cannot be found (this could be a link to external aggregate)");
                         return;
                     }
                     netIfs.add(netIf);
@@ -341,10 +341,26 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
             GeniStitchLinkContent srcLink = localHops.get(0).getLink();
             GeniStitchLinkContent dstLink = localHops.get(localHops.size()-1).getLink();
+            String source = srcLink.getId();
+            AggregateNetworkInterface netIf = AggregateState.getAggregateInterfaces().getByUrn(srcLink.getId());
+            if (netIf != null) {
+                if (netIf.getLinks() == null || netIf.getLinks().isEmpty())
+                    throw new AggregateException("Cannot resolve hop (link id'="+srcLink.getId()+"')");
+                source = netIf.getLinks().get(0);
+            } else {
+                source = AggregateUtils.convertGeniToDcnUrn(srcLink.getId());
+            }
+            String destination = dstLink.getId();
+            netIf = AggregateState.getAggregateInterfaces().getByUrn(dstLink.getId());
+            if (netIf != null) {
+                if (netIf.getLinks() == null || netIf.getLinks().isEmpty())
+                    throw new AggregateException("Cannot resolve hop (link id'="+dstLink.getId()+"')");
+                destination = netIf.getLinks().get(0);
+            } else {
+                destination = AggregateUtils.convertGeniToDcnUrn(dstLink.getId());
+            }
             //create p2pvlan
             AggregateP2PVlan stitchingP2PVlan = new AggregateP2PVlan();
-            String source = AggregateUtils.convertGeniToDcnUrn(srcLink.getId());
-            String destination = AggregateUtils.convertGeniToDcnUrn(dstLink.getId());
             float bandwidth = AggregateUtils.convertBandwdithToMbps(srcLink.getCapacity());
             stitchingP2PVlan.setSource(source);
             stitchingP2PVlan.setDestination(destination);
@@ -380,7 +396,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 stitchingP2PVlan.setVtag("any");
             }
             stitchingP2PVlan.setStitchingResourceId(path.getId()+"-geni-stitching");
-            stitchingP2PVlan.setExternalResourceId("");
+            stitchingP2PVlan.setExternalResourceId("legacy-non-empty");
             rspec.getResources().add((AggregateResource)stitchingP2PVlan);
         }
     }
