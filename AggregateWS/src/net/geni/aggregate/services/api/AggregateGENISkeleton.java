@@ -546,6 +546,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
             net.geni.aggregate.services.api.CreateSliceNetwork createSliceNetwork8)
             throws AggregateFaultMessage {
         CreateSliceNetworkType createSliceNework = createSliceNetwork8.getCreateSliceNetwork();
+        String rspecId = createSliceNework.getRspecID();
         RSpecTopologyType rspecTopo = createSliceNework.getRspecNetwork();
         String rspecXml = "";
         for (String s: rspecTopo.getStatement()) {
@@ -560,7 +561,7 @@ public class AggregateGENISkeleton implements AggregateGENISkeletonInterface {
         String message = "";
         try {
             //TODO pass authUser into createRspec!
-            status = AggregateState.getRspecManager().createRspec(rspecXml, authUser.getEmail(), addPlcSlice);
+            status = AggregateState.getRspecManager().createRspec(rspecId, rspecXml, authUser.getEmail(), addPlcSlice);
             message = "";
         } catch (AggregateException e) {
             status = "FAILED";

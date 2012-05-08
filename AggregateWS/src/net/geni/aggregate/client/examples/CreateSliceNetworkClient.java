@@ -28,15 +28,18 @@ public class CreateSliceNetworkClient extends ExampleClient {
             throws AggregateFaultMessage, Exception {
         super.init(args);
 
+        String rspecId = "";
         String rspecFile = "";
         boolean addingPlcSlice = false;
-        if (args.length == 3) {
+        if (args.length == 4) {
             //args[0] for repo; args[1] for service_url;
-            rspecFile = args[2];
+            rspecId = args[2];
+            rspecFile = args[3];
         } else {
             try {
                 // Prompt for input parameters
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                rspecId = Args.getArg(br, "Rspec ID/Name", rspecId);
                 rspecFile = Args.getArg(br, "Rspec XML file path", rspecFile);
                 String yn = Args.getArg(br, "Adding PLC slice (y/n)?", "y");
                 if (yn.equalsIgnoreCase("y"))
@@ -64,7 +67,7 @@ public class CreateSliceNetworkClient extends ExampleClient {
         String rspecXml[] = {(new String(buffer))};
 
         // make the call to the server
-        CreateSliceNetworkResponseType response = this.getClient().createSliceNetwork(rspecXml, addingPlcSlice);
+        CreateSliceNetworkResponseType response = this.getClient().createSliceNetwork(rspecId, rspecXml, addingPlcSlice);
         this.outputResponse(response);
         super.cleanup();
     }

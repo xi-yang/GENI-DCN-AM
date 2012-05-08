@@ -32,36 +32,6 @@
         
 
                         /**
-                        * field for UserID
-                        */
-
-                        
-                                    protected java.lang.String localUserID ;
-                                
-
-                           /**
-                           * Auto generated getter method
-                           * @return java.lang.String
-                           */
-                           public  java.lang.String getUserID(){
-                               return localUserID;
-                           }
-
-                           
-                        
-                            /**
-                               * Auto generated setter method
-                               * @param param UserID
-                               */
-                               public void setUserID(java.lang.String param){
-                            
-                                            this.localUserID=param;
-                                    
-
-                               }
-                            
-
-                        /**
                         * field for RspecID
                         */
 
@@ -249,40 +219,6 @@
                
                    }
                
-                                    namespace = "http://aggregate.geni.net/services/api/";
-                                    if (! namespace.equals("")) {
-                                        prefix = xmlWriter.getPrefix(namespace);
-
-                                        if (prefix == null) {
-                                            prefix = generatePrefix(namespace);
-
-                                            xmlWriter.writeStartElement(prefix,"userID", namespace);
-                                            xmlWriter.writeNamespace(prefix, namespace);
-                                            xmlWriter.setPrefix(prefix, namespace);
-
-                                        } else {
-                                            xmlWriter.writeStartElement(namespace,"userID");
-                                        }
-
-                                    } else {
-                                        xmlWriter.writeStartElement("userID");
-                                    }
-                                
-
-                                          if (localUserID==null){
-                                              // write the nil attribute
-                                              
-                                                     throw new org.apache.axis2.databinding.ADBException("userID cannot be null!!");
-                                                  
-                                          }else{
-
-                                        
-                                                   xmlWriter.writeCharacters(localUserID);
-                                            
-                                          }
-                                    
-                                   xmlWriter.writeEndElement();
-                             
                                     namespace = "http://aggregate.geni.net/services/api/";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -515,15 +451,6 @@
 
                 
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
-                                                                      "userID"));
-                                 
-                                        if (localUserID != null){
-                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localUserID));
-                                        } else {
-                                           throw new org.apache.axis2.databinding.ADBException("userID cannot be null!!");
-                                        }
-                                    
-                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "rspecID"));
                                  
                                         if (localRspecID != null){
@@ -622,25 +549,6 @@
                     
                     reader.next();
                 
-                                    
-                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
-                                
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","userID").equals(reader.getName())){
-                                
-                                    java.lang.String content = reader.getElementText();
-                                    
-                                              object.setUserID(
-                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
-                                              
-                                        reader.next();
-                                    
-                              }  // End of if for expected property start element
-                                
-                                else{
-                                    // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
-                                }
-                            
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 

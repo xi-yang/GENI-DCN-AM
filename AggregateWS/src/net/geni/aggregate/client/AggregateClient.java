@@ -221,7 +221,7 @@ public class AggregateClient {
         return querySliceVlanResponse.getQuerySliceVlanResponse();
     }
 
-    public CreateSliceNetworkResponseType createSliceNetwork(String rsepcXml[], boolean addPlcSlice)
+    public CreateSliceNetworkResponseType createSliceNetwork(String rspecId, String rsepcXml[], boolean addPlcSlice)
            throws AggregateFaultMessage, Exception {
         CreateSliceNetwork createSliceNet = new CreateSliceNetwork();
         CreateSliceNetworkType createSliceNetType = new CreateSliceNetworkType();

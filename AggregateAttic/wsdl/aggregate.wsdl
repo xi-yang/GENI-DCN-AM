@@ -405,7 +405,6 @@
             <xs:element name="CreateSliceNetwork" type="tns:CreateSliceNetworkType"/>
             <xs:complexType name="CreateSliceNetworkType">
                 <xs:sequence>
-                    <xs:element name="userID" type="xs:string"/>
                     <xs:element name="rspecID" type="xs:string"/>
                     <xs:element name="rspecNetwork" type="tns:RSpecTopologyType"/>
                     <xs:element name="addPlcSlice" type="xs:boolean" default="true"/>
