@@ -86,7 +86,8 @@ public class AggregateRspecRunner extends Thread {
                 rollback(); //revert
                 return;
             }
-
+            
+            //log.info("SLICE-STARTING ");
             rspec.setStatus("SLICE-STARTING");
             manager.updateRspec(rspec);
             try {
@@ -102,6 +103,7 @@ public class AggregateRspecRunner extends Thread {
                 return;
             }
 
+            //log.info("STITCHING-STARTING");
             rspec.setStatus("STITCHING-STARTING");
             manager.updateRspec(rspec);
             try {
@@ -117,6 +119,7 @@ public class AggregateRspecRunner extends Thread {
                 return;
             }
 
+            //log.info("VLANS-STARTING");
             rspec.setStatus("VLANS-STARTING");
             manager.updateRspec(rspec);
             try {

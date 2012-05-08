@@ -94,7 +94,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         if (stitchTopoObj != null) {
             parseStitchingResources(aggrRspec, stitchTopoObj);
         }
-
+        // set default lifetime = now+24hrs
+        // TODO: support optional <lifetime> as anyExtentionin RSpec
+        aggrRspec.setStartTime(System.currentTimeMillis()/1000);
+        aggrRspec.setEndTime(System.currentTimeMillis()/1000+3600*24);
         return aggrRspec;
     }
 

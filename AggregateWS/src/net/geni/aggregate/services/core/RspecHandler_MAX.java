@@ -558,7 +558,8 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
 
 
     public String getRspecManifest(AggregateRspec rspec) throws AggregateException {
-        String rspecMan = "<computeResource id=\"urn:aggregate="+rspec.getAggregateName()+":rspec="+rspec.getRspecName()+"\">";
+        // As a convention, alwasys use standard id such as 'maxpl' for <rspec> <aggregate> 
+        String rspecMan = "<computeResource id=\"urn:publicid:IDN+"+rspec.getAggregateName()+"+slice+"+rspec.getRspecName()+"\">";
         for (int n = 0; n < rspec.getResources().size(); n++) {
             AggregateResource rc = rspec.getResources().get(n);
             if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
@@ -588,7 +589,7 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
                                         rspecMan = rspecMan + "<vlanRange>" + AggregateUtils.parseVlanTag(ppv.getVtag(), true) + "</vlanRange>";
                                         rspecMan = rspecMan + "<attachedLinkUrn>" + ai.getAttachedLinkUrns() + "</attachedLinkUrn>";
                                         if (ai.getPeers().isEmpty() || ai.getPeers().get(0).isEmpty()) {
-                                            rspecMan = rspecMan + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=dst" + "</peerNetworkInterface>";
+                                            rspecMan = rspecMan + "<peerNetworkInterface>urn:publicid:IDN+"+rspec.getAggregateName()+"+p2pvlan+"+ppv.getId() + "+interface+dst" + "</peerNetworkInterface>";
                                         } else {
                                             rspecMan = rspecMan + "<peerNetworkInterface>" + ai.getPeers().get(0) + "</peerNetworkInterface>";
                                         }
@@ -602,7 +603,7 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
                                         rspecMan = rspecMan + "<vlanRange>" + AggregateUtils.parseVlanTag(ppv.getVtag(), false) + "</vlanRange>";
                                         rspecMan = rspecMan + "<attachedLinkUrn>" + ai.getAttachedLinkUrns() + "</attachedLinkUrn>";
                                         if (ai.getPeers().isEmpty() || ai.getPeers().get(0).isEmpty()) {
-                                            rspecMan = rspecMan + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=src" + "</peerNetworkInterface>";
+                                            rspecMan = rspecMan + "<peerNetworkInterface>urn:publicid:IDN+"+rspec.getAggregateName()+"+p2pvlan+"+ppv.getId() + "+interface+src" + "</peerNetworkInterface>";
                                         } else {
                                             rspecMan = rspecMan + "<peerNetworkInterface>" + ai.getPeers().get(0) + "</peerNetworkInterface>";
                                         }
@@ -652,9 +653,9 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
             if (rspec.getResources().get(n).getType().equalsIgnoreCase("p2pvlan")) {
                 AggregateP2PVlan ppv = (AggregateP2PVlan)rspec.getResources().get(n);
                 if (ppv.getSrcInterface().isEmpty() || ppv.getDstInterface().isEmpty())
-                    rspecMan = rspecMan + "<stitchingResource id=\"p2pvlan-"+ppv.getId()+"\" type=\"p2pvlan\">";
+                    rspecMan = rspecMan + "<stitchingResource id=\"urn:publicid:IDN+"+rspec.getAggregateName()+"+p2pvlan+"+ppv.getId()+"\" type=\"p2pvlan\">";
                 if (ppv.getSrcInterface().isEmpty()) {
-                    rspecMan = rspecMan + "<networkInterface id=\"p2pvlan-" + ppv.getId() + ":interface=src" + "\">";
+                    rspecMan = rspecMan + "<networkInterface id=\"urn:publicid:IDN+"+rspec.getAggregateName()+"+p2pvlan+"+ppv.getId() + "+interface+src" + "\">";
                     rspecMan = rspecMan + "<deviceType>ethernet</deviceType>";
                     rspecMan = rspecMan + "<deviceName>" + ppv.getSrcInterface() + "</deviceName>";
                     rspecMan = rspecMan + "<capacity>" + Float.toString(ppv.getBandwidth()) + "Mbps</capacity>";
@@ -663,13 +664,13 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
                     rspecMan = rspecMan + "<attachedLinkUrn>" + ppv.getSource() +"</attachedLinkUrn>";
                     AggregateNetworkInterface netIf = AggregateState.getAggregateInterfaces().getByAttachedLink(ppv.getDestination());
                     if (ppv.getDstInterface().isEmpty() || netIf == null)
-                        rspecMan = rspecMan + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=dst" + "</peerNetworkInterface>";
+                        rspecMan = rspecMan + "<peerNetworkInterface>urn:publicid:IDN+"+rspec.getAggregateName()+"+p2pvlan+"+ppv.getId() + "+interface+dst" + "</peerNetworkInterface>";
                     else
                         rspecMan = rspecMan + "<peerNetworkInterface>" + netIf.getUrn() + "</peerNetworkInterface>";
                     rspecMan += "</networkInterface>";
                 }
                 if (ppv.getDstInterface().isEmpty()) {
-                    rspecMan = rspecMan + "<networkInterface id=\"p2pvlan-" + ppv.getId() + ":interface=dst" + "\">";
+                    rspecMan = rspecMan + "<networkInterface id=\"urn:publicid:IDN+"+rspec.getAggregateName()+"+p2pvlan+"+ppv.getId() + "+interface+dst" + "\">";
                     rspecMan = rspecMan + "<deviceType>ethernet</deviceType>";
                     rspecMan = rspecMan + "<deviceName>" + ppv.getDstInterface() + "</deviceName>";
                     rspecMan = rspecMan + "<capacity>" + Float.toString(ppv.getBandwidth()) + "Mbps</capacity>";
@@ -678,7 +679,7 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
                     rspecMan = rspecMan + "<attachedLinkUrn>" + ppv.getDestination() +"</attachedLinkUrn>";
                     AggregateNetworkInterface netIf = AggregateState.getAggregateInterfaces().getByAttachedLink(ppv.getSource());
                     if (ppv.getSrcInterface().isEmpty() || netIf == null)
-                        rspecMan = rspecMan + "<peerNetworkInterface>p2pvlan-" + ppv.getId() + ":interface=src" + "</peerNetworkInterface>";
+                        rspecMan = rspecMan + "<peerNetworkInterface>urn:publicid:IDN+"+rspec.getAggregateName()+"+p2pvlan+"+ppv.getId() + "+interface+src" + "</peerNetworkInterface>";
                     else 
                         rspecMan = rspecMan + "<peerNetworkInterface>" + netIf.getUrn() + "</peerNetworkInterface>";
                     rspecMan += "</networkInterface>";
