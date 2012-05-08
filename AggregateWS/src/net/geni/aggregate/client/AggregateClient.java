@@ -225,6 +225,7 @@ public class AggregateClient {
            throws AggregateFaultMessage, Exception {
         CreateSliceNetwork createSliceNet = new CreateSliceNetwork();
         CreateSliceNetworkType createSliceNetType = new CreateSliceNetworkType();
+        createSliceNetType.setRspecID(rspecId);
         RSpecTopologyType rspecTopoType = new RSpecTopologyType();
         rspecTopoType.setStatement(rsepcXml);
         createSliceNetType.setRspecNetwork(rspecTopoType);

@@ -33950,6 +33950,36 @@
         
 
                         /**
+                        * field for RspecID
+                        */
+
+                        
+                                    protected java.lang.String localRspecID ;
+                                
+
+                           /**
+                           * Auto generated getter method
+                           * @return java.lang.String
+                           */
+                           public  java.lang.String getRspecID(){
+                               return localRspecID;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param RspecID
+                               */
+                               public void setRspecID(java.lang.String param){
+                            
+                                            this.localRspecID=param;
+                                    
+
+                               }
+                            
+
+                        /**
                         * field for RspecNetwork
                         */
 
@@ -34107,6 +34137,40 @@
                
                    }
                
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
+                                            xmlWriter.writeStartElement(prefix,"rspecID", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"rspecID");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("rspecID");
+                                    }
+                                
+
+                                          if (localRspecID==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("rspecID cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localRspecID);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                             
                                             if (localRspecNetwork==null){
                                                  throw new org.apache.axis2.databinding.ADBException("rspecNetwork cannot be null!!");
                                             }
@@ -34304,6 +34368,15 @@
                  java.util.ArrayList attribList = new java.util.ArrayList();
 
                 
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "rspecID"));
+                                 
+                                        if (localRspecID != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localRspecID));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("rspecID cannot be null!!");
+                                        }
+                                    
                             elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "rspecNetwork"));
                             
@@ -34394,6 +34467,25 @@
                     
                     reader.next();
                 
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","rspecID").equals(reader.getName())){
+                                
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setRspecID(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                else{
+                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                }
+                            
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 

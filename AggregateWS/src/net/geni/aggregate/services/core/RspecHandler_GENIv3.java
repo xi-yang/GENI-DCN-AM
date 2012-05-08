@@ -94,11 +94,17 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         if (stitchTopoObj != null) {
             parseStitchingResources(aggrRspec, stitchTopoObj);
         }
+
         // set default lifetime = now+24hrs
         // TODO: support optional <lifetime> as anyExtentionin RSpec
         aggrRspec.setStartTime(System.currentTimeMillis()/1000);
         aggrRspec.setEndTime(System.currentTimeMillis()/1000+3600*24);
-        
+
+        String aggrName = "unknown";
+        int ind1 = AggregateState.getAmUrn().indexOf("urn:publicid:IDN+");
+        if (ind1 != -1)
+            aggrName = AggregateState.getAmUrn().substring(ind1);
+        aggrRspec.setAggregateName(AggregateState.getAmUrn());
         return aggrRspec;
     }
 
