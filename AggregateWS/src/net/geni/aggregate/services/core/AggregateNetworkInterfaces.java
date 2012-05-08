@@ -103,7 +103,7 @@ public class AggregateNetworkInterfaces {
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
-            Query q = session.createQuery("from AggregateNetworkInterface as interface where interface.urn=" + urn);
+            Query q = session.createQuery("from AggregateNetworkInterface as interface where interface.urn='" + urn +"'");
             if (q.list().size() == 0)
                 return null;
             return (AggregateNetworkInterface) q.list().get(0);
