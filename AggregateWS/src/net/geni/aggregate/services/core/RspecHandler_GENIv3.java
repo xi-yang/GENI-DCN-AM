@@ -575,7 +575,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
     }
     
     AggregateNetworkInterface lookupInterfaceReference(AggregateRspec rspec, String urn) {
-        AggregateNetworkInterface aif = null;
         boolean isDcnUrn = false;
         if (AggregateUtils.isDcnUrn(urn))
             isDcnUrn = true;
@@ -588,7 +587,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (!rc.getType().equalsIgnoreCase("networkInterface")) {
                 continue;
             }
-            aif = (AggregateNetworkInterface)rc;
+            AggregateNetworkInterface aif = (AggregateNetworkInterface)rc;
             if (isDcnUrn) {
                 if (aif.getAttachedLinkUrns().contains(urn))
                     return aif;
@@ -597,7 +596,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     return aif;
             }
         }
-        return aif;
+        return null;
     }
 
     List<GeniStitchHopContent> getAggregateLocalHops(GeniStitchPathContent path) {
