@@ -9,9 +9,11 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBElement;
 import java.io.*;
 import java.util.*;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import net.geni.www.resources.rspec._3.*;
 import net.geni.schema.stitching.topology.genistitch._20110220.*;
-        
+
 /**
  *
  * @author xyang
@@ -95,11 +97,17 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             parseStitchingResources(aggrRspec, stitchTopoObj);
         }
 
-        // set default lifetime = now+24hrs
-        // TODO: support optional <lifetime> as anyExtentionin RSpec
-        aggrRspec.setStartTime(System.currentTimeMillis()/1000);
-        aggrRspec.setEndTime(System.currentTimeMillis()/1000+3600*24);
-
+        long now = System.currentTimeMillis()/1000;
+        XMLGregorianCalendar xgcExpires = rspecV3Obj.getExpires();
+        long expires = now + 3600*24; // default = 1 day
+        if (xgcExpires != null) {
+            Date dateExpires = xgcExpires.toGregorianCalendar().getTime();
+            expires = dateExpires.getTime()/1000;
+            if (expires - now < 4*60) // duration must be at least 4 minutes
+                expires = now + 3600*24; // default = 1 day
+        }
+        aggrRspec.setStartTime(now);
+        aggrRspec.setEndTime(expires);
         String aggrName = "unknown";
         int ind1 = AggregateState.getAmUrn().indexOf("urn:publicid:IDN+");
         if (ind1 != -1)
@@ -321,7 +329,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 explicitP2PVlan.setDstIpAndMask(netIfs.get(0).getIpAddress());
             }
             // no device and IP needed if neither end is attached to node netIf
-            explicitP2PVlan.setStitchingResourceId("implicit-geni-stitching");
+            explicitP2PVlan.setStitchingResourceId("geni-implicit-stitching");
             explicitP2PVlan.setExternalResourceId("");
             rspec.getResources().add((AggregateResource)explicitP2PVlan);
         }
@@ -416,11 +424,179 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
     }
 
     public String getRspecManifest(AggregateRspec rspec) throws AggregateException {
-        String rspecMan = "";
+        Date dateExpires = new Date(rspec.getEndTime() * 1000);
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(dateExpires);
+        XMLGregorianCalendar xgcExpires = null;
+        try {
+            xgcExpires = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        } catch (Exception e) {
+            throw new AggregateException("RspecHandler_GENIv3.getRspecManifest error: " + e.getMessage());
+        }
+        //XMLGregorianCalendar xgcExpires = new XMLGregorianCalendar(dateExpires);
+        String rspecMan = "<rspec type=\"manifest\" expires=\"" + xgcExpires.toString()
+                + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/manifest.xsd\""
+                + " xmlns=\"http://www.geni.net/resources/rspec/3\">";
+        for (int n = 0; n < rspec.getResources().size(); n++) {
+            AggregateResource rc = rspec.getResources().get(n);
+            if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
+                AggregateNode an = (AggregateNode) rc;
+                rspecMan = rspecMan + "<node client_id=\"" + an.getClientId()
+                        + "\" component_id=\"" + an.getUrn() + "\" component_manager_id=\""
+                        + rspec.getAggregateName() + " exclusive=\"true\">";
+                rspecMan += "<hardware_type name=\"plab-pc\"/>";
+                rspecMan += "<hardware_type name=\"pc\"/>";
+                rspecMan += "<sliver_type name=\"plab-vserver\"/>";
+                rspecMan += "<location country=\"unknown\" latitude=\"unknown\" longitude=\"unknown\"/>";
+                for (int i = 0; i < rspec.getResources().size(); i++) {
+                    rc = rspec.getResources().get(i);
+                    if (!rc.getType().equalsIgnoreCase("networkInterface")) {
+                        continue;
+                    }
+                    AggregateNetworkInterface ai = (AggregateNetworkInterface) rc;
+                    if (ai.getParentNode() == an) // || AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
+                    {
+                        rspecMan = rspecMan + "<interface client_id=\"" + ai.getClientId() + "\" + component_id=\"" + ai.getUrn() + "\">";
+                    }
+                    if (!ai.getIpAddress().isEmpty()) {
+                        rspecMan = rspecMan + "<ip address=\"" + ai.getIpAddress().split("/")[0]
+                                + "\" + mask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\">";
+                    }
+                    // optional (any extension)
+                    if (!ai.getAttachedLinkUrns().isEmpty()) {
+                        rspecMan = rspecMan + "<attached_link>" + ai.getAttachedLinkUrns() + "</attached_link>";
+                    }
+                    rspecMan += "</interface>";
+                }
+            }
+            rspecMan += "</node>";
+        }
 
+        ArrayList<AggregateP2PVlan> ppvLinks = new ArrayList<AggregateP2PVlan>();
+        ArrayList<AggregateP2PVlan> ppvStitches = new ArrayList<AggregateP2PVlan>();
+
+        for (int l = 0; l < rspec.getResources().size(); l++) {
+            if (rspec.getResources().get(l).getType().equalsIgnoreCase("p2pvlan")) {
+                AggregateP2PVlan ppv = (AggregateP2PVlan)rspec.getResources().get(l);
+                if (ppv.getSrcInterface().isEmpty() || ppv.getDstInterface().isEmpty())
+                    ppvStitches.add(ppv);
+                else
+                    ppvLinks.add(ppv);
+            }
+        }
+        
+        for (AggregateP2PVlan ppv: ppvLinks) {
+            rspecMan = rspecMan + "<link client_id=\"p2pvlan-"+ppv.getId()
+                        + "\" vlantag=\"" + ppv.getVtag() + "\">";
+
+            AggregateNetworkInterface netIf = lookupInterfaceReference(rspec, ppv.getSource());
+            if (netIf != null)
+                rspecMan = rspecMan + "<interface_ref client_id=\""+ netIf.getClientId() +"\"/>";
+            netIf = lookupInterfaceReference(rspec, ppv.getDestination());
+            if (netIf != null)
+                rspecMan = rspecMan + "<interface_ref client_id=\""+ netIf.getClientId() +"\"/>";
+            
+            rspecMan +=  "<property>";
+            rspecMan +=  "<source_id>" + ppv.getSource() + "</source_id>";
+            rspecMan +=  "<dest_id>" + ppv.getDestination() + "</dest_id>";
+            //optional (any extension)
+            rspecMan +=  "<global_resource_id>" + ppv.getGlobalReservationId() + "</global_resource_id>";
+            rspecMan +=  "</property>";
+
+            rspecMan +=  "</link>";
+        }
+
+        if (!ppvStitches.isEmpty()) {
+            rspecMan +=  "<stitching>";
+            Date dateNow = new Date();
+            rspecMan +=  "<topology lastUpdateTime=\"" + dateNow.toString() + "\" xmlns=\"http://geni.net/schema/stitching/topology/geniStitch/20110220/\">";
+            for (AggregateP2PVlan ppv: ppvStitches) {
+                rspecMan = rspecMan + "<path id=\"GRI-" + ppv.getGri() + "\">";
+                String[] vlanTags = ppv.getVtag().split("-");
+                // create source hop
+                String urn = ppv.getSource();
+                AggregateNetworkInterface netIf = lookupInterfaceReference(rspec, urn);
+                if (netIf != null) {
+                    urn = netIf.getUrn();
+                }
+                rspecMan +=  "<hop id=\"src\" type=\"strict\">";
+                rspecMan = rspecMan + "<link id=\""+urn+"\">";
+                rspecMan = rspecMan + "<capacity>"+Float.toString(ppv.getBandwidth())+"</capacity>";
+                rspecMan +=  "<switchingCapabilityDescriptor>";
+                rspecMan +=  "<switchingcapType>l2sc</switchingcapType>";
+                rspecMan +=  "<encodingType>ethernet</encodingType>";
+                rspecMan +=  "<switchingCapabilitySpecificInfo>";
+                rspecMan +=  "<switchingCapabilitySpecificInfo_L2sc>";
+                rspecMan +=  "<interfaceMTU>9000</interfaceMTU>";
+                rspecMan = rspecMan +  "<vlanRangeAvailability>"+vlanTags[0]+"</vlanRangeAvailability>";
+                rspecMan = rspecMan +  "<suggestedVLANRange>"+vlanTags[0]+"</suggestedVLANRange>";
+                rspecMan = rspecMan + "<vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</vlanTranslation>";
+                rspecMan +=  "</switchingCapabilitySpecificInfo_L2sc>";
+                rspecMan +=  "</switchingCapabilitySpecificInfo>";
+                rspecMan +=  "</switchingCapabilityDescriptor>";
+                rspecMan +=  "</link>";
+                rspecMan = rspecMan + "<nextHop>dst</nextHop>";
+                rspecMan +=  "</hop>";
+                // TODO: get intermediate hops from OSCARS query (stored in DB?)
+                // create destination hop
+                urn = ppv.getDestination();
+                netIf = lookupInterfaceReference(rspec, urn);
+                if (netIf != null) {
+                    urn = netIf.getUrn();
+                }
+                rspecMan +=  "<hop id=\"dst\" type=\"strict\">";
+                rspecMan = rspecMan + "<link id=\""+urn+"\">";
+                rspecMan = rspecMan + "<capacity>"+Float.toString(ppv.getBandwidth())+"</capacity>";
+                rspecMan +=  "<switchingCapabilityDescriptor>";
+                rspecMan +=  "<switchingcapType>l2sc</switchingcapType>";
+                rspecMan +=  "<encodingType>ethernet</encodingType>";
+                rspecMan +=  "<switchingCapabilitySpecificInfo>";
+                rspecMan +=  "<switchingCapabilitySpecificInfo_L2sc>";
+                rspecMan +=  "<interfaceMTU>9000</interfaceMTU>";
+                rspecMan =  rspecMan + "<vlanRangeAvailability>"+(vlanTags.length == 2?vlanTags[1]:vlanTags[0])+"</vlanRangeAvailability>";
+                rspecMan =  rspecMan + "<suggestedVLANRange>"+(vlanTags.length == 2?vlanTags[1]:vlanTags[0])+"</suggestedVLANRange>";
+                rspecMan =  rspecMan + "<vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</vlanTranslation>";
+                rspecMan +=  "</switchingCapabilitySpecificInfo_L2sc>";
+                rspecMan +=  "</switchingCapabilitySpecificInfo>";
+                rspecMan +=  "</switchingCapabilityDescriptor>";
+                rspecMan +=  "</link>";
+                rspecMan +=  "<nextHop>null</nextHop>";
+                rspecMan +=  "</hop>";
+                rspecMan +=  "</path>";
+            }            
+            rspecMan +=  "</topology>";
+            rspecMan +=  "</stitching>";
+        }
+        rspecMan +=  "</rspec>";
         return rspecMan;
     }
-        
+    
+    AggregateNetworkInterface lookupInterfaceReference(AggregateRspec rspec, String urn) {
+        AggregateNetworkInterface aif = null;
+        boolean isDcnUrn = false;
+        if (AggregateUtils.isDcnUrn(urn))
+            isDcnUrn = true;
+        else if (AggregateUtils.isGeniUrn(urn))
+            isDcnUrn = false;
+        else 
+            return null;
+        for (int i = 0; i < rspec.getResources().size(); i++) {
+            AggregateResource rc = rspec.getResources().get(i);
+            if (!rc.getType().equalsIgnoreCase("networkInterface")) {
+                continue;
+            }
+            if (isDcnUrn) {
+                if (aif.getAttachedLinkUrns().contains(urn))
+                    return aif;
+            } else {
+                if (aif.getUrn().equalsIgnoreCase(urn))
+                    return aif;
+            }
+        }
+        return aif;
+    }
+
     List<GeniStitchHopContent> getAggregateLocalHops(GeniStitchPathContent path) {
         List<GeniStitchHopContent> hops = new ArrayList<GeniStitchHopContent>();
         for (GeniStitchHopContent hop: path.getHop()) {

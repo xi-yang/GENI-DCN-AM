@@ -157,6 +157,13 @@ public class AggregateUtils
         return false;
     }
 
+    public static String getGeniAmBase(String geniUrn) {
+        String[] fields = geniUrn.split("\\+");
+        if (fields.length < 2)
+            return null;
+        return fields[1];
+    }
+    
     public static String convertGeniToDcnUrn(String geniUrn) throws AggregateException {
         String aggregate = "";
         String type = "";
@@ -350,6 +357,7 @@ public class AggregateUtils
             return null;
         return ((ElementNSImpl)anyObj).getFirstChild().getNodeValue();
     }
+    
     public static Node getAnyExtensionNode(ArrayList anyList, String name) {
         for (Object obj: anyList) {
             if (getAnyName(obj).equals(name))
@@ -365,7 +373,4 @@ public class AggregateUtils
         }
         return null;
     }
-
-    //TODO : assembling methods (makeAnyNode, makeAnyTextNode) and move to Utils
-
 }

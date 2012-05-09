@@ -113,6 +113,9 @@ public class AggregateRspecManager extends Thread{
                 if (ER.getRspecId() == aggrRspec.getId())
                     aggrRspec.getResources().add(ER);
             }
+            //reconstruct nodes and interfaces
+            recalibrateRspecResources(aggrRspec);
+            //start rspec runner
             AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
             synchronized (rspecThreads) {
                 rspecThreads.add(rspecRunner);
@@ -122,6 +125,80 @@ public class AggregateRspecManager extends Thread{
             rspecRunner.start();
         }
     }
+
+    public void recalibrateRspecResources(AggregateRspec rspec) {
+        for (int n = 0; n < rspec.getResources().size(); n++) {
+            AggregateResource rc = rspec.getResources().get(n);
+            // scan compute (plc) slices 
+            if (rc.getType().equalsIgnoreCase("computeSlice")) {
+                AggregateSlice as = (AggregateSlice)rc;
+                String[] nodes = as.getNodes().split("[,\\s]");
+                for (String nodeId: nodes) {
+                    if (nodeId.isEmpty())
+                        continue;
+                    AggregateNode an = AggregateState.getAggregateNodes().getByNodeId(Integer.valueOf(nodeId));
+                    if (an != null) {
+                        boolean haveAdded = false;
+                        for (AggregateResource rc1: rspec.getResources()) {
+                            if ((rc1.getType().equalsIgnoreCase("computeNode") || rc1.getType().equalsIgnoreCase("planetlabNodeSliver"))
+                                    && ((AggregateNode)rc1).getNodeId() == Integer.valueOf(nodeId))
+                                haveAdded = true;
+                        }
+                        if (!haveAdded) {
+                            AggregateNode an2 = an.duplicate();
+                            an2.setClientId("instance-of-node"+nodeId);
+                            an2.setType("planetlabNodeSliver");
+                            rspec.getResources().add(an2);
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < rspec.getResources().size(); i++) {
+            AggregateResource rc = rspec.getResources().get(i);
+            // scan p2pvlan's
+            if (rc.getType().equalsIgnoreCase("p2pvlan")) {
+                AggregateP2PVlan ppv = (AggregateP2PVlan)rc;
+                AggregateNetworkInterface aif1 = null;
+                AggregateNetworkInterface aif2 = null;
+                if (!ppv.getSrcInterface().isEmpty()) {
+                    AggregateNetworkInterface aif = AggregateState.getAggregateInterfaces().getByAttachedLink(ppv.getSource());
+                    if (aif != null) {
+                        for (int n = 0; n < rspec.getResources().size(); n++) {
+                            rc = rspec.getResources().get(n);
+                            if (rc.getType().equalsIgnoreCase("planetlabNodeSliver") 
+                                    && ((AggregateNode)rc).getUrn().equals(aif.getParentNode().getUrn())) {
+                                aif1 = aif.duplicate();
+                                aif1.setClientId("instance-of-if"+Integer.toBinaryString(aif.getId()));
+                                aif1.setParentNode((AggregateNode)rc);
+                                rspec.getResources().add(aif1);
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!ppv.getSrcInterface().isEmpty()) {
+                    AggregateNetworkInterface aif = AggregateState.getAggregateInterfaces().getByAttachedLink(ppv.getDestination());
+                    if (aif != null) {
+                        for (int n = 0; n < rspec.getResources().size(); n++) {
+                            rc = rspec.getResources().get(n);
+                            if (rc.getType().equalsIgnoreCase("planetlabNodeSliver") 
+                                    && ((AggregateNode)rc).getUrn().equals(aif.getParentNode().getUrn())) {
+                                aif2 = aif.duplicate();
+                                aif2.setClientId("instance-of-if"+Integer.toBinaryString(aif.getId()));
+                                aif2.setParentNode((AggregateNode)rc);
+                                rspec.getResources().add(aif2);
+                            }
+                        }
+                    }
+                }
+                if (aif1 != null && aif2 != null) {
+                    aif1.setPeerInterfaces(aif2.getUrn());
+                    aif2.setPeerInterfaces(aif1.getUrn());
+                }
+            }
+        }
+    } 
 
     public void run() {
         loadCRDB();
