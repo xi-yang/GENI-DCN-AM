@@ -444,7 +444,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 AggregateNode an = (AggregateNode) rc;
                 rspecMan = rspecMan + "<node client_id=\"" + an.getClientId()
                         + "\" component_id=\"" + an.getUrn() + "\" component_manager_id=\""
-                        + rspec.getAggregateName() + " exclusive=\"true\">";
+                        + rspec.getAggregateName() + "\" exclusive=\"true\">";
                 rspecMan += "<hardware_type name=\"plab-pc\"/>";
                 rspecMan += "<hardware_type name=\"pc\"/>";
                 rspecMan += "<sliver_type name=\"plab-vserver\"/>";
@@ -457,20 +457,20 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     AggregateNetworkInterface ai = (AggregateNetworkInterface) rc;
                     if (ai.getParentNode() == an) // || AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
                     {
-                        rspecMan = rspecMan + "<interface client_id=\"" + ai.getClientId() + "\" + component_id=\"" + ai.getUrn() + "\">";
+                        rspecMan = rspecMan + "<interface client_id=\"" + ai.getClientId() + "\" component_id=\"" + ai.getUrn() + "\">";
+                        if (!ai.getIpAddress().isEmpty()) {
+                            rspecMan = rspecMan + "<ip address=\"" + ai.getIpAddress().split("/")[0]
+                                    + "\" + mask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\"/>";
+                        }
+                        // optional (any extension)
+                        if (!ai.getAttachedLinkUrns().isEmpty()) {
+                            rspecMan = rspecMan + "<attached_link>" + ai.getAttachedLinkUrns() + "</attached_link>";
+                        }
+                        rspecMan += "</interface>";
                     }
-                    if (!ai.getIpAddress().isEmpty()) {
-                        rspecMan = rspecMan + "<ip address=\"" + ai.getIpAddress().split("/")[0]
-                                + "\" + mask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\">";
-                    }
-                    // optional (any extension)
-                    if (!ai.getAttachedLinkUrns().isEmpty()) {
-                        rspecMan = rspecMan + "<attached_link>" + ai.getAttachedLinkUrns() + "</attached_link>";
-                    }
-                    rspecMan += "</interface>";
                 }
+                rspecMan += "</node>";
             }
-            rspecMan += "</node>";
         }
 
         ArrayList<AggregateP2PVlan> ppvLinks = new ArrayList<AggregateP2PVlan>();
