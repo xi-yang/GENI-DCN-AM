@@ -498,10 +498,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan = rspecMan + "<interface_ref client_id=\""+ netIf.getClientId() +"\"/>";
             
             rspecMan +=  "<property>";
-            rspecMan +=  "<source_id>" + ppv.getSource() + "</source_id>";
-            rspecMan +=  "<dest_id>" + ppv.getDestination() + "</dest_id>";
+            rspecMan = rspecMan + "<source_id>" + ppv.getSource() + "</source_id>";
+            rspecMan = rspecMan + "<dest_id>" + ppv.getDestination() + "</dest_id>";
             //optional (any extension)
-            rspecMan +=  "<global_resource_id>" + ppv.getGlobalReservationId() + "</global_resource_id>";
+            rspecMan = rspecMan + "<global_resource_id>" + ppv.getGlobalReservationId() + "</global_resource_id>";
             rspecMan +=  "</property>";
 
             rspecMan +=  "</link>";
@@ -510,7 +510,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         if (!ppvStitches.isEmpty()) {
             rspecMan +=  "<stitching>";
             Date dateNow = new Date();
-            rspecMan +=  "<topology lastUpdateTime=\"" + dateNow.toString() + "\" xmlns=\"http://geni.net/schema/stitching/topology/geniStitch/20110220/\">";
+            rspecMan =  rspecMan + "<topology lastUpdateTime=\"" + dateNow.toString() + "\" xmlns=\"http://geni.net/schema/stitching/topology/geniStitch/20110220/\">";
             for (AggregateP2PVlan ppv: ppvStitches) {
                 rspecMan = rspecMan + "<path id=\"GRI-" + ppv.getGri() + "\">";
                 String[] vlanTags = ppv.getVtag().split("-");
@@ -522,7 +522,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 }
                 rspecMan +=  "<hop id=\"src\" type=\"strict\">";
                 rspecMan = rspecMan + "<link id=\""+urn+"\">";
-                rspecMan = rspecMan + "<capacity>"+Float.toString(ppv.getBandwidth())+"</capacity>";
+                rspecMan = rspecMan + "<capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</capacity>";
                 rspecMan +=  "<switchingCapabilityDescriptor>";
                 rspecMan +=  "<switchingcapType>l2sc</switchingcapType>";
                 rspecMan +=  "<encodingType>ethernet</encodingType>";
@@ -547,7 +547,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 }
                 rspecMan +=  "<hop id=\"dst\" type=\"strict\">";
                 rspecMan = rspecMan + "<link id=\""+urn+"\">";
-                rspecMan = rspecMan + "<capacity>"+Float.toString(ppv.getBandwidth())+"</capacity>";
+                rspecMan = rspecMan + "<capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</capacity>";
                 rspecMan +=  "<switchingCapabilityDescriptor>";
                 rspecMan +=  "<switchingcapType>l2sc</switchingcapType>";
                 rspecMan +=  "<encodingType>ethernet</encodingType>";
@@ -586,6 +586,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (!rc.getType().equalsIgnoreCase("networkInterface")) {
                 continue;
             }
+            aif = (AggregateNetworkInterface)rc;
             if (isDcnUrn) {
                 if (aif.getAttachedLinkUrns().contains(urn))
                     return aif;
