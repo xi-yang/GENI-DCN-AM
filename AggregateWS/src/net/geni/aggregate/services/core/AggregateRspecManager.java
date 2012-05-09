@@ -168,7 +168,7 @@ public class AggregateRspecManager extends Thread{
                             rc = rspec.getResources().get(n);
                             if (rc.getType().equalsIgnoreCase("planetlabNodeSliver") 
                                     && AggregateUtils.getUrnField(((AggregateNode)rc).getUrn(), "node").equals(
-                                            AggregateUtils.getUrnField(aif.getParentNode().getUrn(), "node"))) {
+                                            AggregateUtils.getUrnField(aif.getUrn(), "node"))) {
                                 aif1 = aif.duplicate();
                                 aif1.setClientId("instance-of-if"+Integer.toString(aif.getId()));
                                 aif1.setParentNode((AggregateNode)rc);
@@ -186,7 +186,7 @@ public class AggregateRspecManager extends Thread{
                             rc = rspec.getResources().get(n);
                             if (rc.getType().equalsIgnoreCase("planetlabNodeSliver") 
                                     && AggregateUtils.getUrnField(((AggregateNode)rc).getUrn(), "node").equals(
-                                            AggregateUtils.getUrnField(aif.getParentNode().getUrn(), "node"))) {
+                                            AggregateUtils.getUrnField(aif.getUrn(), "node"))) {
                                 aif2 = aif.duplicate();
                                 aif2.setClientId("instance-of-if"+Integer.toString(aif.getId()));
                                 aif2.setParentNode((AggregateNode)rc);
