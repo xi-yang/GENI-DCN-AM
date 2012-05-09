@@ -487,9 +487,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
         
         for (AggregateP2PVlan ppv: ppvLinks) {
+            String[] vlanTags = ppv.getVtag().split("-");
             rspecMan = rspecMan + "<link client_id=\"p2pvlan-"+ppv.getId()
-                        + "\" vlantag=\"" + ppv.getVtag() + "\">";
-
+                    + "\" vlantag=\"" 
+                    + ((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?vlanTags[0]:ppv.getVtag()) 
+                    + "\">";
             AggregateNetworkInterface netIf = lookupInterfaceReference(rspec, ppv.getSource());
             if (netIf != null)
                 rspecMan = rspecMan + "<interface_ref client_id=\""+ netIf.getClientId() +"\"/>";

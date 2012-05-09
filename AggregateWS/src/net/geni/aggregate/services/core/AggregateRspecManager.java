@@ -167,26 +167,30 @@ public class AggregateRspecManager extends Thread{
                         for (int n = 0; n < rspec.getResources().size(); n++) {
                             rc = rspec.getResources().get(n);
                             if (rc.getType().equalsIgnoreCase("planetlabNodeSliver") 
-                                    && ((AggregateNode)rc).getUrn().equals(aif.getParentNode().getUrn())) {
+                                    && AggregateUtils.getUrnField(((AggregateNode)rc).getUrn(), "node").equals(
+                                            AggregateUtils.getUrnField(aif.getParentNode().getUrn(), "node"))) {
                                 aif1 = aif.duplicate();
                                 aif1.setClientId("instance-of-if"+Integer.toBinaryString(aif.getId()));
                                 aif1.setParentNode((AggregateNode)rc);
+                                aif1.setType("networkInterface");
                                 rspec.getResources().add(aif1);
                                 break;
                             }
                         }
                     }
                 }
-                if (!ppv.getSrcInterface().isEmpty()) {
+                if (!ppv.getDstInterface().isEmpty()) {
                     AggregateNetworkInterface aif = AggregateState.getAggregateInterfaces().getByAttachedLink(ppv.getDestination());
                     if (aif != null) {
                         for (int n = 0; n < rspec.getResources().size(); n++) {
                             rc = rspec.getResources().get(n);
                             if (rc.getType().equalsIgnoreCase("planetlabNodeSliver") 
-                                    && ((AggregateNode)rc).getUrn().equals(aif.getParentNode().getUrn())) {
+                                    && AggregateUtils.getUrnField(((AggregateNode)rc).getUrn(), "node").equals(
+                                            AggregateUtils.getUrnField(aif.getParentNode().getUrn(), "node"))) {
                                 aif2 = aif.duplicate();
                                 aif2.setClientId("instance-of-if"+Integer.toBinaryString(aif.getId()));
                                 aif2.setParentNode((AggregateNode)rc);
+                                aif2.setType("networkInterface");
                                 rspec.getResources().add(aif2);
                             }
                         }
