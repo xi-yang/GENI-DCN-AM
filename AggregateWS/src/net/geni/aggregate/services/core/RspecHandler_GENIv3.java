@@ -460,7 +460,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         rspecMan = rspecMan + "<interface client_id=\"" + ai.getClientId() + "\" component_id=\"" + ai.getUrn() + "\">";
                         if (!ai.getIpAddress().isEmpty()) {
                             rspecMan = rspecMan + "<ip address=\"" + ai.getIpAddress().split("/")[0]
-                                    + "\" + mask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\"/>";
+                                    + "\" mask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\"/>";
                         }
                         // optional (any extension)
                         if (!ai.getAttachedLinkUrns().isEmpty()) {
