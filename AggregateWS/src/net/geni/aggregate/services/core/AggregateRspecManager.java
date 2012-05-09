@@ -421,8 +421,9 @@ public class AggregateRspecManager extends Thread{
                 } else {
                     statements[0] = computeResource;
                     statements[1] = networkTopology;
-                    if (statements[0].contains("</dcn_topology>")) {
-                        statements[0].replace("</dcn_topology>", statements[1]);
+                    // optional / configurable ?
+                    if (statements[0].contains("</rspec>")) {
+                        statements[0] = statements[0].replace("</rspec>", statements[1]+"</rspec>");
                     }
                 }
             }

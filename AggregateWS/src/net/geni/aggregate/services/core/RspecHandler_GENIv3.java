@@ -570,9 +570,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             rspecMan +=  "</topology>";
             rspecMan +=  "</stitching>";
         }
-        if (rspec.getId() == 0) { // globalAggregate rspec
-            rspecMan +=  "<dcn_topolgy/>";
-        }
         rspecMan +=  "</rspec>";
         return rspecMan;
     }
