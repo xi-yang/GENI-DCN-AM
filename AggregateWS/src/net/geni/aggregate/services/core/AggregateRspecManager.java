@@ -170,7 +170,7 @@ public class AggregateRspecManager extends Thread{
                                     && AggregateUtils.getUrnField(((AggregateNode)rc).getUrn(), "node").equals(
                                             AggregateUtils.getUrnField(aif.getParentNode().getUrn(), "node"))) {
                                 aif1 = aif.duplicate();
-                                aif1.setClientId("instance-of-if"+Integer.toBinaryString(aif.getId()));
+                                aif1.setClientId("instance-of-if"+Integer.toString(aif.getId()));
                                 aif1.setParentNode((AggregateNode)rc);
                                 aif1.setType("networkInterface");
                                 rspec.getResources().add(aif1);
@@ -188,7 +188,7 @@ public class AggregateRspecManager extends Thread{
                                     && AggregateUtils.getUrnField(((AggregateNode)rc).getUrn(), "node").equals(
                                             AggregateUtils.getUrnField(aif.getParentNode().getUrn(), "node"))) {
                                 aif2 = aif.duplicate();
-                                aif2.setClientId("instance-of-if"+Integer.toBinaryString(aif.getId()));
+                                aif2.setClientId("instance-of-if"+Integer.toString(aif.getId()));
                                 aif2.setParentNode((AggregateNode)rc);
                                 aif2.setType("networkInterface");
                                 rspec.getResources().add(aif2);
