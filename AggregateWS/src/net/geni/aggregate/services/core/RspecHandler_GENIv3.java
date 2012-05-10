@@ -396,7 +396,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (netIf1 != null) {
                     stitchingP2PVlan.setSrcInterface(netIf1.getDeviceName());
                     stitchingP2PVlan.setSrcIpAndMask(netIf1.getIpAddress());
-                    if (stitchingP2PVlan.getVtag().isEmpty())
+                    if (stitchingP2PVlan.getVtag().isEmpty() && netIf1.getVlanTag() != null)
                         stitchingP2PVlan.setVtag(netIf1.getVlanTag());
                 }
             }
@@ -405,9 +405,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (netIf2 != null) {
                     stitchingP2PVlan.setSrcInterface(netIf2.getDeviceName());
                     stitchingP2PVlan.setSrcIpAndMask(netIf2.getIpAddress());
-                    if (stitchingP2PVlan.getVtag().isEmpty())
+                    if (stitchingP2PVlan.getVtag().isEmpty() && netIf2.getVlanTag() != null)
                         stitchingP2PVlan.setVtag(netIf2.getVlanTag());
-                    else if (!netIf2.getVlanTag().isEmpty())
+                    else if (netIf2.getVlanTag() != null && !netIf2.getVlanTag().isEmpty())
                         stitchingP2PVlan.setVtag(stitchingP2PVlan.getVtag()+"-"+netIf2.getVlanTag());
                 }
             }
@@ -641,6 +641,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         List<GeniStitchSwitchingCapabilitySpecificInfoL2Sc> l2scInfo = specInfo.getSwitchingCapabilitySpecificInfoL2Sc();
         if (l2scInfo == null || l2scInfo.isEmpty())
             return "";
-        return l2scInfo.get(0).getSuggestedVLANRange();
+        return l2scInfo.get(0).getVlanRangeAvailability();
     }
 }
