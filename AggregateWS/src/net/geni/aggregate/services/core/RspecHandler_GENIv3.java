@@ -242,7 +242,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String vlanTag = link.getVlantag();
         String capacity = "1000000"; // 1Mbps by default
         List<AggregateNetworkInterface> netIfs = new ArrayList<AggregateNetworkInterface>();
-        //List<String> externalUrns = new ArrayList<String>(); 
+        List<String> externalUrns = new ArrayList<String>(); 
         for (Object obj: link.getAnyOrPropertyOrLinkType()) {
             if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
                 String elemName = ((JAXBElement)obj).getName().getLocalPart();
@@ -251,10 +251,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     String netIfClientId = irc.getClientId();
                     AggregateNetworkInterface netIf = lookupInterfaceByClientId(rspec, netIfClientId);
                     if (netIf == null) {
-                        log.debug("interface_ref:'" + netIfClientId + "' cannot be found (this could be a link to external aggregate)");
-                        return;
+                        log.debug("interface_ref:'" + netIfClientId + "' cannot be found (this could be a stitching reference or link to external aggregate)");
+                        externalUrns.add(netIfClientId);
+                    } else {
+                        netIfs.add(netIf);
                     }
-                    netIfs.add(netIf);
                 } else if (elemName.equalsIgnoreCase("property")) {
                     LinkPropertyContents lpc = (LinkPropertyContents)((JAXBElement)obj).getValue();
                     sourceId = lpc.getSourceId();
@@ -313,8 +314,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         } else {
             throw new AggregateException("number interface_ref's must be no greater than 2 in link:" + clientId);
         }
-        //create explicit p2pvlan 
         if (netIfs.size() < 2 && sourceId != null && destId != null) {
+            //create implicit stitching p2pvlan; 
+            //otherwise a local p2pvlan will be created by RspecRunner later
             AggregateP2PVlan explicitP2PVlan = new AggregateP2PVlan();
             explicitP2PVlan.setSource(AggregateUtils.getIDCQualifiedUrn(sourceId));
             explicitP2PVlan.setDestination(AggregateUtils.getIDCQualifiedUrn(destId));
@@ -332,6 +334,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             explicitP2PVlan.setStitchingResourceId("geni-implicit-stitching");
             explicitP2PVlan.setExternalResourceId("");
             rspec.getResources().add((AggregateResource)explicitP2PVlan);
+        } else if (clientId.contains("stitching") && netIfs.size() == 1 && externalUrns.size() == 1) {
+            netIfs.get(0).setStitchingResourceId(externalUrns.get(0));
         }
     }
     
@@ -350,20 +354,20 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             GeniStitchLinkContent srcLink = localHops.get(0).getLink();
             GeniStitchLinkContent dstLink = localHops.get(localHops.size()-1).getLink();
             String source = srcLink.getId();
-            AggregateNetworkInterface netIf = AggregateState.getAggregateInterfaces().getByUrn(srcLink.getId());
-            if (netIf != null) {
-                if (netIf.getLinks() == null || netIf.getLinks().isEmpty())
+            AggregateNetworkInterface netIf1 = AggregateState.getAggregateInterfaces().getByUrn(srcLink.getId());
+            if (netIf1 != null) {
+                if (netIf1.getLinks() == null || netIf1.getLinks().isEmpty())
                     throw new AggregateException("Cannot resolve hop (link id'="+srcLink.getId()+"')");
-                source = netIf.getLinks().get(0);
+                source = netIf1.getLinks().get(0);
             } else {
                 source = AggregateUtils.convertGeniToDcnUrn(srcLink.getId());
             }
             String destination = dstLink.getId();
-            netIf = AggregateState.getAggregateInterfaces().getByUrn(dstLink.getId());
-            if (netIf != null) {
-                if (netIf.getLinks() == null || netIf.getLinks().isEmpty())
+            AggregateNetworkInterface netIf2 = AggregateState.getAggregateInterfaces().getByUrn(dstLink.getId());
+            if (netIf2 != null) {
+                if (netIf2.getLinks() == null || netIf2.getLinks().isEmpty())
                     throw new AggregateException("Cannot resolve hop (link id'="+dstLink.getId()+"')");
-                destination = netIf.getLinks().get(0);
+                destination = netIf2.getLinks().get(0);
             } else {
                 destination = AggregateUtils.convertGeniToDcnUrn(dstLink.getId());
             }
@@ -384,21 +388,25 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             else 
                 stitchingP2PVlan.setVtag("");
             // attach source or destination interface (device + IP)
-            AggregateNetworkInterface netIf1 = AggregateState.getAggregateInterfaces().getByAttachedLink(srcLink.getId());
             if (netIf1 != null) {
-                stitchingP2PVlan.setSrcInterface(netIf1.getDeviceName());
-                stitchingP2PVlan.setSrcIpAndMask(netIf1.getIpAddress());
-                if (stitchingP2PVlan.getVtag().isEmpty())
-                    stitchingP2PVlan.setVtag(netIf1.getVlanTag());
+                netIf1 = lookupInterfaceByStitchingResourceId(rspec, path.getId());
+                if (netIf1 != null) {
+                    stitchingP2PVlan.setSrcInterface(netIf1.getDeviceName());
+                    stitchingP2PVlan.setSrcIpAndMask(netIf1.getIpAddress());
+                    if (stitchingP2PVlan.getVtag().isEmpty())
+                        stitchingP2PVlan.setVtag(netIf1.getVlanTag());
+                }
             }
-            AggregateNetworkInterface netIf2 = AggregateState.getAggregateInterfaces().getByAttachedLink(dstLink.getId());
             if (netIf2 != null) {
-                stitchingP2PVlan.setSrcInterface(netIf2.getDeviceName());
-                stitchingP2PVlan.setSrcIpAndMask(netIf2.getIpAddress());
-                if (stitchingP2PVlan.getVtag().isEmpty())
-                    stitchingP2PVlan.setVtag(netIf2.getVlanTag());
-                else if (!netIf2.getVlanTag().isEmpty())
-                    stitchingP2PVlan.setVtag(stitchingP2PVlan.getVtag()+"-"+netIf2.getVlanTag());
+                netIf2 = lookupInterfaceByStitchingResourceId(rspec, path.getId());
+                if (netIf2 != null) {
+                    stitchingP2PVlan.setSrcInterface(netIf2.getDeviceName());
+                    stitchingP2PVlan.setSrcIpAndMask(netIf2.getIpAddress());
+                    if (stitchingP2PVlan.getVtag().isEmpty())
+                        stitchingP2PVlan.setVtag(netIf2.getVlanTag());
+                    else if (!netIf2.getVlanTag().isEmpty())
+                        stitchingP2PVlan.setVtag(stitchingP2PVlan.getVtag()+"-"+netIf2.getVlanTag());
+                }
             }
             if (stitchingP2PVlan.getVtag().isEmpty()) {
                 stitchingP2PVlan.setVtag("any");
@@ -410,14 +418,25 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
     }
 
     AggregateNetworkInterface lookupInterfaceByClientId(AggregateRspec rspec, String id) {
-        for (AggregateResource rc: rspec.getResources()) {
+        for (int i = 0; i < rspec.getResources().size(); i++) {
+            AggregateResource rc = rspec.getResources().get(i);
             if (rc.getType().equalsIgnoreCase("networkInterface") && rc.getClientId().equalsIgnoreCase(id)) {
                 return (AggregateNetworkInterface)rc;
             }
         }
         return null;
     }
-    
+
+    AggregateNetworkInterface lookupInterfaceByStitchingResourceId(AggregateRspec rspec, String id) {
+        for (int i = 0; i < rspec.getResources().size(); i++) {
+            AggregateResource rc = rspec.getResources().get(i);
+            if (rc.getType().equalsIgnoreCase("networkInterface") && ((AggregateNetworkInterface)rc).getStitchingResourceId().equalsIgnoreCase(id)) {
+                return (AggregateNetworkInterface)rc;
+            }
+        }
+        return null;
+    }
+
     public AggregateRspec configRspecFromFile(String filePath) throws AggregateException {
         throw new AggregateException("RspecHandler_GENIv3::configRspecFromFile not implemented");
         // loadCRDB only use this method from MAX rspecHandler instance? 
