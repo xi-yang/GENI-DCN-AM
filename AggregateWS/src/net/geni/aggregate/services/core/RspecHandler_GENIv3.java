@@ -547,7 +547,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan +=  "<hop id=\"src\" type=\"strict\">";
                 rspecMan = rspecMan + "<link id=\""+urn+"\">";
                 rspecMan = rspecMan + "<capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</capacity>";
-                rspecMan +=  "<switchingCapabilityDescriptor>";
+                rspecMan +=  "<SwitchingCapabilityDescriptors>";
                 rspecMan +=  "<switchingcapType>l2sc</switchingcapType>";
                 rspecMan +=  "<encodingType>ethernet</encodingType>";
                 rspecMan +=  "<switchingCapabilitySpecificInfo>";
@@ -558,7 +558,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan = rspecMan + "<vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</vlanTranslation>";
                 rspecMan +=  "</switchingCapabilitySpecificInfo_L2sc>";
                 rspecMan +=  "</switchingCapabilitySpecificInfo>";
-                rspecMan +=  "</switchingCapabilityDescriptor>";
+                rspecMan +=  "</SwitchingCapabilityDescriptors>";
                 rspecMan +=  "</link>";
                 rspecMan = rspecMan + "<nextHop>dst</nextHop>";
                 rspecMan +=  "</hop>";
@@ -572,7 +572,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan +=  "<hop id=\"dst\" type=\"strict\">";
                 rspecMan = rspecMan + "<link id=\""+urn+"\">";
                 rspecMan = rspecMan + "<capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</capacity>";
-                rspecMan +=  "<switchingCapabilityDescriptor>";
+                rspecMan +=  "<SwitchingCapabilityDescriptors>";
                 rspecMan +=  "<switchingcapType>l2sc</switchingcapType>";
                 rspecMan +=  "<encodingType>ethernet</encodingType>";
                 rspecMan +=  "<switchingCapabilitySpecificInfo>";
@@ -583,7 +583,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan =  rspecMan + "<vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</vlanTranslation>";
                 rspecMan +=  "</switchingCapabilitySpecificInfo_L2sc>";
                 rspecMan +=  "</switchingCapabilitySpecificInfo>";
-                rspecMan +=  "</switchingCapabilityDescriptor>";
+                rspecMan +=  "</SwitchingCapabilityDescriptors>";
                 rspecMan +=  "</link>";
                 rspecMan +=  "<nextHop>null</nextHop>";
                 rspecMan +=  "</hop>";
