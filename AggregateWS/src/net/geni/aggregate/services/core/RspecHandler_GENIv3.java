@@ -295,8 +295,13 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             hasSourceIf = true;
             hasDestIf = true;
         } else if (netIfs.size() == 1) {
+            // handle link that binds stitching resource to local interface
+            if (clientId.contains("stitching") && externalUrns.size() == 1) {
+                netIfs.get(0).setStitchingResourceId(externalUrns.get(0));
+                return;
+            }
             // local netIf peering with explicit source or dest urn
-            if (destId != null && (sourceId == null || sourceId.equalsIgnoreCase(netIfs.get(0).getUrn()))) {
+            else if (destId != null && (sourceId == null || sourceId.equalsIgnoreCase(netIfs.get(0).getUrn()))) {
                 sourceId = netIfs.get(0).getLinks().get(0);
                 hasSourceIf = true;
             } else if (sourceId != null && (destId == null || destId.equalsIgnoreCase(netIfs.get(0).getUrn()))) {
@@ -334,8 +339,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             explicitP2PVlan.setStitchingResourceId("geni-implicit-stitching");
             explicitP2PVlan.setExternalResourceId("");
             rspec.getResources().add((AggregateResource)explicitP2PVlan);
-        } else if (clientId.contains("stitching") && netIfs.size() == 1 && externalUrns.size() == 1) {
-            netIfs.get(0).setStitchingResourceId(externalUrns.get(0));
         }
     }
     
