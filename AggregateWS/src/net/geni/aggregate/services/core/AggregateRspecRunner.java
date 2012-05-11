@@ -397,8 +397,6 @@ public class AggregateRspecRunner extends Thread {
                         } else {//the slice would expire bfore VLAN
                             throw (new AggregateException("Failed to create stitching P2PVlan for an expired internal slice: " + sliceName));
                         }
-                    } else {
-                        throw (new AggregateException("Failed to create stitching P2PVlan without finding the internal slice: " + sliceName));
                     }
                     p2pvlan.setStartTime(startTime);
                     p2pvlan.setEndTime(endTime);
