@@ -336,7 +336,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
             // no device and IP needed if neither end is attached to node netIf
             explicitP2PVlan.setStitchingResourceId("geni-implicit-stitching");
-            explicitP2PVlan.setExternalResourceId("");
+            explicitP2PVlan.setExternalResourceId("legacy-non-empty");
             rspec.getResources().add((AggregateResource)explicitP2PVlan);
         }
     }
