@@ -311,10 +311,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 throw new AggregateException("single interface_ref must be paired with an external source_id or dest_id property in link:" + clientId);
             }
         } else if (netIfs.isEmpty()) {
-            //create peering between sourceId and destId, both explicit urn
-            if (sourceId != null && destId != null && sourceId.equalsIgnoreCase(destId)) {
-            } else {
-                throw new AggregateException("with zero interface_ref, both source_id or dest_id properties must be present in link:" + clientId);
+            //create peering between sourceId and destId, both explicit urn's
+            if (sourceId == null || destId == null || sourceId.equalsIgnoreCase(destId)) {
+                throw new AggregateException("without interface_ref, both source_id or dest_id properties must be present in link:" + clientId);
             }
         } else {
             throw new AggregateException("number interface_ref's must be no greater than 2 in link:" + clientId);
