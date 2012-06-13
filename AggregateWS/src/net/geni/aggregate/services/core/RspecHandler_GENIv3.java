@@ -130,7 +130,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         AggregateNode aggrNode= AggregateState.getAggregateNodes().getByUrn(urn);
         if (aggrNode == null) {
             // TODO: log and return -- not an exception
-            log.debug("unknown node:"+urn+" (this node could belong to external aggregate)");
+            log.debug("unknown node:"+urn+"  -- can be safely ignored only if this node belong to external aggregate");
             return;
         }
 
@@ -251,7 +251,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     String netIfClientId = irc.getClientId();
                     AggregateNetworkInterface netIf = lookupInterfaceByClientId(rspec, netIfClientId);
                     if (netIf == null) {
-                        log.debug("interface_ref:'" + netIfClientId + "' cannot be found (this could be a stitching reference or link to external aggregate)");
+                        log.debug("interface_ref:'" + netIfClientId + "' cannot be found -- can be safely ignored only if it is a stitching reference or link to external aggregate");
                         externalUrns.add(netIfClientId);
                     } else {
                         netIfs.add(netIf);
