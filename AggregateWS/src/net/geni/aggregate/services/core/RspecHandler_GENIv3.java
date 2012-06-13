@@ -627,7 +627,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
     List<GeniStitchHopContent> getAggregateLocalHops(GeniStitchPathContent path) {
         List<GeniStitchHopContent> hops = new ArrayList<GeniStitchHopContent>();
         for (GeniStitchHopContent hop: path.getHop()) {
-            if (hop.getLink() != null || hop.getLink().getId().contains(AggregateState.getAmUrn())) {
+            if (hop.getLink() != null && hop.getLink().getId().contains(AggregateState.getAmUrn())) {
                 hops.add(hop);
             }
         }
