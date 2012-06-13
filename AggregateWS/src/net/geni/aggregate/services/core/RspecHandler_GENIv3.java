@@ -313,31 +313,40 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         } else if (netIfs.isEmpty()) {
             //create peering between sourceId and destId, both explicit urn's
             if (sourceId == null || destId == null || sourceId.equalsIgnoreCase(destId)) {
-                throw new AggregateException("without interface_ref, both source_id or dest_id properties must be present in link:" + clientId);
+                log.warn("With no recognized interface_ref, and missing source_id and/or dest_id properties, the link '" 
+                        + clientId + "' can be safely ignored only if it belongs to external aggregate(s).");
+                return;
             }
         } else {
             throw new AggregateException("number interface_ref's must be no greater than 2 in link:" + clientId);
         }
         if (netIfs.size() < 2 && sourceId != null && destId != null) {
-            //create implicit stitching p2pvlan; 
-            //otherwise a local p2pvlan will be created by RspecRunner later
-            AggregateP2PVlan explicitP2PVlan = new AggregateP2PVlan();
-            explicitP2PVlan.setSource(AggregateUtils.getIDCQualifiedUrn(sourceId));
-            explicitP2PVlan.setDestination(AggregateUtils.getIDCQualifiedUrn(destId));
-            explicitP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(capacity));//50M by default
-            explicitP2PVlan.setVtag(vlanTag);
-            if (hasSourceIf) {
-                explicitP2PVlan.setSrcInterface(netIfs.get(0).getDeviceName());
-                explicitP2PVlan.setSrcIpAndMask(netIfs.get(0).getIpAddress());
+            String verifySrcUrn = sourceId;
+            if (AggregateUtils.isDcnUrn(sourceId)) {
+                verifySrcUrn = AggregateUtils.convertDcnToGeniUrn(sourceId);
             }
-            if (hasDestIf) {
-                explicitP2PVlan.setDstInterface(netIfs.get(0).getDeviceName());
-                explicitP2PVlan.setDstIpAndMask(netIfs.get(0).getIpAddress());
+            // create VLAN link only if the link has a local sourceId urn
+            if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
+                //create implicit stitching p2pvlan 
+                //otherwise a local p2pvlan will be created by RspecRunner later
+                AggregateP2PVlan explicitP2PVlan = new AggregateP2PVlan();
+                explicitP2PVlan.setSource(AggregateUtils.getIDCQualifiedUrn(sourceId));
+                explicitP2PVlan.setDestination(AggregateUtils.getIDCQualifiedUrn(destId));
+                explicitP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(capacity));//50M by default
+                explicitP2PVlan.setVtag(vlanTag);
+                if (hasSourceIf) {
+                    explicitP2PVlan.setSrcInterface(netIfs.get(0).getDeviceName());
+                    explicitP2PVlan.setSrcIpAndMask(netIfs.get(0).getIpAddress());
+                }
+                if (hasDestIf) {
+                    explicitP2PVlan.setDstInterface(netIfs.get(0).getDeviceName());
+                    explicitP2PVlan.setDstIpAndMask(netIfs.get(0).getIpAddress());
+                }
+                // no device and IP needed if neither end is attached to node netIf
+                explicitP2PVlan.setStitchingResourceId("geni-implicit-stitching");
+                explicitP2PVlan.setExternalResourceId("legacy-non-empty");
+                rspec.getResources().add((AggregateResource) explicitP2PVlan);
             }
-            // no device and IP needed if neither end is attached to node netIf
-            explicitP2PVlan.setStitchingResourceId("geni-implicit-stitching");
-            explicitP2PVlan.setExternalResourceId("legacy-non-empty");
-            rspec.getResources().add((AggregateResource)explicitP2PVlan);
         }
     }
     
