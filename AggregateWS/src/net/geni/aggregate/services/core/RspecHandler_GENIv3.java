@@ -313,8 +313,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         } else if (netIfs.isEmpty()) {
             //create peering between sourceId and destId, both explicit urn's
             if (sourceId == null || destId == null || sourceId.equalsIgnoreCase(destId)) {
-                log.warn("With no recognized interface_ref, and missing source_id and/or dest_id properties, the link '" 
-                        + clientId + "' can be safely ignored only if it belongs to external aggregate(s).");
+                log.warn("unknown interface_ref and missing source_id and dest_id properties in the link '" 
+                        + clientId + "' -- can be safely ignored only if it belongs to external aggregate(s)");
                 return;
             }
         } else {
