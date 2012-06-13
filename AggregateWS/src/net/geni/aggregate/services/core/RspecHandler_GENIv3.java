@@ -455,7 +455,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             throw new AggregateException("RspecHandler_GENIv3.getRspecManifest error: " + e.getMessage());
         }
         //XMLGregorianCalendar xgcExpires = new XMLGregorianCalendar(dateExpires);
-        String rspecMan = "<rspec type=\"manifest\" expires=\"" + xgcExpires.toString()
+        String type ="manifest";
+        if (rspec == AggregateRspecManager.getAggrRspecGlobal()) {
+            type="advertisement";
+        }
+        String rspecMan = "<rspec type=\"" + type +"\" expires=\"" + xgcExpires.toString()
                 + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/manifest.xsd\""
                 + " xmlns=\"http://www.geni.net/resources/rspec/3\">";

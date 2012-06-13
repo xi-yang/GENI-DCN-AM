@@ -24,7 +24,7 @@ public class AggregateRspecManager extends Thread{
     private volatile boolean goRun = false;
     private volatile List<AggregateRspec> aggrRspecs;
     private volatile List<AggregateRspecRunner> rspecThreads;
-    private AggregateRspec aggrRspecGlobal = null;
+    private static AggregateRspec aggrRspecGlobal = null;
     private static Session session;
     private static org.hibernate.Transaction tx;
     private org.apache.log4j.Logger log;
@@ -40,7 +40,7 @@ public class AggregateRspecManager extends Thread{
         return aggrRspecs;
     }
 
-    public AggregateRspec getAggrRspecGlobal() {
+    public static AggregateRspec getAggrRspecGlobal() {
         return aggrRspecGlobal;
     }
 

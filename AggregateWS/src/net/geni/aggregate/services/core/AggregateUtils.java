@@ -185,6 +185,8 @@ public class AggregateUtils
             dcnUrn += "dragon.maxgigapop.net";
         } else if (aggregate.equals("ionpl")) {
             dcnUrn += "ion.internet2.edu";
+        } else if (aggregate.equals("lonipl")) {
+            dcnUrn += "loni.org";
         } else {
             throw new AggregateException("convertGeniToDcnUrn: cannot resolve domain-id for aggregate="+aggregate);
         }
@@ -223,6 +225,8 @@ public class AggregateUtils
                         geniUrn += "maxpl";
                     } else if (matcher.group(2).equalsIgnoreCase("ion.internet2.edu")) {
                         geniUrn += "ionpl";
+                    } else if (matcher.group(2).equalsIgnoreCase("loni.org")) {
+                        geniUrn += "lonipl";
                     } else {
                         throw new AggregateException("convertDcnToGeniUrn: cannot resolve aggregate for "+field);
                     }
