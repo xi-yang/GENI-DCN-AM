@@ -16,7 +16,7 @@ import java.util.*;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.geni.www.resources.rspec._3.*;
-import net.geni.schema.stitching.topology.genistitch._20110220.*;
+import edu.isi.east.hpn.rspec.ext.stitch._0_2.*;
 import org.apache.xerces.dom.ElementNSImpl;
 
 import javax.imageio.metadata.IIOMetadataNode;
@@ -51,35 +51,17 @@ public class Rspecv3Test {
         JAXBElement<RSpecContents> jaxbRspec = null;
         GeniStitchTopologyContent stitchTopoObj = null;
         JAXBElement<GeniStitchTopologyContent> jaxbRspec2 = null;
-        String[] rspecXmls = null;
         try {
-            rspecXmls = RspecHandler_GENIv3.extractStitchingRspec(rspecXml);
-        } catch (Exception e) {
-            System.err.println("Error in extract stitching section from the rspec. " + e.getMessage());
-            System.exit(-1);
-        }
-        if (rspecXmls == null) {
-            System.err.println("Missing or malformed <stitching> Rspec section.");
-            System.exit(-1);
-        }
-        try {
-            StringReader reader = new StringReader(rspecXmls[0]);
+            StringReader reader = new StringReader(rspecXml);
             JAXBContext jc = JAXBContext.newInstance("net.geni.www.resources.rspec._3");
             Unmarshaller unm = jc.createUnmarshaller();
             jaxbRspec = (JAXBElement<RSpecContents>) unm.unmarshal(reader);
             rspecV3Obj = jaxbRspec.getValue();
-        } catch (Exception e) {
-            System.err.println("Error in unmarshling GENI RSpec v3 contents: " + e.getMessage());
-            System.exit(-1);
-        }
-        try {
-            StringReader reader = new StringReader(rspecXmls[1]);
-            JAXBContext jc = JAXBContext.newInstance("net.geni.schema.stitching.topology.genistitch._20110220");
-            Unmarshaller unm = jc.createUnmarshaller();
-            jaxbRspec2 = (JAXBElement<GeniStitchTopologyContent>) unm.unmarshal(reader);
+            JAXBContext payloadContext = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_2");
+            jaxbRspec2 = (JAXBElement<GeniStitchTopologyContent>)payloadContext.createUnmarshaller().unmarshal((Node) rspecV3Obj.getAnyOrNodeOrLink().get(4));
             stitchTopoObj = jaxbRspec2.getValue();
         } catch (Exception e) {
-            System.err.println("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
+            System.err.println("Error in unmarshling GENI RSpec v3 contents: " + e.getMessage());
             System.exit(-1);
         }
         Date dateExpires = new Date();

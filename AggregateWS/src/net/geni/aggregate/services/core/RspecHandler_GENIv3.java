@@ -7,12 +7,13 @@ package net.geni.aggregate.services.core;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBElement;
+import org.w3c.dom.Node;
 import java.io.*;
 import java.util.*;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.geni.www.resources.rspec._3.*;
-import net.geni.schema.stitching.topology.genistitch._20110220.*;
+import edu.isi.east.hpn.rspec.ext.stitch._0_2.*;
 
 /**
  *
@@ -25,37 +26,12 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         log = org.apache.log4j.Logger.getLogger(this.getClass());
     }
 
-    public static String[] extractStitchingRspec(String rspecXml) throws AggregateException {
-        String[] rspecs = new String[2];
-        int iStitchOpen1 = rspecXml.indexOf("<stitching");
-        int iStitchOpen2 = (iStitchOpen1 == -1 ? -1 : rspecXml.indexOf(">", iStitchOpen1));
-        int iStitchClose1 = rspecXml.indexOf("</stitching");
-        int iStitchClose2 = (iStitchClose1 == -1 ? -1 : rspecXml.indexOf(">", iStitchClose1));
-        if (iStitchOpen1 == -1 && iStitchClose1 == -1) {
-            rspecs[0] = rspecXml;
-            rspecs[1] = null;
-        } else if (iStitchOpen1 == -1 || iStitchOpen2 == -1
-                || iStitchClose1 == -1 || iStitchClose2 == -1) {
-            throw new AggregateException("Missing or malformed <stitching> Rspec section.");
-        } else {
-            rspecs[0] = rspecXml.substring(0, iStitchOpen1 - 1);
-            rspecs[0] += rspecXml.substring(iStitchClose2 + 1);
-            rspecs[1] = rspecXml.substring(iStitchOpen2 + 1, iStitchClose1 - 1);
-            if (!rspecs[1].contains("http://geni.net/schema/stitching/topology")) {
-                rspecs[1] = rspecs[1].replace("<topology",
-                    "<topology xmlns=\"http://geni.net/schema/stitching/topology/geniStitch/20110220/\"");
-            }
-        }
-        return rspecs;
-    }
-
     public AggregateRspec parseRspecXml(String rspecXml) throws AggregateException {
         AggregateRspec aggrRspec = new AggregateRspec();
         RSpecContents rspecV3Obj = null;
         GeniStitchTopologyContent stitchTopoObj = null;
-        String[] rspecXmls = this.extractStitchingRspec(rspecXml);
         try {
-            StringReader reader = new StringReader(rspecXmls[0]);
+            StringReader reader = new StringReader(rspecXml);
             JAXBContext jc = JAXBContext.newInstance("net.geni.www.resources.rspec._3");
             Unmarshaller unm = jc.createUnmarshaller();
             JAXBElement<RSpecContents> jaxbRspec = (JAXBElement<RSpecContents>) unm.unmarshal(reader);
@@ -63,24 +39,26 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         } catch (Exception e) {
             throw new AggregateException("Error in unmarshling GENI RSpec v3 contents: " + e.getMessage());
         }
-        if (rspecXmls[1] != null) {
-            try {
-                StringReader reader = new StringReader(rspecXmls[1]);
-                JAXBContext jc = JAXBContext.newInstance("net.geni.schema.stitching.topology.genistitch._20110220");
-                Unmarshaller unm = jc.createUnmarshaller();
-                JAXBElement<GeniStitchTopologyContent> jaxbRspec = (JAXBElement<GeniStitchTopologyContent>) unm.unmarshal(reader);
-                stitchTopoObj = jaxbRspec.getValue();
-            } catch (Exception e) {
-                throw new AggregateException("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
-            }
-        }
         // parse GENI RSpecv3 main section -- root params and nodes
         for (Object obj: rspecV3Obj.getAnyOrNodeOrLink()) {
             if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
                 String elemName = ((JAXBElement)obj).getName().getLocalPart();
                 if (elemName.equalsIgnoreCase("node")) {
-                    parseAddNode(aggrRspec, (NodeContents)((JAXBElement)obj).getValue());
+                    parseAddNode(aggrRspec, (NodeContents) ((JAXBElement) obj).getValue());
                 }
+            } else if (obj.getClass().getName().contains("ElementNSImpl")) {
+                String elemName = AggregateUtils.getAnyName(obj);
+                if (elemName.equalsIgnoreCase("address")) {
+                    try {
+                        JAXBContext jc = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_2");
+                        JAXBElement<GeniStitchTopologyContent> jaxbRspec = (JAXBElement<GeniStitchTopologyContent>) jc.createUnmarshaller().unmarshal((Node)obj);
+                        stitchTopoObj = jaxbRspec.getValue();
+                    } catch (Exception e) {
+                        throw new AggregateException("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
+                    }
+
+                }
+
             }
         }
         // parse links -- require interfaces created under nodes
@@ -150,12 +128,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             // optional:
             if (obj.getClass().getName().contains("ElementNSImpl")) {
                 String elemName = AggregateUtils.getAnyName(obj);
-                if (elemName.equalsIgnoreCase("address")) {
+                if (elemName.equalsIgnoreCase("topology")) {
                     address = AggregateUtils.getAnyText(obj);
                 } else if (elemName.equalsIgnoreCase("description")) {
                     descr = AggregateUtils.getAnyText(obj);
                 }
-
             }
         }
 

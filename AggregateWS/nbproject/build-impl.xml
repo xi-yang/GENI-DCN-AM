@@ -590,8 +590,8 @@ is divided into following sections:
             <arg value="-d" />
             <arg value="${src.dir}"/>
             <arg value="-p" />
-            <arg value="net.geni.schema.stitching.topology.genistitch._20110220"/>
-            <arg value="${build.dir}/rspecs/stitching.xsd" />
+            <arg value="edu.isi.east.hpn.rspec.ext.stitch._0_2"/>
+            <arg value="${build.dir}/rspecs/stitch-schema.xsd" />
         </java>
     </target>
 
