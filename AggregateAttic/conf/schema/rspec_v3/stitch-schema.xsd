@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xs:schema 
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-    elementFormDefault="qualified" 
-    targetNamespace="http://geni.net/schema/stitching/topology/geniStitch/20110220/" 
-    xmlns:GeniStitch="http://geni.net/schema/stitching/topology/geniStitch/20110220/">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    targetNamespace="http://hpn.east.isi.edu/rspec/ext/stitch/0.2/"
+    xmlns:stitch="http://hpn.east.isi.edu/rspec/ext/stitch/0.2/">
   
     <xs:annotation>
       <xs:documentation>
@@ -14,23 +14,23 @@
     </xs:annotation>
     
   <!-- Aggregate Topology -->
-  <xs:element name="topology" type="GeniStitch:GeniStitchTopologyContent"/>
+  <xs:element name="topology" type="stitch:GeniStitchTopologyContent"/>
   
   <xs:complexType name="GeniStitchTopologyContent">
     <xs:sequence>
-      <xs:element name="lastupddatetime" type="xs:string"/>
-      <xs:element name="AggregateUrl" type="xs:string"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="GeniStitch:path"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="GeniStitch:aggregate"/>
+      <xs:element minOccurs="0" name="lastupdatetime" type="xs:string"/>
+      <xs:element minOccurs="0" name="AggregateUrl" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="stitch:path"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="stitch:aggregate"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="aggregateSignature" 
-        type="GeniStitch:GeniStitchAggregateSignatureContent"/>
+        type="stitch:GeniStitchAggregateSignatureContent"/>
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string"/>
   </xs:complexType>
   <!-- /Aggregate Topology -->
 
   <!-- Aggregate -->
-  <xs:element name="aggregate" type="GeniStitch:GeniStitchAggregateContent"/>
+  <xs:element name="aggregate" type="stitch:GeniStitchAggregateContent"/>
   
   <xs:complexType name="GeniStitchAggregateContent">
       <xs:sequence>
@@ -38,40 +38,40 @@
 	<xs:element minOccurs="0" maxOccurs="1" name="stitchingmode" type="xs:string"/>
 	<xs:element minOccurs="0" maxOccurs="1" name="scheduledservices" type="xs:string"/>
 	<xs:element minOccurs="0" maxOccurs="1" name="negotiatedservices" type="xs:string"/>
-        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="GeniStitch:Lifetime"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="GeniStitch:node"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="GeniStitch:port"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="GeniStitch:link"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="stitch:Lifetime"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="stitch:node"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="stitch:port"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="stitch:link"/>
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string"/>
   </xs:complexType>
   <!-- /Aggregate -->
 
   <!-- Node -->
-  <xs:element name="node" type="GeniStitch:GeniStitchNodeContent"/>
+  <xs:element name="node" type="stitch:GeniStitchNodeContent"/>
   
   <xs:complexType name="GeniStitchNodeContent">
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="GeniStitch:Lifetime"/>
-        <xs:element minOccurs="0" name="address" type="GeniStitch:GeniStitchAddressContent" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="GeniStitch:port"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="stitch:Lifetime"/>
+        <xs:element minOccurs="0" name="address" type="stitch:GeniStitchAddressContent" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="stitch:port"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>
   </xs:complexType>
   <!-- /Node -->
 
   <!-- Port -->
-  <xs:element name="port" type="GeniStitch:GeniStitchPortContent" />
+  <xs:element name="port" type="stitch:GeniStitchPortContent" />
   
   <xs:complexType name="GeniStitchPortContent">
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="GeniStitch:Lifetime"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="stitch:Lifetime"/>
         <xs:element minOccurs="0" name="capacity" type="xs:string"/>
         <xs:element minOccurs="0" name="maximumReservableCapacity" type="xs:string"/>
         <xs:element minOccurs="0" name="minimumReservableCapacity" type="xs:string"/>
         <xs:element minOccurs="0" name="granularity" type="xs:string"/>
         <xs:element minOccurs="0" name="unreservedCapacity" type="xs:string"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="GeniStitch:link"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="stitch:link"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>
   </xs:complexType>
@@ -79,7 +79,7 @@
 
   
   <!-- Link -->
-  <xs:element name="link" type="GeniStitch:GeniStitchLinkContent" />
+  <xs:element name="link" type="stitch:GeniStitchLinkContent" />
   
   <xs:complexType name="GeniStitchLinkContent">
       <xs:sequence>
@@ -93,8 +93,8 @@
         <xs:element minOccurs="0" maxOccurs="unbounded" 
             name="linkProtectionTypes" type="xs:string"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" name="administrativeGroups" 
-            type="GeniStitch:GeniStitchAdministrativeGroup"/>
-        <xs:element name="SwitchingCapabilityDescriptors" type="GeniStitch:GeniStitchSwcapContent"/>
+            type="stitch:GeniStitchAdministrativeGroup"/>
+        <xs:element name="SwitchingCapabilityDescriptors" type="stitch:GeniStitchSwcapContent"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>
   </xs:complexType>
@@ -102,12 +102,12 @@
 
   <!-- Path -->
   <!--Path element is used to describe a simple point-to-point path-->
-  <xs:element name="path" type="GeniStitch:GeniStitchPathContent" />
+  <xs:element name="path" type="stitch:GeniStitchPathContent" />
   
   <xs:complexType name="GeniStitchPathContent">
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="GeniStitch:Lifetime" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="hop" type="GeniStitch:GeniStitchHopContent" />
+        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="stitch:Lifetime" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="hop" type="stitch:GeniStitchHopContent" />
         <xs:element minOccurs="0" maxOccurs="1" name="status" type="xs:string" />
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>
@@ -121,12 +121,12 @@
         <xs:element minOccurs="0" name="nodeIdRef" type="xs:string" />
         <xs:element minOccurs="0" name="portIdRef" type="xs:string" />
         <xs:element minOccurs="0" name="linkIdRef" type="xs:string" />
-        <xs:element minOccurs="0" ref="GeniStitch:aggregate"/>
-        <xs:element minOccurs="0" ref="GeniStitch:node"/>
-        <xs:element minOccurs="0" ref="GeniStitch:port"/>
-        <xs:element minOccurs="0" ref="GeniStitch:link"/>
+        <xs:element minOccurs="0" ref="stitch:aggregate"/>
+        <xs:element minOccurs="0" ref="stitch:node"/>
+        <xs:element minOccurs="0" ref="stitch:port"/>
+        <xs:element minOccurs="0" ref="stitch:link"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" name="nextHop" 
-                    type="GeniStitch:GeniStitchNextHopContent" />
+                    type="stitch:GeniStitchNextHopContent" />
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>
   </xs:complexType>
@@ -142,9 +142,9 @@
   
   <xs:complexType name="Lifetime">
       <xs:sequence>
-        <xs:element name="start" type="GeniStitch:TimeContent" minOccurs="0"/>
-        <xs:element name="end" type="GeniStitch:TimeContent" minOccurs="0"/>
-        <xs:element name="duration" type="GeniStitch:Duration" minOccurs="0"/>
+        <xs:element name="start" type="stitch:TimeContent" minOccurs="0"/>
+        <xs:element name="end" type="stitch:TimeContent" minOccurs="0"/>
+        <xs:element name="duration" type="stitch:Duration" minOccurs="0"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>
       <xs:attribute name="direction" use="optional" type="xs:string"/>
@@ -193,7 +193,7 @@ multipoint-to-multipoint, and paths-with-protection.  This will described in a l
       <xs:element name="switchingcapType" type="xs:string" />
       <xs:element name="encodingType" type="xs:string" />
       <xs:element name="switchingCapabilitySpecificInfo" 
-        type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo"/>
+        type="stitch:GeniStitchSwitchingCapabilitySpecificInfo"/>
     </xs:sequence>
   </xs:complexType>
   
@@ -206,15 +206,15 @@ multipoint-to-multipoint, and paths-with-protection.  This will described in a l
 
   <xs:complexType name="GeniStitchSwitchingCapabilitySpecificInfo">
     <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_L2sc" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_L2sc"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_L2sc" type="stitch:GeniStitchSwitchingCapabilitySpecificInfo_L2sc"/>
       <!-- TBD
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc1" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc1"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc2" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc2"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc3" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc3"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc4" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc4"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Tdm" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Tdm"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Lsc" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Lsc"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Fsc" type="GeniStitch:GeniStitchSwitchingCapabilitySpecificInfo_Fsc"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc1" type="stitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc1"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc2" type="stitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc2"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc3" type="stitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc3"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Psc4" type="stitch:GeniStitchSwitchingCapabilitySpecificInfo_Psc4"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Tdm" type="stitch:GeniStitchSwitchingCapabilitySpecificInfo_Tdm"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Lsc" type="stitch:GeniStitchSwitchingCapabilitySpecificInfo_Lsc"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="switchingCapabilitySpecificInfo_Fsc" type="stitch:GeniStitchSwitchingCapabilitySpecificInfo_Fsc"/>
       -->
     </xs:sequence>
   </xs:complexType>
