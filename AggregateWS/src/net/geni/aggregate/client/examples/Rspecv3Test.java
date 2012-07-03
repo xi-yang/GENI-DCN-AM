@@ -35,7 +35,7 @@ import java.io.StringReader;
  */
 public class Rspecv3Test {
     public static void main(String[] args) {
-        String filePath = "/Users/xyang/Work/GENI/rspecv3-and-stitching/max-req-v3.rspec.xml";
+        String filePath = "/Users/xyang/Work/GENI/gcf-1.6.1/geni-stitching.rspec";
         if (args.length > 0)
             filePath = args[0];
         byte[] buffer = new byte[(int)new File(filePath).length()];

@@ -48,7 +48,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 }
             } else if (obj.getClass().getName().contains("ElementNSImpl")) {
                 String elemName = AggregateUtils.getAnyName(obj);
-                if (elemName.equalsIgnoreCase("address")) {
+                if (elemName.equalsIgnoreCase("topology")) {
                     try {
                         JAXBContext jc = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_2");
                         JAXBElement<GeniStitchTopologyContent> jaxbRspec = (JAXBElement<GeniStitchTopologyContent>) jc.createUnmarshaller().unmarshal((Node)obj);
@@ -128,7 +128,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             // optional:
             if (obj.getClass().getName().contains("ElementNSImpl")) {
                 String elemName = AggregateUtils.getAnyName(obj);
-                if (elemName.equalsIgnoreCase("topology")) {
+                if (elemName.equalsIgnoreCase("address")) {
                     address = AggregateUtils.getAnyText(obj);
                 } else if (elemName.equalsIgnoreCase("description")) {
                     descr = AggregateUtils.getAnyText(obj);
