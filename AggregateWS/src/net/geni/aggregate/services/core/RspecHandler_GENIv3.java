@@ -537,7 +537,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (AggregateUtils.isDcnUrn(urn)) {
                     urn = AggregateUtils.convertDcnToGeniUrn(urn);
                 }
-                rspecMan +=  "<stitch:hop id=\"src\" type=\"strict\">";
+                rspecMan +=  "<stitch:hop id=\"src\">";
                 rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
                 rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
                 rspecMan +=  "<stitch:SwitchingCapabilityDescriptors>";
@@ -565,13 +565,13 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (AggregateUtils.isDcnUrn(urn)) {
                     urn = AggregateUtils.convertDcnToGeniUrn(urn);
                 }
-                rspecMan +=  "<stitch:hop id=\"dst\" type=\"strict\">";
+                rspecMan +=  "<stitch:hop id=\"dst\">";
                 rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
                 rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
                 rspecMan +=  "<stitch:SwitchingCapabilityDescriptors>";
                 rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
                 rspecMan +=  "<stitch:encodingType>ethernet</stitch:encodingType>";
-                rspecMan +=  "<stitch:stitch:switchingCapabilitySpecificInfo>";
+                rspecMan +=  "<stitch:switchingCapabilitySpecificInfo>";
                 rspecMan +=  "<stitch:switchingCapabilitySpecificInfo_L2sc>";
                 rspecMan +=  "<stitch:interfaceMTU>9000</stitch:interfaceMTU>";
                 rspecMan =  rspecMan + "<stitch:vlanRangeAvailability>"+(vlanTags.length == 2?vlanTags[1]:vlanTags[0])+"</stitch:vlanRangeAvailability>";
