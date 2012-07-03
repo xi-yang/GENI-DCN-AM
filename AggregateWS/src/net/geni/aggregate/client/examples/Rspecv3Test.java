@@ -58,7 +58,7 @@ public class Rspecv3Test {
             jaxbRspec = (JAXBElement<RSpecContents>) unm.unmarshal(reader);
             rspecV3Obj = jaxbRspec.getValue();
             JAXBContext payloadContext = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_2");
-            jaxbRspec2 = (JAXBElement<GeniStitchTopologyContent>)payloadContext.createUnmarshaller().unmarshal((Node) rspecV3Obj.getAnyOrNodeOrLink().get(4));
+            jaxbRspec2 = (JAXBElement<GeniStitchTopologyContent>)payloadContext.createUnmarshaller().unmarshal((org.w3c.dom.Node) rspecV3Obj.getAnyOrNodeOrLink().get(4));
             stitchTopoObj = jaxbRspec2.getValue();
         } catch (Exception e) {
             System.err.println("Error in unmarshling GENI RSpec v3 contents: " + e.getMessage());

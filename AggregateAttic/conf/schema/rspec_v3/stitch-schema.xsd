@@ -84,7 +84,7 @@
   <xs:complexType name="GeniStitchLinkContent">
       <xs:sequence>
         <xs:element minOccurs="0" name="remoteLinkId" type="xs:string" />
-        <xs:element name="trafficEngineeringMetric" type="xs:string"/>        
+        <xs:element minOccurs="0" name="trafficEngineeringMetric" type="xs:string"/>
         <xs:element minOccurs="0" name="capacity" type="xs:string"/>
         <xs:element minOccurs="0" name="maximumReservableCapacity" type="xs:string"/>
         <xs:element minOccurs="0" name="minimumReservableCapacity" type="xs:string"/>
@@ -228,6 +228,11 @@ multipoint-to-multipoint, and paths-with-protection.  This will described in a l
       <xs:element minOccurs="0" name="vlanTranslation" type="xs:boolean"/>
     </xs:sequence>
   </xs:complexType>
+
    <!-- /Misc Types -->
+
+  <xs:attribute name="vlantag" type="xs:string"/>
+
+  <xs:element name="attached_link" type="xs:string"/>
 
 </xs:schema>

@@ -172,7 +172,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             // optional:
             if (obj.getClass().getName().contains("ElementNSImpl")) {
                 String elemName = AggregateUtils.getAnyName(obj);
-                if (elemName.equalsIgnoreCase("attached_link_urn")) {
+                if (elemName.equalsIgnoreCase("attached_link")) {
                     linkUrns.add(AggregateUtils.getAnyText(obj));
                 } else if (elemName.equalsIgnoreCase("vlan_range")) {
                     vlanTag = AggregateUtils.getAnyText(obj);
@@ -476,7 +476,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         }
                         // optional (any extension)
                         if (!ai.getAttachedLinkUrns().isEmpty()) {
-                            rspecMan = rspecMan + "<attached_link>" + ai.getAttachedLinkUrns() + "</attached_link>";
+                            rspecMan = rspecMan + "<stitch:attached_link>" + ai.getAttachedLinkUrns() + "</stitch:attached_link>";
                         }
                         rspecMan += "</interface>";
                     }
