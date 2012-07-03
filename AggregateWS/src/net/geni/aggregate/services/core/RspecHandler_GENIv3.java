@@ -447,8 +447,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
         String rspecMan = "<rspec type=\"" + type +"\" expires=\"" + xgcExpires.toString()
                 + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/manifest.xsd\""
-                + " xmlns=\"http://www.geni.net/resources/rspec/3\">";
+                + " xmlns=\"http://www.geni.net/resources/rspec/3\" xmlns:stitch=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.2/\""
+                + " xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/manifest.xsd"
+                + " http://hpn.east.isi.edu/rspec/ext/stitch/0.2/ http://hpn.east.isi.edu/rspec/ext/stitch/0.2/stitch-schema.xsd\">";
         for (int n = 0; n < rspec.getResources().size(); n++) {
             AggregateResource rc = rspec.getResources().get(n);
             if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
@@ -471,7 +472,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         rspecMan = rspecMan + "<interface client_id=\"" + ai.getClientId() + "\" component_id=\"" + ai.getUrn() + "\">";
                         if (!ai.getIpAddress().isEmpty()) {
                             rspecMan = rspecMan + "<ip address=\"" + ai.getIpAddress().split("/")[0]
-                                    + "\" mask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\"/>";
+                                    + "\" netmask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\"/>";
                         }
                         // optional (any extension)
                         if (!ai.getAttachedLinkUrns().isEmpty()) {
@@ -521,11 +522,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
 
         if (!ppvStitches.isEmpty()) {
-            rspecMan +=  "<stitching>";
+            rspecMan +=  "<stitch:topology id=\"stitch-ext-topology\">";
             Date dateNow = new Date();
-            rspecMan =  rspecMan + "<topology lastUpdateTime=\"" + dateNow.toString() + "\" xmlns=\"http://geni.net/schema/stitching/topology/geniStitch/20110220/\">";
+            rspecMan =  rspecMan + "<stitch:lastupdatetime>" + dateNow.toString() + "</stitch:lastupdatetime>";
             for (AggregateP2PVlan ppv: ppvStitches) {
-                rspecMan = rspecMan + "<path id=\"GRI-" + ppv.getGri() + "\">";
+                rspecMan = rspecMan + "<stitch:path id=\"GRI-" + ppv.getGri() + "\">";
                 String[] vlanTags = ppv.getVtag().split("-");
                 // create source hop
                 String urn = ppv.getSource();
@@ -533,24 +534,27 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (netIf != null) {
                     urn = netIf.getUrn();
                 }
-                rspecMan +=  "<hop id=\"src\" type=\"strict\">";
-                rspecMan = rspecMan + "<link id=\""+urn+"\">";
-                rspecMan = rspecMan + "<capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</capacity>";
-                rspecMan +=  "<SwitchingCapabilityDescriptors>";
-                rspecMan +=  "<switchingcapType>l2sc</switchingcapType>";
-                rspecMan +=  "<encodingType>ethernet</encodingType>";
-                rspecMan +=  "<switchingCapabilitySpecificInfo>";
-                rspecMan +=  "<switchingCapabilitySpecificInfo_L2sc>";
-                rspecMan +=  "<interfaceMTU>9000</interfaceMTU>";
-                rspecMan = rspecMan +  "<vlanRangeAvailability>"+vlanTags[0]+"</vlanRangeAvailability>";
-                rspecMan = rspecMan +  "<suggestedVLANRange>"+vlanTags[0]+"</suggestedVLANRange>";
-                rspecMan = rspecMan + "<vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</vlanTranslation>";
-                rspecMan +=  "</switchingCapabilitySpecificInfo_L2sc>";
-                rspecMan +=  "</switchingCapabilitySpecificInfo>";
-                rspecMan +=  "</SwitchingCapabilityDescriptors>";
-                rspecMan +=  "</link>";
-                rspecMan = rspecMan + "<nextHop>dst</nextHop>";
-                rspecMan +=  "</hop>";
+                if (AggregateUtils.isDcnUrn(urn)) {
+                    urn = AggregateUtils.convertDcnToGeniUrn(urn);
+                }
+                rspecMan +=  "<stitch:hop id=\"src\" type=\"strict\">";
+                rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
+                rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
+                rspecMan +=  "<stitch:SwitchingCapabilityDescriptors>";
+                rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
+                rspecMan +=  "<stitch:encodingType>ethernet</stitch:encodingType>";
+                rspecMan +=  "<stitch:switchingCapabilitySpecificInfo>";
+                rspecMan +=  "<stitch:switchingCapabilitySpecificInfo_L2sc>";
+                rspecMan +=  "<stitch:interfaceMTU>9000</stitch:interfaceMTU>";
+                rspecMan = rspecMan +  "<stitch:vlanRangeAvailability>"+vlanTags[0]+"</stitch:vlanRangeAvailability>";
+                rspecMan = rspecMan +  "<stitch:suggestedVLANRange>"+vlanTags[0]+"</stitch:suggestedVLANRange>";
+                rspecMan = rspecMan + "<stitch:vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</stitch:vlanTranslation>";
+                rspecMan +=  "</stitch:switchingCapabilitySpecificInfo_L2sc>";
+                rspecMan +=  "</stitch:switchingCapabilitySpecificInfo>";
+                rspecMan +=  "</stitch:SwitchingCapabilityDescriptors>";
+                rspecMan +=  "</stitch:link>";
+                rspecMan = rspecMan + "<stitch:nextHop>dst</stitch:nextHop>";
+                rspecMan +=  "</stitch:hop>";
                 // TODO: get intermediate hops from OSCARS query (stored in DB?)
                 // create destination hop
                 urn = ppv.getDestination();
@@ -558,28 +562,30 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (netIf != null) {
                     urn = netIf.getUrn();
                 }
-                rspecMan +=  "<hop id=\"dst\" type=\"strict\">";
-                rspecMan = rspecMan + "<link id=\""+urn+"\">";
-                rspecMan = rspecMan + "<capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</capacity>";
-                rspecMan +=  "<SwitchingCapabilityDescriptors>";
-                rspecMan +=  "<switchingcapType>l2sc</switchingcapType>";
-                rspecMan +=  "<encodingType>ethernet</encodingType>";
-                rspecMan +=  "<switchingCapabilitySpecificInfo>";
-                rspecMan +=  "<switchingCapabilitySpecificInfo_L2sc>";
-                rspecMan +=  "<interfaceMTU>9000</interfaceMTU>";
-                rspecMan =  rspecMan + "<vlanRangeAvailability>"+(vlanTags.length == 2?vlanTags[1]:vlanTags[0])+"</vlanRangeAvailability>";
-                rspecMan =  rspecMan + "<suggestedVLANRange>"+(vlanTags.length == 2?vlanTags[1]:vlanTags[0])+"</suggestedVLANRange>";
-                rspecMan =  rspecMan + "<vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</vlanTranslation>";
-                rspecMan +=  "</switchingCapabilitySpecificInfo_L2sc>";
-                rspecMan +=  "</switchingCapabilitySpecificInfo>";
-                rspecMan +=  "</SwitchingCapabilityDescriptors>";
-                rspecMan +=  "</link>";
-                rspecMan +=  "<nextHop>null</nextHop>";
-                rspecMan +=  "</hop>";
-                rspecMan +=  "</path>";
+                if (AggregateUtils.isDcnUrn(urn)) {
+                    urn = AggregateUtils.convertDcnToGeniUrn(urn);
+                }
+                rspecMan +=  "<stitch:hop id=\"dst\" type=\"strict\">";
+                rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
+                rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
+                rspecMan +=  "<stitch:SwitchingCapabilityDescriptors>";
+                rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
+                rspecMan +=  "<stitch:encodingType>ethernet</stitch:encodingType>";
+                rspecMan +=  "<stitch:stitch:switchingCapabilitySpecificInfo>";
+                rspecMan +=  "<stitch:switchingCapabilitySpecificInfo_L2sc>";
+                rspecMan +=  "<stitch:interfaceMTU>9000</stitch:interfaceMTU>";
+                rspecMan =  rspecMan + "<stitch:vlanRangeAvailability>"+(vlanTags.length == 2?vlanTags[1]:vlanTags[0])+"</stitch:vlanRangeAvailability>";
+                rspecMan =  rspecMan + "<stitch:suggestedVLANRange>"+(vlanTags.length == 2?vlanTags[1]:vlanTags[0])+"</stitch:suggestedVLANRange>";
+                rspecMan =  rspecMan + "<stitch:vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</stitch:vlanTranslation>";
+                rspecMan +=  "</stitch:switchingCapabilitySpecificInfo_L2sc>";
+                rspecMan +=  "</stitch:switchingCapabilitySpecificInfo>";
+                rspecMan +=  "</stitch:SwitchingCapabilityDescriptors>";
+                rspecMan +=  "</stitch:link>";
+                rspecMan +=  "<stitch:nextHop>null</stitch:nextHop>";
+                rspecMan +=  "</stitch:hop>";
+                rspecMan +=  "</stitch:path>";
             }            
-            rspecMan +=  "</topology>";
-            rspecMan +=  "</stitching>";
+            rspecMan +=  "</stitch:topology>";
         }
         rspecMan +=  "</rspec>";
         return rspecMan;
