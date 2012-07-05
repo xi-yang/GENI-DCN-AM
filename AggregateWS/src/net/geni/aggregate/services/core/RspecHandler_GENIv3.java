@@ -215,11 +215,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String sourceId = null;
         String destId = null;
         String descr = "p2pVlan:rspecId=" + rspec.getRspecName() + ":clientId=" + clientId;
-        String vlanTag = link.getVlantag();
         String capacity = "1000000"; // 1Mbps by default
+        String vlanTag =  AggregateUtils.getAnyAttrString(link.getOtherAttributes(), "http://hpn.east.isi.edu/rspec/ext/stitch/0.2/", "vlantag");
         List<AggregateNetworkInterface> netIfs = new ArrayList<AggregateNetworkInterface>();
         List<String> externalUrns = new ArrayList<String>(); 
-        AggregateUtils.getAnyAttrString(link.getOtherAttributes(), "http://hpn.east.isi.edu/rspec/ext/stitch/0.2/", "vlantag");
         for (Object obj: link.getAnyOrPropertyOrLinkType()) {
             if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
                 String elemName = ((JAXBElement)obj).getName().getLocalPart();
