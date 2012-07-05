@@ -57,6 +57,8 @@ public class Rspecv3Test {
             Unmarshaller unm = jc.createUnmarshaller();
             jaxbRspec = (JAXBElement<RSpecContents>) unm.unmarshal(reader);
             rspecV3Obj = jaxbRspec.getValue();
+            LinkContents link = (LinkContents)((JAXBElement)rspecV3Obj.getAnyOrNodeOrLink().get(3)).getValue();
+            String vlantag = AggregateUtils.getAnyAttrString(link.getOtherAttributes(),"http://hpn.east.isi.edu/rspec/ext/stitch/0.2/", "vlantag");
             JAXBContext payloadContext = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_2");
             jaxbRspec2 = (JAXBElement<GeniStitchTopologyContent>)payloadContext.createUnmarshaller().unmarshal((org.w3c.dom.Node) rspecV3Obj.getAnyOrNodeOrLink().get(4));
             stitchTopoObj = jaxbRspec2.getValue();

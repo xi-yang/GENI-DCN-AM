@@ -12,6 +12,7 @@ import net.geni.aggregate.services.api.AggregateFaultMessage;
 import net.geni.aggregate.services.api.AggregateFaultMessageExt;
 import org.apache.xerces.dom.ElementNSImpl;
 import org.w3c.dom.Node;
+import javax.xml.namespace.QName;
 
 /**
  *
@@ -376,5 +377,10 @@ public class AggregateUtils
                 return getAnyText(obj);
         }
         return null;
+    }
+    
+    public static String getAnyAttrString(Map<QName, String> attrs, String namespace, String localpart) {
+        QName qname = new QName(namespace, localpart);
+        return attrs.get(qname);
     }
 }

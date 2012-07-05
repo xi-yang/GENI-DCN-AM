@@ -155,7 +155,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String capacity = "";
         String clientId = iface.getClientId();
         ArrayList<String> linkUrns = new ArrayList<String>();
-
         for (Object obj: iface.getAnyOrIpOrHost()) {
             if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
                 String elemName = ((JAXBElement)obj).getName().getLocalPart();
@@ -220,6 +219,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String capacity = "1000000"; // 1Mbps by default
         List<AggregateNetworkInterface> netIfs = new ArrayList<AggregateNetworkInterface>();
         List<String> externalUrns = new ArrayList<String>(); 
+        AggregateUtils.getAnyAttrString(link.getOtherAttributes(), "http://hpn.east.isi.edu/rspec/ext/stitch/0.2/", "vlantag");
         for (Object obj: link.getAnyOrPropertyOrLinkType()) {
             if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
                 String elemName = ((JAXBElement)obj).getName().getLocalPart();
