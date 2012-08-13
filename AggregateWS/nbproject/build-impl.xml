@@ -590,7 +590,7 @@ is divided into following sections:
             <arg value="-d" />
             <arg value="${src.dir}"/>
             <arg value="-p" />
-            <arg value="edu.isi.east.hpn.rspec.ext.stitch._0_2"/>
+            <arg value="edu.isi.east.hpn.rspec.ext.stitch._0_1"/>
             <arg value="${build.dir}/rspecs/stitch-schema.xsd" />
         </java>
     </target>

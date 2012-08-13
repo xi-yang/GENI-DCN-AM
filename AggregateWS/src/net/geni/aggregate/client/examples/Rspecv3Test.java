@@ -16,7 +16,7 @@ import java.util.*;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.geni.www.resources.rspec._3.*;
-import edu.isi.east.hpn.rspec.ext.stitch._0_2.*;
+import edu.isi.east.hpn.rspec.ext.stitch._0_1.*;
 import org.apache.xerces.dom.ElementNSImpl;
 
 import javax.imageio.metadata.IIOMetadataNode;
@@ -49,8 +49,8 @@ public class Rspecv3Test {
         String rspecXml = new String(buffer);
         RSpecContents rspecV3Obj = null;
         JAXBElement<RSpecContents> jaxbRspec = null;
-        GeniStitchTopologyContent stitchTopoObj = null;
-        JAXBElement<GeniStitchTopologyContent> jaxbRspec2 = null;
+        StitchContent stitchObj = null;
+        JAXBElement<StitchContent> jaxbRspec2 = null;
         try {
             StringReader reader = new StringReader(rspecXml);
             JAXBContext jc = JAXBContext.newInstance("net.geni.www.resources.rspec._3");
@@ -58,10 +58,10 @@ public class Rspecv3Test {
             jaxbRspec = (JAXBElement<RSpecContents>) unm.unmarshal(reader);
             rspecV3Obj = jaxbRspec.getValue();
             LinkContents link = (LinkContents)((JAXBElement)rspecV3Obj.getAnyOrNodeOrLink().get(3)).getValue();
-            String vlantag = AggregateUtils.getAnyAttrString(link.getOtherAttributes(),"http://hpn.east.isi.edu/rspec/ext/stitch/0.2/", "vlantag");
-            JAXBContext payloadContext = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_2");
-            jaxbRspec2 = (JAXBElement<GeniStitchTopologyContent>)payloadContext.createUnmarshaller().unmarshal((org.w3c.dom.Node) rspecV3Obj.getAnyOrNodeOrLink().get(4));
-            stitchTopoObj = jaxbRspec2.getValue();
+            String vlantag = AggregateUtils.getAnyAttrString(link.getOtherAttributes(),"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/", "vlantag");
+            JAXBContext payloadContext = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_1");
+            jaxbRspec2 = (JAXBElement<StitchContent>)payloadContext.createUnmarshaller().unmarshal((org.w3c.dom.Node) rspecV3Obj.getAnyOrNodeOrLink().get(4));
+            stitchObj = jaxbRspec2.getValue();
         } catch (Exception e) {
             System.err.println("Error in unmarshling GENI RSpec v3 contents: " + e.getMessage());
             System.exit(-1);

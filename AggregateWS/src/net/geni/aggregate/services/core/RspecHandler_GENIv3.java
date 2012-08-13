@@ -13,7 +13,7 @@ import java.util.*;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.geni.www.resources.rspec._3.*;
-import edu.isi.east.hpn.rspec.ext.stitch._0_2.*;
+import edu.isi.east.hpn.rspec.ext.stitch._0_1.*;
 
 /**
  *
@@ -29,7 +29,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
     public AggregateRspec parseRspecXml(String rspecXml) throws AggregateException {
         AggregateRspec aggrRspec = new AggregateRspec();
         RSpecContents rspecV3Obj = null;
-        GeniStitchTopologyContent stitchTopoObj = null;
+        StitchContent stitchObj = null;
         try {
             StringReader reader = new StringReader(rspecXml);
             JAXBContext jc = JAXBContext.newInstance("net.geni.www.resources.rspec._3");
@@ -48,11 +48,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 }
             } else if (obj.getClass().getName().contains("ElementNSImpl")) {
                 String elemName = AggregateUtils.getAnyName(obj);
-                if (elemName.equalsIgnoreCase("topology")) {
+                if (elemName.equalsIgnoreCase("stitching")) {
                     try {
-                        JAXBContext jc = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_2");
-                        JAXBElement<GeniStitchTopologyContent> jaxbRspec = (JAXBElement<GeniStitchTopologyContent>) jc.createUnmarshaller().unmarshal((Node)obj);
-                        stitchTopoObj = jaxbRspec.getValue();
+                        JAXBContext jc = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_1");
+                        JAXBElement<StitchContent> jaxbRspec = (JAXBElement<StitchContent>) jc.createUnmarshaller().unmarshal((Node)obj);
+                        stitchObj = jaxbRspec.getValue();
                     } catch (Exception e) {
                         throw new AggregateException("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
                     }
@@ -71,8 +71,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
         }
         // parse GENI Stitching Rspec section
-        if (stitchTopoObj != null) {
-            parseStitchingResources(aggrRspec, stitchTopoObj);
+        if (stitchObj != null) {
+            parseStitchingResources(aggrRspec, stitchObj);
         }
 
         long now = System.currentTimeMillis()/1000;
@@ -173,7 +173,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 String elemName = AggregateUtils.getAnyName(obj);
                 if (elemName.equalsIgnoreCase("attached_link")) {
                     linkUrns.add(AggregateUtils.getAnyText(obj));
-                } else if (elemName.equalsIgnoreCase("vlan_range")) {
+                } else if (elemName.equalsIgnoreCase("vlantag")) {
                     vlanTag = AggregateUtils.getAnyText(obj);
                 } 
             }
@@ -216,7 +216,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String destId = null;
         String descr = "p2pVlan:rspecId=" + rspec.getRspecName() + ":clientId=" + clientId;
         String capacity = "1000000"; // 1Mbps by default
-        String vlanTag =  AggregateUtils.getAnyAttrString(link.getOtherAttributes(), "http://hpn.east.isi.edu/rspec/ext/stitch/0.2/", "vlantag");
+        String vlanTag =  AggregateUtils.getAnyAttrString(link.getOtherAttributes(), "http://hpn.east.isi.edu/rspec/ext/stitch/0.1/", "vlantag");
         List<AggregateNetworkInterface> netIfs = new ArrayList<AggregateNetworkInterface>();
         List<String> externalUrns = new ArrayList<String>(); 
         for (Object obj: link.getAnyOrPropertyOrLinkType()) {
@@ -326,20 +326,20 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
     }
     
-    void parseStitchingResources(AggregateRspec rspec, GeniStitchTopologyContent stitchingTopology) throws AggregateException {
+    void parseStitchingResources(AggregateRspec rspec, StitchContent stitchingTopology) throws AggregateException {
         // stitching resources == <topology> that contatins one or more <path> elements
         if (stitchingTopology.getPath() == null || stitchingTopology.getPath().isEmpty()) {
             throw new AggregateException("RspecHandler_GENIv3::parseStitchingResources stitching <topology> must have at least one <path>.");
         }
-        for (GeniStitchPathContent path: stitchingTopology.getPath()) {
-            List<GeniStitchHopContent> localHops = getAggregateLocalHops(path);
+        for (PathContent path: stitchingTopology.getPath()) {
+            List<HopContent> localHops = getAggregateLocalHops(path);
             // privision edge-to-edge -- skip explicit path hops in between (if any) 
             if (localHops.size() < 2) {
                 throw new AggregateException("RspecHandler_GENIv3::parseStitchingResources stitching <path id=\"" 
                         + path.getId() + "\" must have at least two <hop> elements.");
             }
-            GeniStitchLinkContent srcLink = localHops.get(0).getLink();
-            GeniStitchLinkContent dstLink = localHops.get(localHops.size()-1).getLink();
+            LinkContent srcLink = localHops.get(0).getLink();
+            LinkContent dstLink = localHops.get(localHops.size()-1).getLink();
             String source = srcLink.getId();
             AggregateNetworkInterface netIf1 = AggregateState.getAggregateInterfaces().getByUrn(srcLink.getId());
             if (netIf1 != null) {
@@ -446,9 +446,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
         String rspecMan = "<rspec type=\"" + type +"\" expires=\"" + xgcExpires.toString()
                 + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xmlns=\"http://www.geni.net/resources/rspec/3\" xmlns:stitch=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.2/\""
+                + " xmlns=\"http://www.geni.net/resources/rspec/3\" xmlns:stitch=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/\""
                 + " xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/manifest.xsd"
-                + " http://hpn.east.isi.edu/rspec/ext/stitch/0.2/ http://hpn.east.isi.edu/rspec/ext/stitch/0.2/stitch-schema.xsd\">";
+                + " http://hpn.east.isi.edu/rspec/ext/stitch/0.1/ http://hpn.east.isi.edu/rspec/ext/stitch/0.1/stitch-schema.xsd\">";
         for (int n = 0; n < rspec.getResources().size(); n++) {
             AggregateResource rc = rspec.getResources().get(n);
             if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
@@ -521,11 +521,12 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
 
         if (!ppvStitches.isEmpty()) {
-            rspecMan +=  "<stitch:topology id=\"stitch-ext-topology\">";
             Date dateNow = new Date();
-            rspecMan =  rspecMan + "<stitch:lastupdatetime>" + dateNow.toString() + "</stitch:lastupdatetime>";
+            rspecMan +=  "<stitch:stitching id=\"stitch-ext-topology\" lastUpdateTime=\""
+                    + dateNow.toString() + "\">";
             for (AggregateP2PVlan ppv: ppvStitches) {
                 rspecMan = rspecMan + "<stitch:path id=\"GRI-" + ppv.getGri() + "\">";
+                rspecMan = rspecMan + "<stitch:globalId>" + ppv.getGri() + "</stitch:globalId>";
                 String[] vlanTags = ppv.getVtag().split("-");
                 // create source hop
                 String urn = ppv.getSource();
@@ -539,7 +540,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan +=  "<stitch:hop id=\"src\">";
                 rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
                 rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
-                rspecMan +=  "<stitch:SwitchingCapabilityDescriptors>";
+                rspecMan +=  "<stitch:SwitchingCapabilityDescriptor>";
                 rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
                 rspecMan +=  "<stitch:encodingType>ethernet</stitch:encodingType>";
                 rspecMan +=  "<stitch:switchingCapabilitySpecificInfo>";
@@ -550,7 +551,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan = rspecMan + "<stitch:vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</stitch:vlanTranslation>";
                 rspecMan +=  "</stitch:switchingCapabilitySpecificInfo_L2sc>";
                 rspecMan +=  "</stitch:switchingCapabilitySpecificInfo>";
-                rspecMan +=  "</stitch:SwitchingCapabilityDescriptors>";
+                rspecMan +=  "</stitch:SwitchingCapabilityDescriptor>";
                 rspecMan +=  "</stitch:link>";
                 rspecMan = rspecMan + "<stitch:nextHop>dst</stitch:nextHop>";
                 rspecMan +=  "</stitch:hop>";
@@ -567,7 +568,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan +=  "<stitch:hop id=\"dst\">";
                 rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
                 rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
-                rspecMan +=  "<stitch:SwitchingCapabilityDescriptors>";
+                rspecMan +=  "<stitch:SwitchingCapabilityDescriptor>";
                 rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
                 rspecMan +=  "<stitch:encodingType>ethernet</stitch:encodingType>";
                 rspecMan +=  "<stitch:switchingCapabilitySpecificInfo>";
@@ -578,13 +579,13 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan =  rspecMan + "<stitch:vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</stitch:vlanTranslation>";
                 rspecMan +=  "</stitch:switchingCapabilitySpecificInfo_L2sc>";
                 rspecMan +=  "</stitch:switchingCapabilitySpecificInfo>";
-                rspecMan +=  "</stitch:SwitchingCapabilityDescriptors>";
+                rspecMan +=  "</stitch:SwitchingCapabilityDescriptor>";
                 rspecMan +=  "</stitch:link>";
                 rspecMan +=  "<stitch:nextHop>null</stitch:nextHop>";
                 rspecMan +=  "</stitch:hop>";
                 rspecMan +=  "</stitch:path>";
             }            
-            rspecMan +=  "</stitch:topology>";
+            rspecMan +=  "</stitch:stitching>";
         }
         rspecMan +=  "</rspec>";
         return rspecMan;
@@ -615,9 +616,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         return null;
     }
 
-    List<GeniStitchHopContent> getAggregateLocalHops(GeniStitchPathContent path) {
-        List<GeniStitchHopContent> hops = new ArrayList<GeniStitchHopContent>();
-        for (GeniStitchHopContent hop: path.getHop()) {
+    List<HopContent> getAggregateLocalHops(PathContent path) {
+        List<HopContent> hops = new ArrayList<HopContent>();
+        for (HopContent hop: path.getHop()) {
             if (hop.getLink() != null && hop.getLink().getId().contains(AggregateState.getAmUrn())) {
                 hops.add(hop);
             }
@@ -625,16 +626,23 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         return hops;
     }
     
-    String getLinkVlanRange(GeniStitchLinkContent link) {
-        GeniStitchSwcapContent swcap = link.getSwitchingCapabilityDescriptors();
-        if (swcap == null)
+    String getLinkVlanRange(LinkContent link) {
+        List<SwitchingCapabilityDescriptor> swcapList = link.getSwitchingCapabilityDescriptor();
+        if (swcapList == null || swcapList.isEmpty())
             return "";
-        GeniStitchSwitchingCapabilitySpecificInfo specInfo = swcap.getSwitchingCapabilitySpecificInfo();
-        if (specInfo == null)
+        SwitchingCapabilitySpecificInfoL2Sc l2scInfo = null;
+        for (SwitchingCapabilityDescriptor swcap: swcapList) {
+            SwitchingCapabilitySpecificInfo specInfo = swcap.getSwitchingCapabilitySpecificInfo();            
+            if (specInfo == null)
+                continue;
+            List<SwitchingCapabilitySpecificInfoL2Sc> l2scInfoList = specInfo.getSwitchingCapabilitySpecificInfoL2Sc();
+            if (l2scInfoList != null && !l2scInfoList.isEmpty()) {
+                l2scInfo = l2scInfoList.get(0);
+                break;
+            }
+        }
+        if (l2scInfo == null)
             return "";
-        List<GeniStitchSwitchingCapabilitySpecificInfoL2Sc> l2scInfo = specInfo.getSwitchingCapabilitySpecificInfoL2Sc();
-        if (l2scInfo == null || l2scInfo.isEmpty())
-            return "";
-        return l2scInfo.get(0).getVlanRangeAvailability();
+        return l2scInfo.getVlanRangeAvailability();
     }
 }
