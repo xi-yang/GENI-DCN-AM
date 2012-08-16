@@ -474,9 +474,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                     + "\" netmask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\"/>";
                         }
                         // optional (any extension)
-                        if (!ai.getAttachedLinkUrns().isEmpty()) {
-                            rspecMan = rspecMan + "<stitch:attached_link>" + ai.getAttachedLinkUrns() + "</stitch:attached_link>";
-                        }
+                        //if (!ai.getAttachedLinkUrns().isEmpty()) {
+                        //    rspecMan = rspecMan + "<stitch:attached_link>" + ai.getAttachedLinkUrns() + "</stitch:attached_link>";
+                        //}
                         rspecMan += "</interface>";
                     }
                 }
@@ -514,7 +514,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             rspecMan = rspecMan + "<source_id>" + ppv.getSource() + "</source_id>";
             rspecMan = rspecMan + "<dest_id>" + ppv.getDestination() + "</dest_id>";
             //optional (any extension)
-            rspecMan = rspecMan + "<global_resource_id>" + ppv.getGlobalReservationId() + "</global_resource_id>";
+            //rspecMan = rspecMan + "<global_resource_id>" + ppv.getGlobalReservationId() + "</global_resource_id>";
             rspecMan +=  "</property>";
 
             rspecMan +=  "</link>";
@@ -538,6 +538,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 }
                 rspecMan +=  "<stitch:hop id=\"src\">";
                 rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
+                rspecMan = rspecMan + "<stitch:trafficEngineeringMetric>1</stitch:trafficEngineeringMetric>";
                 rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
                 rspecMan +=  "<stitch:SwitchingCapabilityDescriptor>";
                 rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
@@ -566,6 +567,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 }
                 rspecMan +=  "<stitch:hop id=\"dst\">";
                 rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
+                rspecMan = rspecMan + "<stitch:trafficEngineeringMetric>1</stitch:trafficEngineeringMetric>";
                 rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
                 rspecMan +=  "<stitch:SwitchingCapabilityDescriptor>";
                 rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
