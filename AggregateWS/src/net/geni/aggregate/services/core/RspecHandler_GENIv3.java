@@ -540,7 +540,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
                 rspecMan = rspecMan + "<stitch:trafficEngineeringMetric>1</stitch:trafficEngineeringMetric>";
                 rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
-                rspecMan +=  "<stitch:SwitchingCapabilityDescriptor>";
+                rspecMan +=  "<stitch:switchingCapabilityDescriptor>";
                 rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
                 rspecMan +=  "<stitch:encodingType>ethernet</stitch:encodingType>";
                 rspecMan +=  "<stitch:switchingCapabilitySpecificInfo>";
@@ -551,7 +551,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan = rspecMan + "<stitch:vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</stitch:vlanTranslation>";
                 rspecMan +=  "</stitch:switchingCapabilitySpecificInfo_L2sc>";
                 rspecMan +=  "</stitch:switchingCapabilitySpecificInfo>";
-                rspecMan +=  "</stitch:SwitchingCapabilityDescriptor>";
+                rspecMan +=  "</stitch:switchingCapabilityDescriptor>";
                 rspecMan +=  "</stitch:link>";
                 rspecMan = rspecMan + "<stitch:nextHop>dst</stitch:nextHop>";
                 rspecMan +=  "</stitch:hop>";
@@ -569,7 +569,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
                 rspecMan = rspecMan + "<stitch:trafficEngineeringMetric>1</stitch:trafficEngineeringMetric>";
                 rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
-                rspecMan +=  "<stitch:SwitchingCapabilityDescriptor>";
+                rspecMan +=  "<stitch:switchingCapabilityDescriptor>";
                 rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
                 rspecMan +=  "<stitch:encodingType>ethernet</stitch:encodingType>";
                 rspecMan +=  "<stitch:switchingCapabilitySpecificInfo>";
@@ -580,7 +580,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 rspecMan =  rspecMan + "<stitch:vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</stitch:vlanTranslation>";
                 rspecMan +=  "</stitch:switchingCapabilitySpecificInfo_L2sc>";
                 rspecMan +=  "</stitch:switchingCapabilitySpecificInfo>";
-                rspecMan +=  "</stitch:SwitchingCapabilityDescriptor>";
+                rspecMan +=  "</stitch:switchingCapabilityDescriptor>";
                 rspecMan +=  "</stitch:link>";
                 rspecMan +=  "<stitch:nextHop>null</stitch:nextHop>";
                 rspecMan +=  "</stitch:hop>";
