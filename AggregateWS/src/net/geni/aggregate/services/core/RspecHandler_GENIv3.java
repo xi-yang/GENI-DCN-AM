@@ -447,14 +447,15 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String rspecMan = "<rspec type=\"" + type +"\" expires=\"" + xgcExpires.toString()
                 + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xmlns=\"http://www.geni.net/resources/rspec/3\" xmlns:stitch=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/\""
-                + " xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/manifest.xsd"
+                + " xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/"
+                + (type.equalsIgnoreCase("advertisement") ? "ad.xsd": "manifest.xsd")
                 + " http://hpn.east.isi.edu/rspec/ext/stitch/0.1/ http://hpn.east.isi.edu/rspec/ext/stitch/0.1/stitch-schema.xsd\">";
         for (int n = 0; n < rspec.getResources().size(); n++) {
             AggregateResource rc = rspec.getResources().get(n);
             if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
                 AggregateNode an = (AggregateNode) rc;
-                rspecMan = rspecMan + "<node client_id=\"" + an.getClientId()
-                        + "\" component_id=\"" + an.getUrn() + "\" component_manager_id=\""
+                rspecMan = rspecMan + "<node " + (type.equalsIgnoreCase("advertisement") ?"":("client_id=\"" + an.getClientId() + "\""))
+                        + " component_id=\"" + an.getUrn() + "\" component_manager_id=\""
                         + rspec.getAggregateName() + "\" exclusive=\"true\">";
                 rspecMan += "<hardware_type name=\"plab-pc\"/>";
                 rspecMan += "<hardware_type name=\"pc\"/>";
@@ -465,10 +466,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     if (!rc.getType().equalsIgnoreCase("networkInterface")) {
                         continue;
                     }
-                    AggregateNetworkInterface ai = (AggregateNetworkInterface) rc;
+                    AggregateNetworkInterface ai = (AggregateNetworkInterface)rc;
                     if (ai.getParentNode() == an) // || AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
                     {
-                        rspecMan = rspecMan + "<interface client_id=\"" + ai.getClientId() + "\" component_id=\"" + ai.getUrn() + "\">";
+                        rspecMan = rspecMan + "<interface " + (type.equalsIgnoreCase("advertisement") ?"":("client_id=\"" + an.getClientId() + "\""))
+                                + " component_id=\"" + ai.getUrn() + "\">";
                         if (!ai.getIpAddress().isEmpty()) {
                             rspecMan = rspecMan + "<ip address=\"" + ai.getIpAddress().split("/")[0]
                                     + "\" netmask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\"/>";
