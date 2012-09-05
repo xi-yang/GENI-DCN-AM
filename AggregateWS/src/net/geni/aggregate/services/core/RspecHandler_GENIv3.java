@@ -512,12 +512,12 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (netIf != null)
                 rspecMan = rspecMan + "<interface_ref client_id=\""+ netIf.getClientId() +"\"/>";
             
-            rspecMan +=  "<property>";
-            rspecMan = rspecMan + "<source_id>" + ppv.getSource() + "</source_id>";
-            rspecMan = rspecMan + "<dest_id>" + ppv.getDestination() + "</dest_id>";
+            rspecMan +=  "<property";
+            rspecMan = rspecMan + " source_id=\"" + ppv.getSource() + "\"";
+            rspecMan = rspecMan + " dest_id=\"" + ppv.getDestination() + "\"";
             //optional (any extension)
             //rspecMan = rspecMan + "<global_resource_id>" + ppv.getGlobalReservationId() + "</global_resource_id>";
-            rspecMan +=  "</property>";
+            rspecMan +=  " />";
 
             rspecMan +=  "</link>";
         }
