@@ -179,18 +179,7 @@ public class AggregateUtils
         type = matcher.group(2);
         value = matcher.group(3);
         
-        String dcnUrn = "urn:ogf:network:domain=";
-
-        //TODO: domain-id resolver (additional config file) -  hardcoded for now
-        if (aggregate.equals("maxpl")) {
-            dcnUrn += "dragon.maxgigapop.net";
-        } else if (aggregate.equals("ionpl")) {
-            dcnUrn += "ion.internet2.edu";
-        } else if (aggregate.equals("lonipl")) {
-            dcnUrn += "loni.org";
-        } else {
-            throw new AggregateException("convertGeniToDcnUrn: cannot resolve domain-id for aggregate="+aggregate);
-        }
+        String dcnUrn = "urn:ogf:network:domain="+aggregate;
         String[] fields = value.split(":");
         if (fields.length > 0) {
             dcnUrn += ":node=";
@@ -221,16 +210,7 @@ public class AggregateUtils
             Matcher matcher = pattern.matcher(field);
             if (matcher.find()) {
                 if (matcher.group(1).equalsIgnoreCase("domain")) {
-                    //TODO: domain-id resolver - hardcoded for now
-                    if (matcher.group(2).equalsIgnoreCase("dragon.maxgigapop.net")) {
-                        geniUrn += "maxpl";
-                    } else if (matcher.group(2).equalsIgnoreCase("ion.internet2.edu")) {
-                        geniUrn += "ionpl";
-                    } else if (matcher.group(2).equalsIgnoreCase("loni.org")) {
-                        geniUrn += "lonipl";
-                    } else {
-                        throw new AggregateException("convertDcnToGeniUrn: cannot resolve aggregate for "+field);
-                    }
+                    geniUrn += matcher.group(2);
                 } else if (matcher.group(1).equalsIgnoreCase("node")) {
                     node = matcher.group(2);
                 } else if (matcher.group(1).equalsIgnoreCase("port")) {
