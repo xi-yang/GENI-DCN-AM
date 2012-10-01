@@ -284,7 +284,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 destId = netIfs.get(0).getLinks().get(0);
                 hasDestIf = true;
             } else {
-                throw new AggregateException("single interface_ref must be paired with an external source_id or dest_id property in link:" + clientId);
+                log.warn("single interface_ref must be paired with an external source_id or dest_id property in link. Skip link: " + clientId);
+                return;
             }
         } else if (netIfs.isEmpty()) {
             //create peering between sourceId and destId, both explicit urn's
@@ -294,7 +295,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 return;
             }
         } else {
-            throw new AggregateException("number interface_ref's must be no greater than 2 in link:" + clientId);
+            log.warn("number interface_ref's must be no greater than 2 in link. Skip link: " + clientId);
+            return;
         }
         if (netIfs.size() < 2 && sourceId != null && destId != null) {
             String verifySrcUrn = sourceId;
@@ -387,8 +389,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (netIf2 != null) {
                 netIf2 = lookupInterfaceByStitchingResourceId(rspec, path.getId());
                 if (netIf2 != null) {
-                    stitchingP2PVlan.setSrcInterface(netIf2.getDeviceName());
-                    stitchingP2PVlan.setSrcIpAndMask(netIf2.getIpAddress());
+                    stitchingP2PVlan.setDstInterface(netIf2.getDeviceName());
+                    stitchingP2PVlan.setDstIpAndMask(netIf2.getIpAddress());
                     if (stitchingP2PVlan.getVtag().isEmpty() && netIf2.getVlanTag() != null)
                         stitchingP2PVlan.setVtag(netIf2.getVlanTag());
                     else if (netIf2.getVlanTag() != null && !netIf2.getVlanTag().isEmpty())
