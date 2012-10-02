@@ -271,9 +271,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             hasSourceIf = true;
             hasDestIf = true;
         } else if (netIfs.size() == 1) {
-            // handle link that binds stitching resource to local interface
-            if (clientId.contains("stitching") && externalUrns.size() == 1) {
-                netIfs.get(0).setStitchingResourceId(externalUrns.get(0));
+            // handle link that binds stitching resource to local interface (link client_id == stitching path id)
+            if (externalUrns.size() == 1) {
+                netIfs.get(0).setStitchingResourceId(link.getClientId());
                 return;
             }
             // local netIf peering with explicit source or dest urn
@@ -284,7 +284,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 destId = netIfs.get(0).getLinks().get(0);
                 hasDestIf = true;
             } else {
-                log.warn("single interface_ref must be paired with an external source_id or dest_id property in link. Skip link: " + clientId);
+                log.warn("single interface_ref must be paired with an external source_id or dest_id property in link - skip " + clientId);
                 return;
             }
         } else if (netIfs.isEmpty()) {
@@ -295,7 +295,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 return;
             }
         } else {
-            log.warn("number interface_ref's must be no greater than 2 in link. Skip link: " + clientId);
+            log.warn("number interface_ref's must be no greater than 2 in link - skip " + clientId);
             return;
         }
         if (netIfs.size() < 2 && sourceId != null && destId != null) {
