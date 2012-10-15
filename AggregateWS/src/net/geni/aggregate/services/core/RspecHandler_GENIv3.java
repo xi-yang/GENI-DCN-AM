@@ -336,12 +336,24 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         for (PathContent path: stitchingTopology.getPath()) {
             List<HopContent> localHops = getAggregateLocalHops(path);
             // privision edge-to-edge -- skip explicit path hops in between (if any) 
-            if (localHops.size() < 2) {
+            if (localHops.size() == 0) {
                 throw new AggregateException("RspecHandler_GENIv3::parseStitchingResources stitching <path id=\"" 
-                        + path.getId() + "\" must have at least two <hop> elements.");
+                        + path.getId() + "\"> must have at least one <hop> elements.");
             }
             LinkContent srcLink = localHops.get(0).getLink();
-            LinkContent dstLink = localHops.get(localHops.size()-1).getLink();
+            LinkContent dstLink = null;
+            if (localHops.size() > 1) {
+                dstLink = localHops.get(localHops.size()-1).getLink();
+            }
+            else {
+                HopContent nextHop = getAggregateNextHop(path);
+                if (nextHop != null)
+                    dstLink = nextHop.getLink();
+            }
+            if (dstLink == null) {
+                throw new AggregateException("RspecHandler_GENIv3::parseStitchingResources stitching <path id=\"" 
+                        + path.getId() + "\"> missing destination <hop> element for current segment.");                
+            }
             String source = srcLink.getId();
             AggregateNetworkInterface netIf1 = AggregateState.getAggregateInterfaces().getByUrn(srcLink.getId());
             if (netIf1 != null) {
@@ -631,6 +643,19 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         return hops;
     }
     
+    HopContent getAggregateNextHop(PathContent path) {
+        boolean pastLocal = false;
+        for (HopContent hop: path.getHop()) {
+            if (hop.getLink() != null && hop.getLink().getId().contains(AggregateState.getAmUrn())) {
+                pastLocal = true;
+            }
+            if (pastLocal && hop.getLink() != null && !hop.getLink().getId().contains(AggregateState.getAmUrn())) {
+                return hop;
+            }
+        }
+        return null;
+    }
+
     String getLinkVlanRange(LinkContent link) {
         List<SwitchingCapabilityDescriptor> swcapList = link.getSwitchingCapabilityDescriptor();
         if (swcapList == null || swcapList.isEmpty())
