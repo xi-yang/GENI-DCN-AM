@@ -541,7 +541,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             rspecMan +=  "<stitch:stitching lastUpdateTime=\"" + dateNow.toString() + "\">";
             for (AggregateP2PVlan ppv: ppvStitches) {
                 if (ppv.getStitchingResourceId() != null && !ppv.getStitchingResourceId().isEmpty()) {
-                    rspecMan = rspecMan + "<stitch:path id=\">" + ppv.getStitchingResourceId() + "\">";                    
+                    rspecMan = rspecMan + "<stitch:path id=\"" + ppv.getStitchingResourceId() + "\">";                    
                 } else {
                     rspecMan = rspecMan + "<stitch:path id=\"GRI-" + ppv.getGri() + "\">";
                 }
