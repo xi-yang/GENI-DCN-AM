@@ -412,7 +412,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (stitchingP2PVlan.getVtag().isEmpty()) {
                 stitchingP2PVlan.setVtag("any");
             }
-            stitchingP2PVlan.setStitchingResourceId(path.getId()+"-geni-stitching");
+            stitchingP2PVlan.setStitchingResourceId(path.getId());
             stitchingP2PVlan.setExternalResourceId("legacy-non-empty");
             rspec.getResources().add((AggregateResource)stitchingP2PVlan);
         }
@@ -540,8 +540,14 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             Date dateNow = new Date();
             rspecMan +=  "<stitch:stitching lastUpdateTime=\"" + dateNow.toString() + "\">";
             for (AggregateP2PVlan ppv: ppvStitches) {
-                rspecMan = rspecMan + "<stitch:path id=\"GRI-" + ppv.getGri() + "\">";
-                rspecMan = rspecMan + "<stitch:globalId>" + ppv.getGri() + "</stitch:globalId>";
+                if (ppv.getStitchingResourceId() != null && !ppv.getStitchingResourceId().isEmpty()) {
+                    rspecMan = rspecMan + "<stitch:path id=\">" + ppv.getStitchingResourceId() + "\">";                    
+                } else {
+                    rspecMan = rspecMan + "<stitch:path id=\"GRI-" + ppv.getGri() + "\">";
+                }
+                if (ppv.getGri() != null && !ppv.getGri().isEmpty()) {
+                    rspecMan = rspecMan + "<stitch:globalId>" + ppv.getGri() + "</stitch:globalId>";
+                }
                 String[] vlanTags = ppv.getVtag().split("-");
                 // create source hop
                 String urn = ppv.getSource();
