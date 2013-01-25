@@ -131,9 +131,8 @@ public class AggregateRspecManager extends Thread{
         if (rspec.isDeleted()) {
             return;
         }
-        if (rspec.getStatus().contains("FAILED") 
-                || rspec.getStatus().contains("ROLLBACKED") 
-                || rspec.getStatus().contains("TERMINATED")) {
+        if (rspec.getStatus().equalsIgnoreCase("ROLLBACKED") 
+                || rspec.getStatus().equalsIgnoreCase("TERMINATED")) {
             rspec.setDeleted(true);
             this.updateRspec(rspec);
             this.aggrRspecs.remove(rspec);
@@ -233,9 +232,8 @@ public class AggregateRspecManager extends Thread{
                             rspecThread.setGoRun(false);
                             rspecThread.interrupt();
                         }
-                    } else if (rspec.getStatus().equalsIgnoreCase("TERMINATED")
-                      || rspec.getStatus().equalsIgnoreCase("ROLLBACKED")
-                      || rspec.getStatus().contains("FAILED")) {
+                    } else if (rspec.getStatus().startsWith("TERMINATED")
+                      || rspec.getStatus().startsWith("ROLLBACKED")) {
                         //rollbacked thread may get diff. treatment?
                         try {
                             rspec.getResources().clear();

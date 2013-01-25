@@ -456,7 +456,7 @@ public class AggregateRspecRunner extends Thread {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
             e.printStackTrace();
         }
-        rspec.setStatus("ROLLBACKED");
+        rspec.setStatus("ROLLBACKED:"+rspec.getStatus());
         log.debug("end - rolling back rspec: "+ rspec.getRspecName());
     }
 
@@ -473,9 +473,7 @@ public class AggregateRspecRunner extends Thread {
         }
         goRun = false;
         goPoll = false;
-        if (!rspec.getStatus().contains("FAILED")) {
-            rspec.setStatus("TERMINATED");
-        }
+        rspec.setStatus("TERMINATED:"+rspec.getStatus());
         log.debug("end - terminating rspec: "+ rspec.getRspecName());
     }
 }
