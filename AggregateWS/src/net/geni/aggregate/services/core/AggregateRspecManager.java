@@ -99,7 +99,8 @@ public class AggregateRspecManager extends Thread{
 
         for (AggregateRspec aggrRspec: aggrRspecs) {
             //reload computeSlices
-            for (AggregateSlice slice: slices) {
+           log.error(String.format("AggregateRspecManager.reloadFromDB: reloading instance for RSpec '%s'", aggrRspec.getRspecName()));
+           for (AggregateSlice slice: slices) {
                 if (slice.getRspecId() == aggrRspec.getId())
                     aggrRspec.getResources().add(slice);
             }
