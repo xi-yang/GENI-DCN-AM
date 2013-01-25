@@ -473,7 +473,9 @@ public class AggregateRspecRunner extends Thread {
         }
         goRun = false;
         goPoll = false;
-        rspec.setStatus("TERMINATED");
+        if (!rspec.getStatus().contains("FAILED")) {
+            rspec.setStatus("TERMINATED");
+        }
         log.debug("end - terminating rspec: "+ rspec.getRspecName());
     }
 }

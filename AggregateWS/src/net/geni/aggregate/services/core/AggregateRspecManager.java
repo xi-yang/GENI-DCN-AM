@@ -225,7 +225,8 @@ public class AggregateRspecManager extends Thread{
                             rspecThread.interrupt();
                         }
                     } else if (rspec.getStatus().equalsIgnoreCase("TERMINATED")
-                      || rspec.getStatus().equalsIgnoreCase("ROLLBACKED")) {
+                      || rspec.getStatus().equalsIgnoreCase("ROLLBACKED")
+                      || rspec.getStatus().contains("FAILED")) {
                         //rollbacked thread may get diff. treatment?
                         try {
                             rspec.getResources().clear();
