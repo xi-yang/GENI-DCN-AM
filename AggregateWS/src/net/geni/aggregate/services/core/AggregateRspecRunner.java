@@ -150,6 +150,8 @@ public class AggregateRspecRunner extends Thread {
                 try {
                     this.pollP2PVlans();
                     if (rspec.getStatus().equalsIgnoreCase("VLANS-ACTIVE")) {
+                        String manifestXml = AggregateState.getRspecHandler().generateRspecManifest(rspec);
+                        rspec.setManifestXml(manifestXml);
                         rspec.setStatus("WORKING");
                         manager.updateRspec(rspec);
                     }

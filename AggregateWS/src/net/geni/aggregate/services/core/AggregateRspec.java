@@ -23,8 +23,10 @@ public class AggregateRspec implements java.io.Serializable {
     private List<String> users = null;
     private List<AggregateResource> resources = null;
     private boolean addPlcSlice = false;
+    private String requestXml = null;
+    private String manifestXml = null;
     private String status = "";
-    private String xml = null;
+    private boolean deleted = false;
 
     public AggregateRspec() {
         log = org.apache.log4j.Logger.getLogger(this.getClass());
@@ -106,6 +108,30 @@ public class AggregateRspec implements java.io.Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getRequestXml() {
+        return requestXml;
+    }
+
+    public void setRequestXml(String requestXml) {
+        this.requestXml = requestXml;
+    }
+
+    public String getManifestXml() {
+        return manifestXml;
+    }
+
+    public void setManifestXml(String manifestXml) {
+        this.manifestXml = manifestXml;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     HashMap retrieveRspecInfo() {

@@ -557,7 +557,7 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
     }
 
 
-    public String getRspecManifest(AggregateRspec rspec) throws AggregateException {
+    public String generateRspecManifest(AggregateRspec rspec) throws AggregateException {
         String amBase = AggregateUtils.getGeniAmBase(rspec.getAggregateName());
         String rspecMan = "<computeResource id=\"urn:publicid:IDN+"+amBase+"+slice+"+rspec.getRspecName()+"\">";
         for (int n = 0; n < rspec.getResources().size(); n++) {

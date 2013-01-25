@@ -81,7 +81,7 @@ public class AggregateRspecManager extends Thread{
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
-            Query q = session.createQuery("from AggregateRspec");
+            Query q = session.createQuery("from AggregateRspec where deleted=false");
             if (q.list().size() == 0) {
                 return;
             }
@@ -127,6 +127,9 @@ public class AggregateRspecManager extends Thread{
     }
 
     public void recalibrateRspecResources(AggregateRspec rspec) {
+        if (rspec.isDeleted()) {
+            return;
+        }
         for (int n = 0; n < rspec.getResources().size(); n++) {
             AggregateResource rc = rspec.getResources().get(n);
             // scan compute (plc) slices 
@@ -225,9 +228,11 @@ public class AggregateRspecManager extends Thread{
                       || rspec.getStatus().equalsIgnoreCase("ROLLBACKED")) {
                         //rollbacked thread may get diff. treatment?
                         try {
+                            rspec.getResources().clear();
+                            rspec.setDeleted(true);
                             session = HibernateUtil.getSessionFactory().openSession();
                             tx = session.beginTransaction();
-                            session.delete(rspec);
+                            session.update(rspec);
                             session.flush();
                             tx.commit();
                         } catch (Exception e) {
@@ -265,8 +270,8 @@ public class AggregateRspecManager extends Thread{
 
         synchronized(aggrRspecs) {
             for (AggregateRspec rspec: aggrRspecs)
-                if (aggrRspec.getRspecName().equalsIgnoreCase(rspec.getRspecName()))
-                    throw new AggregateException("Rspec name:"+rspec.getRspecName()+" has already existed!");
+                if (aggrRspec.getRspecName().equalsIgnoreCase(rspec.getRspecName()) && !aggrRspec.isDeleted())
+                    throw new AggregateException("An instance for RSpec name='"+rspec.getRspecName()+"' has already existed!");
         }
 
         aggrRspec.setStatus("STARTING");
@@ -328,6 +333,9 @@ public class AggregateRspecManager extends Thread{
 
     public synchronized void updateRspec(AggregateRspec aggrRspec) {
         synchronized(this) {
+            if (aggrRspec.isDeleted()) {
+                return;
+            }
             if (!(aggrRspec.getRspecName().isEmpty() || aggrRspec.getAggregateName().isEmpty()
               || aggrRspec.getResources().size() == 0)) {
                 try {
@@ -363,7 +371,7 @@ public class AggregateRspecManager extends Thread{
             //get compute resources
             if (scope.equalsIgnoreCase("all") || scope.contains("compute")) {
                 if (aggrRspecGlobal != null) {
-                    computeResource = AggregateState.getRspecHandler().getRspecManifest(aggrRspecGlobal);
+                    computeResource = AggregateState.getRspecHandler().generateRspecManifest(aggrRspecGlobal);
                 }
                 if (computeResource != null && !computeResource.isEmpty()) {
                     len++;
@@ -441,7 +449,14 @@ public class AggregateRspecManager extends Thread{
                 len = retRspecs.size();
                 statements = new String[len];
                 for (int i = 0; i < len; i++) {
-                    statements[i] = AggregateState.getRspecHandler().getRspecManifest(retRspecs.get(i));
+                    if (retRspecs.get(i).getStatus().equalsIgnoreCase("WORKING")) {
+                        statements[i] = retRspecs.get(i).getManifestXml();
+                    }
+                    else {
+                        statements[i] = AggregateState.getRspecHandler().generateRspecManifest(retRspecs.get(i));
+                        retRspecs.get(i).setManifestXml(statements[i]);
+                        this.updateRspec(retRspecs.get(i));
+                    }
                 }
         }
 

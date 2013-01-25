@@ -71,7 +71,10 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "description text NOT NULL, " +
                     "startTime bigint(20) default NULL, " +
                     "endTime bigint(20) default NULL, " +
+                    "requestXml text default NULL, " +
+                    "manifestXml text default NULL, " +
                     "status varchar(255) NOT NULL, " +
+                    "deleted int(1) default NULL, " +
                     "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
         } catch(AggregateException ex) {

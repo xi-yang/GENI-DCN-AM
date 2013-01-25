@@ -12,5 +12,5 @@ package net.geni.aggregate.services.core;
 public interface AggregateRspecHandler {
     AggregateRspec parseRspecXml(String rspecXml) throws AggregateException;
     AggregateRspec configRspecFromFile(String filePath) throws AggregateException;
-    String getRspecManifest(AggregateRspec rspec) throws AggregateException;
+    String generateRspecManifest(AggregateRspec rspec) throws AggregateException;
 }

@@ -28,6 +28,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
 
     public AggregateRspec parseRspecXml(String rspecXml) throws AggregateException {
         AggregateRspec aggrRspec = new AggregateRspec();
+        aggrRspec.setRequestXml(rspecXml);
         RSpecContents rspecV3Obj = null;
         StitchContent stitchObj = null;
         try {
@@ -443,7 +444,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         // loadCRDB only use this method from MAX rspecHandler instance? 
     }
 
-    public String getRspecManifest(AggregateRspec rspec) throws AggregateException {
+    // TODO: For slice manifest (not ad) -- revise this by annotating the request rspec XML. 
+    // Only update vlan tags on local hops, add globalId. What else ?
+    public String generateRspecManifest(AggregateRspec rspec) throws AggregateException {
         Date dateExpires = new Date(rspec.getEndTime() * 1000);
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(dateExpires);

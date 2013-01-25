@@ -10,6 +10,11 @@
       <property column="description" name="description"/>
       <property column="startTime" name="startTime"/>
       <property column="endTime" name="endTime"/>
+      <property column="requestXml" name="requestXml"/>
+      <property column="manifestXml" name="manifestXml"/>
       <property column="status" name="status"/>
+      <property name="deleted" not-null="true" >
+        <column sql-type="BOOLEAN" not-null="true" name="deleted" />
+      </property>
   </class>
 </hibernate-mapping>
