@@ -131,6 +131,14 @@ public class AggregateRspecManager extends Thread{
         if (rspec.isDeleted()) {
             return;
         }
+        if (rspec.getStatus().contains("FAILED") 
+                || rspec.getStatus().contains("ROLLBACKED") 
+                || rspec.getStatus().contains("TERMINATED")) {
+            rspec.setDeleted(true);
+            this.updateRspec(rspec);
+            this.aggrRspecs.remove(rspec);
+            return;
+        }
         for (int n = 0; n < rspec.getResources().size(); n++) {
             AggregateResource rc = rspec.getResources().get(n);
             // scan compute (plc) slices 
