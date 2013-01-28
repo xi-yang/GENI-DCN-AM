@@ -678,7 +678,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         rspecXml = this.marshallJaxbToString(jaxbRspec, "net.geni.www.resources.rspec._3");
         if (jaxbStitch != null) {
             String stitchXml = this.marshallJaxbToString(jaxbStitch, "edu.isi.east.hpn.rspec.ext.stitch._0_1");
-            rspecXml = rspecXml.replaceFirst("</rspec>", stitchXml+"\n</rspec>");
+            rspecXml = rspecXml.replaceFirst("</rspec>", stitchXml+"</rspec>");
         }
         return rspecXml;
     }
