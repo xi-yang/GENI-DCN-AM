@@ -8,6 +8,7 @@
     </id>
     <property column="type" name="type"/>
     <property column="rspecId" name="rspecId"/>
+    <property column="clientId" name="clientId"/>
     <joined-subclass name="net.geni.aggregate.services.core.AggregateNode" table="nodes">
       <key column="id"/>
       <property column="nodeId" name="nodeId"/>

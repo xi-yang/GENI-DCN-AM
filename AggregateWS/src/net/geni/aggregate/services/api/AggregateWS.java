@@ -56,6 +56,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "id int(11) NOT NULL auto_increment, " +
                     "type VARCHAR(255) NOT NULL, " +
                     "rspecId int(11) NOT NULL, " +
+                    "clientId varchar(255) NOT NULL, " +
                     "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
         } catch(AggregateException ex) {
