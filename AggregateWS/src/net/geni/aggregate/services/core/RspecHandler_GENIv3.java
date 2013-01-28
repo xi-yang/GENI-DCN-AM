@@ -769,7 +769,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (sliverId == null || sliverId.isEmpty()) {
                 sliverId = "null";
             }
-            linkObj.setSliverId(String.format("%s+%s", AggregateUtils.getGeniAmBase(ppvLink.getSource()), sliverId));
+            linkObj.setSliverId(String.format("%s+%s", AggregateState.getAmUrn(), sliverId));
 
             String[] vlanTags = ppvLink.getVtag().split("-");
             linkObj.setVlantag(((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?ppvLink.getVtag():vlanTags[0]));
@@ -806,6 +806,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     if (linkObj.getId().equalsIgnoreCase(dstUrn)) {
                         egrLinkObj = linkObj;
                     }
+                    log.debug(String.format("srcUrn=%s, dstUrn=%s, linkUrn=%s", srcUrn, dstUrn, linkObj.getId()));
                 }
                 if (ingLinkObj == null || egrLinkObj == null)
                     continue;
