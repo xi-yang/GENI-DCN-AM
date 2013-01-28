@@ -702,8 +702,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
         JAXBElement<RSpecContents> jaxbRspec;
         RSpecContents rspecV3Obj = null;
-        List<LinkContents> linkObjList = null;
-        StitchContent stitchObj = null;
         try {
             StringReader reader = new StringReader(rspecXml);
             JAXBContext jc = JAXBContext.newInstance("net.geni.www.resources.rspec._3");
@@ -720,6 +718,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         rspecV3Obj.setExpires(xgcExpires);
         
         // get GENI RSpecv3 links and stitching objects
+        List<LinkContents> linkObjList = null;
+        JAXBElement<StitchContent> jaxbStitch = null;
+        StitchContent stitchObj = null;
         for (Object obj: rspecV3Obj.getAnyOrNodeOrLink()) {
             if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
                 String elemName = ((JAXBElement)obj).getName().getLocalPart();
@@ -734,12 +735,13 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (elemName.equalsIgnoreCase("stitching")) {
                     try {
                         JAXBContext jc = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_1");
-                        JAXBElement<StitchContent> jaxbStitch = (JAXBElement<StitchContent>) jc.createUnmarshaller().unmarshal((Node)obj);
+                        jaxbStitch = (JAXBElement<StitchContent>) jc.createUnmarshaller().unmarshal((Node)obj);
                         stitchObj = jaxbStitch.getValue();
                     } catch (Exception e) {
                         throw new AggregateException("RspecHandler_GENIv3.generateRspecManifest error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
                     }
                 }
+                rspecV3Obj.getAnyOrNodeOrLink().remove(obj);
             }
         }
 
@@ -818,7 +820,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     && ingLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc() != null
                     && !ingLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc().isEmpty()) {
                         SwitchingCapabilitySpecificInfoL2Sc l2scObj = ingLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc().get(0);
-                        log.debug(String.format("ingLinkObj %s vtag=%s", ingLinkObj.getId(), vlanTags[0]));
                         l2scObj.setVlanRangeAvailability(vlanTags[0]);
                         l2scObj.setSuggestedVLANRange(vlanTags[0]);
                         if ((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))) {
@@ -830,7 +831,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     && egrLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc() != null
                     && !egrLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc().isEmpty()) {
                         SwitchingCapabilitySpecificInfoL2Sc l2scObj = egrLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc().get(0);
-                        log.debug(String.format("egrLinkObj %s vtag=%s", egrLinkObj.getId(), vlanTags[0]));
                         if (vlanTags.length == 2) {
                             l2scObj.setVlanRangeAvailability(vlanTags[1]);
                             l2scObj.setSuggestedVLANRange(vlanTags[1]);
@@ -844,6 +844,18 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 }
             }            
         }
+        if (stitchObj != null) {
+            rspecV3Obj.getAnyOrNodeOrLink().add(stitchObj);
+        }
+        rspecXml = this.marshallJaxbToString(jaxbRspec);
+        if (jaxbStitch != null) {
+            String stitchXml = this.marshallJaxbToString(jaxbStitch);
+            rspecXml = rspecXml.replaceFirst("</rspec>", stitchXml+"\n</rspec>");
+        }
+        return rspecXml;
+    }
+
+    private String marshallJaxbToString(JAXBElement jaxbObj) {
         try {
             Document infoDoc = null;
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -852,21 +864,20 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             infoDoc = db.newDocument();
             JAXBContext jc = JAXBContext.newInstance("net.geni.www.resources.rspec._3");
             Marshaller m = jc.createMarshaller();
-            m.marshal(jaxbRspec, infoDoc);
+            m.marshal(jaxbObj, infoDoc);
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer();
             StringWriter writer = new StringWriter();
             Result result = new StreamResult(writer);
             Source source = new DOMSource(infoDoc);
             transformer.transform(source, result);
-            rspecXml = writer.toString();
-            writer.close();
+            return writer.toString();
         } catch (Exception e) {
-            System.out.println("RspecHandler_GENIv3.generateRspecManifest error marshaling rspec: " + e.getMessage());
+            log.error("RspecHandler_GENIv3.marshallJaxbToString error marshaling rspec: " + e.getMessage());
         }
-        return rspecXml;
+        return null;
     }
-
+    
     AggregateNetworkInterface lookupInterfaceReference(AggregateRspec rspec, String urn) {
         boolean isDcnUrn = false;
         if (AggregateUtils.isDcnUrn(urn))
