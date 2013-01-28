@@ -721,6 +721,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         List<LinkContents> linkObjList = null;
         JAXBElement<StitchContent> jaxbStitch = null;
         StitchContent stitchObj = null;
+        Object stitchObjToRemove = null;
         for (Object obj: rspecV3Obj.getAnyOrNodeOrLink()) {
             if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
                 String elemName = ((JAXBElement)obj).getName().getLocalPart();
@@ -737,12 +738,15 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         JAXBContext jc = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_1");
                         jaxbStitch = (JAXBElement<StitchContent>) jc.createUnmarshaller().unmarshal((Node)obj);
                         stitchObj = jaxbStitch.getValue();
+                        stitchObjToRemove = obj;
                     } catch (Exception e) {
                         throw new AggregateException("RspecHandler_GENIv3.generateRspecManifest error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
                     }
-                    rspecV3Obj.getAnyOrNodeOrLink().remove(obj);
                 }
             }
+        }
+        if (stitchObjToRemove != null) {
+            rspecV3Obj.getAnyOrNodeOrLink().remove(stitchObjToRemove);
         }
 
         ArrayList<AggregateP2PVlan> ppvLinks = new ArrayList<AggregateP2PVlan>();
