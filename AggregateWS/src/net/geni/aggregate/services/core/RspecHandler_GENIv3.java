@@ -456,179 +456,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         // loadCRDB only use this method from MAX rspecHandler instance? 
     }
 
-    // TODO: For slice manifest (not ad) -- revise this by annotating the request rspec XML. 
-    // Add sliver-id to vlantag to <link>? (sliver-id to plc node). update vlan tags on local hops, add globalId. What else ?
-    public String generateRspecManifest_Old(AggregateRspec rspec) throws AggregateException {
-        Date dateExpires = new Date(rspec.getEndTime() * 1000);
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime(dateExpires);
-        XMLGregorianCalendar xgcExpires = null;
-        try {
-            xgcExpires = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-        } catch (Exception e) {
-            throw new AggregateException("RspecHandler_GENIv3.getRspecManifest error: " + e.getMessage());
-        }
-        //XMLGregorianCalendar xgcExpires = new XMLGregorianCalendar(dateExpires);
-        String type ="manifest";
-        if (rspec == AggregateRspecManager.getAggrRspecGlobal()) {
-            type="advertisement";
-        }
-        String rspecMan = "<rspec type=\"" + type +"\" expires=\"" + xgcExpires.toString()
-                + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xmlns=\"http://www.geni.net/resources/rspec/3\" xmlns:stitch=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/\""
-                + " xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/"
-                + (type.equalsIgnoreCase("advertisement") ? "ad.xsd": "manifest.xsd")
-                + " http://hpn.east.isi.edu/rspec/ext/stitch/0.1/ http://hpn.east.isi.edu/rspec/ext/stitch/0.1/stitch-schema.xsd\">";
-        for (int n = 0; n < rspec.getResources().size(); n++) {
-            AggregateResource rc = rspec.getResources().get(n);
-            if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
-                AggregateNode an = (AggregateNode) rc;
-                rspecMan = rspecMan + "<node " + (type.equalsIgnoreCase("advertisement") ?"":("client_id=\"" + an.getClientId() + "\""))
-                        + " component_id=\"" + an.getUrn() + "\" component_manager_id=\""
-                        + rspec.getAggregateName() + "\" exclusive=\"true\">";
-                rspecMan += "<hardware_type name=\"plab-pc\"/>";
-                rspecMan += "<hardware_type name=\"pc\"/>";
-                rspecMan += "<sliver_type name=\"plab-vserver\"/>";
-                rspecMan += "<location country=\"unknown\" latitude=\"unknown\" longitude=\"unknown\"/>";
-                for (int i = 0; i < rspec.getResources().size(); i++) {
-                    rc = rspec.getResources().get(i);
-                    if (!rc.getType().equalsIgnoreCase("networkInterface")) {
-                        continue;
-                    }
-                    AggregateNetworkInterface ai = (AggregateNetworkInterface)rc;
-                    if (ai.getParentNode() == an) // || AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
-                    {
-                        rspecMan = rspecMan + "<interface " + (type.equalsIgnoreCase("advertisement") ?"":("client_id=\"" + an.getClientId() + "\""))
-                                + " component_id=\"" + ai.getUrn() + "\">";
-                        if (!ai.getIpAddress().isEmpty()) {
-                            rspecMan = rspecMan + "<ip address=\"" + ai.getIpAddress().split("/")[0]
-                                    + "\" netmask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\"/>";
-                        }
-                        // optional (any extension)
-                        //if (!ai.getAttachedLinkUrns().isEmpty()) {
-                        //    rspecMan = rspecMan + "<stitch:attached_link>" + ai.getAttachedLinkUrns() + "</stitch:attached_link>";
-                        //}
-                        rspecMan += "</interface>";
-                    }
-                }
-                rspecMan += "</node>";
-            }
-        }
-
-        ArrayList<AggregateP2PVlan> ppvLinks = new ArrayList<AggregateP2PVlan>();
-        ArrayList<AggregateP2PVlan> ppvStitches = new ArrayList<AggregateP2PVlan>();
-
-        for (int l = 0; l < rspec.getResources().size(); l++) {
-            if (rspec.getResources().get(l).getType().equalsIgnoreCase("p2pvlan")) {
-                AggregateP2PVlan ppv = (AggregateP2PVlan)rspec.getResources().get(l);
-                if (ppv.getSrcInterface().isEmpty() || ppv.getDstInterface().isEmpty())
-                    ppvStitches.add(ppv);
-                else
-                    ppvLinks.add(ppv);
-            }
-        }
-        
-        for (AggregateP2PVlan ppv: ppvLinks) {
-            String[] vlanTags = ppv.getVtag().split("-");
-            rspecMan = rspecMan + "<link client_id=\"p2pvlan-"+ppv.getId()
-                    + "\" vlantag=\"" 
-                    + ((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?ppv.getVtag():vlanTags[0]) 
-                    + "\">";
-            AggregateNetworkInterface netIf = lookupInterfaceReference(rspec, ppv.getSource());
-            if (netIf != null)
-                rspecMan = rspecMan + "<interface_ref client_id=\""+ netIf.getClientId() +"\"/>";
-            netIf = lookupInterfaceReference(rspec, ppv.getDestination());
-            if (netIf != null)
-                rspecMan = rspecMan + "<interface_ref client_id=\""+ netIf.getClientId() +"\"/>";
-            
-            rspecMan +=  "<property";
-            rspecMan = rspecMan + " source_id=\"" + ppv.getSource() + "\"";
-            rspecMan = rspecMan + " dest_id=\"" + ppv.getDestination() + "\"";
-            //optional (any extension)
-            //rspecMan = rspecMan + "<global_resource_id>" + ppv.getGlobalReservationId() + "</global_resource_id>";
-            rspecMan +=  " />";
-
-            rspecMan +=  "</link>";
-        }
-
-        if (!ppvStitches.isEmpty()) {
-            Date dateNow = new Date();
-            rspecMan +=  "<stitch:stitching lastUpdateTime=\"" + dateNow.toString() + "\">";
-            for (AggregateP2PVlan ppv: ppvStitches) {
-                if (ppv.getStitchingResourceId() != null && !ppv.getStitchingResourceId().isEmpty()) {
-                    rspecMan = rspecMan + "<stitch:path id=\"" + ppv.getStitchingResourceId() + "\">";                    
-                } else {
-                    rspecMan = rspecMan + "<stitch:path id=\"GRI-" + ppv.getGri() + "\">";
-                }
-                if (ppv.getGri() != null && !ppv.getGri().isEmpty()) {
-                    rspecMan = rspecMan + "<stitch:globalId>" + ppv.getGri() + "</stitch:globalId>";
-                }
-                String[] vlanTags = ppv.getVtag().split("-");
-                // create source hop
-                String urn = ppv.getSource();
-                AggregateNetworkInterface netIf = lookupInterfaceReference(rspec, urn);
-                if (netIf != null) {
-                    urn = netIf.getUrn();
-                }
-                if (AggregateUtils.isDcnUrn(urn)) {
-                    urn = AggregateUtils.convertDcnToGeniUrn(urn);
-                }
-                rspecMan +=  "<stitch:hop id=\"src\">";
-                rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
-                rspecMan = rspecMan + "<stitch:trafficEngineeringMetric>1</stitch:trafficEngineeringMetric>";
-                rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
-                rspecMan +=  "<stitch:switchingCapabilityDescriptor>";
-                rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
-                rspecMan +=  "<stitch:encodingType>ethernet</stitch:encodingType>";
-                rspecMan +=  "<stitch:switchingCapabilitySpecificInfo>";
-                rspecMan +=  "<stitch:switchingCapabilitySpecificInfo_L2sc>";
-                rspecMan +=  "<stitch:interfaceMTU>9000</stitch:interfaceMTU>";
-                rspecMan = rspecMan +  "<stitch:vlanRangeAvailability>"+vlanTags[0]+"</stitch:vlanRangeAvailability>";
-                rspecMan = rspecMan +  "<stitch:suggestedVLANRange>"+vlanTags[0]+"</stitch:suggestedVLANRange>";
-                rspecMan = rspecMan + "<stitch:vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</stitch:vlanTranslation>";
-                rspecMan +=  "</stitch:switchingCapabilitySpecificInfo_L2sc>";
-                rspecMan +=  "</stitch:switchingCapabilitySpecificInfo>";
-                rspecMan +=  "</stitch:switchingCapabilityDescriptor>";
-                rspecMan +=  "</stitch:link>";
-                rspecMan = rspecMan + "<stitch:nextHop>dst</stitch:nextHop>";
-                rspecMan +=  "</stitch:hop>";
-                // TODO: get intermediate hops from OSCARS query (stored in DB?)
-                // create destination hop
-                urn = ppv.getDestination();
-                netIf = lookupInterfaceReference(rspec, urn);
-                if (netIf != null) {
-                    urn = netIf.getUrn();
-                }
-                if (AggregateUtils.isDcnUrn(urn)) {
-                    urn = AggregateUtils.convertDcnToGeniUrn(urn);
-                }
-                rspecMan +=  "<stitch:hop id=\"dst\">";
-                rspecMan = rspecMan + "<stitch:link id=\""+urn+"\">";
-                rspecMan = rspecMan + "<stitch:trafficEngineeringMetric>1</stitch:trafficEngineeringMetric>";
-                rspecMan = rspecMan + "<stitch:capacity>"+Float.toString(ppv.getBandwidth())+"Mbps</stitch:capacity>";
-                rspecMan +=  "<stitch:switchingCapabilityDescriptor>";
-                rspecMan +=  "<stitch:switchingcapType>l2sc</stitch:switchingcapType>";
-                rspecMan +=  "<stitch:encodingType>ethernet</stitch:encodingType>";
-                rspecMan +=  "<stitch:switchingCapabilitySpecificInfo>";
-                rspecMan +=  "<stitch:switchingCapabilitySpecificInfo_L2sc>";
-                rspecMan +=  "<stitch:interfaceMTU>9000</stitch:interfaceMTU>";
-                rspecMan =  rspecMan + "<stitch:vlanRangeAvailability>"+(vlanTags.length == 2?vlanTags[1]:vlanTags[0])+"</stitch:vlanRangeAvailability>";
-                rspecMan =  rspecMan + "<stitch:suggestedVLANRange>"+(vlanTags.length == 2?vlanTags[1]:vlanTags[0])+"</stitch:suggestedVLANRange>";
-                rspecMan =  rspecMan + "<stitch:vlanTranslation>"+((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?"true":"false")+"</stitch:vlanTranslation>";
-                rspecMan +=  "</stitch:switchingCapabilitySpecificInfo_L2sc>";
-                rspecMan +=  "</stitch:switchingCapabilitySpecificInfo>";
-                rspecMan +=  "</stitch:switchingCapabilityDescriptor>";
-                rspecMan +=  "</stitch:link>";
-                rspecMan +=  "<stitch:nextHop>null</stitch:nextHop>";
-                rspecMan +=  "</stitch:hop>";
-                rspecMan +=  "</stitch:path>";
-            }            
-            rspecMan +=  "</stitch:stitching>";
-        }
-        rspecMan +=  "</rspec>";
-        return rspecMan;
-    }
-
     public String generateAdvertisementRspec(AggregateRspec rspec) throws AggregateException {
         Date dateExpires = new Date(rspec.getEndTime() * 1000);
         GregorianCalendar c = new GregorianCalendar();
@@ -782,7 +609,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
 
         if (!ppvStitches.isEmpty() && stitchObj != null && !stitchObj.getPath().isEmpty()) {
-            stitchObj.setLastUpdateTime(dateNow.toString());
+            stitchObj.setLastUpdateTime(xgcGenerated.toString());
             for (PathContent pathObj: stitchObj.getPath()) {
                 AggregateP2PVlan ppvStitch = null;
                 for (AggregateP2PVlan ppv: ppvStitches) {
@@ -868,6 +695,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             m.marshal(jaxbObj, infoDoc);
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer();
+            transformer.setOutputProperty("omit-xml-declaration", "yes");
             StringWriter writer = new StringWriter();
             Result result = new StreamResult(writer);
             Source source = new DOMSource(infoDoc);
