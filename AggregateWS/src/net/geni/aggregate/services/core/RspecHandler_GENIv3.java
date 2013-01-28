@@ -787,6 +787,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 }
                 if (ppvStitch == null)
                     continue;
+                if (ppvStitch.getGri() != null && !ppvStitch.getGri().isEmpty()) {
+                    pathObj.setGlobalId(ppvStitch.getGri());
+                }
                 // look up local ingress and egress hop links
                 LinkContent ingLinkObj = null;
                 LinkContent egrLinkObj = null;
@@ -795,10 +798,12 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     if (linkObj == null) {
                         continue;
                     }
-                    if (linkObj.getId().equalsIgnoreCase(ppvStitch.getSource())) {
+                    String srcUrn = AggregateUtils.convertDcnToGeniUrn(ppvStitch.getSource());
+                    String dstUrn = AggregateUtils.convertDcnToGeniUrn(ppvStitch.getDestination());
+                    if (linkObj.getId().equalsIgnoreCase(srcUrn)) {
                         ingLinkObj = linkObj;
                     }
-                    if (linkObj.getId().equalsIgnoreCase(ppvStitch.getDestination())) {
+                    if (linkObj.getId().equalsIgnoreCase(dstUrn)) {
                         egrLinkObj = linkObj;
                     }
                 }
