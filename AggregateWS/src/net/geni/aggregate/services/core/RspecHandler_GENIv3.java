@@ -740,8 +740,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     } catch (Exception e) {
                         throw new AggregateException("RspecHandler_GENIv3.generateRspecManifest error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
                     }
+                    rspecV3Obj.getAnyOrNodeOrLink().remove(obj);
                 }
-                rspecV3Obj.getAnyOrNodeOrLink().remove(obj);
             }
         }
 
@@ -844,25 +844,22 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 }
             }            
         }
-        if (stitchObj != null) {
-            rspecV3Obj.getAnyOrNodeOrLink().add(stitchObj);
-        }
-        rspecXml = this.marshallJaxbToString(jaxbRspec);
+        rspecXml = this.marshallJaxbToString(jaxbRspec, "net.geni.www.resources.rspec._3");
         if (jaxbStitch != null) {
-            String stitchXml = this.marshallJaxbToString(jaxbStitch);
+            String stitchXml = this.marshallJaxbToString(jaxbStitch, "edu.isi.east.hpn.rspec.ext.stitch._0_1");
             rspecXml = rspecXml.replaceFirst("</rspec>", stitchXml+"\n</rspec>");
         }
         return rspecXml;
     }
 
-    private String marshallJaxbToString(JAXBElement jaxbObj) {
+    private String marshallJaxbToString(JAXBElement jaxbObj, String jaxbContext) throws AggregateException {
         try {
             Document infoDoc = null;
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(false);
             DocumentBuilder db = dbf.newDocumentBuilder();
             infoDoc = db.newDocument();
-            JAXBContext jc = JAXBContext.newInstance("net.geni.www.resources.rspec._3");
+            JAXBContext jc = JAXBContext.newInstance(jaxbContext);
             Marshaller m = jc.createMarshaller();
             m.marshal(jaxbObj, infoDoc);
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -874,8 +871,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             return writer.toString();
         } catch (Exception e) {
             log.error("RspecHandler_GENIv3.marshallJaxbToString error marshaling rspec: " + e.getMessage());
+            throw new AggregateException(e.getMessage());
         }
-        return null;
     }
     
     AggregateNetworkInterface lookupInterfaceReference(AggregateRspec rspec, String urn) {
