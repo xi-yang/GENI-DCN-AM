@@ -810,7 +810,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (ingLinkObj == null || egrLinkObj == null)
                     continue;
                 // annotate local hops
-                log.debug(String.format("vlantags=%s", ppvStitch.getVtag()));
                 String[] vlanTags = ppvStitch.getVtag().split("-");
                 ingLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()));
                 egrLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()));
@@ -819,6 +818,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     && ingLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc() != null
                     && !ingLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc().isEmpty()) {
                         SwitchingCapabilitySpecificInfoL2Sc l2scObj = ingLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc().get(0);
+                        log.debug(String.format("ingLinkObj %s vtag=%s", ingLinkObj.getId(), vlanTags[0]));
                         l2scObj.setVlanRangeAvailability(vlanTags[0]);
                         l2scObj.setSuggestedVLANRange(vlanTags[0]);
                         if ((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))) {
@@ -830,6 +830,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     && egrLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc() != null
                     && !egrLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc().isEmpty()) {
                         SwitchingCapabilitySpecificInfoL2Sc l2scObj = egrLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc().get(0);
+                        log.debug(String.format("egrLinkObj %s vtag=%s", egrLinkObj.getId(), vlanTags[0]));
                         if (vlanTags.length == 2) {
                             l2scObj.setVlanRangeAvailability(vlanTags[1]);
                             l2scObj.setSuggestedVLANRange(vlanTags[1]);
