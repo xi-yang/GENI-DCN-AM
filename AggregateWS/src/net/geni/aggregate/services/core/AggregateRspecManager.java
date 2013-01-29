@@ -327,6 +327,23 @@ public class AggregateRspecManager extends Thread{
             // no runner thread, proceed to see if lingering rspec instance
             for (AggregateRspec aggrRspec: aggrRspecs) {
                 if (aggrRspec.getRspecName().equalsIgnoreCase(rspecName)) {
+                    try {
+                        aggrRspec.getResources().clear();
+                        aggrRspec.setDeleted(true);
+                        aggrRspec.setStatus("TERMINATED:"+aggrRspec.getStatus());
+                        session = HibernateUtil.getSessionFactory().openSession();
+                        tx = session.beginTransaction();
+                        session.update(aggrRspec);
+                        session.flush();
+                        tx.commit();
+                    } catch (Exception e) {
+                        tx.rollback();
+                        e.printStackTrace();
+                    } finally {
+                        if (session.isOpen()) {
+                            session.close();
+                        }
+                    }
                     aggrRspecs.remove(aggrRspec);
                     return "STOPPED";
                 }
