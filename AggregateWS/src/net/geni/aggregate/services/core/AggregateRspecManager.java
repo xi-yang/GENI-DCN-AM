@@ -250,7 +250,10 @@ public class AggregateRspecManager extends Thread{
                             if (session.isOpen()) session.close();
                         }
                         rspecThreads.remove(rspecThread);
-                        aggrRspecs.remove(rspec);
+                        // remove rspec only if explicitly terminated
+                        if (rspec.getStatus().startsWith("TERMINATED")) {
+                            aggrRspecs.remove(rspec);
+                        }
                         break;  // go loop again!
                     }
                     //give other instructions e.g., terminate on expires
@@ -321,6 +324,13 @@ public class AggregateRspecManager extends Thread{
                     rspecThread.setGoRun(false);
                     rspecThread.interrupt();
                     return "STOPPING";
+                }
+            }
+            // no runner thread, proceed to see if lingering rspec instance
+            for (AggregateRspec aggrRspec: aggrRspecs) {
+                if (aggrRspec.getRspecName().equalsIgnoreCase(rspecName)) {
+                    aggrRspecs.remove(aggrRspec);
+                    return "STOPPED";
                 }
             }
         }

@@ -165,8 +165,11 @@ public class AggregateRspecRunner extends Thread {
                 }
             }
         }
-
-        terminate();
+        if (rspec.getStatus().contains("FAILED")) {
+            rollback();
+        } else {
+            terminate();
+        }
     }
 
     private void createSlice() throws AggregateException {
