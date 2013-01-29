@@ -232,9 +232,10 @@ public class AggregateRspecManager extends Thread{
                             rspecThread.setGoRun(false);
                             rspecThread.interrupt();
                         }
-                    } else if (rspec.getStatus().startsWith("TERMINATED")
-                      || rspec.getStatus().startsWith("ROLLBACKED")) {
-                        //rollbacked thread may get diff. treatment?
+                    } else if (rspec.getStatus().startsWith("ROLLBACKED")) {
+                        rspecThreads.remove(rspecThread);
+                        break;  // go loop again!
+                    } else if (rspec.getStatus().startsWith("TERMINATED")) {
                         try {
                             rspec.getResources().clear();
                             rspec.setDeleted(true);
@@ -250,10 +251,7 @@ public class AggregateRspecManager extends Thread{
                             if (session.isOpen()) session.close();
                         }
                         rspecThreads.remove(rspecThread);
-                        // remove rspec only if explicitly terminated
-                        if (rspec.getStatus().startsWith("TERMINATED")) {
-                            aggrRspecs.remove(rspec);
-                        }
+                        aggrRspecs.remove(rspec);
                         break;  // go loop again!
                     }
                     //give other instructions e.g., terminate on expires
