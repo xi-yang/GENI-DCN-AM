@@ -277,7 +277,7 @@ public class AggregateRspecManager extends Thread{
             || aggrRspec.getStartTime() == 0 || aggrRspec.getResources().size() == 0)
             throw new AggregateException("Rspec parsing failed!");
 
-        synchronized(aggrRspecs) {
+        synchronized(rspecThreads) {
             for (AggregateRspec rspec: aggrRspecs)
                 if (aggrRspec.getRspecName().equalsIgnoreCase(rspec.getRspecName()) && !aggrRspec.isDeleted())
                     throw new AggregateException("An instance for RSpec name='"+rspec.getRspecName()+"' has already existed!");
@@ -324,9 +324,7 @@ public class AggregateRspecManager extends Thread{
                     return "STOPPING";
                 }
             }
-        }
-        // no runner thread, proceed to see if lingering rspec instance
-        synchronized(aggrRspecs) {
+            // no runner thread, proceed to see if lingering rspec instance
             for (AggregateRspec aggrRspec : aggrRspecs) {
                 if (aggrRspec.getRspecName().equalsIgnoreCase(rspecName)) {
                     try {
