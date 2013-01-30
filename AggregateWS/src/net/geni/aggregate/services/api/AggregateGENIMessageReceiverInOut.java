@@ -22,7 +22,7 @@
         // get the implementation class for the Web Service
         Object obj = getTheImplementationObject(msgContext);
 
-        AggregateGENISkeletonInterface skel = (AggregateGENISkeletonInterface)obj;
+        AggregateWS skel = (AggregateWS)obj;
         //Out Envelop
         org.apache.axiom.soap.SOAPEnvelope envelope = null;
         //Find the axisOperation that has been set by the Dispatch phase.
