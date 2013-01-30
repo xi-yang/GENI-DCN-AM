@@ -12,7 +12,6 @@ import java.util.Vector;
 import net.geni.aggregate.services.core.AggregateCapabilities;
 import org.apache.log4j.*;
 import net.geni.aggregate.services.core.AggregateState;
-import net.geni.aggregate.services.core.AggregateWSRunner;
 import net.geni.aggregate.services.core.AggregateRspecManager;
 import net.geni.aggregate.services.core.AggregateSlicesPoller;
 import net.geni.aggregate.services.core.AggregateCapability;
@@ -42,7 +41,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     public static Logger log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
 
     private Thread aggregateServerThread;
-    private AggregateWSRunner aggregateWSRunner;
     
     public void init(ServiceContext serviceContext) {
         System.err.println("AggregateWS init...");
@@ -261,7 +259,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
      * @param serviceContext
      */
     public void destroy(ServiceContext serviceContext) {
-        aggregateWSRunner.stop();
+
     }
 
     /**

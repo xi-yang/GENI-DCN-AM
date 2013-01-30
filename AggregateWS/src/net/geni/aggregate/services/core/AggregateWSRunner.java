@@ -6,7 +6,6 @@
 package net.geni.aggregate.services.core;
 
 import java.util.logging.Level;
-import net.geni.aggregate.services.api.AggregateGENISkeleton;
 
 
 /**
