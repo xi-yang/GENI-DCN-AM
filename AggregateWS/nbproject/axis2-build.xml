@@ -24,6 +24,7 @@
             <arg line="-o ${build.dir}/axis2"/>
             <classpath path="${javac.classpath}"/>
         </java>
+        <delete file="${build.dir}/axis2/src/net/geni/aggregate/services/api/AggregateGENISkeleton.java"/>
     </target>
     <target name="-wsdl2java-abs-dir-" unless="haveEnvDir">
         <delete dir="${build.dir}/axis2"/>
@@ -44,6 +45,7 @@
             <arg line="-o ${build.dir}/axis2"/>
             <classpath path="${javac.classpath}"/>
         </java>
+        <delete file="${build.dir}/axis2/src/net/geni/aggregate/services/api/AggregateGENISkeleton.java"/>
     </target>
     
     <target name="wsdl2java-AggregateGENI" depends="init, -wsdl2java-env-dir-, -wsdl2java-abs-dir-">
@@ -62,6 +64,12 @@
                 <include name="AggregateGENIMessageReceiverInOut.java"/>
             </fileset>
         </copy>
+        <copy toDir="${build.dir}/axis2/src/net/geni/aggregate/services/api" overwrite="true">
+            <fileset dir="/tmp">
+                <include name="AggregateGENIMessageReceiverInOut.java"/>
+            </fileset>
+        </copy>
+        <delete file="${src.dir}/net/geni/aggregate/services/api/AggregateGENISkeleton.java"/>
         <mkdir dir="${basedir}/xml-resources/axis2/META-INF"/>
         <copy toDir="${basedir}/xml-resources/axis2/META-INF/" overwrite="true">
             <fileset dir="${build.dir}/axis2/resources">
@@ -92,6 +100,12 @@
                 <include name="AggregateGENIMessageReceiverInOut.java"/>
             </fileset>
         </copy>
+        <copy toDir="${build.dir}/axis2/src/net/geni/aggregate/services/api" overwrite="true">
+            <fileset dir="/tmp">
+                <include name="AggregateGENIMessageReceiverInOut.java"/>
+            </fileset>
+        </copy>
+
     </target>
     <target name="wsdl2java-clean-AggregateGENI" depends="init">
         <delete file="${basedir}/xml-resources/axis2/META-INF/AggregateGENI.wsdl"/>
