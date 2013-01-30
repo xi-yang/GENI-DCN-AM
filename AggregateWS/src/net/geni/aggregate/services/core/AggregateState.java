@@ -13,7 +13,6 @@ import java.util.prefs.Preferences;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import net.geni.aggregate.services.api.AggregateGENISkeleton;
 import net.geni.aggregate.services.api.AggregateWS;
 
 /**
@@ -70,7 +69,6 @@ public class AggregateState
     private static AggregateUsers aggregateUsers = null;
     
     // Global states
-    private static AggregateGENISkeleton skeletonAPI = null;
     private static AggregateRspecManager aggregateRspecManager = null;
     private static AggregateRspecHandler aggregateRspecHandler = null;
     private static AggregateSlicesPoller aggregateSlicesPoller = null;
@@ -159,15 +157,7 @@ public class AggregateState
     public static String getAggregateConfDir() {
         return aggregateProps.getProperty("aggregate.conf.dir", null);
     }
-
-    public static void setSkeletonAPI(AggregateGENISkeleton aggregateSkeleton) {
-        skeletonAPI = aggregateSkeleton;
-    }
-
-    public static AggregateGENISkeleton getSkeletonAPI() {
-        return skeletonAPI;
-    }
-
+    
     public static AggregateRspecManager getRspecManager() {
         return aggregateRspecManager;
     }

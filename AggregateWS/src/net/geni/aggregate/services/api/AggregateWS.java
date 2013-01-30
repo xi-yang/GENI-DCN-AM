@@ -237,10 +237,11 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         }
 
         // Web Services handnling thread
+        /*
         aggregateWSRunner = new AggregateWSRunner();
         aggregateServerThread = new Thread(aggregateWSRunner);
         aggregateServerThread.start();
-
+        */
         // Rspec manager thread
         AggregateRspecManager aggregateRspecManager = new AggregateRspecManager();
         aggregateRspecManager.start();

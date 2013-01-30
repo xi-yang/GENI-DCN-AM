@@ -20,7 +20,7 @@ public class AggregateWSRunner implements Runnable {
     public AggregateWSRunner() {
 
         //initialize the interface
-        AggregateState.setSkeletonAPI(new AggregateGENISkeleton());
+        //AggregateState.setSkeletonAPI(new AggregateGENISkeleton());
 
     }
 
