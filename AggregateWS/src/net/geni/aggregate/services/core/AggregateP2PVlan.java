@@ -293,8 +293,13 @@ public class AggregateP2PVlan extends AggregateResource {
      public String teardownVlan() {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
-        status = "FAILED";
         try {
+            HashMap hmRet = apiClient.queryReservation(gri);
+            status = hmRet.get("status").toString();
+            if (status.equals("CANCELLED") || status.equals("FAILED") || status.equals("INTEARDOWN")) {
+                return status;
+            }
+            status = "FAILED";
             status = apiClient.cancelReservation(gri);
             if (status.contains("Reservation cancellation status: ")) {
                 status = status.replaceAll("Reservation cancellation status:\\s", "").toUpperCase();
