@@ -174,9 +174,8 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         createSliceCmd = createSliceCmd.replaceFirst("<_user_>", user);
         createSliceCmd = createSliceCmd.replaceAll("<_node_list_>", "[" + nodes + "]");
         this.sendCommand(createSliceCmd);
-        log.debug("createSlice dump #1: " + createSliceCmd);
         int ret = this.readPattern("^1\\s1", ".*Fault|.*Error", promptPattern);
-        log.debug("createSlice dump #2: " + this.buffer);
+        log.debug("createSlice dump: " + this.buffer);
         if (ret != 1) {
             log.error("plcapi server failed to create Slice '" + sliceName +"' on Nodes: " + nodes);
             logoff();
@@ -299,6 +298,7 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
             if (sliceNames[i].isEmpty()) {
                 return -1;
             }
+            i++;
         } 
         String sliceArray = AggregateUtils.makePyArrayString(sliceNames);
         String cmd = "print api_server.GetSlices(auth,"+sliceArray+");";
