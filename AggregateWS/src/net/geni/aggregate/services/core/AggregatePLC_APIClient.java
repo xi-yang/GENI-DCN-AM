@@ -117,6 +117,19 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         return super.logoff("import sys; sys.exit(0)");
     }
 
+    private String getPlcSliceName(String sliceName) {
+        if (sliceName.startsWith("urn:")) {
+            String[] items = sliceName.split("\\+");
+            if (items.length < 4 || !items[items.length-2].equals("slice")) {
+                return "";
+            }
+            return (items[items.length-3].replace(".", "") + "_" + items[items.length-1]);
+        } else if (sliceName.contains("+") || sliceName.contains(".") || sliceName.contains(":")) {
+            return "";
+        }
+        return sliceName;
+    }
+    
     /**
      *
      * @param hm the hashmap to return the buffer content
@@ -146,7 +159,10 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
             if (!login())
                 return -1;
         }
-
+        sliceName = getPlcSliceName(sliceName);
+        if (sliceName.isEmpty()) {
+            return -1;
+        }
         String createSliceCmd = "";
         if (isAddPlcSlice) {
             createSliceCmd = addSliceCmd;
@@ -180,6 +196,10 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
             if (!login())
                 return -1;
         }
+        sliceName = getPlcSliceName(sliceName);
+        if (sliceName.isEmpty()) {
+            return -1;
+        }
         String cmd = "print api_server.DeleteSlice(auth, '"+sliceName+"');";
         this.sendCommand(cmd);
         int ret = this.readPattern("^1", ".*Fault|.*Error", promptPattern);
@@ -194,6 +214,10 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         if (!alive()) {
             if (!login())
                 return -1;
+        }
+        sliceName = getPlcSliceName(sliceName);
+        if (sliceName.isEmpty()) {
+            return -1;
         }
         cleanupSliceCmd = cleanupSliceCmd.replaceAll("<_name_>", sliceName);
         //cleanupSliceCmd = cleanupSliceCmd.replaceAll("<_user_>", user);
@@ -213,7 +237,10 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
             if (!login())
                 return false;
         }
-
+        sliceName = getPlcSliceName(sliceName);
+        if (sliceName.isEmpty()) {
+            return false;
+        }
         String cmd = "print api_server.GetSlices(auth, '"+sliceName+"');";
         this.sendCommand(cmd);
         int ret = this.readPattern("^\\[\\{", "^\\[\\]", promptPattern);
@@ -229,12 +256,14 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
             if (!login())
                 return -1;
         }
-
         if (!hasSlice(sliceName)) {
             log.error("plcapi server does not recognize '" + sliceName +"'");
             return 0;
         }
-
+        sliceName = getPlcSliceName(sliceName);
+        if (sliceName.isEmpty()) {
+            return -1;
+        }
         updateSliceCmd = updateSliceCmd.replaceAll("<_name_>", sliceName);
         updateSliceCmd = updateSliceCmd.replaceFirst("<_url_>", url);
         updateSliceCmd = updateSliceCmd.replaceFirst("<_descr_>", descr);
@@ -256,7 +285,7 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
      *
      * @param sliceName
      * @param sliceData
-     * @return int code: 1 success; 2 unknow slice; 0 failed to exact data
+     * @return int code: 1 success; 2 unknow slice; 0 failed to extract data
      */
     public int querySlice(String[] sliceNames, Vector<HashMap> hmSlices) {
         if (!alive()) {
@@ -264,6 +293,13 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
                 return -1;
         }
         hmSlices.clear();
+        int i = 0;
+        while (i < sliceNames.length) {
+            sliceNames[i] = getPlcSliceName(sliceNames[i]);
+            if (sliceNames[i].isEmpty()) {
+                return -1;
+            }
+        } 
         String sliceArray = AggregateUtils.makePyArrayString(sliceNames);
         String cmd = "print api_server.GetSlices(auth,"+sliceArray+");";
         this.sendCommand(cmd);
@@ -294,7 +330,10 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
             if (!login())
                 return -1;
         }
-
+        sliceName = getPlcSliceName(sliceName);
+        if (sliceName.isEmpty()) {
+            return -1;
+        }
         startSliceCmd = startSliceCmd.replaceAll("<_name_>", sliceName);
         if (startOrStop) {//start
             startSliceCmd = startSliceCmd.replaceAll("<_tag_id_>", "1");
