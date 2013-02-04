@@ -1,0 +1,947 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:tns="http://aggregate.geni.net/services/api/"
+	xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" 
+	xmlns:wsnt="http://docs.oasis-open.org/wsn/b-2"
+	xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
+	targetNamespace="http://aggregate.geni.net/services/api/">
+
+
+    <!--  security policy definitions -->
+    <!-- policy copied from http://ws.apache.org/rampart/samples/policy/sample02.xml -->
+    <wsp:Policy  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+		xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
+		xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+		wsu:Id="X509BindingPolicy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:AsymmetricBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:InitiatorToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                                    <wsp:Policy>
+                                        <sp:WssX509V3Token10 />
+                                        <sp:RequireThumbprintReference/> <!-- needed for V1 certs -->
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:InitiatorToken>
+                        <sp:RecipientToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Always">
+                                    <wsp:Policy>
+                                        <sp:WssX509V3Token10 />
+                                        <sp:RequireThumbprintReference/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:RecipientToken>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:TripleDesRsa15 />
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Strict />
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp />
+                        <sp:OnlySignEntireHeadersAndBody />
+                    </wsp:Policy>
+                </sp:AsymmetricBinding>
+                <sp:Wss10 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:MustSupportRefKeyIdentifier />
+                        <sp:MustSupportRefIssuerSerial />
+                    </wsp:Policy>
+                </sp:Wss10>
+         
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+
+    <wsp:Policy
+   	  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+   	  xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
+   	  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+   	  wsu:Id="signedMsgPolicy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body />
+                </sp:SignedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+   
+    <types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns:tns="http://aggregate.geni.net/services/api/"
+			targetNamespace="http://aggregate.geni.net/services/api/"    
+			elementFormDefault="qualified">
+
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+					GENI Aggregate Manager Interface: 
+                </xs:documentation>
+            </xs:annotation>
+
+
+<!--  **************************************************************** -->
+<!--  ***************** common types ********************************* -->
+<!--  **************************************************************** -->
+
+
+            <xs:complexType name="CapabilityType">
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="urn" type="xs:string"/>
+                    <xs:element name="id" type="xs:int"/>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="controllerURL" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="NodeDescriptorType">
+                <xs:sequence>
+                    <xs:element name="urn" type="xs:string"/>
+                    <xs:element name="id" type="xs:int"/>
+                    <xs:element name="description" type="xs:string" minOccurs="0"/>
+                    <xs:sequence>
+                        <xs:element name="capability" maxOccurs="unbounded" type="tns:CapabilityType"/>
+                    </xs:sequence>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="SliceDescriptorType">
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="url" type="xs:string"/>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="nodes" type="xs:string"/>
+                    <xs:element name="creator" type="xs:string"/>
+                    <xs:element name="createdTime" type="xs:long"/>
+                    <xs:element name="expiredTime" type="xs:long"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="VlanReservationDescriptorType">
+                <xs:sequence>
+                    <xs:element name="vlan" type="xs:string"/>     <!--  format: srcVlan-dstVlan for translation case -->
+                    <xs:element name="sourceNode" type="xs:string"/>
+                    <xs:element name="srcInterface" type="xs:string" minOccurs="0"/>
+                    <xs:element name="srcIpAndMask" type="xs:string" minOccurs="0"/>
+                    <xs:element name="destinationNode" type="xs:string"/>
+                    <xs:element name="dstInterface" type="xs:string" minOccurs="0"/>
+                    <xs:element name="dstIpAndMask" type="xs:string" minOccurs="0"/>
+                    <xs:element name="bandwidth" type="xs:float"/>
+                    <xs:element name="description" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="VlanRangeType">
+                <xs:sequence>
+                    <xs:element name="vlanRangeFrom" type="xs:int"/>
+                    <xs:element name="vlanRangeTo" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType >
+
+            <xs:complexType name="VlanReservationResultType">
+                <xs:sequence>
+                    <xs:element name="reservation" type="tns:VlanReservationDescriptorType"/>
+                    <xs:element name="globalReservationId" type="xs:string" minOccurs="0"/>
+                    <xs:element name="status" type="xs:string"/>
+                    <xs:element name="message" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType >
+
+            <!-- Placeholder: a better definition will be provided via seprate .xsd file -->
+            <xs:complexType name="RSpecTopologyType">
+                <xs:sequence>
+                    <xs:element name="statement" type="xs:string" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType >
+
+            <!-- Fault -->
+            <xs:element name="AggregateFault">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="msg" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+<!--  **************************************************************** -->
+<!--  **************** nodes, capabilities and slices **************** -->
+<!--  **************************************************************** -->
+
+            <!-- ListCapabilities request definitions -->
+            <xs:element name="ListCapabilities" type="tns:ListCapabilitiesType"/>
+            <xs:complexType name="ListCapabilitiesType">
+                <xs:sequence>
+                    <xs:element name="filter" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- ListCapabilities response definitions -->
+            <xs:element name="ListCapabilitiesResponse" type="tns:ListCapabilitiesResponseType"/>
+            <xs:complexType name="ListCapabilitiesResponseType">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="capability" type="tns:CapabilityType"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- ListNodes request definitions -->
+            <xs:element name="ListNodes" type="tns:ListNodesType"/>
+            <xs:complexType name="ListNodesType">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="capabilityURN" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- ListNodes response definitions -->
+            <xs:element name="ListNodesResponse" type="tns:ListNodesResponseType"/>
+            <xs:complexType name="ListNodesResponseType">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="node" type="tns:NodeDescriptorType"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- ListSlices request definitions -->
+            <xs:element name="ListSlices" type="tns:ListSlicesType"/>
+            <xs:complexType name="ListSlicesType">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="filter" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- ListSlices response definitions -->
+            <xs:element name="ListSlicesResponse" type="tns:ListSlicesResponseType"/>
+            <xs:complexType name="ListSlicesResponseType">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="slice" type="tns:SliceDescriptorType"/>
+                </xs:sequence>
+            </xs:complexType>
+
+<!--  **************************************************************** -->
+<!--  ************************ slice manipulation ******************** -->
+<!--  **************************************************************** -->
+
+            <!-- CreateSlice request definitions -->
+            <xs:element name="CreateSlice" type="tns:CreateSliceType"/>
+            <xs:complexType name="CreateSliceType">
+                <xs:sequence>
+                    <xs:element name="sliceID" type="xs:string"/>
+                    <xs:element name="url" type="xs:string"/>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="user" type="xs:string"/>
+                    <xs:element name="node" type="xs:string" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- CreateSlice response definitions -->
+            <xs:element name="CreateSliceResponse" type="tns:CreateSliceResponseType"/>
+            <xs:complexType name="CreateSliceResponseType">
+                <xs:sequence>
+                    <xs:element name="sliceID" type="xs:string"/>
+                    <xs:element name="status" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- DeleteSlice request definitions -->
+            <xs:element name="DeleteSlice" type="tns:DeleteSliceType"/>
+            <xs:complexType name="DeleteSliceType">
+                <xs:sequence>
+                    <xs:element name="sliceID" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- DeleteSlice response definitions -->
+            <xs:element name="DeleteSliceResponse" type="tns:DeleteSliceResponseType"/>
+            <xs:complexType name="DeleteSliceResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- UpdateSlice request definitions -->
+            <xs:element name="UpdateSlice" type="tns:UpdateSliceType"/>
+            <xs:complexType name="UpdateSliceType">
+                <xs:sequence>
+                    <xs:element name="sliceID" type="xs:string"/>
+                    <xs:element name="url" type="xs:string"/>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="user" type="xs:string" maxOccurs="unbounded"/>
+                    <xs:element name="node" type="xs:string" maxOccurs="unbounded"/>
+                    <xs:element name="expires" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- UpdateSlice response definitions -->
+            <xs:element name="UpdateSliceResponse" type="tns:UpdateSliceResponseType"/>
+            <xs:complexType name="UpdateSliceResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+<!--  **************************************************************** -->
+<!--  ************************ slice actions ************************* -->
+<!--  **************************************************************** -->
+
+            <!-- StartSlice request definitions -->
+            <xs:element name="StartSlice" type="tns:StartSliceType"/>
+            <xs:complexType name="StartSliceType">
+                <xs:sequence>
+                    <xs:element name="sliceID" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- StartSlice response definitions -->
+            <xs:element name="StartSliceResponse" type="tns:StartSliceResponseType"/>
+            <xs:complexType name="StartSliceResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- StopSlice request definitions -->
+            <xs:element name="StopSlice" type="tns:StopSliceType"/>
+            <xs:complexType name="StopSliceType">
+                <xs:sequence>
+                    <xs:element name="sliceID" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- StopSlice response definitions -->
+            <xs:element name="StopSliceResponse" type="tns:StopSliceResponseType"/>
+            <xs:complexType name="StopSliceResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- QuerySlice request definitions -->
+            <xs:element name="QuerySlice" type="tns:QuerySliceType"/>
+            <xs:complexType name="QuerySliceType">
+                <xs:sequence>
+                    <xs:element name="sliceID" type="xs:string" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- QuerySlice response definitions -->
+            <xs:element name="QuerySliceResponse" type="tns:QuerySliceResponseType"/>
+            <xs:complexType name="QuerySliceResponseType">
+                <xs:sequence>
+                    <xs:element name="queryResult" type="xs:string" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+
+
+<!--  **************************************************************** -->
+<!--  ********************** network provisioning ******************** -->
+<!--  **************************************************************** -->
+
+            <!-- CreateSliceVlan request definitions -->
+            <xs:element name="CreateSliceVlan" type="tns:CreateSliceVlanType"/>
+            <xs:complexType name="CreateSliceVlanType">
+                <xs:sequence>
+                    <xs:element name="sliceID" type="xs:string"/>
+                    <xs:element name="vlanReservation" type="tns:VlanReservationDescriptorType"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- CreateSliceVlan response definitions -->
+            <xs:element name="CreateSliceVlanResponse" type="tns:CreateSliceVlanResponseType"/>
+            <xs:complexType name="CreateSliceVlanResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                    <xs:element name="message" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- DeleteSliceVlan request definitions -->
+            <xs:element name="DeleteSliceVlan" type="tns:DeleteSliceVlanType"/>
+            <xs:complexType name="DeleteSliceVlanType">
+                <xs:sequence>
+                    <xs:element name="sliceID" type="xs:string"/>
+                    <xs:element name="vlan" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- DeleteSliceVlan response definitions -->
+            <xs:element name="DeleteSliceVlanResponse" type="tns:DeleteSliceVlanResponseType"/>
+            <xs:complexType name="DeleteSliceVlanResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                    <xs:element name="message" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- QuerySliceVlan request definitions -->
+            <xs:element name="QuerySliceVlan" type="tns:QuerySliceVlanType"/>
+            <xs:complexType name="QuerySliceVlanType">
+                <xs:sequence>
+                    <xs:element name="sliceID" type="xs:string"/>
+                    <xs:element name="vlan" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- QuerySliceVlan response definitions -->
+            <xs:element name="QuerySliceVlanResponse" type="tns:QuerySliceVlanResponseType"/>
+            <xs:complexType name="QuerySliceVlanResponseType">
+                <xs:sequence>
+                    <xs:element name="vlanResvResult" type="tns:VlanReservationResultType"/>
+                </xs:sequence>
+            </xs:complexType>
+
+
+            <!-- CreateSliceNetwork request definitions -->
+            <xs:element name="CreateSliceNetwork" type="tns:CreateSliceNetworkType"/>
+            <xs:complexType name="CreateSliceNetworkType">
+                <xs:sequence>
+                    <xs:element name="rspecID" type="xs:string"/>
+                    <xs:element name="rspecNetwork" type="tns:RSpecTopologyType"/>
+                    <xs:element name="addPlcSlice" type="xs:boolean" default="true"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- CreateSliceNetwork response definitions -->
+            <xs:element name="CreateSliceNetworkResponse" type="tns:CreateSliceNetworkResponseType"/>
+            <xs:complexType name="CreateSliceNetworkResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                    <xs:element name="message" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- DeleteSliceNetwork request definitions -->
+            <xs:element name="DeleteSliceNetwork" type="tns:DeleteSliceNetworkType"/>
+            <xs:complexType name="DeleteSliceNetworkType">
+                <xs:sequence>
+                    <xs:element name="rspecID" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- DeleteSliceNetwork response definitions -->
+            <xs:element name="DeleteSliceNetworkResponse" type="tns:DeleteSliceNetworkResponseType"/>
+            <xs:complexType name="DeleteSliceNetworkResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                    <xs:element name="message" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- QuerySliceNetwork request definitions -->
+            <xs:element name="QuerySliceNetwork" type="tns:QuerySliceNetworkType"/>
+            <xs:complexType name="QuerySliceNetworkType">
+                <xs:sequence>
+                    <xs:element name="rspecID" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- QuerySliceNetwork response definitions -->
+            <xs:element name="QuerySliceNetworkResponse" type="tns:QuerySliceNetworkResponseType"/>
+            <xs:complexType name="QuerySliceNetworkResponseType">
+                <xs:sequence>
+                    <xs:element name="sliceStatus" type="xs:string"/>
+                    <xs:element name="vlanResvResult" type="tns:VlanReservationResultType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="externalResourceStatus" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- GetResourceTopology request definitions -->
+            <xs:element name="GetResourceTopology" type="tns:GetResourceTopologyType"/>
+            <xs:complexType name="GetResourceTopologyType">
+                <xs:sequence>
+                    <xs:element name="scope" type="xs:string"/>
+                    <xs:element name="rspec" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- GetResourceTopology response definitions -->
+            <xs:element name="GetResourceTopologyResponse" type="tns:GetResourceTopologyResponseType"/>
+            <xs:complexType name="GetResourceTopologyResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string" minOccurs="0"/>
+                    <xs:element name="resourceTopology" type="tns:RSpecTopologyType"/>
+                </xs:sequence>
+            </xs:complexType>
+
+        </xs:schema>
+    </types>
+
+    <!-- message definitions -->
+
+    <message name="ListCapabilitiesRequestMsg">
+        <part name="ListCapabilitiesMsgReq" element="tns:ListCapabilities" />
+    </message>
+
+    <message name="ListCapabilitiesResponseMsg">
+        <part name="ListCapabilitiesMsgResp" element="tns:ListCapabilitiesResponse" />
+    </message>
+
+    <message name="ListNodesRequestMsg">
+        <part name="ListNodesMsgReq" element="tns:ListNodes" />
+    </message>
+
+    <message name="ListNodesResponseMsg">
+        <part name="ListNodesMsgResp" element="tns:ListNodesResponse" />
+    </message>
+
+    <message name="ListSlicesRequestMsg">
+        <part name="ListSlicesMsgReq" element="tns:ListSlices" />
+    </message>
+
+    <message name="ListSlicesResponseMsg">
+        <part name="ListSlicesMsgResp" element="tns:ListSlicesResponse" />
+    </message>
+
+    <message name="CreateSliceRequestMsg">
+        <part name="CreateSliceMsgReq" element="tns:CreateSlice" />
+    </message>
+
+    <message name="CreateSliceResponseMsg">
+        <part name="CreateSliceMsgResp" element="tns:CreateSliceResponse" />
+    </message>
+
+    <message name="DeleteSliceRequestMsg">
+        <part name="DeleteSliceMsgReq" element="tns:DeleteSlice" />
+    </message>
+
+    <message name="DeleteSliceResponseMsg">
+        <part name="DeleteSliceMsgResp" element="tns:DeleteSliceResponse" />
+    </message>
+
+    <message name="UpdateSliceRequestMsg">
+        <part name="UpdateSliceMsgReq" element="tns:UpdateSlice" />
+    </message>
+
+    <message name="UpdateSliceResponseMsg">
+        <part name="UpdateSliceMsgResp" element="tns:UpdateSliceResponse" />
+    </message>
+
+    <message name="StartSliceRequestMsg">
+        <part name="StartSliceMsgReq" element="tns:StartSlice" />
+    </message>
+
+    <message name="StartSliceResponseMsg">
+        <part name="StartSliceMsgResp" element="tns:StartSliceResponse" />
+    </message>
+
+    <message name="StopSliceRequestMsg">
+        <part name="StopSliceMsgReq" element="tns:StopSlice" />
+    </message>
+
+    <message name="StopSliceResponseMsg">
+        <part name="StopSliceMsgResp" element="tns:StopSliceResponse" />
+    </message>
+
+    <message name="QuerySliceRequestMsg">
+        <part name="QuerySliceMsgReq" element="tns:QuerySlice" />
+    </message>
+
+    <message name="QuerySliceResponseMsg">
+        <part name="QuerySliceMsgResp" element="tns:QuerySliceResponse" />
+    </message>
+
+    <message name="CreateSliceVlanRequestMsg">
+        <part name="CreateSliceVlanMsgReq" element="tns:CreateSliceVlan" />
+    </message>
+
+    <message name="CreateSliceVlanResponseMsg">
+        <part name="CreateSliceVlanMsgResp" element="tns:CreateSliceVlanResponse" />
+    </message>
+
+    <message name="DeleteSliceVlanRequestMsg">
+        <part name="DeleteSliceVlanMsgReq" element="tns:DeleteSliceVlan" />
+    </message>
+
+    <message name="DeleteSliceVlanResponseMsg">
+        <part name="DeleteSliceVlanMsgResp" element="tns:DeleteSliceVlanResponse" />
+    </message>
+
+    <message name="QuerySliceVlanRequestMsg">
+        <part name="QuerySliceVlanMsgReq" element="tns:QuerySliceVlan" />
+    </message>
+
+    <message name="QuerySliceVlanResponseMsg">
+        <part name="QuerySliceVlanMsgResp" element="tns:QuerySliceVlanResponse" />
+    </message>
+
+    <message name="CreateSliceNetworkRequestMsg">
+        <part name="CreateSliceNetworkMsgResp" element="tns:CreateSliceNetwork" />
+    </message>
+
+    <message name="CreateSliceNetworkResponseMsg">
+        <part name="CreateSliceNetworkMsgResp" element="tns:CreateSliceNetworkResponse" />
+    </message>
+
+    <message name="DeleteSliceNetworkRequestMsg">
+        <part name="DeleteSliceNetworkMsgReq" element="tns:DeleteSliceNetwork" />
+    </message>
+
+    <message name="DeleteSliceNetworkResponseMsg">
+        <part name="DeleteSliceNetworkMsgResp" element="tns:DeleteSliceNetworkResponse" />
+    </message>
+
+    <message name="QuerySliceNetworkRequestMsg">
+        <part name="QuerySliceNetworkMsgReq" element="tns:QuerySliceNetwork" />
+    </message>
+
+    <message name="QuerySliceNetworkResponseMsg">
+        <part name="QuerySliceNetworkMsgResp" element="tns:QuerySliceNetworkResponse" />
+    </message>
+
+    <message name="GetResourceTopologyRequestMsg">
+        <part name="GetResourceTopologyMsgReq" element="tns:GetResourceTopology" />
+    </message>
+
+    <message name="GetResourceTopologyResponseMsg">
+        <part name="GetResourceTopologyMsgResp" element="tns:GetResourceTopologyResponse" />
+    </message>
+
+    <message name="AggregateFaultMessage">
+        <part name="fault" element="tns:AggregateFault" />
+    </message>
+
+    <portType name="AggregateGENIPortType">
+        <operation name="ListCapabilities">
+            <input message="tns:ListCapabilitiesRequestMsg" />
+            <output message="tns:ListCapabilitiesResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="ListNodes">
+            <input message="tns:ListNodesRequestMsg" />
+            <output message="tns:ListNodesResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="ListSlices">
+            <input message="tns:ListSlicesRequestMsg" />
+            <output message="tns:ListSlicesResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="CreateSlice">
+            <input message="tns:CreateSliceRequestMsg" />
+            <output message="tns:CreateSliceResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="DeleteSlice">
+            <input message="tns:DeleteSliceRequestMsg" />
+            <output message="tns:DeleteSliceResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="UpdateSlice">
+            <input message="tns:UpdateSliceRequestMsg" />
+            <output message="tns:UpdateSliceResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="StartSlice">
+            <input message="tns:StartSliceRequestMsg" />
+            <output message="tns:StartSliceResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="StopSlice">
+            <input message="tns:StopSliceRequestMsg" />
+            <output message="tns:StopSliceResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="QuerySlice">
+            <input message="tns:QuerySliceRequestMsg" />
+            <output message="tns:QuerySliceResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="CreateSliceVlan">
+            <input message="tns:CreateSliceVlanRequestMsg" />
+            <output message="tns:CreateSliceVlanResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="DeleteSliceVlan">
+            <input message="tns:DeleteSliceVlanRequestMsg" />
+            <output message="tns:DeleteSliceVlanResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="QuerySliceVlan">
+            <input message="tns:QuerySliceVlanRequestMsg" />
+            <output message="tns:QuerySliceVlanResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="CreateSliceNetwork">
+            <input message="tns:CreateSliceNetworkRequestMsg" />
+            <output message="tns:CreateSliceNetworkResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="DeleteSliceNetwork">
+            <input message="tns:DeleteSliceNetworkRequestMsg" />
+            <output message="tns:DeleteSliceNetworkResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="QuerySliceNetwork">
+            <input message="tns:QuerySliceNetworkRequestMsg" />
+            <output message="tns:QuerySliceNetworkResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="GetResourceTopology">
+            <input message="tns:GetResourceTopologyRequestMsg" />
+            <output message="tns:GetResourceTopologyResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+    </portType>
+
+    <binding name="AggregateGENIBinding" type="tns:AggregateGENIPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+
+        <operation name="ListCapabilities">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="ListCapabilities" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="ListNodes">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="ListNodes" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="ListSlices">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="ListSlices" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="CreateSlice">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="CreateSlice" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="DeleteSlice">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="DeleteSlice" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="UpdateSlice">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="UpdateSlice" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="StartSlice">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="StartSlice" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="StopSlice">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="StopSlice" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="QuerySlice">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="QuerySlice" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="CreateSliceVlan">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="CreateSliceVlan" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="DeleteSliceVlan">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="DeleteSliceVlan" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="QuerySliceVlan">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="QuerySliceVlan" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="CreateSliceNetwork">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="CreateSliceNetwork" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="DeleteSliceNetwork">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="DeleteSliceNetwork" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="QuerySliceNetwork">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="QuerySliceNetwork" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="GetResourceTopology">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="GetResourceTopology" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+    </binding>
+
+    <service name="AggregateGENI">
+        <port name="AggregateGENIPort" binding="tns:AggregateGENIBinding">
+            <soap:address location="http://geni.dragon.maxgigapop.net:8080/axis2/services/AggregateGENI" />
+        </port>
+    </service>
+
+</definitions>

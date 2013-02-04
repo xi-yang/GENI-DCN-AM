@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema 
+    targetNamespace="http://geni.maxgigapop.net/aggregate/rspec/20100412/" 
+    elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:MaxRspec="http://geni.maxgigapop.net/aggregate/rspec/20100412/"
+    xmlns:CtrlPlane="http://ogf.org/schema/network/topology/ctrlPlane/20080828/">
+  
+
+  <xs:annotation>
+    <xs:documentation>
+        ID convention: IDs ('id') are in Text or URN string format.
+    </xs:documentation>
+  </xs:annotation>
+    
+  <xs:import namespace="http://ogf.org/schema/network/topology/ctrlPlane/20080828/"
+              schemaLocation="nmtopo-ctrlp.xsd"/>
+
+  <!-- Max Rspec -->
+  <xs:element name="rspec" type="MaxRspec:MaxRspecContent"/>
+  
+  <xs:complexType name="MaxRspecContent">
+    <xs:sequence>
+      <xs:element name="aggregate" type="xs:string"/>
+      <xs:element name="description" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="user" type="MaxRspec:UserContent"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="CtrlPlane:topology"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:computeResource"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:externalResource"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:stitchingResource"/>
+    </xs:sequence>
+    <xs:attribute name="id" use="required" type="xs:string"/>
+  </xs:complexType>
+  
+  <!-- Compute Resource -->
+  <xs:element name="computeResource" type="MaxRspec:ComputeResourceContent"/>
+
+  <xs:complexType name="ComputeResourceContent">
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:computeNode"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:planetlabNodeSliver"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:eucalyptusNodeSliver"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:netFpgaNode"/>
+    </xs:sequence>
+    <xs:attribute name="id" use="required" type="xs:string"/>
+  </xs:complexType>
+  
+  <!-- computeNode -->
+  <xs:element name="computeNode" type="MaxRspec:ComputeNodeContent"/>
+
+  <xs:complexType name="ComputeNodeContent">
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
+        <xs:element minOccurs="0" name="address" type="xs:string" />
+        <xs:element minOccurs="0" name="computeCapacity" type="MaxRspec:ComputeCapacityContent" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:networkInterface"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+  </xs:complexType>
+  
+  <!-- planetlabNodeSliver 
+       This uses the same MaxRspec:ComputeNodeContent definition for now.
+       Will develop seperate MaxRspec:PlanetlabNodeSliverContent definition when needed.
+  -->
+
+  <xs:element name="planetlabNodeSliver" type="MaxRspec:ComputeNodeContent"/>
+
+  <!-- eucalyptusNodeSliver 
+       This uses the same MaxRspec:ComputeNodeContent definition for now.
+       Will develop seperate MaxRspec:EucalyptusNodeSliverContent definition when needed.
+  -->
+
+  <xs:element name="eucalyptusNodeSliver" type="MaxRspec:ComputeNodeContent"/>
+  
+  <!-- netFpgaNode -->
+  <xs:element name="netFpgaNode" type="MaxRspec:NetFpgaNodeContent"/>
+
+  <xs:complexType name="NetFpgaNodeContent">
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="lifetime" type="CtrlPlane:Lifetime"/>
+        <xs:element minOccurs="0" name="address" type="xs:string" />
+        <xs:element minOccurs="0" name="computeCapacity" type="MaxRspec:ComputeCapacityContent" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:networkInterface"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="MaxRspec:netFpgaInterface"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- computeCapacity -->
+  <xs:element name="computeCapacity" type="MaxRspec:ComputeCapacityContent" />
+
+  <xs:complexType name="ComputeCapacityContent">
+      <xs:sequence>
+        <xs:element minOccurs="0" name="cpuType" type="xs:string"/>
+        <xs:element minOccurs="0" name="cpuSpeed" type="xs:string"/>
+        <xs:element minOccurs="0" name="numCpuCores" type="xs:string"/>
+        <xs:element minOccurs="0" name="memorySize" type="xs:string"/>
+        <xs:element minOccurs="0" name="diskSize" type="xs:string"/>
+      </xs:sequence>
+  </xs:complexType>
+
+  <!-- networkInterface -->
+  <xs:element name="networkInterface" type="MaxRspec:NetworkInterfaceContent" />
+
+  <xs:complexType name="NetworkInterfaceContent">
+      <xs:sequence>
+        <xs:element minOccurs="0" name="deviceType" type="xs:string"/>
+        <xs:element minOccurs="0" name="deviceName" type="xs:string"/>
+        <xs:element minOccurs="0" name="capacity" type="xs:string"/>
+        <xs:element minOccurs="0" name="ipAddress" type="xs:string"/>
+        <xs:element minOccurs="0" name="macAddress" type="xs:string"/>
+        <xs:element minOccurs="0" name="vlanRange" type="xs:string"/>
+        <xs:element minOccurs="0" name="attachedLinkUrn" type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="peerNetworkInterface" type="xs:string"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- NetFPGA specific -->
+  <xs:element name="netFpgaCapacity" type="MaxRspec:NetFpgaCapacityContent" />
+
+  <xs:complexType name="NetFpgaCapacityContent">
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="cardId" type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="portId" type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="fpgaDesignTool" type="xs:string" />
+        <xs:element minOccurs="0" name="openFlowEnabled" type="xs:boolean" />
+      </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="netFpgaInterface" type="MaxRspec:NetFpgaInterfaceContent" />
+
+  <xs:complexType name="NetFpgaInterfaceContent">
+      <xs:sequence>
+        <xs:element minOccurs="0" name="portId" type="xs:string"/>
+        <xs:element minOccurs="0" name="status" type="xs:string"/>
+        <xs:element minOccurs="0" name="attachedLinkUrn" type="xs:string"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+  </xs:complexType>
+  
+  <xs:complexType name="UserContent">
+    <xs:attribute name="id" use="optional" type="xs:string"/>
+    <xs:attribute name="name" use="optional" type="xs:string"/>
+    <xs:attribute name="email" use="optional" type="xs:string"/>
+    <xs:attribute name="firstName" use="optional" type="xs:string"/>
+    <xs:attribute name="lastName" use="optional" type="xs:string"/>
+    <xs:attribute name="description" use="optional" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- External Resource -->
+  <xs:element name="externalResource" type="MaxRspec:externalResourceContent"/>
+
+  <xs:complexType name="externalResourceContent">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="sliceManager" type="MaxRspec:ExternalAggregateAccess"/>
+      <xs:element name="aggregateManager" type="MaxRspec:ExternalAggregateAccess"/>
+      <xs:element name="rspecData" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="id" use="required" type="xs:string"/>
+    <xs:attribute name="type" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="ExternalAggregateAccess">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="arg" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="uri" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Stitching Resource -->
+  <xs:element name="stitchingResource" type="MaxRspec:stitchingResourceContent"/>
+
+  <!-- type: 'p2pvlan' or 'stub'. A p2pvlan will need two networkInterfaceUrn and stub just one -->
+  <xs:complexType name="stitchingResourceContent">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="2" name="networkInterfaceUrn" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="externalResourceId" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="networkInterface" type="MaxRspec:NetworkInterfaceContent" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="networkInterface" type="MaxRspec:NetworkInterfaceContent" />
+    </xs:sequence>
+    <xs:attribute name="id" use="required" type="xs:string"/>
+    <xs:attribute name="type" use="required" type="xs:string"/>
+  </xs:complexType>
+
+</xs:schema>

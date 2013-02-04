@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<ns1:ListCapabilitiesResponse xmlns:ns1="http://aggregate.geni.net/services/api/">
+			<ns1:capability>
+				<ns1:name>DRAGON</ns1:name>
+				<ns1:urn>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=dragon</ns1:urn>
+				<ns1:id>1</ns1:id>
+				<ns1:description>dynamic networks provisioning capability</ns1:description>
+				<ns1:controllerURL>https://idc.dragon.maxgigapop.net:8443/axis2/services/OSCARS?wsdl</ns1:controllerURL>
+			</ns1:capability>
+			<ns1:capability>
+				<ns1:name>PlanetLab</ns1:name>
+				<ns1:urn>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=planetlab</ns1:urn>
+				<ns1:id>2</ns1:id>
+				<ns1:description>virtualized computational resources</ns1:description>
+				<ns1:controllerURL>https://max-myplc.dragon.maxgigapop.net/PLCAPI/</ns1:controllerURL>
+			</ns1:capability>
+			<ns1:capability>
+				<ns1:name>NetFPGA</ns1:name>
+				<ns1:urn>urn:ogf:geni:domain=dragon.maxgigapop.net:capability=netfpga</ns1:urn>
+				<ns1:id>3</ns1:id>
+				<ns1:description>netfpga cards</ns1:description>
+				<ns1:controllerURL>http://idc.dragon.maxgigapop.net:8443/axis2/services/NetFPGA?wsdl</ns1:controllerURL>
+			</ns1:capability>
+		</ns1:ListCapabilitiesResponse>
+	</soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,27 @@
+POST /axis2/services/AggregateGENI/ HTTP/1.1
+User-Agent: wsdlpull/1.23
+Host: 206.196.176.170:8080
+SOAPAction: "CreateSliceVlan"
+Content-Type: text/xml; charset=UTF-8
+Accept: text/xml;
+Content-Length: CONTENT_LENGTH
+
+<?xml version='1.0' encoding='UTF-8' standalone='no' ?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://aggregate.geni.net/services/api/">
+	<SOAP-ENV:Body>
+		<CreateSliceVlan xmlns="http://aggregate.geni.net/services/api/">
+			<sliceID>maxpl_xi_test2</sliceID>
+			<vlanReservation>
+				<vlan>3034</vlan>
+				<sourceNode>planetlab3.dragon.maxgigapop.net</sourceNode>
+                                <srcInterface>eth1</srcInterface>
+                                <srcIpAndMask>10.10.11.9/30</srcIpAndMask>
+				<destinationNode>geni-planetlab-1.unl.gpeni.net</destinationNode>
+                                <dstInterface>eth1</dstInterface>
+                                <dstIpAndMask>10.10.11.10/30</dstIpAndMask>
+				<bandwidth>100</bandwidth>
+				<description>VLAN3034 between MAX-planetlab3 and UNL-geni</description>
+			</vlanReservation>
+		</CreateSliceVlan>
+	</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

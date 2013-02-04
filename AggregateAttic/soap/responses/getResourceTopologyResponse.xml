@@ -1,0 +1,1419 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<ns1:GetResourceTopologyResponse xmlns:ns1="http://aggregate.geni.net/services/api/">
+			<ns1:status>normal</ns1:status>
+				<ns1:resourceTopology>
+					<ns1:statement>
+						<computeResource id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb">
+							<computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab2">
+							<plId>2</plId>
+								<networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab2:interface=eth1">
+								<deviceType>Ethernet</deviceType>
+								<deviceName>eth1</deviceName>
+								<capacity>1000Mbps</capacity>
+									<ipAddress>
+								</ipAddress>
+								<vlanRange>1001-2000</vlanRange>
+								<attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-9:link=*</attachedLinkUrn>
+							</networkInterface>
+						</computeNode>
+						<computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab3">
+							<plId>5</plId>
+								<networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab3:interface=eth1">
+								<deviceType>Ethernet</deviceType>
+								<deviceName>eth1</deviceName>
+								<capacity>1000Mbps</capacity>
+									<ipAddress>
+								</ipAddress>
+								<vlanRange>1001-2000</vlanRange>
+								<attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-0-4:link=*</attachedLinkUrn>
+							</networkInterface>
+						</computeNode>
+						<computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab4">
+							<plId>3</plId>
+								<networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab4:interface=eth1">
+								<deviceType>Ethernet</deviceType>
+								<deviceName>eth1</deviceName>
+								<capacity>1000Mbps</capacity>
+									<ipAddress>
+								</ipAddress>
+								<vlanRange>1001-2000</vlanRange>
+								<attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-0-6:link=*</attachedLinkUrn>
+							</networkInterface>
+						</computeNode>
+						<computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=planetlab5">
+							<plId>1</plId>
+								<networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=planetlab5:interface=eth1">
+								<deviceType>Ethernet</deviceType>
+								<deviceName>eth1</deviceName>
+								<capacity>1000Mbps</capacity>
+									<ipAddress>
+								</ipAddress>
+								<vlanRange>1001-2000</vlanRange>
+								<attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-5:link=*</attachedLinkUrn>
+							</networkInterface>
+						</computeNode>
+						<computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=IDC">
+							<plId>0</plId>
+								<networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=idc:interface=eth0">
+								<deviceType>Ethernet</deviceType>
+								<deviceName>eth0</deviceName>
+								<capacity>1000Mbps</capacity>
+								<ipAddress>206.196.176.151/26</ipAddress>
+								<vlanRange>1001-2000</vlanRange>
+									<attachedLinkUrn>
+								</attachedLinkUrn>
+							</networkInterface>
+						</computeNode>
+						<computeNode id="urn:ogf:geni:domain=dragon.maxgigapop.net:node=STYX">
+							<plId>0</plId>
+								<networkInterface id="urn:aggregate=geni.maxgigapop.net:rspec=physical_crdb:domain=dragon.maxgigapop.net:node=styx:interface=eth0">
+								<deviceType>Ethernet</deviceType>
+								<deviceName>eth0</deviceName>
+								<capacity>1000Mbps</capacity>
+								<ipAddress>65.114.168.198/27</ipAddress>
+								<vlanRange>1001-2000</vlanRange>
+									<attachedLinkUrn>
+								</attachedLinkUrn>
+							</networkInterface>
+						</computeNode>
+					</computeResource>
+				</ns1:statement>
+				<ns1:statement>
+					<topology id="dragon.maxgigapop.net-1212079234">
+						<domain id="urn:ogf:network:domain=dragon.maxgigapop.net">
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX">
+								<address>140.173.2.233</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-1">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-1:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-2">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-2:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-5">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-5:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-6">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-6:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-7">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-7:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-8">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-8:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-9">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-9:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-10">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-10:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-1-4">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-1-4:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-1-8">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-1-8:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-1-12">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-1-12:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-2-2">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-2-2:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-2-3">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-2-3:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-3-1">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-3-1:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-2-1">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-2-1:link=140.173.97.93">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-2-2:link=140.173.97.94</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-4">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-4:link=140.173.97.177">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX3:port=0-4-9:link=140.173.97.178</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-3">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-3:link=140.173.97.185">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-10:link=140.173.97.186</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-3-2">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-3-2:link=140.173.97.225">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAXMMLAB:port=0-0-25:link=140.173.97.226</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2">
+								<address>140.173.2.234</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-9">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-9:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-17">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-17:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-21">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-21:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-23">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-23:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-10">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-10:link=140.173.97.186">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-3:link=140.173.97.185</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-13">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX2:port=1-0-13:link=*">
+										<remoteLinkId>urn:ogf:network:domain=green.pod.lan:node=vlsr2:port=9:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX3">
+								<address>140.173.2.235</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX3:port=0-4-10">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX3:port=0-4-10:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX3:port=0-4-9">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX3:port=0-4-9:link=140.173.97.178">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-4:link=140.173.97.177</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAXMMLAB">
+								<address>140.173.2.238</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAXMMLAB:port=0-0-25">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAXMMLAB:port=0-0-25:link=140.173.97.226">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-3-2:link=140.173.97.225</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAXMMLAB:port=0-0-26">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAXMMLAB:port=0-0-26:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAXMMLAB:port=0-0-23">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MAXMMLAB:port=0-0-23:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK">
+								<address>140.173.2.232</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-0-1">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-0-1:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-0-4">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-0-4:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-0-2">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-0-2:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-12">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-12:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-3-3">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-3-3:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-3-1">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-3-1:link=140.173.97.161">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=TRC:port=1-2-1:link=140.173.97.162</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-4">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-4:link=140.173.97.145">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=22:link=140.173.97.146</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-2">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-2:link=140.173.97.153">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=21:link=140.173.97.154</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-2-3">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-2-3:link=140.173.97.109">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE:port=1-2-1:link=140.173.97.110</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-6">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-6:link=140.173.97.61">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-3:link=140.173.97.62</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-2-1">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-2-1:link=140.173.97.78">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-2-2">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-2-2:link=140.173.97.94">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-2-1:link=140.173.97.93</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-3-2">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-3-2:link=140.173.13.38">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=LAB4:port=1-2-1:link=140.173.13.37</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-8">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-8:link=140.173.97.193">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK6509:port=0-4-48:link=140.173.97.194</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK6509">
+								<address>140.173.2.236</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK6509:port=0-4-48">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK6509:port=0-4-48:link=140.173.97.194">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-8:link=140.173.97.193</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK6509:port=0-4-37">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK6509:port=0-4-37:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK6509:port=0-4-16">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK6509:port=0-4-16:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=LAB4">
+								<address>140.173.13.232</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=LAB4:port=1-0-1">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=LAB4:port=1-0-1:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=LAB4:port=1-0-3">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=LAB4:port=1-0-3:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=LAB4:port=1-1-1">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=LAB4:port=1-1-1:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=LAB4:port=1-2-1">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=LAB4:port=1-2-1:link=140.173.13.37">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-3-2:link=140.173.13.38</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=TRC">
+								<address>140.173.12.232</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=TRC:port=1-2-1">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=TRC:port=1-2-1:link=140.173.97.162">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-3-1:link=140.173.97.161</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC">
+								<address>140.173.7.232</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=5">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=5:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=6">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=6:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=18">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=18:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=19">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=19:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=20">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=20:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=22">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=22:link=140.173.97.146">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-4:link=140.173.97.145</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=21">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=GSFC:port=21:link=140.173.97.154">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-2:link=140.173.97.153</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE">
+								<address>140.173.3.232</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE:port=1-0-1">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE:port=1-0-1:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE:port=1-2-3">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE:port=1-2-3:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE:port=1-2-1">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE:port=1-2-1:link=140.173.97.110">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-2-3:link=140.173.97.109</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE:port=1-2-2">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE:port=1-2-2:link=140.173.97.118">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-3-3:link=140.173.97.117</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG">
+								<address>140.173.4.232</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-0-5">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-0-5:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-0-6">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-0-6:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-4">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-4:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-11">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-11:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-12">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-12:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-2-2">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-2-2:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-3-1">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-3-1:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-3">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-3:link=140.173.97.62">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-1-6:link=140.173.97.61</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-3-3">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-3-3:link=140.173.97.117">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=DCNE:port=1-2-2:link=140.173.97.118</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-2-1">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-2-1:link=140.173.97.70">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-3-3:link=140.173.97.69</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-2">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-2:link=140.173.97.169">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=NCSA:port=2:link=140.173.97.170</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=NCSA">
+								<address>140.173.5.232</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=NCSA:port=17">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=NCSA:port=17:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=NCSA:port=2">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=NCSA:port=2:link=140.173.97.170">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-1-2:link=140.173.97.169</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+							<node id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN">
+								<address>140.173.10.232</address>
+									<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-3">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-3:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-4">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-4:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-5">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-5:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-6">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-6:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-7">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-7:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-8">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-8:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-9">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-9:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-10">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-10:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-11">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-11:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-12">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-0-12:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-1-4">
+									<capacity>1000000000</capacity>
+									<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-1-4:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>1000000000</capacity>
+										<maximumReservableCapacity>1000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-3">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-3:link=*">
+										<remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-1:link=140.173.97.77">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-2-1:link=140.173.97.78</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-3-3">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-3-3:link=140.173.97.69">
+										<remoteLinkId>urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-2-1:link=140.173.97.70</remoteLinkId>
+										<trafficEngineeringMetric>10</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-3-1">
+									<capacity>2500000000</capacity>
+									<maximumReservableCapacity>2500000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-3-1:link=*">
+										<remoteLinkId>urn:ogf:network:domain=dcn.internet2.edu:node=WASH:port=S26367:link=10.100.80.221</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>2500000000</capacity>
+										<maximumReservableCapacity>2500000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-3-2">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-3-2:link=*">
+										<remoteLinkId>urn:ogf:network:domain=bicc-idc.hpna:node=vlsr1:port=7:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+								<port id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-2">
+									<capacity>10000000000</capacity>
+									<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+									<minimumReservableCapacity>1000000</minimumReservableCapacity>
+									<granularity>1000000</granularity>
+										<link id="urn:ogf:network:domain=dragon.maxgigapop.net:node=MCLN:port=1-2-2:link=*">
+										<remoteLinkId>urn:ogf:network:domain=protogeni.net:node=*:port=*:link=*</remoteLinkId>
+										<trafficEngineeringMetric>100</trafficEngineeringMetric>
+										<capacity>10000000000</capacity>
+										<maximumReservableCapacity>10000000000</maximumReservableCapacity>
+										<minimumReservableCapacity>1000000</minimumReservableCapacity>
+										<granularity>1000000</granularity>
+									</link>
+								</port>
+							</node>
+						</domain>
+					</topology>
+				</ns1:statement>
+			</ns1:resourceTopology>
+		</ns1:GetResourceTopologyResponse>
+	</soapenv:Body>
+</soapenv:Envelope>

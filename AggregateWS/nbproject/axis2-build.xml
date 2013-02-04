@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:axis2="http://www.netbeans.org/ns/axis2/1" xmlns:xalan="http://xml.apache.org/xslt" xmlns:j2seproject3="http://www.netbeans.org/ns/j2se-project/3">
+    <!--
+                ===================
+                JAX-WS WSIMPORT SECTION
+                ===================
+            -->
+    <target name="-wsdl2java-env-dir-" if="haveEnvDir">
+        <delete dir="${build.dir}/axis2"/>
+        <copy toDir="/tmp" overwrite="true">
+            <fileset dir="${src.dir}/net/geni/aggregate/services/api">
+                <include name="AggregateGENIMessageReceiverInOut.java"/>
+            </fileset>
+        </copy>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <arg line="-uri file:${env.AGGREGATE_HOME}/AggregateAttic/wsdl/aggregate.wsdl"/>
+            <arg line="-ss -sd"/>
+            <arg line="-s"/>
+            <arg line="-ssi"/>
+            <arg line="-sn AggregateGENI"/>
+            <arg line="-pn AggregateGENIPort"/>
+            <arg line="-p net.geni.aggregate.services.api"/>
+            <arg line="-d adb"/>
+            <arg line="-o ${build.dir}/axis2"/>
+            <classpath path="${javac.classpath}"/>
+        </java>
+        <delete file="${build.dir}/axis2/src/net/geni/aggregate/services/api/AggregateGENISkeleton.java"/>
+    </target>
+    <target name="-wsdl2java-abs-dir-" unless="haveEnvDir">
+        <delete dir="${build.dir}/axis2"/>
+        <copy toDir="/tmp" overwrite="true">
+            <fileset dir="${src.dir}/net/geni/aggregate/services/api">
+                <include name="AggregateGENIMessageReceiverInOut.java"/>
+            </fileset>
+        </copy>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <arg line="-uri file:/usr/local/geni-aggregate/AggregateAttic/wsdl/aggregate.wsdl"/>
+            <arg line="-ss -sd"/>
+            <arg line="-s"/>
+            <arg line="-ssi"/>
+            <arg line="-sn AggregateGENI"/>
+            <arg line="-pn AggregateGENIPort"/>
+            <arg line="-p net.geni.aggregate.services.api"/>
+            <arg line="-d adb"/>
+            <arg line="-o ${build.dir}/axis2"/>
+            <classpath path="${javac.classpath}"/>
+        </java>
+        <delete file="${build.dir}/axis2/src/net/geni/aggregate/services/api/AggregateGENISkeleton.java"/>
+    </target>
+    
+    <target name="wsdl2java-AggregateGENI" depends="init, -wsdl2java-env-dir-, -wsdl2java-abs-dir-">
+       <copy toDir="${src.dir}" overwrite="true">
+            <fileset dir="${build.dir}/axis2/src">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy toDir="/tmp/gen" overwrite="true">
+            <fileset dir="${src.dir}/net/geni/aggregate/services/api">
+                <include name="AggregateGENIMessageReceiverInOut.java"/>
+            </fileset>
+        </copy>
+        <copy toDir="${src.dir}/net/geni/aggregate/services/api" overwrite="true">
+            <fileset dir="/tmp">
+                <include name="AggregateGENIMessageReceiverInOut.java"/>
+            </fileset>
+        </copy>
+        <copy toDir="${build.dir}/axis2/src/net/geni/aggregate/services/api" overwrite="true">
+            <fileset dir="/tmp">
+                <include name="AggregateGENIMessageReceiverInOut.java"/>
+            </fileset>
+        </copy>
+        <delete file="${src.dir}/net/geni/aggregate/services/api/AggregateGENISkeleton.java"/>
+        <mkdir dir="${basedir}/xml-resources/axis2/META-INF"/>
+        <copy toDir="${basedir}/xml-resources/axis2/META-INF/" overwrite="true">
+            <fileset dir="${build.dir}/axis2/resources">
+                <include name="**/*.wsdl"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.xsd"/>
+            </fileset>
+        </copy>
+        <copy toDir="${basedir}/xml-resources/axis2/META-INF/" overwrite="true">
+            <fileset dir="${basedir}/../AggregateAttic/conf/repo">
+                <include name="services.xml"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="wsdl2java-refresh-AggregateGENI" depends="init, -wsdl2java-env-dir-, -wsdl2java-abs-dir-">
+        <copy toDir="${src.dir}" overwrite="true">
+            <fileset dir="${build.dir}/axis2/src">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+         <copy toDir="/tmp/gen" overwrite="true">
+            <fileset dir="${src.dir}/net/geni/aggregate/services/api">
+                <include name="AggregateGENIMessageReceiverInOut.java"/>
+            </fileset>
+        </copy>
+        <copy toDir="${src.dir}/net/geni/aggregate/services/api" overwrite="true">
+            <fileset dir="/tmp">
+                <include name="AggregateGENIMessageReceiverInOut.java"/>
+            </fileset>
+        </copy>
+        <copy toDir="${build.dir}/axis2/src/net/geni/aggregate/services/api" overwrite="true">
+            <fileset dir="/tmp">
+                <include name="AggregateGENIMessageReceiverInOut.java"/>
+            </fileset>
+        </copy>
+
+    </target>
+    <target name="wsdl2java-clean-AggregateGENI" depends="init">
+        <delete file="${basedir}/xml-resources/axis2/META-INF/AggregateGENI.wsdl"/>
+    </target>
+    <target name="axis2-aar" depends="compile">
+        <mkdir dir="${build.dir}/axis2/WEB-INF/services"/>
+        <jar destfile="${build.dir}/axis2/WEB-INF/services/${ant.project.name}.aar">
+            <fileset excludes="**/Test.class" dir="${build.dir}/classes">
+                <include name="log4j.properties"/>
+                <include name="hibernate.cfg.xml"/>
+                <include name="net/geni/aggregate/services/**/*"/>
+            </fileset>
+            <fileset dir="${basedir}/xml-resources/axis2">
+                <include name="**/*.wsdl"/>
+                <include name="**/*.xsd"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.jar"/>
+            </fileset>
+        </jar>
+    </target>
+    <target name="-deploy-lib-env-dir-" if="haveEnvDir">
+            <copy file="${build.dir}/axis2/WEB-INF/services/AggregateWS.aar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/services/AggregateWS.aar"/>
+            <copy file="${basedir}/../AggregateAttic/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
+            <copy toDir="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/lib">
+                <fileset dir="${basedir}/lib/">
+                    <include name="*.jar"/>
+                </fileset>
+            </copy>
+            <copy todir="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/classes" overwrite="true">
+                <fileset dir="${build.dir}/classes">
+                    <include name="**"/>
+                </fileset>
+            </copy>
+    </target>
+    <target name="-deploy-lib-abs-dir-" unless="haveEnvDir">
+	    <copy file="${build.dir}/axis2/WEB-INF/services/AggregateWS.aar" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/services/AggregateWS.aar"/>
+	    <copy file="${basedir}/../AggregateAttic/conf/repo/modules/rampart-SNAPSHOT.mar" tofile="/usr/local/tomcat/webapps/axis2/WEB-INF/modules/rampart-SNAPSHOT.mar"/>
+	    <copy toDir="/usr/local/tomcat/webapps/axis2/WEB-INF/lib">
+                <fileset dir="${basedir}/lib/">
+                    <include name="*.jar"/>
+                </fileset>
+            </copy>
+            <copy todir="/usr/local/tomcat/webapps/axis2/WEB-INF/classes" overwrite="true">
+                <fileset dir="${build.dir}/classes">
+                    <include name="**"/>
+                </fileset>
+            </copy>
+    </target>
+    <target name="axis2-deploy-local" depends="wsdl2java-AggregateGENI, axis2-aar, -deploy-lib-env-dir-, -deploy-lib-abs-dir-">
+            <fail message="Cannot find 'expect' executable in sytem. Please install 'expect'..." unless="haveExpect"/>
+           <!--empty-->
+    </target>
+    <target name="axis2-deploy-dir-check" depends="axis2-aar">
+        <condition property="axis2-deploy-dir-required">
+            <isset property="axis2.deploy.dir"/>
+        </condition>
+    </target>
+    <target name="axis2-deploy-dir" depends="axis2-deploy-dir-check" if="axis2-deploy-dir-required">
+        <copy toDir="${axis2.deploy.dir}/WEB-INF/services">
+            <fileset dir="${build.dir}/axis2/WEB-INF/services">
+                <include name="*.aar"/>
+            </fileset>
+        </copy>
+        <exec dir="./" executable="scp">
+            <arg line="-P52108 ${build.dir}/axis2/WEB-INF/services/AggregateWS.aar root@charon.dragon.maxgigapop.net:/usr/local/apache-tomcat-6.0.18/webapps/axis2/WEB-INF/services/"/>
+        </exec>
+    </target>
+    <target name="axis2-deploy-war-check" depends="axis2-aar">
+        <condition property="axis2-deploy-war-required">
+            <isset property="axis2.deploy.war"/>
+        </condition>
+    </target>
+    <target name="axis2-deploy-war" depends="axis2-deploy-war-check" if="axis2-deploy-war-required">
+        <jar destfile="${axis2.deploy.war}" update="true">
+            <fileset dir="${build.dir}/axis2">
+                <include name="**/*.aar"/>
+            </fileset>
+        </jar>
+    </target>
+    <target name="axis2-deploy" depends="axis2-deploy-dir, axis2-deploy-war"/>
+
+</project>

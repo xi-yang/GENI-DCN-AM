@@ -1,0 +1,125 @@
+GENI AggregateWS version 0.1
+========================
+
+DATA: March 12, 2010
+
+---------------------------------
+For users who deploy from scrach
+---------------------------------
+
+1. Prepare System for Installation
+-- Install JDK-1.5 or higher 
+
+-- Set $JAVA_HOME to jdk directory, for example
+   export JAVA_HOME /usr/local/jdk-xxx 
+
+-- Install apache-tomcat-5.5 or higher
+
+-- set $CATALINA_HOME to tomcat directory, for example
+   export CATALINA_HOME /usr/local/tomcat
+
+-- Install axis2 under $CATALINA_HOME/webapps
+   download axi2-1.4.1 or higher and unpack it
+   extract axis2.war and place it under $CATALINA_HOME/webapps
+
+-- Set $AXIS2_HOME to axis2 directory, for example
+   export AXIS2_HOME /usr/local/axis2-1.4.1
+
+-- Install MySQL server
+
+-- Intall apache-ant-1.7.1 or higher
+   download  pache-ant-1.7.1.bin.tar.gz or higher and unpack it
+   if you have an existing lower version at /usr/bin/ant, do
+      mv /usr/bin/ant /usr/bin/ant-1xx
+      ln -s /usr/local/apache-ant-1.7.1/bin/ant /usr/bin/ant
+
+2. Install the GENI AggregateWS 
+
+-- svn export svn://svn.maxgigapop.net/geni-aggregate /usr/local/geni-aggregate
+
+-- set $AGGREGATE_HOME to /usr/local/geni-aggregate
+
+-- cd $AGGREGATE_HOME/AggregateWS
+
+-- ant axis2-deploy-local
+
+3. Configure the GENI AggregateWS
+
+-- configure $AGGREGATE_HOME/AggregateAttic/conf/aggregate.properties
+   set aggregate.mysql.user and pggregate.mysql.pass
+   set aggregate.idc.url to your OSCARS IDC server
+
+-- if you choose a AGGREGATE_HOME different than /usr/local/geni-aggregate
+   update aggregate.properties: aggregate.idc.repo path
+   update $AGGREGATE_HOME/AggregateAttic/conf/repo/rampConfig.xml to set 
+   absolute path to the OSCARS.jks file
+
+-- initiate MySQL database
+   create tables and import sample data using the sql files under
+   $AGGREGATE_HOME/AggregateWS/sql
+
+-- configure WS Security
+   edit $AGGREGATE_HOME/AggregateAttic/conf/repo/services.xml to point to the path of the rampConfig.xml file this Aggregate Manager server.
+   edit the rampConfig.xml file to point to the path of the keystore file for the Aggregate Manager server. Also set the correct keystore password.
+
+-- configure authentication for IDC/OSCARS 
+   generate a certificate signing request (default keystore passphrase: password)
+
+      cd $AGGREGATE_HOME/AggregateAttic/conf/repo/
+      keytool -genkey -alias yourkeyname -keystore OSCARS.jks -keyalg rsa
+      keytool -certreq -alias yourkeyname -keystore OSCARS.jks -file ~/yourkeyname.csr
+
+   send the .csr file to IDC/OSCARS server admin for signing and ask for a user account 
+   being created and associated with this certificate. The admin will send back a signed
+   x509 key. Import that into your keystore.
+
+      keytool -import -keystore OSCARS.jks -alias yourkeyname -file ~/yourkeyname.x509.cer 
+
+   update <!ENTITY rampConfig SYSTEM "/usr/local/geni-aggregate/AggregateAttic/conf/repo/rampConfig.xml"> 
+   in $AGGREGATE_HOME/AggregateAttic/conf/repo/axis2.xml to point to correct rampConfig.xml path.
+
+   update <ramp:user> value to 'yourkeyname' in $AGGREGATE_HOME/AggregateAttic/conf/repo/rampConfig.xml
+
+-- configure authentication for PlanetLab PLC
+   configure aggregate.properties for PlanetLab PLCAPI connection following this example
+
+       aggregate.plc.url=https://max-myplc.dragon.maxgigapop.net/PLCAPI/
+       aggregate.plc.pi=PI_user_name(email)
+       aggregate.plc.pass=PI_user_password
+   
+   configure aggregate.properties for PlanetLab Server SSH connection following this example
+
+       aggregate.plc.ssh.host=max-myplc.dragon.maxgigapop.net
+       aggregate.plc.ssh.login=root
+       aggregate.plc.ssh.port=22
+       aggregate.plc.ssh.keyfile=/usr/local/geni-aggregate/AggregateAttic/conf/repo/plc-ssh.pkey
+       aggregate.plc.ssh.keypass=
+       aggregate.plc.ssh.execprefix="ssh -i /etc/planetlab/root_ssh_key.rsa "
+
+   Generate an SSH keypair.
+   Place the private key under the directory as specified by 'aggregate.plc.ssh.keyfile'.
+   Install the public key to the PLC server either under 'root' or a password-less sudoer, whose
+   name is specified by 'aggregate.plc.ssh.login'. Set keypass if needed.
+   *Note: root_ssh_key.rsa in the 'aggregate.plc.ssh.execprefix' specifies the SSH key that the PLC 
+   server uses to connect to PlanetLab nodes. Update its name and location if needed.
+
+-- prepare compute resource database (CRDB) config file
+   configure aggregate.properties for CRDB xml file path.
+
+       aggregate.crdb.path=/usr/local/geni-aggregate/AggregateAttic/conf/repo/crdb.xml
+
+   Edit the crdb.xml to reflect the actual resource manifest, including Planetlab nodes, network 
+   interfaces and users etc. under your aggregate. When used with Planetlab resources, make sure 
+   the node 'plId' and user 'id' match up with the node_id and person_id in PLC.
+
+4. Start GENI AggregateWS Services
+
+-- cd $CATALINA_HOME/bin
+
+-- ./catalina.sh stop
+
+-- ./catalina.sh start
+
+-- see logging output in $CATALINA_HOME/logs/catalina.out
+   tail -f $CATALINA_HOME/logs/catalina.out
+

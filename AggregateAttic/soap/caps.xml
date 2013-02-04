@@ -1,0 +1,16 @@
+POST /services/JetstreamNPService/ HTTP/1.1
+User-Agent: wsdlpull/1.23
+Host: 127.0.0.1:8080
+SOAPAction: "ListCapabilities"
+Content-Type: text/xml; charset=UTF-8
+Accept: text/xml;
+Content-Length: CONTENT_LENGTH
+
+<?xml version='1.0' encoding='UTF-8' standalone='no' ?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://aggregate.geni.net/services/api/">
+	<SOAP-ENV:Body>
+            <ListCapabilities xmlns="http://www.maxgigapop.net/jetstream/services/network/api/">
+			<filter>all</filter>
+		</ListCapabilities>
+	</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

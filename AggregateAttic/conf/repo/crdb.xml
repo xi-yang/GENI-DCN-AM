@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rspec id="physical_crdb">
+    <aggregate>urn:publicid:IDN+maxpl</aggregate>
+    <user id="3" name="xyang" email="xyang@east.isi.edu" firstName="Xi" lastName="Yang" role="PI" certSubject="CN=Xi Yang, OU=ISI, O=USC, L=Arlington, ST=Virginia, C=US" description="GENI Test PI User" />
+    <user id="4" name="TomLehman" email="tlehman@east.isi.edu" firstName="Tom" lastName="Lehman" role="PI" certSubject="CN=Tom Lehman, OU=ISI, O=USC, L=Arlington, ST=Virginia, C=US" description="GENI Test User"/>
+    <user id="20" name="lxue" email="lxue2@tigers.lsu.edu" firstName="Lin" lastName="Xue" role="User" certSubject="" description="LSU MAX Demo User"/>
+    <computeResource id="urn:publicid:IDN+maxpl+rspec+crdb">
+        <computeNode id="urn:publicid:IDN+maxpl+node+planetlab2.dragon.maxgigapop.net">
+            <plId>7</plId>
+            <address>206.196.176.45</address>
+            <capabilities>urn:publicid:IDN+maxpl+capability+dragon,urn:publicid:IDN+maxpl+capability+planetlab</capabilities>
+            <description>planetlab2.dragon.maxgigapop.net</description>
+            <networkInterface id="urn:publicid:IDN+maxpl+interface+planetlab2.dragon.maxgigapop.net:eth1">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress></ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-9:link=*</attachedLinkUrn>
+            </networkInterface>
+        </computeNode>
+        <computeNode id="urn:publicid:IDN+maxpl+node+planetlab3.dragon.maxgigapop.net">
+            <plId>6</plId>
+            <capabilities>urn:publicid:IDN+maxpl+capability+dragon,urn:publicid:IDN+maxpl+capability+planetlab</capabilities>
+            <description>planetlab3.dragon.maxgigapop.net</description>
+            <networkInterface id="urn:publicid:IDN+maxpl+interface+planetlab3.dragon.maxgigapop.net:eth1">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress></ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=CLPK:port=1-0-4:link=*</attachedLinkUrn>
+            </networkInterface>
+        </computeNode>
+        <computeNode id="urn:publicid:IDN+maxpl+node+planetlab4.dragon.maxgigapop.net">
+            <plId>8</plId>
+            <capabilities>urn:publicid:IDN+maxpl+capability+dragon,urn:publicid:IDN+maxpl+capability+planetlab</capabilities>
+            <description>planetlab4.dragon.maxgigapop.net</description>
+            <networkInterface id="urn:publicid:IDN+maxpl+interface+planetlab4.dragon.maxgigapop.net:eth1">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress></ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=ARLG:port=1-0-12:link=*</attachedLinkUrn>
+            </networkInterface>
+        </computeNode>
+        <computeNode id="urn:publicid:IDN+maxpl+node+planetlab5.dragon.maxgigapop.net">
+            <plId>4</plId>
+            <capabilities>urn:publicid:IDN+maxpl+capability+dragon,urn:publicid:IDN+maxpl+capability+planetlab</capabilities>
+            <description>planetlab5.dragon.maxgigapop.net</description>
+            <networkInterface id="urn:publicid:IDN+maxpl+interface+planetlab5.dragon.maxgigapop.net:eth1">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth1</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress></ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+                <attachedLinkUrn>urn:ogf:network:domain=dragon.maxgigapop.net:node=MAX:port=1-0-8:link=*</attachedLinkUrn>
+            </networkInterface>
+        </computeNode>
+        <computeNode id="urn:publicid:IDN+maxpl+node+idc.dragon.maxgigapop.net">
+            <capabilities>urn:publicid:IDN+maxpl+capability+dragon</capabilities>
+            <description>MAX-DRAGON InterDomain Controller</description>
+            <networkInterface id="urn:publicid:IDN+maxpl+interface+idc.dragon.maxgigapop.net:eth0">
+                <deviceType>Ethernet</deviceType>
+                <deviceName>eth0</deviceName>
+                <capacity>1000Mbps</capacity>
+                <ipAddress>206.196.176.151/26</ipAddress>
+                <vlanRange>1001-2000</vlanRange>
+            </networkInterface>
+        </computeNode>
+    </computeResource>
+</rspec>
+

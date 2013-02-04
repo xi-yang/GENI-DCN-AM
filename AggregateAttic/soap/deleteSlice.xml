@@ -1,0 +1,16 @@
+POST /axis2/services/AggregateGENI/ HTTP/1.1
+User-Agent: wsdlpull/1.23
+Host: 65.114.168.135:8080
+SOAPAction: "DeleteSlice"
+Content-Type: text/xml; charset=UTF-8
+Accept: text/xml;
+Content-Length: CONTENT_LENGTH
+
+<?xml version='1.0' encoding='UTF-8' standalone='no' ?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://aggregate.geni.net/services/api/">
+	<SOAP-ENV:Body>
+		<DeleteSlice xmlns="http://aggregate.geni.net/services/api/">
+			<sliceID>xi_test4</sliceID>
+		</DeleteSlice>
+	</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

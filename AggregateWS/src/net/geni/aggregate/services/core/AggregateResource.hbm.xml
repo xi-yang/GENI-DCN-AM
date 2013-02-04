@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="net.geni.aggregate.services.core.AggregateResource" table="resources">
+    <meta attribute="scope-class">public abstract</meta>
+    <id column="id" name="id">
+      <generator class="increment"></generator>
+    </id>
+    <property column="type" name="type"/>
+    <property column="rspecId" name="rspecId"/>
+    <property column="clientId" name="clientId"/>
+    <joined-subclass name="net.geni.aggregate.services.core.AggregateNode" table="nodes">
+      <key column="id"/>
+      <property column="nodeId" name="nodeId"/>
+      <property column="urn" name="urn"/>
+      <property column="address" name="address"/>
+      <property column="description" name="description"/>
+      <property column="capabilities" name="capabilities"/>
+    </joined-subclass>
+    <joined-subclass name="net.geni.aggregate.services.core.AggregateNetworkInterface" table="interfaces">
+      <key column="id"/>
+      <property column="pnid" name="pnid"/>
+      <property column="urn" name="urn"/>
+      <property column="deviceType" name="deviceType"/>
+      <property column="deviceName" name="deviceName"/>
+      <property column="capacity" name="capacity"/>
+      <property column="ipAddress" name="ipAddress"/>
+      <property column="vlanRanges" name="vlanTag"/>
+      <property column="attachedLinks" name="attachedLinkUrns"/>
+      <property column="peerInterfaces" name="peerInterfaces"/>
+    </joined-subclass>
+    <joined-subclass name="net.geni.aggregate.services.core.AggregateSlice" table="slices">
+      <key column="id"/>
+      <property column="sliceId" name="sliceId"/>
+      <property column="sliceName" name="sliceName"/>
+      <property column="url" name="url"/>
+      <property column="description" name="description"/>
+      <property column="users" name="users"/>
+      <property column="nodes" name="nodes"/>
+      <property column="creatorId" name="creatorId"/>
+      <property column="createdTime" name="createdTime"/>
+      <property column="expiredTime" name="expiredTime"/>
+      <property name="addedSlice" not-null="true" >
+        <column sql-type="BOOLEAN" not-null="true" name="addedSlice" />
+      </property>
+      <property column="status" name="status"/>
+    </joined-subclass>
+    <joined-subclass name="net.geni.aggregate.services.core.AggregateP2PVlan" table="p2pvlans">
+      <key column="id"/>
+      <property column="vlanTag" name="vtag"/>
+      <property column="sliceName" name="sliceName"/>
+      <property column="source" name="source"/>
+      <property column="destination" name="destination"/>
+      <property column="srcInterface" name="srcInterface"/>
+      <property column="dstInterface" name="dstInterface"/>
+      <property column="srcIpAndMask" name="srcIpAndMask"/>
+      <property column="dstIpAndMask" name="dstIpAndMask"/>
+      <property column="description" name="description"/>
+      <property column="bandwidth" name="bandwidth"/>
+      <property column="globalReservationId" name="gri"/>
+      <property column="status" name="status"/>
+    </joined-subclass>
+    <joined-subclass name="net.geni.aggregate.services.core.AggregateExternalResource" table="ext_resources">
+      <key column="id"/>
+      <property column="urn" name="urn"/>
+      <property column="subType" name="subType"/>
+      <property column="smUri" name="smUri"/>
+      <property column="amUri" name="amUri"/>
+      <property column="rspecData" name="rspecData"/>
+      <property column="status" name="status"/>
+    </joined-subclass>
+  </class>
+</hibernate-mapping>

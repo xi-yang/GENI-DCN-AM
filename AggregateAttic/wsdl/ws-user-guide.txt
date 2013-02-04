@@ -1,0 +1,35 @@
+This document provides explanations on using the AggregateWS services and parameters.
+These services are structured in four groups:
+  * Compute Slice Services group includes CreateSlice, DeleteSlice, QuerySlice, UpdateSlice, StartSlice and StopSlice.
+  * VLAN Networking Services group includes CreateSliceVlan, DeleteSliceVlan and QuerySliceVlan.
+  * RSpec-Based Slice Services group includes CreateSliceNetwork, DeleteSliceNetwork and QuerySliceNetwork.
+  * Resource Information and Topology Services group includes ListCapabilities, ListNodes ListSlices and GetResourceTopology.
+
+1. Compute Slice Services (Planetlab Slice only at this point)
+  The typical use case for the servics is to request a slice with CreateSlice. Parameters include sliceName, user (email, name or ID) and node names. A slice is created with a 'SUCCESSFUL' status returned or 'FAILED' when error occurs. Besides 'status', a 'message' field is also included in the response to provide extra information such as failure reasons.
+  The slice can then be modified with UpdateSlice. Parameters include sliceName, new user list, new node list and new expiration time (epoch timestamp). The slice can be terminated via DeleteSlice. Similarly, 'SUCCESSFUL' or 'FAILED' status and message fields are replied.
+  One may also query the slice details with the QuerySlice service. This service can query more than one slice at a time.
+  Example SOAP request messages for the above services are shown in createSlice.xml, updateSlice.xml, deleteSlice.xml and querySlice.xml under $AGGREGATE_HOM/AggregateAttic/soap/. Corresponding example SOAP replies messages are under $AGGREGATE_HOM/AggregateAttic/soap/responses/.
+
+2. VLAN Networking Services
+  Given a compute slice has already been created, one can add point-to-point (P2P) VLAN connection between any pair of nodes/slivers by using CreateSliceVlan. The parameters include sliceName, vlanTag, sourceNodeName, destinationNodeName. When source and/or destination interface (e.g. 'eth1') and IP address/mask are also provided, the service will configure the tagged Ethernet interface on the node/sliver (e.g. 'eth1.3000'). Note that this only works for nodes within the current aggregate. One may still be able to create a P2P VLAN across multiple aggregates, in which case no interface or IP address/mask parameter should be provided for the node(s) in a foreign aggregate.
+  One can then use QuerySliceVlan and DeleteSliceVlan to query and terminate the P2P VLAN connection. Note that the CreateSliceVlan service only returns a 'ACCEPTED' or 'FAILED' status. One has to use QuerySliceVlan service to check whether the connection is up into 'ACTIVE' status. That will take from ten seconds to a few minutes.
+  Example SOAP request messages are shown in the createSliceVlan-*.xml, deleteSliceVlan-*.xml and querySliceVlan-*.xml files.
+
+3. RSpec-Based Slice Services
+  A more GENI way to allocate resources with the Aggregate Manager is to describe the request in an RSpec description. The CreateSliceNetwork service does exaxtly that. An example SOAP request message is shown in createSliceNetwork.xml. An RSpec XML description is wrapped in the <statement></statement> element. It describes a networked compute slice that includes three Planetlab nodes/slivers and three P2P VLANs that connect them into a triangle topology. The RSpec XML description is validated against the XSD schema files under $AGGREGATE_HOM/AggregateAttic/conf/schema/.
+  Similarly one can query and terminate a RSpec slice via the QuerySliceNetwork and DeleteSliceNetwork services. The example SOAP messages are in querySliceNetwork.xml and deleteSliceNetwork.xml. Note that both CreateSliceNetwork and DeleteSliceNetwork receives instant response from the AM that only indicates whether the creation/deletion request is acceptable. One should use QuerySliceNetwork service to get the latest resource allocation states.
+
+4. Resource Information and Topology Services
+  The ListCapabilities service replies with a list of capabilities the current aggregate supports. The 'filter' parameter is not enforced. Just put a value 'all' in there. (SOAP message example: caps.xml)
+  The ListNodes serivce replies with a list of comptue nodes that have ALL the capabilities whose URNs are listed in the requset. (SOAP message example: nodes-*.xml)
+  The ListSlices service replies with a list of compute slices (Planetlab only at this point) that have been created by the aggregate. (SOAP message example: nodes-*.xml)
+  The GetResourceTopology service without a 'rspec' field returns the physical topology of the entire substrate infrastructure including both compute nodes and network topology. The 'scope' field value is set to 'all', which is the only option at this point. With a 'rspec' filed (the RSpec name that is specified by the 'id' attribute of a RSpec description), the overlay resource topology of the existing named slice is returned. 
+
+5. Fault Messages
+  For service requests that are admitted by the AM, an operation fault is indicated by a 'FAILED' value of the 'status' field in the response message.
+  For service requests that are refused by the AM, for example a duplicate request, a SOAP Fault/Exception message will be replied.
+  
+6. Recommendations
+  We recommend using  RSpec-Based Slice Services if one wants to provision a collection of compute and network resources. Only in some special cases, one may use the more atomic Compute Slice and VLAN Networking services to fulfill logic of a designated workflow. One may also use the VLAN Networking services to create and manage P2P VLAN connections between nodes in separate aggregates.
+ 
