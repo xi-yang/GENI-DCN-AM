@@ -405,7 +405,7 @@ public class AggregateRspecRunner extends Thread {
                     }
                     p2pvlan.setStartTime(startTime);
                     p2pvlan.setEndTime(endTime);
-                    p2pvlan.setDescription(rspec.getRspecName() + " stitching-resource: p2pvlan-" + p2pvlan.getSource() + "-" + p2pvlan.getDestination() + "-vlan-" + p2pvlan.getVtag());
+                    //p2pvlan.setDescription(rspec.getRspecName() + " stitching-resource: p2pvlan-" + p2pvlan.getSource() + "-" + p2pvlan.getDestination() + "-vlan-" + p2pvlan.getVtag());
                     String status = p2pvlan.setupVlan();
                     AggregateState.getAggregateP2PVlans().add(p2pvlan);
                     if (status.equalsIgnoreCase("FAILED")) {
