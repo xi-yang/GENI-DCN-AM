@@ -261,8 +261,13 @@ public class AggregateRspecManager extends Thread{
     }
 
     public synchronized String createRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice) throws AggregateException {
-        AggregateRspec aggrRspec = new AggregateRspec();
+        synchronized(rspecThreads) {
+            for (AggregateRspec rspec: aggrRspecs)
+                if (rspecId.equalsIgnoreCase(rspec.getRspecName()) && !rspec.isDeleted())
+                    throw new AggregateException("An instance for RSpec name='"+rspecId+"' has already existed!");
+        }
 
+        AggregateRspec aggrRspec = new AggregateRspec();
         //set the 1st user to the WSS policy authorized user
         if (authUser != null) { 
             List<String> users = new ArrayList<String>();
@@ -276,12 +281,6 @@ public class AggregateRspecManager extends Thread{
         if (aggrRspec.getRspecName().isEmpty() || aggrRspec.getStartTime() == 0
             || aggrRspec.getStartTime() == 0 || aggrRspec.getResources().size() == 0)
             throw new AggregateException("Rspec parsing failed!");
-
-        synchronized(rspecThreads) {
-            for (AggregateRspec rspec: aggrRspecs)
-                if (aggrRspec.getRspecName().equalsIgnoreCase(rspec.getRspecName()) && !aggrRspec.isDeleted())
-                    throw new AggregateException("An instance for RSpec name='"+rspec.getRspecName()+"' has already existed!");
-        }
 
         aggrRspec.setStatus("STARTING");
         synchronized(this) {
