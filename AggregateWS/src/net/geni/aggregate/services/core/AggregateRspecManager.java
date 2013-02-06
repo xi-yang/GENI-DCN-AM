@@ -140,7 +140,20 @@ public class AggregateRspecManager extends Thread{
                 || rspec.getStatus().contains("TERMINATED")
                 || rspec.getStatus().contains("FAILED")) {
             rspec.setDeleted(true);
-            this.updateRspec(rspec);
+            try {
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
+                session.update(rspec);
+                session.flush();
+                tx.commit();
+            } catch (Exception e) {
+                tx.rollback();
+                e.printStackTrace();
+            } finally {
+                if (session.isOpen()) {
+                    session.close();
+                }
+            }
             return;
         }
         for (int n = 0; n < rspec.getResources().size(); n++) {
