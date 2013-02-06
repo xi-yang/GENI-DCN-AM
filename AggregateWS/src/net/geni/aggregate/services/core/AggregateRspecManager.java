@@ -116,6 +116,9 @@ public class AggregateRspecManager extends Thread{
             }
             //reconstruct nodes and interfaces
             recalibrateRspecResources(aggrRspec);
+            if (aggrRspec.isDeleted()) {
+                continue;
+            }
             //start rspec runner
             AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
             synchronized (rspecThreads) {
@@ -131,8 +134,9 @@ public class AggregateRspecManager extends Thread{
         if (rspec.isDeleted()) {
             return;
         }
-        if (rspec.getStatus().equalsIgnoreCase("ROLLBACKED") 
-                || rspec.getStatus().equalsIgnoreCase("TERMINATED")) {
+        if (rspec.getStatus().contains("ROLLBACKED") 
+                || rspec.getStatus().contains("TERMINATED")
+                || rspec.getStatus().contains("FAILED")) {
             rspec.setDeleted(true);
             this.updateRspec(rspec);
             this.aggrRspecs.remove(rspec);
