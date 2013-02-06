@@ -117,6 +117,9 @@ public class AggregateRspecManager extends Thread{
             //reconstruct nodes and interfaces
             recalibrateRspecResources(aggrRspec);
             if (aggrRspec.isDeleted()) {
+                aggrRspecs.remove(aggrRspec);
+                if (aggrRspecs.isEmpty())
+                    break;
                 continue;
             }
             //start rspec runner
@@ -139,7 +142,6 @@ public class AggregateRspecManager extends Thread{
                 || rspec.getStatus().contains("FAILED")) {
             rspec.setDeleted(true);
             this.updateRspec(rspec);
-            this.aggrRspecs.remove(rspec);
             return;
         }
         for (int n = 0; n < rspec.getResources().size(); n++) {
