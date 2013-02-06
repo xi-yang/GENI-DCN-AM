@@ -393,11 +393,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             String srcVlan = getLinkVlanRange(srcLink);
             String dstVlan = getLinkVlanRange(dstLink);
             if (srcVlan.isEmpty() && !dstVlan.isEmpty())
-                stitchingP2PVlan.setVtag(srcVlan+"-any");
+                stitchingP2PVlan.setVtag(srcVlan+":any");
             else if (!srcVlan.isEmpty() && dstVlan.isEmpty())
-                stitchingP2PVlan.setVtag("any-"+dstVlan);
+                stitchingP2PVlan.setVtag("any:"+dstVlan);
             else if (!srcVlan.isEmpty() && !dstVlan.isEmpty())
-                stitchingP2PVlan.setVtag(srcVlan+"-"+dstVlan);
+                stitchingP2PVlan.setVtag(srcVlan+":"+dstVlan);
             else 
                 stitchingP2PVlan.setVtag("");
             // attach source or destination interface (device + IP)
@@ -418,7 +418,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     if (stitchingP2PVlan.getVtag().isEmpty() && netIf2.getVlanTag() != null)
                         stitchingP2PVlan.setVtag(netIf2.getVlanTag());
                     else if (netIf2.getVlanTag() != null && !netIf2.getVlanTag().isEmpty())
-                        stitchingP2PVlan.setVtag(stitchingP2PVlan.getVtag()+"-"+netIf2.getVlanTag());
+                        stitchingP2PVlan.setVtag(stitchingP2PVlan.getVtag()+":"+netIf2.getVlanTag());
                 }
             }
             if (stitchingP2PVlan.getVtag().isEmpty()) {
@@ -604,7 +604,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
             linkObj.setSliverId(String.format("%s+sliver+%s", AggregateState.getAmUrn(), sliverId));
 
-            String[] vlanTags = ppvLink.getVtag().split("-");
+            String[] vlanTags = ppvLink.getVtag().split(":");
             linkObj.setVlantag(((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?ppvLink.getVtag():vlanTags[0]));
         }
 
@@ -643,7 +643,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (ingLinkObj == null || egrLinkObj == null)
                     continue;
                 // annotate local hops
-                String[] vlanTags = ppvStitch.getVtag().split("-");
+                String[] vlanTags = ppvStitch.getVtag().split(":");
                 ingLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()));
                 egrLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()));
                 if (!ingLinkObj.getSwitchingCapabilityDescriptor().isEmpty()

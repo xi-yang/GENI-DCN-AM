@@ -450,7 +450,7 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
                         if (stitchingP2PVlan.getVtag().isEmpty())
                             stitchingP2PVlan.setVtag(netIf2.getVlanTag());
                         else 
-                            stitchingP2PVlan.setVtag(netIf1.getVlanTag() + "-" + netIf2.getVlanTag());
+                            stitchingP2PVlan.setVtag(netIf1.getVlanTag() + ":" + netIf2.getVlanTag());
                     }
                 }
             }
