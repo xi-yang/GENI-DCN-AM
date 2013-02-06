@@ -118,17 +118,19 @@ public class AggregateRspecManager extends Thread{
             if (aggrRspec.isDeleted()) {
                 log.debug(String.format("AggregateRspecManager.reloadFromDB: removing defunct instance for RSpec '%s'", aggrRspec.getRspecName()));
                 aggrRspecs.remove(aggrRspec);
-            } else {
-                //start rspec runner
-                log.debug(String.format("AggregateRspecManager.reloadFromDB: reloading instance for RSpec '%s'", aggrRspec.getRspecName()));
-                AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
-                synchronized (rspecThreads) {
-                    rspecThreads.add(rspecRunner);
-                }
-                rspecRunner.setReloaded(true);
-                rspecRunner.setPollInterval(AggregateState.getPollInterval());
-                rspecRunner.start();
+                if (aggrRspecs.isEmpty())
+                    break;
+                continue;
+            } 
+            //start rspec runner
+            log.debug(String.format("AggregateRspecManager.reloadFromDB: reloading instance for RSpec '%s'", aggrRspec.getRspecName()));
+            AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
+            synchronized (rspecThreads) {
+                rspecThreads.add(rspecRunner);
             }
+            rspecRunner.setReloaded(true);
+            rspecRunner.setPollInterval(AggregateState.getPollInterval());
+            rspecRunner.start();
         }
     }
 
