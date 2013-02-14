@@ -676,8 +676,12 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }            
         }
         rspecXml = this.marshallJaxbToString(jaxbRspec, "net.geni.www.resources.rspec._3");
+        rspecXml = rspecXml.replaceFirst("xmlns=", " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                + "xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/manifest.xsd\" xmlns=");
         if (jaxbStitch != null) {
             String stitchXml = this.marshallJaxbToString(jaxbStitch, "edu.isi.east.hpn.rspec.ext.stitch._0_1");
+            stitchXml = stitchXml.replaceFirst("xmlns=", " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                + "xsi:schemaLocation=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/ http://hpn.east.isi.edu/rspec/ext/stitch/0.1/stitch-schema.xsd\" xmlns=");
             rspecXml = rspecXml.replaceFirst("</rspec>", stitchXml+"</rspec>");
         }
         return rspecXml;
