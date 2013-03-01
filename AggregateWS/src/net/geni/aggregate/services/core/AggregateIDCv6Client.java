@@ -92,7 +92,7 @@ public class AggregateIDCv6Client {
     }
 
     private String extractXmlValueByTag(String xml, String tag) {
-        int pos1 = xml.indexOf(String.format("<%s>", tag));
+        int pos1 = xml.indexOf(String.format("<%s", tag));
         if (pos1 == -1) {
             return "";
         }
