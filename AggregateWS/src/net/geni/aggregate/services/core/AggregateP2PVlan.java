@@ -44,6 +44,7 @@ public class AggregateP2PVlan extends AggregateResource {
     long endTime = 0;
     String errMessage = "";
     String status = "";
+    boolean hasVlanOnNodes = false;
 
     private String stitchingResourceId = "";
     private String externalResourceId = "";
@@ -55,6 +56,7 @@ public class AggregateP2PVlan extends AggregateResource {
     public AggregateP2PVlan(){
         log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
         type = "p2pVlan";
+        hasVlanOnNodes = false;
     }
 
     public AggregateP2PVlan(String sl, String s, String d, String v, float b, String desc, long st, long et) {
@@ -89,6 +91,7 @@ public class AggregateP2PVlan extends AggregateResource {
         endTime = 0;
         log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
         type = "p2pVlan";
+        hasVlanOnNodes = false;
     }
 
     public void setBandwidth(float bandwidth) {
@@ -232,6 +235,14 @@ public class AggregateP2PVlan extends AggregateResource {
         this.stitchingResourceId = stitchingResourceId;
     }
 
+    public boolean hasVlanOnNodes() {
+        return hasVlanOnNodes;
+    }
+
+    public void setHasVlanOnNodes(boolean hasVlanOnNodes) {
+        this.hasVlanOnNodes = hasVlanOnNodes;
+    }
+
     /**
      * setup p2p vlan
      * @param
@@ -319,7 +330,7 @@ public class AggregateP2PVlan extends AggregateResource {
             errMessage = "OSCARSStub threw exception in cancelReservation: " +e.getMessage();
         }
 
-        if (!setVlanOnNodes(false)) {
+        if (hasVlanOnNodes && !setVlanOnNodes(false)) {
             status = "FAILED";
             errMessage += "teardownVlan failed to delete VLAN interface on source or destination node";
         }
