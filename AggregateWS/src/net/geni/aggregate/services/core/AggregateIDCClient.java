@@ -158,28 +158,25 @@ public class AggregateIDCClient {
      */
     public HashMap queryReservation(String aGri)
         throws AxisFault, AAAFaultMessage, BSSFaultMessage, RemoteException, Exception {
-
-        HashMap hmRet = new HashMap();
-        if (gri == null) {
-            hmRet.put("GRI","unknown");
-            hmRet.put("status", "FAILED");
-            return hmRet;
+        if (aGri != null && !aGri.equals("")) {
+            if (gri == null) {
+                gri = new GlobalReservationId();
+            }
+            gri.setGri(aGri);
+        } else {
+            throw new Exception("queryReservation on null or empty GRI");
         }
+	log.debug("### queryReservation GRI= "+ gri.getGri());
 
         if (v6Client != null) {
             return v6Client.requestQueryReservation(aGri);
         }
 
+        HashMap hmRet = new HashMap();
         Client client = new Client();
-
         /* Initialize client instance */
         client.setUp(true, idcURL, idcRepo);
         /* Send Request */
-        if (aGri != null && !aGri.equals(""))
-            gri.setGri(aGri);
-
-	log.debug("#### GRI= "+ gri.getGri());
-
         ResDetails response = client.queryReservation(this.gri);
         client.cleanUp();
         PathInfo pathInfo = response.getPathInfo();
