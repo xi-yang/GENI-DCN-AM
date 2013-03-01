@@ -315,6 +315,8 @@ public class AggregateUtils
     
     public static String parseVlanTag(String vlanTag, boolean getSrc) {
         String[] vtags = vlanTag.split(":");
+        if (vtags == null || vtags.length == 0)
+            return "";
         if (!getSrc && vtags.length == 2)
             return vtags[1];
         return vtags[0];
