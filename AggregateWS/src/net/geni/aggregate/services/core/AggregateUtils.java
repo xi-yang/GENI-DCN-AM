@@ -4,6 +4,7 @@
  */
 package net.geni.aggregate.services.core;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.*;
 import org.hibernate.*;
@@ -362,5 +363,11 @@ public class AggregateUtils
     public static String getAnyAttrString(Map<QName, String> attrs, String namespace, String localpart) {
         QName qname = new QName(namespace, localpart);
         return attrs.get(qname);
+    }
+    
+    public static String idcTimestampToString(long t) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date dt = new Date(t);
+        return df.format(dt);
     }
 }

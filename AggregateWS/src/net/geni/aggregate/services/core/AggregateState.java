@@ -5,15 +5,9 @@
 package net.geni.aggregate.services.core;
 
 import org.apache.log4j.*;
-import java.util.Vector;
 import java.util.Properties;
-import java.sql.Connection;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import net.geni.aggregate.services.api.AggregateWS;
 
 /**
  *
@@ -39,10 +33,19 @@ public class AggregateState
     private static String p2pvlansTab = "p2pvlans";
     private static String networksTab = "networks";
     private static String extResourcesTab = "ext_resources";
+    
     private static String idcDomainId = "";
     private static String idcTopoFile = null;
     private static String idcURL = "";
     private static String idcRepo = "";
+    private static String idcVersion = "";
+    private static String idc6ClientCommand = "";
+    private static String idc6ClientKeystore = "";
+    private static String idc6ClientKeystorePassword = "";
+    private static String idc6ClientKeystoreUser = "";
+    private static String idc6TrustKeystore = "";
+    private static String idc6TrustKeystorePassword = "";
+    
     private static String plcURL = "";
     private static String plcPI = "";
     private static String plcPassword = "";
@@ -95,6 +98,7 @@ public class AggregateState
         dbUser = aggregateProps.getProperty("aggregate.mysql.user", "geniuser");
         log.info("aggregate.mysql.user set to " + dbUser);
         dbPwd = aggregateProps.getProperty("aggregate.mysql.pass", "genipass");
+        
         idcDomainId = aggregateProps.getProperty("aggregate.idc.domainid", "all");
         log.info("aggregate.idc.domainid set to " + idcDomainId);
         idcTopoFile = aggregateProps.getProperty("aggregate.idc.topofile", null);
@@ -102,6 +106,23 @@ public class AggregateState
         log.info("aggregate.idc.url set to " + idcURL);
         idcRepo = aggregateProps.getProperty("aggregate.idc.repo", "/usr/local/geni-aggregate/AggregateAttic/conf/repo");
         log.info("aggregate.idc.repo set to " + idcRepo);
+        idcVersion = aggregateProps.getProperty("aggregate.idc.version", "0.5");
+        log.info("aggregate.idc.version set to " + idcVersion);
+        idc6ClientCommand = aggregateProps.getProperty("aggregate.idc.v6.client_command", "java -Done-jar.verbose=false -Done-jar.info=false "
+                + "-Done-jar.main.class=net.es.oscars.api.client.SimpleOSCARSClient -jar "
+                + "/usr/local/geni-aggregate/AggregateAttic/conf/repo/SimpleOSCARSClient-0.0.1-SNAPSHOT.one-jar.jar -f -");
+        log.info("aggregate.idc.v6.client_command set to " + idc6ClientCommand);
+        idc6ClientKeystore = aggregateProps.getProperty("aggregate.idc.v6.client_keystore", "/usr/local/geni-aggregate/AggregateAttic/conf/repo/oscars-client.jks");
+        log.info("aggregate.idc.v6.client_keystore set to " + idc6ClientKeystore);
+        idc6ClientKeystorePassword = aggregateProps.getProperty("aggregate.idc.v6.client_keystore_password", "password");
+        log.info("aggregate.idc.v6.client_keystore_password set to " + idc6ClientKeystorePassword);
+        idc6ClientKeystoreUser = aggregateProps.getProperty("aggregate.idc.v6.client_keystore_user", "oscarsuser");
+        log.info("aggregate.idc.v6.client_keystore_user set to " + idc6ClientKeystoreUser);
+        idc6TrustKeystore = aggregateProps.getProperty("aggregate.idc.v6.trust_keystore", "/usr/local/geni-aggregate/AggregateAttic/conf/repo/oscars-ssl.jks");
+        log.info("aggregate.idc.v6.trust_keystore set to " + idc6TrustKeystore);
+        idc6TrustKeystorePassword = aggregateProps.getProperty("aggregate.idc.v6.trust_keystore_password", "password");
+        log.info("aggregate.idc.v6.trust_keystore_password set to " + idc6TrustKeystorePassword);
+        
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         log.info("aggregate.plc.url set to " + plcURL);
         plcPI = aggregateProps.getProperty("aggregate.plc.pi", "xyang@east.isi.edu");
@@ -282,6 +303,34 @@ public class AggregateState
         return idcRepo;
     }
 
+    public static String getIdcVersion() {
+        return idcVersion;
+    }
+
+    public static String getIdc6ClientCommand() {
+        return idc6ClientCommand;
+    }
+
+    public static String getIdc6ClientKeystore() {
+        return idc6ClientKeystore;
+    }
+
+    public static String getIdc6ClientKeystorePassword() {
+        return idc6ClientKeystorePassword;
+    }
+
+    public static String getIdc6ClientKeystoreUser() {
+        return idc6ClientKeystoreUser;
+    }
+
+    public static String getIdc6TrustKeystore() {
+        return idc6TrustKeystore;
+    }
+
+    public static String getIdc6TrustKeystorePassword() {
+        return idc6TrustKeystorePassword;
+    }
+    
     public static String getPlcURL() {
         return plcURL;
     }

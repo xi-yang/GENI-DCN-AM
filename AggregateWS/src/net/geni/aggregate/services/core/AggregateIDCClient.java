@@ -32,6 +32,7 @@ public class AggregateIDCClient {
 
     private String idcURL = "";
     private String idcRepo = "";
+    private AggregateIDCv6Client v6Client= null;
     private GlobalReservationId gri = null;
     private Logger log;
 
@@ -39,6 +40,8 @@ public class AggregateIDCClient {
         idcURL = url;
         idcRepo = repo;
         gri = new GlobalReservationId();
+        if (AggregateState.getIdcVersion().equals("0.6")) 
+            v6Client = new AggregateIDCv6Client();
         log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
     }
     /**
@@ -58,6 +61,13 @@ public class AggregateIDCClient {
     public String createReservation(String src, String dst, String vtag, float bw, String descr, long startTime, long endTime)
         throws AxisFault, AAAFaultMessage, BSSFaultMessage, RemoteException, Exception {
 
+        if (v6Client != null) {
+            String resCreateYaml = v6Client.generateCreateResevationContent(src, dst, vtag, bw, descr, startTime, endTime);
+            String status = v6Client.requestCreateReservation(resCreateYaml);
+            this.gri.setGri(v6Client.getGlobalReservationId());
+            return status;
+        }
+        
         Client client = new Client();
         /* Initialize client instance */
         client.setUp(true, idcURL, idcRepo);
@@ -124,13 +134,18 @@ public class AggregateIDCClient {
         if (gri == null)
             return "FAILED";
 
+        if (!aGri.equals(""))
+            this.gri.setGri(aGri);
+        
+        if (v6Client != null) {
+            return v6Client.requestCancelReservation(aGri);
+        }
+
         Client client = new Client();
 
         /* Initialize client instance */
         client.setUp(true, idcURL, idcRepo);
         /* Send Request */
-        if (!aGri.equals(""))
-            gri.setGri(aGri);
         String status = client.cancelReservation(this.gri);
         client.cleanUp();
         /* Extract repsponse information */
@@ -149,6 +164,10 @@ public class AggregateIDCClient {
             hmRet.put("GRI","unknown");
             hmRet.put("status", "FAILED");
             return hmRet;
+        }
+
+        if (v6Client != null) {
+            return v6Client.requestQueryReservation(aGri);
         }
 
         Client client = new Client();
