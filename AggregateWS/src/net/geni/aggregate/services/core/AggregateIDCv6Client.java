@@ -207,7 +207,7 @@ public class AggregateIDCv6Client {
         createYaml += String.format("bandwidth: %d\n", (int) bw);
         createYaml += String.format("src: '%s'\n", src);
         createYaml += String.format("dst: '%s'\n", dst);
-        createYaml += String.format("description: '%s'\n", descr);
+        createYaml += String.format("description: \"%s\"\n", descr);
         createYaml += String.format("srcvlan: '%s'\n", AggregateUtils.parseVlanTag(vtag, true));
         createYaml += String.format("dstvlan: '%s'\n", AggregateUtils.parseVlanTag(vtag, false));
         createYaml += String.format("start-time: '%s'\n", AggregateUtils.idcTimestampToString(startTime));
