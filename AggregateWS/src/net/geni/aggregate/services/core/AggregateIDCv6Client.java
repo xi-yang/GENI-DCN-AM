@@ -182,7 +182,10 @@ public class AggregateIDCv6Client {
         hmRet.put("cratedTime", extractXmlValueByTag(responseXml, "ns3:cratedTime"));
         hmRet.put("bandwidth", extractXmlValueByTag(responseXml, "ns3:bandwidth"));
         hmRet.put("description", extractXmlValueByTag(responseXml, "ns3:description"));
-        hmRet.put("vlanTag", extractXmlValueByTag(responseXml, "ns3:srcVtag")+":"+extractXmlValueByTag(responseXml, "ns3:destVtag"));
+        String reservedConstraintXml = extractXmlValueByTag(responseXml, "ns3:reservedConstraint");
+        if (reservedConstraintXml != null &&  !reservedConstraintXml.isEmpty()) {
+            hmRet.put("vlanTag", extractXmlValueByTag(reservedConstraintXml, "ns3:srcVtag")+":"+extractXmlValueByTag(reservedConstraintXml, "ns3:destVtag"));
+        }
         return hmRet;
     }
 
