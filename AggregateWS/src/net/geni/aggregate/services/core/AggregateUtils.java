@@ -367,9 +367,9 @@ public class AggregateUtils
         return attrs.get(qname);
     }
     
-    public static String idcTimestampToString(long t) {
+    public static String idcSecondsToDate(long t) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date dt = new Date(t);
+        Date dt = new Date(t*1000);
         return df.format(dt);
     }
 }

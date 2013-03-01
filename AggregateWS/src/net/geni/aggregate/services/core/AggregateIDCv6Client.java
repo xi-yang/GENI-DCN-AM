@@ -122,6 +122,8 @@ public class AggregateIDCv6Client {
         }
         // Extract GRI
         this.gri = extractXmlValueByTag(responseXml, "ns3:globalReservationId");
+        if (this.gri == null || this.gri.isEmpty())
+            return "FAILED";
         // convert status v6->v5
         if (status.equalsIgnoreCase("Ok"))
             status = "ACCEPTED";
@@ -210,8 +212,8 @@ public class AggregateIDCv6Client {
         createYaml += String.format("description: \"%s\"\n", descr);
         createYaml += String.format("srcvlan: '%s'\n", AggregateUtils.parseVlanTag(vtag, true));
         createYaml += String.format("dstvlan: '%s'\n", AggregateUtils.parseVlanTag(vtag, false));
-        createYaml += String.format("start-time: '%s'\n", AggregateUtils.idcTimestampToString(startTime));
-        createYaml += String.format("end-time: '%s'\n", AggregateUtils.idcTimestampToString(endTime));
+        createYaml += String.format("start-time: '%s'\n", AggregateUtils.idcSecondsToDate(startTime));
+        createYaml += String.format("end-time: '%s'\n", AggregateUtils.idcSecondsToDate(endTime));
         createYaml += "path-setup-mode: 'timer-automatic'\n";
         createYaml += "path-type: 'strict'\n";
         return createYaml;
