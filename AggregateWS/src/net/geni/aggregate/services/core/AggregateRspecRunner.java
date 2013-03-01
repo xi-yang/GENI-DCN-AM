@@ -305,8 +305,14 @@ public class AggregateRspecRunner extends Thread {
                 if (!AggregateState.getAggregateP2PVlans().update(p2pvlan))
                     throw (new AggregateException("Cannot update P2PVlan:"+p2pvlan.getDescription()
                         +" with AggregateDB."));
-                if (!p2pvlan.getStatus().equalsIgnoreCase("ACTIVE"))
+                if (p2pvlan.getStatus().equalsIgnoreCase("ACTIVE")) {
+                    if (!p2pvlan.setVlanOnNodes(true)) {
+                        throw (new AggregateException("P2PVlan:"+p2pvlan.getDescription()
+                                + " failed to add VLAN interface on source or destination node"));
+                    }
+                } else {
                     allActive = false;
+                }
             }
         }
         if (allActive && hasP2PVlan)

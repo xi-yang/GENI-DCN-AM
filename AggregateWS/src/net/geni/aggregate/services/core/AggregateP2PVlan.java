@@ -269,6 +269,7 @@ public class AggregateP2PVlan extends AggregateResource {
             status = "FAILED";
             errMessage = "IDC_APIClient::createReservation returned null GRI.";
         }
+        /*
         else {
             if (vtag.contains("any")) {
                 //wait for 10 seconds for IDC to compute path and vlan tag
@@ -281,7 +282,7 @@ public class AggregateP2PVlan extends AggregateResource {
                 errMessage = "setupVlan FAILED to add VLAN interface on source or destination node";
             }
         }
-
+        */
         return status;
      }
 
@@ -377,7 +378,7 @@ public class AggregateP2PVlan extends AggregateResource {
         return getVlanResvResult();
      }
 
-    private boolean setVlanOnNodes(boolean add) {
+    public boolean setVlanOnNodes(boolean add) {
         //login to PLC-ssh (new AggregatePLC_SSHClient)
         AggregatePLC_SSHClient client = AggregatePLC_SSHClient.getPLCClient();
         if (srcInterface.isEmpty() && dstInterface.isEmpty()){
