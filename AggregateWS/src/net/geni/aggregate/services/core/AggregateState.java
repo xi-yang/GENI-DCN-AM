@@ -111,17 +111,18 @@ public class AggregateState
         idc6ClientCommand = aggregateProps.getProperty("aggregate.idc.v6.client_command", "java -Done-jar.verbose=false -Done-jar.info=false "
                 + "-Done-jar.main.class=net.es.oscars.api.client.SimpleOSCARSClient -jar "
                 + "/usr/local/geni-aggregate/AggregateAttic/conf/repo/SimpleOSCARSClient-0.0.1-SNAPSHOT.one-jar.jar -f -");
+        idc6ClientCommand = idc6ClientCommand.replaceAll("[\\'\\\"]", "");
         log.info("aggregate.idc.v6.client_command set to " + idc6ClientCommand);
         idc6ClientKeystore = aggregateProps.getProperty("aggregate.idc.v6.client_keystore", "/usr/local/geni-aggregate/AggregateAttic/conf/repo/oscars-client.jks");
         log.info("aggregate.idc.v6.client_keystore set to " + idc6ClientKeystore);
         idc6ClientKeystorePassword = aggregateProps.getProperty("aggregate.idc.v6.client_keystore_password", "password");
-        log.info("aggregate.idc.v6.client_keystore_password set to " + idc6ClientKeystorePassword);
+        //log.info("aggregate.idc.v6.client_keystore_password set to " + idc6ClientKeystorePassword);
         idc6ClientKeystoreUser = aggregateProps.getProperty("aggregate.idc.v6.client_keystore_user", "oscarsuser");
         log.info("aggregate.idc.v6.client_keystore_user set to " + idc6ClientKeystoreUser);
         idc6TrustKeystore = aggregateProps.getProperty("aggregate.idc.v6.trust_keystore", "/usr/local/geni-aggregate/AggregateAttic/conf/repo/oscars-ssl.jks");
         log.info("aggregate.idc.v6.trust_keystore set to " + idc6TrustKeystore);
         idc6TrustKeystorePassword = aggregateProps.getProperty("aggregate.idc.v6.trust_keystore_password", "password");
-        log.info("aggregate.idc.v6.trust_keystore_password set to " + idc6TrustKeystorePassword);
+        //log.info("aggregate.idc.v6.trust_keystore_password set to " + idc6TrustKeystorePassword);
         
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         log.info("aggregate.plc.url set to " + plcURL);

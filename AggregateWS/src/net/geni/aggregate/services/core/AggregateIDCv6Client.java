@@ -49,6 +49,8 @@ public class AggregateIDCv6Client {
             + "version:    0.6\n";
 
     private String executeShellCommandWithInput(String cmd, String yaml) throws Exception {
+        log.debug("executing IDC client command: "+cmd);
+        log.debug("sending yaml: \n"+yaml);
         Process p = null;
         ReadStream rsIn = null;
         ReadStream rsErr = null;
@@ -81,6 +83,8 @@ public class AggregateIDCv6Client {
     			}
     		}
     	}
+        log.debug("received stdin: \n"+rsIn.getString());
+        log.debug("received stderr: \n"+rsErr.getString());
         if (rsErr.getString().contains("Exception") || rsIn.getString().isEmpty()) {
             return rsErr.getString();
         }
