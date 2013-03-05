@@ -776,6 +776,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
         if (l2scInfo == null)
             return "";
+        if (l2scInfo.getSuggestedVLANRange() != null && l2scInfo.getSuggestedVLANRange().matches("[1-9]+"))
+            return l2scInfo.getSuggestedVLANRange();
         return l2scInfo.getVlanRangeAvailability();
     }
 }
