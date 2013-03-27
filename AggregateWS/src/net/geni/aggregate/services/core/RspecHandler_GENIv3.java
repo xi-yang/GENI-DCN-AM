@@ -225,7 +225,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String clientId = link.getClientId();
         String sourceId = null;
         String destId = null;
-        String descr = rspec.getRspecName() + " (client_id:'"+ clientId+"')";
+        String descr = rspec.getRspecName() + " ("+ clientId+")";
         String capacity = "1000000"; // 1Mbps by default
         String vlanTag =  AggregateUtils.getAnyAttrString(link.getOtherAttributes(), "http://hpn.east.isi.edu/rspec/ext/stitch/0.1/", "vlantag");
         List<AggregateNetworkInterface> netIfs = new ArrayList<AggregateNetworkInterface>();

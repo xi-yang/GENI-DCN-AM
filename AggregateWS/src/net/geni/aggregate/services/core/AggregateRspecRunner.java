@@ -250,7 +250,7 @@ public class AggregateRspecRunner extends Thread {
                             if (destination == null)
                                 throw (new AggregateException("Failed to setup P2PVlan to unrecorgnized dstURN: "+netIf2.getUrn()));
                             String vtag = netIf1.getVlanTag()+":"+netIf2.getVlanTag();
-                            String description = rspec.getRspecName() + String.format(" (client_id:'%s'-'%s')", netIf1.getClientId(), netIf2.getClientId());
+                            String description = rspec.getRspecName() + String.format(" (%s-%s)", netIf1.getClientId(), netIf2.getClientId());
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());
                             HashMap hmRet = new HashMap<String,String>();
                             long startTime = rspec.getStartTime();
@@ -412,12 +412,12 @@ public class AggregateRspecRunner extends Thread {
                     }
                     p2pvlan.setStartTime(startTime);
                     p2pvlan.setEndTime(endTime);
-                    p2pvlan.setDescription(rspec.getRspecName() + String.format(" (client_id:'%s')", p2pvlan.getClientId()));
+                    p2pvlan.setDescription(rspec.getRspecName() + String.format(" (%s)", p2pvlan.getClientId()));
                     String status = p2pvlan.setupVlan();
-                    AggregateState.getAggregateP2PVlans().add(p2pvlan);
                     if (status.equalsIgnoreCase("FAILED")) {
                         throw (new AggregateException("Failed to create stitching P2PVlan:" + p2pvlan.getDescription()));
                     }
+                    AggregateState.getAggregateP2PVlans().add(p2pvlan);
                     log.debug("end - creating stitching p2pvlan: " + p2pvlan.getDescription());
                 }
             }
