@@ -415,7 +415,7 @@ public class AggregateRspecRunner extends Thread {
                     p2pvlan.setDescription(rspec.getRspecName() + String.format(" (%s)", p2pvlan.getClientId()));
                     String status = p2pvlan.setupVlan();
                     if (status.equalsIgnoreCase("FAILED")) {
-                        throw (new AggregateException("Failed to create stitching P2PVlan:" + p2pvlan.getDescription()));
+                        throw (new AggregateException(String.format("Failed to create stitching P2PVlan:%s due to %s.", p2pvlan.getDescription(), p2pvlan.getErrorMessage())));
                     }
                     AggregateState.getAggregateP2PVlans().add(p2pvlan);
                     log.debug("end - creating stitching p2pvlan: " + p2pvlan.getDescription());
