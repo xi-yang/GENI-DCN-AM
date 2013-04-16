@@ -618,8 +618,22 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         break;
                     }
                 }
-                if (ppvStitch == null)
+                if (ppvStitch == null) {
                     continue;
+                }
+                // set lifetime to circuit lifetime
+                Lifetime lft = new Lifetime();
+                lft.setId(ppvStitch.getGri());
+                TimeContent start = new TimeContent();
+                start.setType("xgc");
+                start.setValue(Long.toString(ppvStitch.getStartTime()));
+                lft.setStart(start);
+                TimeContent end = new TimeContent();
+                end.setType("xgc");
+                end.setValue(Long.toString(ppvStitch.getStartTime()));
+                lft.setEnd(end);
+                pathObj.setLifetime(lft);
+                // set globalId to GRI
                 if (ppvStitch.getGri() != null && !ppvStitch.getGri().isEmpty()) {
                     pathObj.setGlobalId(ppvStitch.getGri());
                 }
