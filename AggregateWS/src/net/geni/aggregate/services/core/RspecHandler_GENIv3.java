@@ -509,16 +509,21 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             return generateAdvertisementRspec(rspec);
         }
         Date dateNow = new Date();
+        Date dateCreated = new Date(rspec.getStartTime() * 1000);
         Date dateExpires = new Date(rspec.getEndTime() * 1000);
         GregorianCalendar c0 = new GregorianCalendar();
         c0.setTime(dateNow);
         GregorianCalendar c1 = new GregorianCalendar();
+        c1.setTime(dateCreated);
+        GregorianCalendar c2 = new GregorianCalendar();
         c1.setTime(dateExpires);
         XMLGregorianCalendar xgcGenerated = null;
+        XMLGregorianCalendar xgcCreated = null;
         XMLGregorianCalendar xgcExpires = null;
         try {
             xgcGenerated = DatatypeFactory.newInstance().newXMLGregorianCalendar(c0);
-            xgcExpires = DatatypeFactory.newInstance().newXMLGregorianCalendar(c1);
+            xgcCreated = DatatypeFactory.newInstance().newXMLGregorianCalendar(c1);
+            xgcExpires = DatatypeFactory.newInstance().newXMLGregorianCalendar(c2);
         } catch (Exception e) {
             throw new AggregateException("RspecHandler_GENIv3.generateRspecManifest error: " + e.getMessage());
         }
@@ -626,11 +631,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 lft.setId(ppvStitch.getGri());
                 TimeContent start = new TimeContent();
                 start.setType("xgc");
-                start.setValue(Long.toString(ppvStitch.getStartTime()));
+                start.setValue(xgcCreated.toString());
                 lft.setStart(start);
                 TimeContent end = new TimeContent();
                 end.setType("xgc");
-                end.setValue(Long.toString(ppvStitch.getStartTime()));
+                end.setValue(xgcExpires.toString());
                 lft.setEnd(end);
                 pathObj.setLifetime(lft);
                 // set globalId to GRI
