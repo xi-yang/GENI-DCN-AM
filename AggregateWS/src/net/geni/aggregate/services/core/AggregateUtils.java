@@ -308,7 +308,8 @@ public class AggregateUtils
             else if (m.equalsIgnoreCase("b"))
                 ret /= 1000000;
         } else {
-            ret = Float.valueOf(bwString)/1000000;
+            // default unit is kbps
+            ret = Float.valueOf(bwString)/1000;
         }            
         return ret;
     }

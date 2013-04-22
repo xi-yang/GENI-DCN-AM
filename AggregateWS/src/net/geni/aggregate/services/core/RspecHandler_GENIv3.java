@@ -226,7 +226,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String sourceId = null;
         String destId = null;
         String descr = rspec.getRspecName() + " ("+ clientId+")";
-        String capacity = "1000000"; // 1Mbps by default
+        String capacity = "1000"; // 1Mbps by default
         String vlanTag =  AggregateUtils.getAnyAttrString(link.getOtherAttributes(), "http://hpn.east.isi.edu/rspec/ext/stitch/0.1/", "vlantag");
         List<AggregateNetworkInterface> netIfs = new ArrayList<AggregateNetworkInterface>();
         List<String> externalUrns = new ArrayList<String>(); 
@@ -321,7 +321,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 AggregateP2PVlan explicitP2PVlan = new AggregateP2PVlan();
                 explicitP2PVlan.setSource(AggregateUtils.getIDCQualifiedUrn(sourceId));
                 explicitP2PVlan.setDestination(AggregateUtils.getIDCQualifiedUrn(destId));
-                explicitP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(capacity));//50M by default
+                explicitP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(capacity));
                 explicitP2PVlan.setVtag(vlanTag);
                 if (hasSourceIf) {
                     explicitP2PVlan.setSrcInterface(netIfs.get(0).getDeviceName());
