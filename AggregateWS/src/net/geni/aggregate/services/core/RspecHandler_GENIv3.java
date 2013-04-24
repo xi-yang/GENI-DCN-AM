@@ -663,8 +663,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     continue;
                 // annotate local hops
                 String[] vlanTags = ppvStitch.getVtag().split(":");
-                ingLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()));
-                egrLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()));
+                ingLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()*1000)); // convert mbps to kbps unit
+                egrLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()*1000)); // convert mbps to kbps unit
                 if (!ingLinkObj.getSwitchingCapabilityDescriptor().isEmpty()
                     && ingLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo() != null
                     && ingLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc() != null
