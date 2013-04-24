@@ -186,8 +186,13 @@ public class AggregateIDCv6Client {
         if (reservedConstraintXml != null &&  !reservedConstraintXml.isEmpty()) {
             hmRet.put("vlanTag", extractXmlValueByTag(reservedConstraintXml, "ns3:srcVtag")+":"+extractXmlValueByTag(reservedConstraintXml, "ns3:destVtag"));
         }
-        // TODO: extract the first occurence of <ns3:errorReport>[<ns5:errorCode>;<ns5:errorMsg>;<ns5:moduleName>;<ns5:transId>]
-        // put into "errMessage"
+        String errReport1Xml = extractXmlValueByTag(responseXml, "ns3:errorReport");
+        if (errReport1Xml != null &&  !errReport1Xml.isEmpty()) {
+            String errCode = extractXmlValueByTag(errReport1Xml, "ns5:errorCode");
+            String errModule = extractXmlValueByTag(errReport1Xml, "ns5:moduleName");
+            String errMessage = extractXmlValueByTag(errReport1Xml, "ns5:errorMsg");
+            hmRet.put("errMessage", String.format("code:%s, module:%s, msg:%s", errCode, errModule, errMessage));
+        }
         return hmRet;
     }
 

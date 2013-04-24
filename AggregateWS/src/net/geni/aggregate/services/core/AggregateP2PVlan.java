@@ -373,6 +373,9 @@ public class AggregateP2PVlan extends AggregateResource {
             hmRet = apiClient.queryReservation(gri);
             status = hmRet.get("status").toString();
             vtag = hmRet.get("vlanTag").toString();
+            if (hmRet.get("errMessage") != null) {
+                errMessage = hmRet.get("errMessage").toString();
+            }
         }
         catch (AxisFault e) {
             errMessage = "AxisFault from queryReservation: " +e.getMessage();
