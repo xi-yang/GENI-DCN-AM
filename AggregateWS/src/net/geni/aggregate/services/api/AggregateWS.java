@@ -22,6 +22,7 @@ import net.geni.aggregate.services.core.AggregateP2PVlan;
 import net.geni.aggregate.services.core.AggregateP2PVlans;
 import net.geni.aggregate.services.core.AggregatePLC_APIClient;
 import net.geni.aggregate.services.core.AggregateSlices;
+import net.geni.aggregate.services.core.AggregateStitchTopologyRunner;
 import net.geni.aggregate.services.core.AggregateUser;
 import net.geni.aggregate.services.core.AggregateUtils;
 import net.geni.aggregate.services.core.HibernateUtil;
@@ -234,16 +235,15 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             return;
         }
 
-        // Web Services handnling thread
-        /*
-        aggregateWSRunner = new AggregateWSRunner();
-        aggregateServerThread = new Thread(aggregateWSRunner);
-        aggregateServerThread.start();
-        */
         // Rspec manager thread
         AggregateRspecManager aggregateRspecManager = new AggregateRspecManager();
         aggregateRspecManager.start();
         AggregateState.setRspecManager(aggregateRspecManager);
+
+        // Ad Rspec stitching topology thread
+        AggregateStitchTopologyRunner stitchTopoRunner = new AggregateStitchTopologyRunner();
+        stitchTopoRunner.start();
+        AggregateState.setStitchTopoRunner(stitchTopoRunner);
         
         // PLC polling and DB sync thread
         AggregateSlicesPoller aggregateSlicesPoller = new AggregateSlicesPoller();

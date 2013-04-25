@@ -238,6 +238,7 @@ public class AggregateRspecManager extends Thread{
     public void run() {
         loadCRDB();
         reloadFromDB();
+
         goRun = true;
         while (goRun) {
             //polling rspecThreads and rspecRspecs for status change
@@ -432,40 +433,7 @@ public class AggregateRspecManager extends Thread{
             }
             //get nework topology
             if (scope.equalsIgnoreCase("all") || scope.contains("network")) {
-                boolean gotTopoFromFile = false;
-                if (AggregateState.getIdcTopoFile() != null && !AggregateState.getIdcTopoFile().isEmpty()) {
-                    try {
-                        int ch;
-                        FileInputStream in = new FileInputStream(AggregateState.getIdcTopoFile());
-                        while( (ch = in.read()) != -1)
-                            networkTopology += ((char)ch);
-                        in.close();
-                        gotTopoFromFile = true;
-                    } catch (IOException e) {
-                        ; // no op
-                    }
-                }
-                if (!gotTopoFromFile) {
-                    AggregateIDCClient client = AggregateIDCClient.getIDCClient();
-                    String errMessage = null;
-                    String domainId = AggregateState.getIdcDomainId();
-                    try {
-                        networkTopology = client.retrieveNetworkTopology(domainId);
-                    } catch (AxisFault e) {
-                        errMessage = "AxisFault from queryReservation: " + e.getMessage();
-                    } catch (AAAFaultMessage e) {
-                        errMessage = "AAAFaultMessage from queryReservation: " + e.getFaultMessage().getMsg();
-                    } catch (BSSFaultMessage e) {
-                        errMessage = "BSSFaultMessage from queryReservation: " + e.getFaultMessage().getMsg();
-                    } catch (java.rmi.RemoteException e) {
-                        errMessage = "RemoteException returned from queryReservation: " + e.getMessage();
-                    } catch (Exception e) {
-                        errMessage = "OSCARSStub threw exception in queryReservation: " + e.getMessage();
-                    }
-                    if (errMessage != null) {
-                        throw new AggregateException(errMessage);
-                    }
-                }
+                networkTopology = AggregateState.getStitchTopoRunner().getStitchXml();
                 if (networkTopology != null && !networkTopology.isEmpty()) {
                     len++;
                 }

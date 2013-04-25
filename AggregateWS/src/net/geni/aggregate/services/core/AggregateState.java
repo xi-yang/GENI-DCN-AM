@@ -75,6 +75,7 @@ public class AggregateState
     private static AggregateRspecManager aggregateRspecManager = null;
     private static AggregateRspecHandler aggregateRspecHandler = null;
     private static AggregateSlicesPoller aggregateSlicesPoller = null;
+    private static AggregateStitchTopologyRunner stitchTopoRunner = null;
     private static final int pollInterval = 60000; //miliseconds
 
     public static void init() {
@@ -190,6 +191,14 @@ public class AggregateState
 
     public static AggregateSlicesPoller getSlicesPoller() {
         return aggregateSlicesPoller;
+    }
+
+    public static AggregateStitchTopologyRunner getStitchTopoRunner() {
+        return stitchTopoRunner;
+    }
+
+    public static void setStitchTopoRunner(AggregateStitchTopologyRunner stitchTopoRunner) {
+        AggregateState.stitchTopoRunner = stitchTopoRunner;
     }
 
     public static void setRspecManager(AggregateRspecManager rspecMan) {

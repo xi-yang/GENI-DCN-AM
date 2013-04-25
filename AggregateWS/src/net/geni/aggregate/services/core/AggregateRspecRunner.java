@@ -10,7 +10,7 @@ import org.apache.log4j.*;
 
 /**
  *
- * @author root
+ * @author Xi Yang
  */
 public class AggregateRspecRunner extends Thread {
     private volatile boolean goRun = true;

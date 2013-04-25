@@ -314,6 +314,12 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (AggregateUtils.isDcnUrn(sourceId)) {
                 verifySrcUrn = AggregateUtils.convertDcnToGeniUrn(sourceId);
             }
+            if (!AggregateState.getStitchTopoRunner().isValidEndPoint(sourceId)) {
+                throw new AggregateException(String.format("Source link '%s' is not valid end point - check the Ad RSpec", sourceId));
+            }
+            if (!AggregateState.getStitchTopoRunner().isValidEndPoint(destId)) {
+                throw new AggregateException(String.format("Destination link '%s' is not valid end point - check the Ad RSpec", destId));
+            }
             // create VLAN link only if the link has a local sourceId urn
             if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
                 //create implicit stitching p2pvlan 
@@ -384,7 +390,13 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             } else {
                 destination = AggregateUtils.convertGeniToDcnUrn(dstLink.getId());
             }
-            //create p2pvlan
+            if (!AggregateState.getStitchTopoRunner().isValidEndPoint(source)) {
+                throw new AggregateException(String.format("Source link '%s' is not valid end point - check the Ad RSpec", source));
+            }
+            if (!AggregateState.getStitchTopoRunner().isValidEndPoint(destination)) {
+                throw new AggregateException(String.format("Destination link '%s' is not valid end point - check the Ad RSpec", destination));
+            }
+            //create p2pvlan1
             AggregateP2PVlan stitchingP2PVlan = new AggregateP2PVlan();
             float bandwidth = AggregateUtils.convertBandwdithToMbps(srcLink.getCapacity());
             stitchingP2PVlan.setSource(source);
