@@ -191,7 +191,7 @@ public class AggregateIDCv6Client {
             String errCode = extractXmlValueByTag(errReport1Xml, "ns5:errorCode");
             String errModule = extractXmlValueByTag(errReport1Xml, "ns5:moduleName");
             String errMessage = extractXmlValueByTag(errReport1Xml, "ns5:errorMsg");
-            hmRet.put("errMessage", String.format("code:%s, module:%s, msg:%s", errCode, errModule, errMessage));
+            hmRet.put("errMessage", String.format("%s(%s): '%s'", errModule, errCode, errMessage));
         }
         return hmRet;
     }

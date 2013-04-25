@@ -266,7 +266,7 @@ public class AggregateSlices {
                 slice.setDescription(descr);
                 slice.setStatus("active");
             } else {
-                slice.setStatus("unknown");
+                slice.setStatus("UNKNOWN");
             }
             this.update(slice);
         }

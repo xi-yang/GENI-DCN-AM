@@ -367,7 +367,7 @@ public class AggregateP2PVlan extends AggregateResource {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         HashMap hmRet = new HashMap();
-        status = "unknown";
+        status = "UNKNOWN";
         hmRet.put("status", status);
         try {
             hmRet = apiClient.queryReservation(gri);
