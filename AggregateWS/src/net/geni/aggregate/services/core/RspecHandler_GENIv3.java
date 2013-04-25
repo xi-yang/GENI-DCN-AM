@@ -314,11 +314,16 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (AggregateUtils.isDcnUrn(sourceId)) {
                 verifySrcUrn = AggregateUtils.convertDcnToGeniUrn(sourceId);
             }
-            if (!AggregateState.getStitchTopoRunner().isValidEndPoint(sourceId)) {
-                throw new AggregateException(String.format("Source link '%s' is not valid end point - check the Ad RSpec", sourceId));
+            String verifyDstUrn = destId;
+            if (AggregateUtils.isDcnUrn(destId)) {
+                verifyDstUrn = AggregateUtils.convertDcnToGeniUrn(destId);
             }
-            if (!AggregateState.getStitchTopoRunner().isValidEndPoint(destId)) {
-                throw new AggregateException(String.format("Destination link '%s' is not valid end point - check the Ad RSpec", destId));
+            //make sure local urn is allowd by Ad RSpec
+            if (verifySrcUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
+                throw new AggregateException(String.format("Source '%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+            }
+            if (verifyDstUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
+                throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
             }
             // create VLAN link only if the link has a local sourceId urn
             if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
@@ -390,11 +395,20 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             } else {
                 destination = AggregateUtils.convertGeniToDcnUrn(dstLink.getId());
             }
-            if (!AggregateState.getStitchTopoRunner().isValidEndPoint(source)) {
-                throw new AggregateException(String.format("Source link '%s' is not valid end point - check the Ad RSpec", source));
+            //make sure local urn is allowd by Ad RSpec
+            String verifySrcUrn = source;
+            if (AggregateUtils.isDcnUrn(source)) {
+                verifySrcUrn = AggregateUtils.convertDcnToGeniUrn(source);
             }
-            if (!AggregateState.getStitchTopoRunner().isValidEndPoint(destination)) {
-                throw new AggregateException(String.format("Destination link '%s' is not valid end point - check the Ad RSpec", destination));
+            String verifyDstUrn = destination;
+            if (AggregateUtils.isDcnUrn(destination)) {
+                verifyDstUrn = AggregateUtils.convertDcnToGeniUrn(destination);
+            }
+            if (verifySrcUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
+                throw new AggregateException(String.format("Source '%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+            }
+            if (verifyDstUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
+                throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
             }
             //create p2pvlan1
             AggregateP2PVlan stitchingP2PVlan = new AggregateP2PVlan();
