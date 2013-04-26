@@ -80,10 +80,13 @@ public class AggregateStitchTopologyRunner extends Thread {
                 return;
             }
             try {
+                StitchContent stitchObj = new JAXBHelper<StitchContent>(StitchContent.class).partialUnmarshal(stitchXml);
+                /*
                 StringReader reader = new StringReader(stitchXml);
                 JAXBContext jc = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_1");
                 JAXBElement<StitchContent> jaxbStitch = (JAXBElement<StitchContent>) jc.createUnmarshaller().unmarshal(reader);
                 stitchObj = jaxbStitch.getValue();
+                */
             } catch (Exception e) {
                 log.warn("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
             }
@@ -122,6 +125,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 // check if AggregateState.getIdcTopoFile() has been updated
                 File topoFile = new File(AggregateState.getIdcTopoFile());
                 if (topoFile.lastModified() > lastModified) {
+                    log.info("stitch topology file updated - reload now");
                     lastModified = topoFile.lastModified();
                     loadStitchTopologyFile();
                 }
