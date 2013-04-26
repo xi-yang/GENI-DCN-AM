@@ -308,7 +308,7 @@ public class AggregateP2PVlan extends AggregateResource {
         try {
             HashMap hmRet = apiClient.queryReservation(gri);
             status = hmRet.get("status").toString();
-            if (status.equals("CANCELLED") || status.equals("FAILED") || status.equals("INTEARDOWN")) {
+            if (status.equals("CANCELLED") || status.equals("FAILED") || status.equals("UNKNOWN") || status.equals("INTEARDOWN")) {
                 return status;
             }
             status = "FAILED";
