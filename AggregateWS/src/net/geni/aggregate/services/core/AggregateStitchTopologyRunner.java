@@ -51,19 +51,27 @@ public class AggregateStitchTopologyRunner extends Thread {
     }
 
     public String getStitchXml() {
-        return stitchXml;
+        synchronized(this) {
+            return stitchXml;
+        }
     }
 
     public void setStitchXml(String stitchXml) {
-        this.stitchXml = stitchXml;
+        synchronized(this) {
+            this.stitchXml = stitchXml;
+        }
     }
 
     public StitchContent getStitchObj() {
-        return stitchObj;
+        synchronized(this) {
+            return stitchObj;
+        }
     }
 
     public void setStitchObj(StitchContent stitchObj) {
-        this.stitchObj = stitchObj;
+        synchronized(this) {
+            this.stitchObj = stitchObj;
+        }
     }
 
     private void loadStitchTopologyFile() {
@@ -71,9 +79,9 @@ public class AggregateStitchTopologyRunner extends Thread {
             try {
                 int ch;
                 FileInputStream in = new FileInputStream(AggregateState.getIdcTopoFile());
-                stitchXml = "";
+                this.stitchXml = "";
                 while ((ch = in.read()) != -1) {
-                    stitchXml += ((char) ch);
+                    this.stitchXml += ((char) ch);
                 }
                 in.close();
             } catch (IOException e) {
@@ -81,13 +89,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 return;
             }
             try {
-                StitchContent stitchObj = new JAXBHelper<StitchContent>(StitchContent.class).partialUnmarshal(stitchXml);
-                /*
-                StringReader reader = new StringReader(stitchXml);
-                JAXBContext jc = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_1");
-                JAXBElement<StitchContent> jaxbStitch = (JAXBElement<StitchContent>) jc.createUnmarshaller().unmarshal(reader);
-                stitchObj = jaxbStitch.getValue();
-                */
+                this.stitchObj = new JAXBHelper<StitchContent>(StitchContent.class).partialUnmarshal(stitchXml);
             } catch (Exception e) {
                 log.warn("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
             }

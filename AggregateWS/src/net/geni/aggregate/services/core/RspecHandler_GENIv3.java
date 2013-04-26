@@ -320,10 +320,12 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
             //make sure local urn is allowd by Ad RSpec
             if (verifySrcUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
-                throw new AggregateException(String.format("Source '%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
             }
             if (verifyDstUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
-                throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+                log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+                throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
             }
             // create VLAN link only if the link has a local sourceId urn
             if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
@@ -405,9 +407,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 verifyDstUrn = AggregateUtils.convertDcnToGeniUrn(destination);
             }
             if (verifySrcUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
-                throw new AggregateException(String.format("Source '%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
             }
             if (verifyDstUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
+                log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
                 throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
             }
             //create p2pvlan1
