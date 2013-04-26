@@ -71,6 +71,7 @@ public class AggregateStitchTopologyRunner extends Thread {
             try {
                 int ch;
                 FileInputStream in = new FileInputStream(AggregateState.getIdcTopoFile());
+                stitchXml = "";
                 while ((ch = in.read()) != -1) {
                     stitchXml += ((char) ch);
                 }
