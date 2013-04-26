@@ -299,7 +299,7 @@ public class AggregateRspecRunner extends Thread {
                 log.debug("polling p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
                 p2pvlan.queryVlan();
                 log.debug("polled p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
-                if (p2pvlan.getStatus().equalsIgnoreCase("FAILED"))
+                if (p2pvlan.getStatus().equalsIgnoreCase("FAILED") || p2pvlan.getStatus().equalsIgnoreCase("UNKNOWN"))
                     throw (new AggregateException("P2PVlan:"+p2pvlan.getDescription()
                         +" creation failed."));
                 if (!AggregateState.getAggregateP2PVlans().update(p2pvlan))
