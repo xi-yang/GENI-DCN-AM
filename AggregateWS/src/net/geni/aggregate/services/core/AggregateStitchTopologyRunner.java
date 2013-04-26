@@ -90,6 +90,9 @@ public class AggregateStitchTopologyRunner extends Thread {
             }
             try {
                 this.stitchObj = new JAXBHelper<StitchContent>(StitchContent.class).partialUnmarshal(stitchXml);
+                if (this.stitchObj == null || this.stitchObj.getAggregate().size() == 0) {
+                    log.warn(String.format("malformed stitch topology file '%s' - make sure there is xmlns property in <stitching>"));
+                }
             } catch (Exception e) {
                 log.warn("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
             }
