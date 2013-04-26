@@ -376,17 +376,21 @@ public class AggregateP2PVlan extends AggregateResource {
             if (hmRet.get("errMessage") != null) {
                 errMessage = hmRet.get("errMessage").toString();
             }
-        }
-        catch (AxisFault e) {
-            errMessage = "AxisFault from queryReservation: " +e.getMessage();
+        } catch (AxisFault e) {
+            if (errMessage.isEmpty())
+                errMessage = "AxisFault from queryReservation: " +e.getMessage();
         } catch (AAAFaultMessage e) {
-            errMessage = "AAAFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
+            if (errMessage.isEmpty())
+                errMessage = "AAAFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
         } catch (BSSFaultMessage e) {
-            errMessage = "BSSFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
+            if (errMessage.isEmpty())
+                errMessage = "BSSFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
         } catch (java.rmi.RemoteException e) {
-            errMessage = "RemoteException returned from queryReservation: " +e.getMessage();
+            if (errMessage.isEmpty())
+                errMessage = "RemoteException returned from queryReservation: " +e.getMessage();
         } catch (Exception e) {
-            errMessage = "OSCARSStub threw exception in queryReservation: " +e.getMessage();
+            if (errMessage.isEmpty())
+                errMessage = "OSCARSStub threw exception in queryReservation: " +e.getMessage();
         }
 
         return getVlanResvResult();
