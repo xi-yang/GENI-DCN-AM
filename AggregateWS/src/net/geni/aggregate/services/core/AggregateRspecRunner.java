@@ -297,9 +297,14 @@ public class AggregateRspecRunner extends Thread {
                 AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(i);
                 hasP2PVlan = true;
                 log.debug("polling p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
+                String lastStatus = p2pvlan.getStatus();
                 p2pvlan.queryVlan();
+                if (lastStatus.equalsIgnoreCase("UNKNOWN") && p2pvlan.getStatus().equalsIgnoreCase("UNKNOWN")) {
+                     // VLAN circuit is considered failed if staying in UNKNOWN twice
+                    p2pvlan.setStatus("FAILED");
+                }
                 log.debug("polled p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
-                if (p2pvlan.getStatus().equalsIgnoreCase("FAILED") || p2pvlan.getStatus().equalsIgnoreCase("UNKNOWN"))
+                if (p2pvlan.getStatus().equalsIgnoreCase("FAILED"))
                     throw (new AggregateException("P2PVlan:"+p2pvlan.getDescription()
                         +" creation failed."));
                 if (!AggregateState.getAggregateP2PVlans().update(p2pvlan))
