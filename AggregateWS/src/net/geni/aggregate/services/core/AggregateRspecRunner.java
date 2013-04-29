@@ -300,7 +300,7 @@ public class AggregateRspecRunner extends Thread {
                 String lastStatus = p2pvlan.getStatus();
                 p2pvlan.queryVlan();
                 if (lastStatus.equalsIgnoreCase("UNKNOWN") && p2pvlan.getStatus().equalsIgnoreCase("UNKNOWN")) {
-                     // VLAN circuit is considered failed if staying in UNKNOWN twice
+                    // VLAN circuit is considered failed if staying in UNKNOWN twice
                     p2pvlan.setStatus("FAILED");
                 }
                 log.debug("polled p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
