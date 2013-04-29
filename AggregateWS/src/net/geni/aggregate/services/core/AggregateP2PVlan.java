@@ -367,7 +367,7 @@ public class AggregateP2PVlan extends AggregateResource {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         HashMap hmRet = new HashMap();
-        status = "UNKNOWN";
+        status = "FAILED";
         hmRet.put("status", status);
         try {
             hmRet = apiClient.queryReservation(gri);
@@ -375,6 +375,12 @@ public class AggregateP2PVlan extends AggregateResource {
             vtag = hmRet.get("vlanTag").toString();
             if (hmRet.get("errMessage") != null) {
                 errMessage = hmRet.get("errMessage").toString();
+            }
+            if (status.equals("unknown")) {
+                status = "UNKNOWN";
+                if (errMessage.isEmpty()) {
+                    errMessage = "VLAN circuit in unknown status";
+                }
             }
         } catch (AxisFault e) {
             if (errMessage.isEmpty())
