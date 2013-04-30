@@ -426,7 +426,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
                     throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
                 }
-                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifySrcUrn, (long)srcBandwidth*1000000)) {
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifySrcUrn, srcBandwidth)) {
                     log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", srcLink.getCapacity(), verifySrcUrn));
                     throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", srcLink.getCapacity(), verifySrcUrn));
                 }
@@ -436,7 +436,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
                     throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
                 }
-                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifyDstUrn, (long)dstBandwidth*1000000)) {
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifyDstUrn, dstBandwidth)) {
                     log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", dstLink.getCapacity(), verifyDstUrn));
                     throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", dstLink.getCapacity(), verifyDstUrn));
                 }

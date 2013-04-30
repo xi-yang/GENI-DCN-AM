@@ -293,6 +293,7 @@ public class AggregateUtils
         return aStr.substring(start, end);
     }
 
+    // default bw unit in kbps
     public static float convertBandwdithToMbps(String bwString) {
         float ret = 0;
         Pattern pattern = Pattern.compile("(\\d+)([mM]|[gG]|[kK]|[bB]).*");
@@ -314,6 +315,7 @@ public class AggregateUtils
         return ret;
     }
 
+    // default bw unit in kbps
     public static long convertBandwdithToKbpsLong(String bwString) {
         long ret = 0L;
         Pattern pattern = Pattern.compile("(\\d+)([mM]|[gG]|[kK]|[bB]).*");

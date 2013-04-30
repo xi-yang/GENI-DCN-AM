@@ -182,7 +182,7 @@ public class AggregateStitchTopologyRunner extends Thread {
             return false;
         }
         synchronized(this) {
-            long max = 100000000000L; //100G by default
+            long max = 100000000L; //100G by default, bw in kbps
             if (link.getMaximumReservableCapacity() != null && !link.getMaximumReservableCapacity().isEmpty()) {
                 max = Long.valueOf(link.getMaximumReservableCapacity());
             }
