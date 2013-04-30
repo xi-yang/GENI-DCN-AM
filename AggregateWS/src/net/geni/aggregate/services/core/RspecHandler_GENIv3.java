@@ -318,14 +318,27 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (AggregateUtils.isDcnUrn(destId)) {
                 verifyDstUrn = AggregateUtils.convertDcnToGeniUrn(destId);
             }
+            float bandwidth = AggregateUtils.convertBandwdithToMbps(capacity);
             //make sure local urn is allowd by Ad RSpec
-            if (verifySrcUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
-                log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
-                throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+            if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
+                if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
+                    log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                    throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                }
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifySrcUrn, (long)bandwidth*1000000)) {
+                    log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifySrcUrn));
+                    throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifySrcUrn));
+                }
             }
-            if (verifyDstUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
-                log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
-                throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+            if (verifyDstUrn.contains(AggregateState.getAmUrn())) {
+                if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
+                    log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+                    throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+                }
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifyDstUrn, (long)bandwidth*1000000)) {
+                    log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifyDstUrn));
+                    throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifyDstUrn));
+                }
             }
             // create VLAN link only if the link has a local sourceId urn
             if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
@@ -334,7 +347,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 AggregateP2PVlan explicitP2PVlan = new AggregateP2PVlan();
                 explicitP2PVlan.setSource(AggregateUtils.getIDCQualifiedUrn(sourceId));
                 explicitP2PVlan.setDestination(AggregateUtils.getIDCQualifiedUrn(destId));
-                explicitP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(capacity));
+                explicitP2PVlan.setBandwidth(bandwidth);
                 explicitP2PVlan.setVtag(vlanTag);
                 if (hasSourceIf) {
                     explicitP2PVlan.setSrcInterface(netIfs.get(0).getDeviceName());
@@ -403,23 +416,36 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 verifySrcUrn = AggregateUtils.convertDcnToGeniUrn(source);
             }
             String verifyDstUrn = destination;
+            float srcBandwidth = AggregateUtils.convertBandwdithToMbps(srcLink.getCapacity());
+            float dstBandwidth = AggregateUtils.convertBandwdithToMbps(dstLink.getCapacity());
             if (AggregateUtils.isDcnUrn(destination)) {
                 verifyDstUrn = AggregateUtils.convertDcnToGeniUrn(destination);
             }
-            if (verifySrcUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
-                log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
-                throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+            if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
+                if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
+                    log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                    throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                }
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifySrcUrn, (long)srcBandwidth*1000000)) {
+                    log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", srcLink.getCapacity(), verifySrcUrn));
+                    throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", srcLink.getCapacity(), verifySrcUrn));
+                }
             }
-            if (verifyDstUrn.contains(AggregateState.getAmUrn()) && !AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
-                log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
-                throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+            if (verifyDstUrn.contains(AggregateState.getAmUrn())) {
+                if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
+                    log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+                    throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+                }
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifyDstUrn, (long)dstBandwidth*1000000)) {
+                    log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", dstLink.getCapacity(), verifyDstUrn));
+                    throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", dstLink.getCapacity(), verifyDstUrn));
+                }
             }
             //create p2pvlan1
             AggregateP2PVlan stitchingP2PVlan = new AggregateP2PVlan();
-            float bandwidth = AggregateUtils.convertBandwdithToMbps(srcLink.getCapacity());
             stitchingP2PVlan.setSource(source);
             stitchingP2PVlan.setDestination(destination);
-            stitchingP2PVlan.setBandwidth(bandwidth);
+            stitchingP2PVlan.setBandwidth(srcBandwidth);
             String srcVlan = getLinkVlanRange(srcLink);
             String dstVlan = getLinkVlanRange(dstLink);
             if (srcVlan.isEmpty() && !dstVlan.isEmpty())

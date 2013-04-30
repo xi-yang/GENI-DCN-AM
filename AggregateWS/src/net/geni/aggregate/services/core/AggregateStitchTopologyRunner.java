@@ -151,21 +151,54 @@ public class AggregateStitchTopologyRunner extends Thread {
         }
     }
     
-    public boolean isValidEndPoint(String urn) {
+    public LinkContent getLinkByUrn (String urn) {
         synchronized(this) {
             if (stitchObj == null)
-                return false;
+                return null;
             for (AggregateContent aggregate: stitchObj.getAggregate()) {
                 for (NodeContent node: aggregate.getNode()) {
                     for (PortContent port: node.getPort()) {
                         for (LinkContent link: port.getLink()) {
                             if (link.getId().equalsIgnoreCase(urn))
-                                return true;
+                                return link;
                         }
                     }
                 }
             }
+            return null;
+        }
+    }
+    
+    public boolean isValidEndPoint(String urn) {
+        if (this.getLinkByUrn(urn) == null) {
             return false;
+        }
+        return true;
+    }
+
+    public boolean isValidBandwidth(String urn, long bw) {
+        LinkContent link = this.getLinkByUrn(urn);
+        if (link == null) {
+            return false;
+        }
+        synchronized(this) {
+            long max = 100000000000L; //100G by default
+            if (link.getMinimumReservableCapacity() != null && !link.getMinimumReservableCapacity().isEmpty()) {
+                max = Long.getLong(link.getMinimumReservableCapacity());
+            }
+            long min = 0;
+            if (link.getMinimumReservableCapacity() != null && !link.getMinimumReservableCapacity().isEmpty()) {
+                min = Long.getLong(link.getMinimumReservableCapacity());
+            }
+            long granularity = 1;
+            if (link.getGranularity() != null && !link.getGranularity().isEmpty()) {
+                granularity = Long.getLong(link.getGranularity());
+            }
+            
+            if (bw > max || bw < min || bw % granularity != 0) {
+                return false;
+            }
+            return true;
         }
     }
 }
