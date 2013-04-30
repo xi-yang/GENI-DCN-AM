@@ -318,14 +318,14 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (AggregateUtils.isDcnUrn(destId)) {
                 verifyDstUrn = AggregateUtils.convertDcnToGeniUrn(destId);
             }
-            float bandwidth = AggregateUtils.convertBandwdithToMbps(capacity);
+            long bwKbps = AggregateUtils.convertBandwdithToKbpsLong(capacity);
             //make sure local urn is allowd by Ad RSpec
             if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
                 if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
                     log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
                     throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
                 }
-                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifySrcUrn, (long)bandwidth*1000000)) {
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifySrcUrn, bwKbps)) {
                     log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifySrcUrn));
                     throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifySrcUrn));
                 }
@@ -335,7 +335,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
                     throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
                 }
-                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifyDstUrn, (long)bandwidth*1000000)) {
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifyDstUrn, bwKbps)) {
                     log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifyDstUrn));
                     throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifyDstUrn));
                 }
@@ -347,7 +347,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 AggregateP2PVlan explicitP2PVlan = new AggregateP2PVlan();
                 explicitP2PVlan.setSource(AggregateUtils.getIDCQualifiedUrn(sourceId));
                 explicitP2PVlan.setDestination(AggregateUtils.getIDCQualifiedUrn(destId));
-                explicitP2PVlan.setBandwidth(bandwidth);
+                explicitP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(capacity));
                 explicitP2PVlan.setVtag(vlanTag);
                 if (hasSourceIf) {
                     explicitP2PVlan.setSrcInterface(netIfs.get(0).getDeviceName());
@@ -416,8 +416,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 verifySrcUrn = AggregateUtils.convertDcnToGeniUrn(source);
             }
             String verifyDstUrn = destination;
-            float srcBandwidth = AggregateUtils.convertBandwdithToMbps(srcLink.getCapacity());
-            float dstBandwidth = AggregateUtils.convertBandwdithToMbps(dstLink.getCapacity());
+            long srcBandwidth = AggregateUtils.convertBandwdithToKbpsLong(srcLink.getCapacity());
+            long dstBandwidth = AggregateUtils.convertBandwdithToKbpsLong(dstLink.getCapacity());
             if (AggregateUtils.isDcnUrn(destination)) {
                 verifyDstUrn = AggregateUtils.convertDcnToGeniUrn(destination);
             }
@@ -445,7 +445,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             AggregateP2PVlan stitchingP2PVlan = new AggregateP2PVlan();
             stitchingP2PVlan.setSource(source);
             stitchingP2PVlan.setDestination(destination);
-            stitchingP2PVlan.setBandwidth(srcBandwidth);
+            stitchingP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(srcLink.getCapacity()));
             String srcVlan = getLinkVlanRange(srcLink);
             String dstVlan = getLinkVlanRange(dstLink);
             if (srcVlan.isEmpty() && !dstVlan.isEmpty())

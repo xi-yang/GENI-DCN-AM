@@ -184,15 +184,15 @@ public class AggregateStitchTopologyRunner extends Thread {
         synchronized(this) {
             long max = 100000000000L; //100G by default
             if (link.getMaximumReservableCapacity() != null && !link.getMaximumReservableCapacity().isEmpty()) {
-                max = Long.parseLong(link.getMaximumReservableCapacity());
+                max = Long.valueOf(link.getMaximumReservableCapacity());
             }
             long min = 0;
             if (link.getMinimumReservableCapacity() != null && !link.getMinimumReservableCapacity().isEmpty()) {
-                min = Long.parseLong(link.getMinimumReservableCapacity());
+                min = Long.valueOf(link.getMinimumReservableCapacity());
             }
             long granularity = 1;
             if (link.getGranularity() != null && !link.getGranularity().isEmpty()) {
-                granularity = Long.parseLong(link.getGranularity());
+                granularity = Long.valueOf(link.getGranularity());
             }
             
             if (bw > max || bw < min || bw % granularity != 0) {

@@ -313,7 +313,28 @@ public class AggregateUtils
         }            
         return ret;
     }
-    
+
+    public static long convertBandwdithToKbpsLong(String bwString) {
+        long ret = 0L;
+        Pattern pattern = Pattern.compile("(\\d+)([mM]|[gG]|[kK]|[bB]).*");
+        Matcher matcher = pattern.matcher(bwString);
+        if (matcher.find()) {
+            String bw = matcher.group(1);
+            ret = Long.valueOf(bw);
+            String m = matcher.group(2);
+            if (m.equalsIgnoreCase("g"))
+                ret *= 1000000;
+            else if (m.equalsIgnoreCase("m"))
+                ret *= 1000;
+            else if (m.equalsIgnoreCase("b"))
+                ret /= 1000;
+        } else {
+            // default unit is kbps
+            ret = Long.valueOf(bwString);
+        }            
+        return ret;
+    }
+
     public static String parseVlanTag(String vlanTag, boolean getSrc) {
         String[] vtags = vlanTag.split(":");
         if (vtags == null || vtags.length == 0)
