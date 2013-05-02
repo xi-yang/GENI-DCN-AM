@@ -225,8 +225,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String clientId = link.getClientId();
         String sourceId = null;
         String destId = null;
-        String descr = "p2pVlan:rspecId=" + rspec.getRspecName() + ":clientId=" + clientId;
-        String capacity = "1000000"; // 1Mbps by default
+        String descr = rspec.getRspecName() + " ("+ clientId+")";
+        String capacity = "1000"; // 1Mbps by default
         String vlanTag =  AggregateUtils.getAnyAttrString(link.getOtherAttributes(), "http://hpn.east.isi.edu/rspec/ext/stitch/0.1/", "vlantag");
         List<AggregateNetworkInterface> netIfs = new ArrayList<AggregateNetworkInterface>();
         List<String> externalUrns = new ArrayList<String>(); 
@@ -314,6 +314,32 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (AggregateUtils.isDcnUrn(sourceId)) {
                 verifySrcUrn = AggregateUtils.convertDcnToGeniUrn(sourceId);
             }
+            String verifyDstUrn = destId;
+            if (AggregateUtils.isDcnUrn(destId)) {
+                verifyDstUrn = AggregateUtils.convertDcnToGeniUrn(destId);
+            }
+            long bwKbps = AggregateUtils.convertBandwdithToKbpsLong(capacity);
+            //make sure local urn is allowd by Ad RSpec
+            if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
+                if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
+                    log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                    throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                }
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifySrcUrn, bwKbps)) {
+                    log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifySrcUrn));
+                    throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifySrcUrn));
+                }
+            }
+            if (verifyDstUrn.contains(AggregateState.getAmUrn())) {
+                if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
+                    log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+                    throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+                }
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifyDstUrn, bwKbps)) {
+                    log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifyDstUrn));
+                    throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifyDstUrn));
+                }
+            }
             // create VLAN link only if the link has a local sourceId urn
             if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
                 //create implicit stitching p2pvlan 
@@ -321,7 +347,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 AggregateP2PVlan explicitP2PVlan = new AggregateP2PVlan();
                 explicitP2PVlan.setSource(AggregateUtils.getIDCQualifiedUrn(sourceId));
                 explicitP2PVlan.setDestination(AggregateUtils.getIDCQualifiedUrn(destId));
-                explicitP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(capacity));//50M by default
+                explicitP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(capacity));
                 explicitP2PVlan.setVtag(vlanTag);
                 if (hasSourceIf) {
                     explicitP2PVlan.setSrcInterface(netIfs.get(0).getDeviceName());
@@ -384,20 +410,50 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             } else {
                 destination = AggregateUtils.convertGeniToDcnUrn(dstLink.getId());
             }
-            //create p2pvlan
+            //make sure local urn is allowd by Ad RSpec
+            String verifySrcUrn = source;
+            if (AggregateUtils.isDcnUrn(source)) {
+                verifySrcUrn = AggregateUtils.convertDcnToGeniUrn(source);
+            }
+            String verifyDstUrn = destination;
+            long srcBandwidth = AggregateUtils.convertBandwdithToKbpsLong(srcLink.getCapacity());
+            long dstBandwidth = AggregateUtils.convertBandwdithToKbpsLong(dstLink.getCapacity());
+            if (AggregateUtils.isDcnUrn(destination)) {
+                verifyDstUrn = AggregateUtils.convertDcnToGeniUrn(destination);
+            }
+            if (verifySrcUrn.contains(AggregateState.getAmUrn())) {
+                if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifySrcUrn)) {
+                    log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                    throw new AggregateException(String.format("'%s' is not valid end point - check the Ad RSpec", verifySrcUrn));
+                }
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifySrcUrn, srcBandwidth)) {
+                    log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", srcLink.getCapacity(), verifySrcUrn));
+                    throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", srcLink.getCapacity(), verifySrcUrn));
+                }
+            }
+            if (verifyDstUrn.contains(AggregateState.getAmUrn())) {
+                if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
+                    log.error(String.format("'%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+                    throw new AggregateException(String.format("Destination '%s' is not valid end point - check the Ad RSpec", verifyDstUrn));
+                }
+                if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifyDstUrn, dstBandwidth)) {
+                    log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", dstLink.getCapacity(), verifyDstUrn));
+                    throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", dstLink.getCapacity(), verifyDstUrn));
+                }
+            }
+            //create p2pvlan1
             AggregateP2PVlan stitchingP2PVlan = new AggregateP2PVlan();
-            float bandwidth = AggregateUtils.convertBandwdithToMbps(srcLink.getCapacity());
             stitchingP2PVlan.setSource(source);
             stitchingP2PVlan.setDestination(destination);
-            stitchingP2PVlan.setBandwidth(bandwidth);
+            stitchingP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(srcLink.getCapacity()));
             String srcVlan = getLinkVlanRange(srcLink);
             String dstVlan = getLinkVlanRange(dstLink);
             if (srcVlan.isEmpty() && !dstVlan.isEmpty())
-                stitchingP2PVlan.setVtag(srcVlan+"-any");
+                stitchingP2PVlan.setVtag(srcVlan+":any");
             else if (!srcVlan.isEmpty() && dstVlan.isEmpty())
-                stitchingP2PVlan.setVtag("any-"+dstVlan);
+                stitchingP2PVlan.setVtag("any:"+dstVlan);
             else if (!srcVlan.isEmpty() && !dstVlan.isEmpty())
-                stitchingP2PVlan.setVtag(srcVlan+"-"+dstVlan);
+                stitchingP2PVlan.setVtag(srcVlan+":"+dstVlan);
             else 
                 stitchingP2PVlan.setVtag("");
             // attach source or destination interface (device + IP)
@@ -418,7 +474,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     if (stitchingP2PVlan.getVtag().isEmpty() && netIf2.getVlanTag() != null)
                         stitchingP2PVlan.setVtag(netIf2.getVlanTag());
                     else if (netIf2.getVlanTag() != null && !netIf2.getVlanTag().isEmpty())
-                        stitchingP2PVlan.setVtag(stitchingP2PVlan.getVtag()+"-"+netIf2.getVlanTag());
+                        stitchingP2PVlan.setVtag(stitchingP2PVlan.getVtag()+":"+netIf2.getVlanTag());
                 }
             }
             if (stitchingP2PVlan.getVtag().isEmpty()) {
@@ -509,16 +565,21 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             return generateAdvertisementRspec(rspec);
         }
         Date dateNow = new Date();
+        Date dateCreated = new Date(rspec.getStartTime() * 1000);
         Date dateExpires = new Date(rspec.getEndTime() * 1000);
         GregorianCalendar c0 = new GregorianCalendar();
         c0.setTime(dateNow);
         GregorianCalendar c1 = new GregorianCalendar();
+        c1.setTime(dateCreated);
+        GregorianCalendar c2 = new GregorianCalendar();
         c1.setTime(dateExpires);
         XMLGregorianCalendar xgcGenerated = null;
+        XMLGregorianCalendar xgcCreated = null;
         XMLGregorianCalendar xgcExpires = null;
         try {
             xgcGenerated = DatatypeFactory.newInstance().newXMLGregorianCalendar(c0);
-            xgcExpires = DatatypeFactory.newInstance().newXMLGregorianCalendar(c1);
+            xgcCreated = DatatypeFactory.newInstance().newXMLGregorianCalendar(c1);
+            xgcExpires = DatatypeFactory.newInstance().newXMLGregorianCalendar(c2);
         } catch (Exception e) {
             throw new AggregateException("RspecHandler_GENIv3.generateRspecManifest error: " + e.getMessage());
         }
@@ -604,7 +665,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
             linkObj.setSliverId(String.format("%s+sliver+%s", AggregateState.getAmUrn(), sliverId));
 
-            String[] vlanTags = ppvLink.getVtag().split("-");
+            String[] vlanTags = ppvLink.getVtag().split(":");
             linkObj.setVlantag(((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?ppvLink.getVtag():vlanTags[0]));
         }
 
@@ -618,8 +679,22 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         break;
                     }
                 }
-                if (ppvStitch == null)
+                if (ppvStitch == null) {
                     continue;
+                }
+                // set lifetime to circuit lifetime
+                Lifetime lft = new Lifetime();
+                lft.setId(ppvStitch.getGri());
+                TimeContent start = new TimeContent();
+                start.setType("xgc");
+                start.setValue(xgcCreated.toString());
+                lft.setStart(start);
+                TimeContent end = new TimeContent();
+                end.setType("xgc");
+                end.setValue(xgcExpires.toString());
+                lft.setEnd(end);
+                pathObj.setLifetime(lft);
+                // set globalId to GRI
                 if (ppvStitch.getGri() != null && !ppvStitch.getGri().isEmpty()) {
                     pathObj.setGlobalId(ppvStitch.getGri());
                 }
@@ -643,9 +718,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (ingLinkObj == null || egrLinkObj == null)
                     continue;
                 // annotate local hops
-                String[] vlanTags = ppvStitch.getVtag().split("-");
-                ingLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()));
-                egrLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()));
+                String[] vlanTags = ppvStitch.getVtag().split(":");
+                ingLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()*1000)); // convert mbps to kbps unit
+                egrLinkObj.setCapacity(Float.toString(ppvStitch.getBandwidth()*1000)); // convert mbps to kbps unit
                 if (!ingLinkObj.getSwitchingCapabilityDescriptor().isEmpty()
                     && ingLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo() != null
                     && ingLinkObj.getSwitchingCapabilityDescriptor().get(0).getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc() != null
@@ -676,8 +751,12 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }            
         }
         rspecXml = this.marshallJaxbToString(jaxbRspec, "net.geni.www.resources.rspec._3");
+        rspecXml = rspecXml.replaceFirst("xmlns=", " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                + "xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/manifest.xsd\" xmlns=");
         if (jaxbStitch != null) {
             String stitchXml = this.marshallJaxbToString(jaxbStitch, "edu.isi.east.hpn.rspec.ext.stitch._0_1");
+            stitchXml = stitchXml.replaceFirst("xmlns=", " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                + "xsi:schemaLocation=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/ http://hpn.east.isi.edu/rspec/ext/stitch/0.1/stitch-schema.xsd\" xmlns=");
             rspecXml = rspecXml.replaceFirst("</rspec>", stitchXml+"</rspec>");
         }
         return rspecXml;
@@ -772,6 +851,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
         if (l2scInfo == null)
             return "";
+        if (l2scInfo.getSuggestedVLANRange() != null && l2scInfo.getSuggestedVLANRange().matches("\\s*[0-9]+\\s*"))
+            return l2scInfo.getSuggestedVLANRange();
         return l2scInfo.getVlanRangeAvailability();
     }
 }

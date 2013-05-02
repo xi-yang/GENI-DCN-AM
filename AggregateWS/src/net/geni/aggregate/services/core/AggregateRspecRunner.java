@@ -10,7 +10,7 @@ import org.apache.log4j.*;
 
 /**
  *
- * @author root
+ * @author Xi Yang
  */
 public class AggregateRspecRunner extends Thread {
     private volatile boolean goRun = true;
@@ -249,8 +249,8 @@ public class AggregateRspecRunner extends Thread {
                                     : AggregateUtils.getIDCQualifiedUrn(netIf2.getLinks().get(0));
                             if (destination == null)
                                 throw (new AggregateException("Failed to setup P2PVlan to unrecorgnized dstURN: "+netIf2.getUrn()));
-                            String vtag = netIf1.getVlanTag()+"-"+netIf2.getVlanTag();
-                            String description = rspec.getRspecName() + " p2pvlan-" + source + "-" + destination + "-" + vtag;
+                            String vtag = netIf1.getVlanTag()+":"+netIf2.getVlanTag();
+                            String description = rspec.getRspecName() + String.format(" (%s-%s)", netIf1.getClientId(), netIf2.getClientId());
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());
                             HashMap hmRet = new HashMap<String,String>();
                             long startTime = rspec.getStartTime();
@@ -297,7 +297,12 @@ public class AggregateRspecRunner extends Thread {
                 AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(i);
                 hasP2PVlan = true;
                 log.debug("polling p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
+                String lastStatus = p2pvlan.getStatus();
                 p2pvlan.queryVlan();
+                if (lastStatus.equalsIgnoreCase("UNKNOWN") && p2pvlan.getStatus().equalsIgnoreCase("UNKNOWN")) {
+                    // VLAN circuit is considered failed if staying in UNKNOWN twice
+                    p2pvlan.setStatus("FAILED");
+                }
                 log.debug("polled p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
                 if (p2pvlan.getStatus().equalsIgnoreCase("FAILED"))
                     throw (new AggregateException("P2PVlan:"+p2pvlan.getDescription()
@@ -305,8 +310,15 @@ public class AggregateRspecRunner extends Thread {
                 if (!AggregateState.getAggregateP2PVlans().update(p2pvlan))
                     throw (new AggregateException("Cannot update P2PVlan:"+p2pvlan.getDescription()
                         +" with AggregateDB."));
-                if (!p2pvlan.getStatus().equalsIgnoreCase("ACTIVE"))
+                if (p2pvlan.getStatus().equalsIgnoreCase("ACTIVE")) {
+                    if (!p2pvlan.hasVlanOnNodes() && !p2pvlan.setVlanOnNodes(true)) {
+                        throw (new AggregateException("P2PVlan:"+p2pvlan.getDescription()
+                                + " failed to add VLAN interface on source or destination node"));
+                    }
+                    p2pvlan.setHasVlanOnNodes(true);
+                } else {
                     allActive = false;
+                }
             }
         }
         if (allActive && hasP2PVlan)
@@ -405,12 +417,12 @@ public class AggregateRspecRunner extends Thread {
                     }
                     p2pvlan.setStartTime(startTime);
                     p2pvlan.setEndTime(endTime);
-                    p2pvlan.setDescription(rspec.getRspecName() + " stitching-resource: p2pvlan-" + p2pvlan.getSource() + "-" + p2pvlan.getDestination() + "-vlan-" + p2pvlan.getVtag());
+                    p2pvlan.setDescription(rspec.getRspecName() + String.format(" (%s)", p2pvlan.getClientId()));
                     String status = p2pvlan.setupVlan();
-                    AggregateState.getAggregateP2PVlans().add(p2pvlan);
                     if (status.equalsIgnoreCase("FAILED")) {
-                        throw (new AggregateException("Failed to create stitching P2PVlan:" + p2pvlan.getDescription()));
+                        throw (new AggregateException(String.format("Failed to create stitching P2PVlan:%s due to %s.", p2pvlan.getDescription(), p2pvlan.getErrorMessage())));
                     }
+                    AggregateState.getAggregateP2PVlans().add(p2pvlan);
                     log.debug("end - creating stitching p2pvlan: " + p2pvlan.getDescription());
                 }
             }

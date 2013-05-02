@@ -99,7 +99,6 @@ public class AggregateRspecManager extends Thread{
 
         for (AggregateRspec aggrRspec: aggrRspecs) {
             //reload computeSlices
-           log.error(String.format("AggregateRspecManager.reloadFromDB: reloading instance for RSpec '%s'", aggrRspec.getRspecName()));
            for (AggregateSlice slice: slices) {
                 if (slice.getRspecId() == aggrRspec.getId())
                     aggrRspec.getResources().add(slice);
@@ -116,7 +115,15 @@ public class AggregateRspecManager extends Thread{
             }
             //reconstruct nodes and interfaces
             recalibrateRspecResources(aggrRspec);
+            if (aggrRspec.isDeleted()) {
+                log.debug(String.format("AggregateRspecManager.reloadFromDB: removing defunct instance for RSpec '%s'", aggrRspec.getRspecName()));
+                aggrRspecs.remove(aggrRspec);
+                if (aggrRspecs.isEmpty())
+                    break;
+                continue;
+            } 
             //start rspec runner
+            log.debug(String.format("AggregateRspecManager.reloadFromDB: reloading instance for RSpec '%s'", aggrRspec.getRspecName()));
             AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
             synchronized (rspecThreads) {
                 rspecThreads.add(rspecRunner);
@@ -131,11 +138,24 @@ public class AggregateRspecManager extends Thread{
         if (rspec.isDeleted()) {
             return;
         }
-        if (rspec.getStatus().equalsIgnoreCase("ROLLBACKED") 
-                || rspec.getStatus().equalsIgnoreCase("TERMINATED")) {
+        if (rspec.getStatus().contains("ROLLBACKED") 
+                || rspec.getStatus().contains("TERMINATED")
+                || rspec.getStatus().contains("FAILED")) {
             rspec.setDeleted(true);
-            this.updateRspec(rspec);
-            this.aggrRspecs.remove(rspec);
+            try {
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
+                session.update(rspec);
+                session.flush();
+                tx.commit();
+            } catch (Exception e) {
+                tx.rollback();
+                e.printStackTrace();
+            } finally {
+                if (session.isOpen()) {
+                    session.close();
+                }
+            }
             return;
         }
         for (int n = 0; n < rspec.getResources().size(); n++) {
@@ -218,6 +238,7 @@ public class AggregateRspecManager extends Thread{
     public void run() {
         loadCRDB();
         reloadFromDB();
+
         goRun = true;
         while (goRun) {
             //polling rspecThreads and rspecRspecs for status change
@@ -261,8 +282,13 @@ public class AggregateRspecManager extends Thread{
     }
 
     public synchronized String createRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice) throws AggregateException {
-        AggregateRspec aggrRspec = new AggregateRspec();
+        synchronized(rspecThreads) {
+            for (AggregateRspec rspec: aggrRspecs)
+                if (rspecId.equalsIgnoreCase(rspec.getRspecName()) && !rspec.isDeleted())
+                    throw new AggregateException("An instance for RSpec name='"+rspecId+"' has already existed!");
+        }
 
+        AggregateRspec aggrRspec = new AggregateRspec();
         //set the 1st user to the WSS policy authorized user
         if (authUser != null) { 
             List<String> users = new ArrayList<String>();
@@ -276,12 +302,6 @@ public class AggregateRspecManager extends Thread{
         if (aggrRspec.getRspecName().isEmpty() || aggrRspec.getStartTime() == 0
             || aggrRspec.getStartTime() == 0 || aggrRspec.getResources().size() == 0)
             throw new AggregateException("Rspec parsing failed!");
-
-        synchronized(rspecThreads) {
-            for (AggregateRspec rspec: aggrRspecs)
-                if (aggrRspec.getRspecName().equalsIgnoreCase(rspec.getRspecName()) && !aggrRspec.isDeleted())
-                    throw new AggregateException("An instance for RSpec name='"+rspec.getRspecName()+"' has already existed!");
-        }
 
         aggrRspec.setStatus("STARTING");
         synchronized(this) {
@@ -413,40 +433,7 @@ public class AggregateRspecManager extends Thread{
             }
             //get nework topology
             if (scope.equalsIgnoreCase("all") || scope.contains("network")) {
-                boolean gotTopoFromFile = false;
-                if (AggregateState.getIdcTopoFile() != null && !AggregateState.getIdcTopoFile().isEmpty()) {
-                    try {
-                        int ch;
-                        FileInputStream in = new FileInputStream(AggregateState.getIdcTopoFile());
-                        while( (ch = in.read()) != -1)
-                            networkTopology += ((char)ch);
-                        in.close();
-                        gotTopoFromFile = true;
-                    } catch (IOException e) {
-                        ; // no op
-                    }
-                }
-                if (!gotTopoFromFile) {
-                    AggregateIDCClient client = AggregateIDCClient.getIDCClient();
-                    String errMessage = null;
-                    String domainId = AggregateState.getIdcDomainId();
-                    try {
-                        networkTopology = client.retrieveNetworkTopology(domainId);
-                    } catch (AxisFault e) {
-                        errMessage = "AxisFault from queryReservation: " + e.getMessage();
-                    } catch (AAAFaultMessage e) {
-                        errMessage = "AAAFaultMessage from queryReservation: " + e.getFaultMessage().getMsg();
-                    } catch (BSSFaultMessage e) {
-                        errMessage = "BSSFaultMessage from queryReservation: " + e.getFaultMessage().getMsg();
-                    } catch (java.rmi.RemoteException e) {
-                        errMessage = "RemoteException returned from queryReservation: " + e.getMessage();
-                    } catch (Exception e) {
-                        errMessage = "OSCARSStub threw exception in queryReservation: " + e.getMessage();
-                    }
-                    if (errMessage != null) {
-                        throw new AggregateException(errMessage);
-                    }
-                }
+                networkTopology = AggregateState.getStitchTopoRunner().getStitchXml();
                 if (networkTopology != null && !networkTopology.isEmpty()) {
                     len++;
                 }

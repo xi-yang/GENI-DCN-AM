@@ -44,6 +44,7 @@ public class AggregateP2PVlan extends AggregateResource {
     long endTime = 0;
     String errMessage = "";
     String status = "";
+    boolean hasVlanOnNodes = false;
 
     private String stitchingResourceId = "";
     private String externalResourceId = "";
@@ -55,6 +56,7 @@ public class AggregateP2PVlan extends AggregateResource {
     public AggregateP2PVlan(){
         log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
         type = "p2pVlan";
+        hasVlanOnNodes = false;
     }
 
     public AggregateP2PVlan(String sl, String s, String d, String v, float b, String desc, long st, long et) {
@@ -89,6 +91,7 @@ public class AggregateP2PVlan extends AggregateResource {
         endTime = 0;
         log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
         type = "p2pVlan";
+        hasVlanOnNodes = false;
     }
 
     public void setBandwidth(float bandwidth) {
@@ -232,6 +235,14 @@ public class AggregateP2PVlan extends AggregateResource {
         this.stitchingResourceId = stitchingResourceId;
     }
 
+    public boolean hasVlanOnNodes() {
+        return hasVlanOnNodes;
+    }
+
+    public void setHasVlanOnNodes(boolean hasVlanOnNodes) {
+        this.hasVlanOnNodes = hasVlanOnNodes;
+    }
+
     /**
      * setup p2p vlan
      * @param
@@ -269,6 +280,7 @@ public class AggregateP2PVlan extends AggregateResource {
             status = "FAILED";
             errMessage = "IDC_APIClient::createReservation returned null GRI.";
         }
+        /*
         else {
             if (vtag.contains("any")) {
                 //wait for 10 seconds for IDC to compute path and vlan tag
@@ -281,7 +293,7 @@ public class AggregateP2PVlan extends AggregateResource {
                 errMessage = "setupVlan FAILED to add VLAN interface on source or destination node";
             }
         }
-
+        */
         return status;
      }
 
@@ -296,7 +308,7 @@ public class AggregateP2PVlan extends AggregateResource {
         try {
             HashMap hmRet = apiClient.queryReservation(gri);
             status = hmRet.get("status").toString();
-            if (status.equals("CANCELLED") || status.equals("FAILED") || status.equals("INTEARDOWN")) {
+            if (status.equals("CANCELLED") || status.equals("FAILED") || status.equals("UNKNOWN") || status.equals("INTEARDOWN")) {
                 return status;
             }
             status = "FAILED";
@@ -318,7 +330,7 @@ public class AggregateP2PVlan extends AggregateResource {
             errMessage = "OSCARSStub threw exception in cancelReservation: " +e.getMessage();
         }
 
-        if (!setVlanOnNodes(false)) {
+        if (hasVlanOnNodes && !setVlanOnNodes(false)) {
             status = "FAILED";
             errMessage += "teardownVlan failed to delete VLAN interface on source or destination node";
         }
@@ -355,29 +367,46 @@ public class AggregateP2PVlan extends AggregateResource {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         HashMap hmRet = new HashMap();
-        status = "unknown";
+        status = "FAILED";
         hmRet.put("status", status);
         try {
             hmRet = apiClient.queryReservation(gri);
-            status = hmRet.get("status").toString();
-            vtag = hmRet.get("vlanTag").toString();
-        }
-        catch (AxisFault e) {
-            errMessage = "AxisFault from queryReservation: " +e.getMessage();
+            if (hmRet.get("status") != null) {
+                status = hmRet.get("status").toString();
+            }
+            if (hmRet.get("vlanTag") != null) {
+                vtag = hmRet.get("vlanTag").toString();
+            }
+            if (hmRet.get("errMessage") != null) {
+                errMessage = hmRet.get("errMessage").toString();
+            }
+            if (status.equals("unknown")) {
+                status = "UNKNOWN";
+                if (errMessage.isEmpty()) {
+                    errMessage = "VLAN circuit in unknown status";
+                }
+            }
+        } catch (AxisFault e) {
+            if (errMessage.isEmpty())
+                errMessage = "AxisFault from queryReservation: " +e.getMessage();
         } catch (AAAFaultMessage e) {
-            errMessage = "AAAFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
+            if (errMessage.isEmpty())
+                errMessage = "AAAFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
         } catch (BSSFaultMessage e) {
-            errMessage = "BSSFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
+            if (errMessage.isEmpty())
+                errMessage = "BSSFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
         } catch (java.rmi.RemoteException e) {
-            errMessage = "RemoteException returned from queryReservation: " +e.getMessage();
+            if (errMessage.isEmpty())
+                errMessage = "RemoteException returned from queryReservation: " +e.getMessage();
         } catch (Exception e) {
-            errMessage = "OSCARSStub threw exception in queryReservation: " +e.getMessage();
+            if (errMessage.isEmpty())
+                errMessage = "OSCARSStub threw exception in queryReservation: " +e.getMessage();
         }
 
         return getVlanResvResult();
      }
 
-    private boolean setVlanOnNodes(boolean add) {
+    public boolean setVlanOnNodes(boolean add) {
         //login to PLC-ssh (new AggregatePLC_SSHClient)
         AggregatePLC_SSHClient client = AggregatePLC_SSHClient.getPLCClient();
         if (srcInterface.isEmpty() && dstInterface.isEmpty()){

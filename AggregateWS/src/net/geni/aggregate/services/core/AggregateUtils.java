@@ -4,6 +4,7 @@
  */
 package net.geni.aggregate.services.core;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.*;
 import org.hibernate.*;
@@ -292,6 +293,7 @@ public class AggregateUtils
         return aStr.substring(start, end);
     }
 
+    // default bw unit in kbps
     public static float convertBandwdithToMbps(String bwString) {
         float ret = 0;
         Pattern pattern = Pattern.compile("(\\d+)([mM]|[gG]|[kK]|[bB]).*");
@@ -307,13 +309,38 @@ public class AggregateUtils
             else if (m.equalsIgnoreCase("b"))
                 ret /= 1000000;
         } else {
-            ret = Float.valueOf(bwString)/1000000;
+            // default unit is kbps
+            ret = Float.valueOf(bwString)/1000;
         }            
         return ret;
     }
-    
+
+    // default bw unit in kbps
+    public static long convertBandwdithToKbpsLong(String bwString) {
+        long ret = 0L;
+        Pattern pattern = Pattern.compile("(\\d+)([mM]|[gG]|[kK]|[bB]).*");
+        Matcher matcher = pattern.matcher(bwString);
+        if (matcher.find()) {
+            String bw = matcher.group(1);
+            ret = Long.valueOf(bw);
+            String m = matcher.group(2);
+            if (m.equalsIgnoreCase("g"))
+                ret *= 1000000;
+            else if (m.equalsIgnoreCase("m"))
+                ret *= 1000;
+            else if (m.equalsIgnoreCase("b"))
+                ret /= 1000;
+        } else {
+            // default unit is kbps
+            ret = Long.valueOf(bwString);
+        }            
+        return ret;
+    }
+
     public static String parseVlanTag(String vlanTag, boolean getSrc) {
-        String[] vtags = vlanTag.split("-");
+        String[] vtags = vlanTag.split(":");
+        if (vtags == null || vtags.length == 0)
+            return "";
         if (!getSrc && vtags.length == 2)
             return vtags[1];
         return vtags[0];
@@ -362,5 +389,11 @@ public class AggregateUtils
     public static String getAnyAttrString(Map<QName, String> attrs, String namespace, String localpart) {
         QName qname = new QName(namespace, localpart);
         return attrs.get(qname);
+    }
+    
+    public static String idcSecondsToDate(long t) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date dt = new Date(t*1000);
+        return df.format(dt);
     }
 }
