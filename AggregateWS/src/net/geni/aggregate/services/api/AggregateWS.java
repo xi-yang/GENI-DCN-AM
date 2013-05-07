@@ -807,6 +807,41 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     /**
      * 
      *
+     * @param renewSliceNetwork22
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.RenewSliceNetworkResponse RenewSliceNetwork(
+            net.geni.aggregate.services.api.RenewSliceNetwork renewSliceNetwork4)
+            throws AggregateFaultMessage {
+        RenewSliceNetworkType renewSliceNework = renewSliceNetwork4.getRenewSliceNetwork();
+        String rspecName = renewSliceNework.getRspecID();
+        String expires = renewSliceNework.getExpires();
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
+        String status = "";
+        String message = "";
+        try {
+            status = AggregateState.getRspecManager().renewRspec(rspecName, expires);
+            message = "";
+        } catch (AggregateException e) {
+            status = "FAILED";
+            message = e.getMessage();
+        }
+
+        //form response
+        RenewSliceNetworkResponseType renewSliceNetworkResponseType = new RenewSliceNetworkResponseType();
+        RenewSliceNetworkResponse renewSliceNetworkResponse = new RenewSliceNetworkResponse();
+        renewSliceNetworkResponseType.setStatus(status);
+        renewSliceNetworkResponseType.setMessage(message);
+        renewSliceNetworkResponse.setRenewSliceNetworkResponse(renewSliceNetworkResponseType);
+        return renewSliceNetworkResponse;
+    }
+
+    /**
+     * 
+     *
      * @param deleteSliceNetwork4
      * @throws AggregateFaultMessage :
      */

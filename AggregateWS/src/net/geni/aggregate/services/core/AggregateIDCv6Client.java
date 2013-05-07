@@ -135,6 +135,35 @@ public class AggregateIDCv6Client {
     }
 
     /**
+     * modifyReservation
+     *
+     */
+    public String requestModifyReservation(String aGri, String src, String dst, String vtag, float bw, String descr, long startTime, long endTime)
+            throws Exception {
+
+        if (aGri == null || aGri.isEmpty()) {
+            throw new Exception("request to modify with null / empty GRI");
+        }
+        this.gri = aGri;
+        String modifyYaml = fillSecurityInfo(yamlTemplate);
+        modifyYaml = modifyYaml.replaceAll("<_command_>", "modifyReservation");
+        modifyYaml += String.format("gri:  '%s'\n", aGri);
+        modifyYaml += "layer: 2\n";
+        modifyYaml += String.format("bandwidth: %d\n", (int) bw);
+        modifyYaml += String.format("src: '%s'\n", src);
+        modifyYaml += String.format("dst: '%s'\n", dst);
+        modifyYaml += String.format("description: \"%s\"\n", descr);
+        modifyYaml += String.format("srcvlan: '%s'\n", AggregateUtils.parseVlanTag(vtag, true));
+        modifyYaml += String.format("dstvlan: '%s'\n", AggregateUtils.parseVlanTag(vtag, false));
+        modifyYaml += String.format("start-time: '%s'\n", AggregateUtils.idcSecondsToDate(startTime));
+        modifyYaml += String.format("end-time: '%s'\n", AggregateUtils.idcSecondsToDate(endTime));
+        String responseXml = executeShellCommandWithInput(this.clientCommand, modifyYaml);
+        String status = extractXmlValueByTag(responseXml, "ns3:status");
+        // TODO: convert status
+        return status;
+    }
+    
+    /**
      * cancelReservation
      *
      */

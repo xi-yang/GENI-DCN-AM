@@ -420,6 +420,24 @@
                 </xs:sequence>
             </xs:complexType>
 
+            <!-- RenewSliceNetwork request definitions -->
+            <xs:element name="RenewSliceNetwork" type="tns:RenewSliceNetworkType"/>
+            <xs:complexType name="RenewSliceNetworkType">
+                <xs:sequence>
+                    <xs:element name="rspecID" type="xs:string"/>
+                    <xs:element name="expires" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- RenewSliceNetwork response definitions -->
+            <xs:element name="RenewSliceNetworkResponse" type="tns:RenewSliceNetworkResponseType"/>
+            <xs:complexType name="RenewSliceNetworkResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                    <xs:element name="message" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
             <!-- DeleteSliceNetwork request definitions -->
             <xs:element name="DeleteSliceNetwork" type="tns:DeleteSliceNetworkType"/>
             <xs:complexType name="DeleteSliceNetworkType">
@@ -582,6 +600,14 @@
         <part name="CreateSliceNetworkMsgResp" element="tns:CreateSliceNetworkResponse" />
     </message>
 
+    <message name="RenewSliceNetworkRequestMsg">
+        <part name="RenewSliceNetworkMsgReq" element="tns:RenewSliceNetwork" />
+    </message>
+
+    <message name="RenewSliceNetworkResponseMsg">
+        <part name="RenewSliceNetworkMsgResp" element="tns:RenewSliceNetworkResponse" />
+    </message>
+
     <message name="DeleteSliceNetworkRequestMsg">
         <part name="DeleteSliceNetworkMsgReq" element="tns:DeleteSliceNetwork" />
     </message>
@@ -674,6 +700,11 @@
         <operation name="CreateSliceNetwork">
             <input message="tns:CreateSliceNetworkRequestMsg" />
             <output message="tns:CreateSliceNetworkResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="RenewSliceNetwork">
+            <input message="tns:RenewSliceNetworkRequestMsg" />
+            <output message="tns:RenewSliceNetworkResponseMsg" />
             <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
         </operation>
         <operation name="DeleteSliceNetwork">
@@ -879,6 +910,21 @@
         <operation name="CreateSliceNetwork">
             <wsp:PolicyReference URI="#X509BindingPolicy"  />
             <soap:operation soapAction="CreateSliceNetwork" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="RenewSliceNetwork">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="RenewSliceNetwork" />
             <input>
                 <wsp:PolicyReference URI="#signedMsgPolicy"  />
                 <soap:body use="literal" />

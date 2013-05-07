@@ -302,6 +302,43 @@ public class AggregateP2PVlan extends AggregateResource {
      * @param
      * @return
      */
+     public String renewVlan() {
+        if (apiClient == null)
+            apiClient = AggregateIDCClient.getIDCClient();
+        try {
+            status = apiClient.modifyReservation(gri, source, destination, vtag, bandwidth, description, startTime, endTime);
+            for (int i = 0; i < 3; i++) {
+                AggregateUtils.justSleep(60); // sleep 60 seconds waiting for modification to finish
+                HashMap hmRet = apiClient.queryReservation(gri);
+                status = hmRet.get("status").toString();
+                long modifiedEndTime = ((Long)hmRet.get("endTime")).longValue();
+                if (modifiedEndTime == this.endTime) {
+                    errMessage = "";
+                    return "RENEWED";
+                }
+            }
+        }
+        catch (AxisFault e) {
+            errMessage = "AxisFault from modifyReservation: " +e.getMessage();
+        } catch (AAAFaultMessage e) {
+            errMessage = "AAAFaultMessage from modifyReservation: " +e.getFaultMessage().getMsg();
+        } catch (BSSFaultMessage e) {
+            errMessage = "BSSFaultMessage from modifyReservation: " +e.getFaultMessage().getMsg();
+        } catch (java.rmi.RemoteException e) {
+            errMessage = "RemoteException returned from modifyReservation: " +e.getMessage();
+        }catch (Exception e) {
+            errMessage = "OSCARSStub threw exception in modifyReservation: " +e.getMessage();
+        }
+        
+         errMessage = "Failed to renew the VLAN circuit via modifyReservation.";
+         return "FAILED";
+     }
+
+     /**
+     * teardown p2p vlan
+     * @param
+     * @return
+     */
      public String teardownVlan() {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();

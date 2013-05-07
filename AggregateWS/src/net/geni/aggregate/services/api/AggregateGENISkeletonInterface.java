@@ -75,6 +75,21 @@
         /**
          * Auto generated method signature
          * 
+                                    * @param renewSliceNetwork
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.RenewSliceNetworkResponse RenewSliceNetwork
+                (
+                  net.geni.aggregate.services.api.RenewSliceNetwork renewSliceNetwork
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
                                     * @param getResourceTopology
              * @throws AggregateFaultMessage : 
          */
