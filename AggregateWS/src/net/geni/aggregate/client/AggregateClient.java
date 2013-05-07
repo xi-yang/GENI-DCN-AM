@@ -245,6 +245,17 @@ public class AggregateClient {
         return deleteSliceNetResponse.getDeleteSliceNetworkResponse();
     }
 
+    public RenewSliceNetworkResponseType renewSliceNetwork(String rspecName, String expires)
+           throws AggregateFaultMessage, Exception {
+        RenewSliceNetwork renewSliceNet = new RenewSliceNetwork();
+        RenewSliceNetworkType renewSliceNetType = new RenewSliceNetworkType();
+        renewSliceNetType.setRspecID(rspecName);
+        renewSliceNetType.setExpires(expires);
+        renewSliceNet.setRenewSliceNetwork(renewSliceNetType);
+        RenewSliceNetworkResponse renewSliceNetResponse = this.stub.RenewSliceNetwork(renewSliceNet);
+        return renewSliceNetResponse.getRenewSliceNetworkResponse();
+    }
+
     public QuerySliceNetworkResponseType querySliceNetwork(String rspecName)
            throws AggregateFaultMessage, Exception {
         QuerySliceNetwork querySliceNet = new QuerySliceNetwork();
