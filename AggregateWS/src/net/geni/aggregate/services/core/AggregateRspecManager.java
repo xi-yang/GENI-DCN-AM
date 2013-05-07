@@ -339,10 +339,10 @@ public class AggregateRspecManager extends Thread{
         return aggrRspec.getStatus();
     }
 
-    public synchronized String renewRspec(String rspecId, String expires) throws AggregateException {
+    public synchronized String renewRspec(String rspecName, String expires) throws AggregateException {
         synchronized(rspecThreads) {
             for (AggregateRspec aggrRspec: aggrRspecs) {
-                if (rspecId.equalsIgnoreCase(aggrRspec.getRspecName()) && !aggrRspec.isDeleted()) {
+                if (rspecName.equalsIgnoreCase(aggrRspec.getRspecName()) && !aggrRspec.isDeleted()) {
                     if (aggrRspec.getStatus().equalsIgnoreCase("WORKING")) {
                         long now = System.currentTimeMillis()/1000;
                         if (aggrRspec.getEndTime() - now < 900) {
@@ -362,21 +362,21 @@ public class AggregateRspecManager extends Thread{
                         aggrRspec.setEndTime(newEndTime);
                         aggrRspec.setStatus("RENEWING");
                         for (AggregateRspecRunner rspecThread: rspecThreads) {
-                            if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecId)) {
+                            if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecName)) {
                                 rspecThread.setPollInterval(defaultPollInterval);
                                 rspecThread.interrupt();
                                 return "RENEWING";
                             }
                         }
-                        throw new AggregateException("No active RSpecRunnner thread '"+rspecId+"' to excute renewal!");            
+                        throw new AggregateException("No active RSpecRunnner thread '"+rspecName+"' to excute renewal!");            
                     } else if (aggrRspec.getStatus().equalsIgnoreCase("RENEWING")) {
                         return "RENEWING";
                     } else {
-                        throw new AggregateException(String.format("RSpec '%s' is in '%s' status -- cannot renew for now!", rspecId, aggrRspec.getStatus()));
+                        throw new AggregateException(String.format("RSpec '%s' is in '%s' status -- cannot renew for now!", rspecName, aggrRspec.getStatus()));
                     }
                 }
             }
-            throw new AggregateException("No active RSpec '"+rspecId+"' available for renewal!");            
+            throw new AggregateException("renewRspec: Unkown Rspec: "+rspecName);
         }
     }
     
