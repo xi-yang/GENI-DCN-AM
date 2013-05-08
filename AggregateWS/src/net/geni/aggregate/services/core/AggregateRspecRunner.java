@@ -149,7 +149,6 @@ public class AggregateRspecRunner extends Thread {
             if (rspec.getStatus().equalsIgnoreCase("RENEWING")) {
                 manager.updateRspec(rspec);
                 this.renew();
-                manager.updateRspec(rspec);
             }
             if (goRun && goPoll) {
                 try {
@@ -490,7 +489,6 @@ public class AggregateRspecRunner extends Thread {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
             e.printStackTrace();
         }
-        rspec.setStatus("WORKING");
         log.debug("end - renewing rspec: "+ rspec.getRspecName());
     }
     

@@ -311,14 +311,13 @@ public class AggregateP2PVlan extends AggregateResource {
                 AggregateUtils.justSleep(60); // sleep 60 seconds waiting for modification to finish
                 HashMap hmRet = apiClient.queryReservation(gri);
                 status = hmRet.get("status").toString();
-                long modifiedEndTime = ((Long)hmRet.get("endTime")).longValue();
+                long modifiedEndTime = Long.valueOf(hmRet.get("endTime").toString());
                 if (modifiedEndTime == this.endTime) {
                     errMessage = "";
                     return "RENEWED";
                 }
             }
-        }
-        catch (AxisFault e) {
+        } catch (AxisFault e) {
             errMessage = "AxisFault from modifyReservation: " +e.getMessage();
         } catch (AAAFaultMessage e) {
             errMessage = "AAAFaultMessage from modifyReservation: " +e.getFaultMessage().getMsg();
@@ -329,9 +328,10 @@ public class AggregateP2PVlan extends AggregateResource {
         }catch (Exception e) {
             errMessage = "OSCARSStub threw exception in modifyReservation: " +e.getMessage();
         }
-        
-         errMessage = "Failed to renew the VLAN circuit via modifyReservation.";
-         return "FAILED";
+        if (errMessage.isEmpty()) {
+            errMessage = "Failed to renew the VLAN circuit via modifyReservation.";
+        }
+        return "FAILED";
      }
 
      /**

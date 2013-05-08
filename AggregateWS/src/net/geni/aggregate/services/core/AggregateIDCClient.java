@@ -239,14 +239,14 @@ public class AggregateIDCClient {
         hmRet.put("GRI", response.getGlobalReservationId());
         hmRet.put("login", response.getLogin());
         hmRet.put("status", response.getStatus());
-        hmRet.put("startTime", response.getStartTime());
-        hmRet.put("endTime", response.getEndTime());
-        hmRet.put("cratedTime", response.getCreateTime());
-        hmRet.put("bandwidth", response.getBandwidth());
+        hmRet.put("startTime", Long.toString(response.getStartTime()));
+        hmRet.put("endTime", Long.toString(response.getEndTime()));
+        hmRet.put("cratedTime", Long.toString(response.getCreateTime()));
+        hmRet.put("bandwidth", Integer.toString(response.getBandwidth()));
         hmRet.put("description", response.getDescription());
         hmRet.put("source", layer2Info.getSrcEndpoint());
         hmRet.put("destination", layer2Info.getDestEndpoint());
-        hmRet.put("vlanTag", layer2Info.getSrcVtag()+":"+layer2Info.getDestVtag());
+        hmRet.put("vlanTag", layer2Info.getSrcVtag().toString()+":"+layer2Info.getDestVtag().toString());
         /* Get path ERO */
         String ero = " ";
         CtrlPlanePathContent path = pathInfo.getPath();
