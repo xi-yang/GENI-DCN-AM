@@ -146,6 +146,11 @@ public class AggregateRspecRunner extends Thread {
                     break;
                 }
             }
+            if (rspec.getStatus().equalsIgnoreCase("RENEWING")) {
+                manager.updateRspec(rspec);
+                this.renew();
+                manager.updateRspec(rspec);
+            }
             if (goRun && goPoll) {
                 try {
                     this.pollP2PVlans();
@@ -163,11 +168,6 @@ public class AggregateRspecRunner extends Thread {
                     manager.updateRspec(rspec);
                     goRun = false;
                 }
-            }
-            if (rspec.getStatus().equalsIgnoreCase("RENEWING")) {
-                manager.updateRspec(rspec);
-                this.renew();
-                manager.updateRspec(rspec);
             }
         }
 
