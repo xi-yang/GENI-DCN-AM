@@ -201,4 +201,46 @@ public class AggregateStitchTopologyRunner extends Thread {
             return true;
         }
     }
+    
+    public boolean isValidVlan(String urn, String vtag) {
+        if (vtag.equalsIgnoreCase("any")) {
+            return true;
+        }
+        int tag = 0;
+        try {
+            tag = Integer.parseInt(vtag);
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+        if (tag <= 0 || tag > 4095) {
+            return false;
+        }
+        LinkContent link = this.getLinkByUrn(urn);
+        if (link == null) {
+            return false;
+        }
+        synchronized(this) {
+            List<SwitchingCapabilityDescriptor> swcapList = link.getSwitchingCapabilityDescriptor();
+            if (swcapList == null || swcapList.isEmpty())
+                return false;
+            for (SwitchingCapabilityDescriptor swcap: swcapList) {
+                if (!swcap.getSwitchingcapType().equalsIgnoreCase("l2sc")
+                    || swcap.getSwitchingCapabilitySpecificInfo() == null 
+                    || swcap.getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc() == null 
+                    || swcap.getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc().isEmpty()) {
+                    continue;
+                }
+                SwitchingCapabilitySpecificInfoL2Sc l2scInfo = swcap.getSwitchingCapabilitySpecificInfo().getSwitchingCapabilitySpecificInfoL2Sc().get(0);
+                try {
+                    VlanRange vlanRange = new VlanRange(l2scInfo.getVlanRangeAvailability());
+                    if (!vlanRange.isEmpty() && vlanRange.hasVlan(tag)) {
+                        return true;
+                    }
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+            return false;
+        }
+    }
 }

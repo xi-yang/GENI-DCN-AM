@@ -329,6 +329,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifySrcUrn));
                     throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifySrcUrn));
                 }
+                if (!AggregateState.getStitchTopoRunner().isValidVlan(verifySrcUrn, vlanTag)) {
+                    log.error(String.format("Requested VLAN '%s' is invalid for link '%s' - check the Ad RSpec", vlanTag, verifySrcUrn));
+                    throw new AggregateException(String.format("Request VLAN '%s' is invalid for link '%s' - check the Ad RSpec", vlanTag, verifySrcUrn));
+                }
             }
             if (verifyDstUrn.contains(AggregateState.getAmUrn())) {
                 if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
@@ -338,6 +342,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (!AggregateState.getStitchTopoRunner().isValidBandwidth(verifyDstUrn, bwKbps)) {
                     log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifyDstUrn));
                     throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", capacity, verifyDstUrn));
+                }
+                if (!AggregateState.getStitchTopoRunner().isValidVlan(verifyDstUrn, vlanTag)) {
+                    log.error(String.format("Requested VLAN '%s' is invalid for link '%s' - check the Ad RSpec", vlanTag, verifyDstUrn));
+                    throw new AggregateException(String.format("Request VLAN '%s' is invalid for link '%s' - check the Ad RSpec", vlanTag, verifyDstUrn));
                 }
             }
             // create VLAN link only if the link has a local sourceId urn
@@ -418,6 +426,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             String verifyDstUrn = destination;
             long srcBandwidth = AggregateUtils.convertBandwdithToKbpsLong(srcLink.getCapacity());
             long dstBandwidth = AggregateUtils.convertBandwdithToKbpsLong(dstLink.getCapacity());
+            String srcVlan = getLinkVlanRange(srcLink);
+            String dstVlan = getLinkVlanRange(dstLink);
             if (AggregateUtils.isDcnUrn(destination)) {
                 verifyDstUrn = AggregateUtils.convertDcnToGeniUrn(destination);
             }
@@ -430,6 +440,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", srcLink.getCapacity(), verifySrcUrn));
                     throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", srcLink.getCapacity(), verifySrcUrn));
                 }
+                if (!AggregateState.getStitchTopoRunner().isValidVlan(verifySrcUrn, srcVlan)) {
+                    log.error(String.format("Requested VLAN '%s' is invalid for link '%s' - check the Ad RSpec", srcVlan, verifySrcUrn));
+                    throw new AggregateException(String.format("Request VLAN '%s' is invalid for link '%s' - check the Ad RSpec", srcVlan, verifySrcUrn));
+                }
             }
             if (verifyDstUrn.contains(AggregateState.getAmUrn())) {
                 if (!AggregateState.getStitchTopoRunner().isValidEndPoint(verifyDstUrn)) {
@@ -440,14 +454,16 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     log.error(String.format("Requested bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", dstLink.getCapacity(), verifyDstUrn));
                     throw new AggregateException(String.format("Request bandwidth '%s' is invalid for link '%s' - check the Ad RSpec", dstLink.getCapacity(), verifyDstUrn));
                 }
+                if (!AggregateState.getStitchTopoRunner().isValidVlan(verifyDstUrn, dstVlan)) {
+                    log.error(String.format("Requested VLAN '%s' is invalid for link '%s' - check the Ad RSpec", dstVlan, verifyDstUrn));
+                    throw new AggregateException(String.format("Request VLAN '%s' is invalid for link '%s' - check the Ad RSpec", dstVlan, verifyDstUrn));
+                }
             }
             //create p2pvlan1
             AggregateP2PVlan stitchingP2PVlan = new AggregateP2PVlan();
             stitchingP2PVlan.setSource(source);
             stitchingP2PVlan.setDestination(destination);
             stitchingP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(srcLink.getCapacity()));
-            String srcVlan = getLinkVlanRange(srcLink);
-            String dstVlan = getLinkVlanRange(dstLink);
             if (srcVlan.isEmpty() && !dstVlan.isEmpty())
                 stitchingP2PVlan.setVtag(srcVlan+":any");
             else if (!srcVlan.isEmpty() && dstVlan.isEmpty())
