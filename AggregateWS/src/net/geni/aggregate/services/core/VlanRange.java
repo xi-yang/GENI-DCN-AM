@@ -81,10 +81,10 @@ public class VlanRange {
     }
     
     public boolean hasVlan(int vtag) {
-        if (vtag < 1 && vtag > MAX_VLAN) {
+        if (vtag < 1 || vtag >= MAX_VLAN) {
             return false;
         }
-        return map[vtag-1];
+        return map[vtag];
     }
 
     public int getFirst() {
