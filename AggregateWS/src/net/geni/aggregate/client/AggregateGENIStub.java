@@ -32031,6 +32031,36 @@
                              }
                              
 
+                        /**
+                        * field for Expires
+                        */
+
+                        
+                                    protected java.lang.String localExpires ;
+                                
+
+                           /**
+                           * Auto generated getter method
+                           * @return java.lang.String
+                           */
+                           public  java.lang.String getExpires(){
+                               return localExpires;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param Expires
+                               */
+                               public void setExpires(java.lang.String param){
+                            
+                                            this.localExpires=param;
+                                    
+
+                               }
+                            
+
      /**
      * isReaderMTOMAware
      * @return true if the reader supports MTOM
@@ -32223,6 +32253,40 @@
                              }
 
                         }
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
+                                            xmlWriter.writeStartElement(prefix,"expires", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"expires");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("expires");
+                                    }
+                                
+
+                                          if (localExpires==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("expires cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localExpires);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                             
                     xmlWriter.writeEndElement();
                
 
@@ -32438,6 +32502,15 @@
                             }
 
                         }
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "expires"));
+                                 
+                                        if (localExpires != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localExpires));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("expires cannot be null!!");
+                                        }
+                                    
 
                 return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
             
@@ -32626,7 +32699,26 @@
                                     else {
                                         
                                     }
-                                  
+                                
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","expires").equals(reader.getName())){
+                                
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setExpires(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                else{
+                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                }
+                              
                             while (!reader.isStartElement() && !reader.isEndElement())
                                 reader.next();
                             
@@ -39990,6 +40082,12 @@
                         
                                     protected java.lang.String localExpires ;
                                 
+                           /*  This tracker boolean wil be used to detect whether the user called the set method
+                          *   for this attribute. It will be used to determine whether to include this field
+                           *   in the serialized XML
+                           */
+                           protected boolean localExpiresTracker = false ;
+                           
 
                            /**
                            * Auto generated getter method
@@ -40007,6 +40105,14 @@
                                */
                                public void setExpires(java.lang.String param){
                             
+                                       if (param != null){
+                                          //update the setting tracker
+                                          localExpiresTracker = true;
+                                       } else {
+                                          localExpiresTracker = false;
+                                              
+                                       }
+                                   
                                             this.localExpires=param;
                                     
 
@@ -40143,7 +40249,7 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                              if (localExpiresTracker){
                                     namespace = "http://aggregate.geni.net/services/api/";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -40177,7 +40283,7 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                             }
                     xmlWriter.writeEndElement();
                
 
@@ -40348,7 +40454,7 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("rspecID cannot be null!!");
                                         }
-                                    
+                                     if (localExpiresTracker){
                                       elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "expires"));
                                  
@@ -40357,7 +40463,7 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("expires cannot be null!!");
                                         }
-                                    
+                                    }
 
                 return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
             
@@ -40466,11 +40572,10 @@
                                     
                               }  // End of if for expected property start element
                                 
-                                else{
-                                    // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
-                                }
-                              
+                                    else {
+                                        
+                                    }
+                                  
                             while (!reader.isStartElement() && !reader.isEndElement())
                                 reader.next();
                             

@@ -52,12 +52,13 @@ public class QuerySliceNetworkClient extends ExampleClient {
     public void outputResponse(QuerySliceNetworkResponseType response) {
         System.out.println("============ QuerySliceNetworkResponse Response =========== ");
         System.out.println("\t Slice Status => " + response.getSliceStatus());
+        System.out.println("\t Expires => " + response.getExpires());
         System.out.println("\t = P2P VLANs =");
         VlanReservationResultType[] vlanResultList = response.getVlanResvResult();
         for (VlanReservationResultType vlanResult: vlanResultList) {
             System.out.println("\t  GRI => " + vlanResult.getGlobalReservationId());
             System.out.println("\t  Status => " + vlanResult.getStatus());
-            System.out.println("\t  Message => " + vlanResult.getMessage());
+            System.out.println("\t  Expires => " + vlanResult.getStatus());
             System.out.println("\t\t VLAN_ID => " + vlanResult.getReservation().getVlan());
             System.out.println("\t\t Source => " + vlanResult.getReservation().getSourceNode());
             System.out.println("\t\t Interface => " + vlanResult.getReservation().getSrcInterface());

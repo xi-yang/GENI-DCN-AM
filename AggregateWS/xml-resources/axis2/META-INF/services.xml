@@ -45,6 +45,8 @@
                 <policy-subject identifier="binding:soap12/operation:QuerySliceVlan" />
                 <policy-subject identifier="binding:soap11/operation:CreateSliceNetwork" />
                 <policy-subject identifier="binding:soap12/operation:CreateSliceNetwork" />
+                <policy-subject identifier="binding:soap11/operation:RenewSliceNetwork" />
+                <policy-subject identifier="binding:soap12/operation:RenewSliceNetwork" />
                 <policy-subject identifier="binding:soap11/operation:DeleteSliceNetwork" />
                 <policy-subject identifier="binding:soap12/operation:DeleteSliceNetwork" />
                 <policy-subject identifier="binding:soap11/operation:QuerySliceNetwork" />
@@ -136,6 +138,8 @@
                 <policy-subject identifier="binding:soap12/operation:QuerySliceVlan/in" />
                 <policy-subject identifier="binding:soap11/operation:CreateSliceNetwork/in" />
                 <policy-subject identifier="binding:soap12/operation:CreateSliceNetwork/in" />
+                <policy-subject identifier="binding:soap11/operation:RenewSliceNetwork/in" />
+                <policy-subject identifier="binding:soap12/operation:RenewSliceNetwork/in" />
                 <policy-subject identifier="binding:soap11/operation:DeleteSliceNetwork/in" />
                 <policy-subject identifier="binding:soap12/operation:DeleteSliceNetwork/in" />
                 <policy-subject identifier="binding:soap11/operation:QuerySliceNetwork/in" />
@@ -170,6 +174,13 @@
             <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/StopSliceResponse</outputActionMapping>
             <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/StopSlice/Fault/AggregateException</faultActionMapping>
             <faultActionMapping faultName="AggregateFaultMessage">urn:StopSliceAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="RenewSliceNetwork" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <module ref="rampart" />
+            <actionMapping>RenewSliceNetwork</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/RenewSliceNetworkResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/RenewSliceNetwork/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:RenewSliceNetworkAggregateFaultMessage</faultActionMapping>
         </operation>
         <operation name="DeleteSliceNetwork" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <module ref="rampart" />
