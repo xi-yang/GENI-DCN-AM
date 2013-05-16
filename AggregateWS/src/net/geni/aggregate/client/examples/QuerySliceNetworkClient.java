@@ -58,6 +58,7 @@ public class QuerySliceNetworkClient extends ExampleClient {
         for (VlanReservationResultType vlanResult: vlanResultList) {
             System.out.println("\t  GRI => " + vlanResult.getGlobalReservationId());
             System.out.println("\t  Status => " + vlanResult.getStatus());
+            System.out.println("\t  Message => " + vlanResult.getMessage());
             System.out.println("\t\t VLAN_ID => " + vlanResult.getReservation().getVlan());
             System.out.println("\t\t Source => " + vlanResult.getReservation().getSourceNode());
             System.out.println("\t\t Interface => " + vlanResult.getReservation().getSrcInterface());
