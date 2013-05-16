@@ -913,6 +913,10 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             String[] extResStatus = {(String)hmRet.get("externalResourceStatus")};
             querySliceNetworkResponseType.setExternalResourceStatus(extResStatus);
         }
+        if (hmRet.containsKey("expires")) {
+            String expires = (String)hmRet.get("expires");
+            querySliceNetworkResponseType.setExpires(expires);
+        }
         querySliceNetworkResponse.setQuerySliceNetworkResponse(querySliceNetworkResponseType);
         return querySliceNetworkResponse;
     }

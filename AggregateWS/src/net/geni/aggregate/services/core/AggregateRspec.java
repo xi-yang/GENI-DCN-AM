@@ -6,6 +6,8 @@
 package net.geni.aggregate.services.core;
 
 import java.util.*;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import net.geni.aggregate.services.api.VlanReservationResultType;
 
 /**
@@ -152,6 +154,17 @@ public class AggregateRspec implements java.io.Serializable {
                 AggregateExternalResource ER = (AggregateExternalResource)rc;
                 hm.put("externalResourceStatus", ER.getSubType()+":"+ER.getUrn()+":"+ER.getStatus()+":"+ER.getRspecData());
             }
+        }
+        // updated expiration
+        try {
+            Date expires = new Date(this.getEndTime() * 1000);
+            GregorianCalendar gc = new GregorianCalendar();
+            gc.setTime(expires);
+            XMLGregorianCalendar xgcExpires = null;
+            xgcExpires = DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
+            hm.put("expires", xgcExpires.toString());
+        } catch (Exception e) {
+            ; //nnop
         }
         return hm;
     }
