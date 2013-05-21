@@ -45,7 +45,8 @@ public class AggregateState
     private static String idc6ClientKeystoreUser = "";
     private static String idc6TrustKeystore = "";
     private static String idc6TrustKeystorePassword = "";
-    
+    private static String idcVerifyEndpoints = "";
+
     private static String plcURL = "";
     private static String plcPI = "";
     private static String plcPassword = "";
@@ -124,6 +125,8 @@ public class AggregateState
         log.info("aggregate.idc.v6.trust_keystore set to " + idc6TrustKeystore);
         idc6TrustKeystorePassword = aggregateProps.getProperty("aggregate.idc.v6.trust_keystore_password", "password");
         //log.info("aggregate.idc.v6.trust_keystore_password set to " + idc6TrustKeystorePassword);
+        idcVerifyEndpoints = aggregateProps.getProperty("aggregate.idc.verifyendpoints", "true");
+        log.info("aggregate.idc.verifyendpoints set to " + idcVerifyEndpoints);
         
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         log.info("aggregate.plc.url set to " + plcURL);
@@ -339,6 +342,10 @@ public class AggregateState
 
     public static String getIdc6TrustKeystorePassword() {
         return idc6TrustKeystorePassword;
+    }
+
+    public static boolean isIdcVerifyEndpoints() {
+        return idcVerifyEndpoints.equalsIgnoreCase("true");
     }
     
     public static String getPlcURL() {

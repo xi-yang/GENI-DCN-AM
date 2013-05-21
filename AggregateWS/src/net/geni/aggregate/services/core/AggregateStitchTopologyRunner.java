@@ -170,6 +170,8 @@ public class AggregateStitchTopologyRunner extends Thread {
     }
     
     public boolean isValidEndPoint(String urn) {
+        if (!AggregateState.isIdcVerifyEndpoints())
+            return true;
         if (this.getLinkByUrn(urn) == null) {
             return false;
         }
@@ -177,6 +179,8 @@ public class AggregateStitchTopologyRunner extends Thread {
     }
 
     public boolean isValidBandwidth(String urn, long bw) {
+        if (!AggregateState.isIdcVerifyEndpoints())
+            return true;
         LinkContent link = this.getLinkByUrn(urn);
         if (link == null) {
             return false;
@@ -203,6 +207,8 @@ public class AggregateStitchTopologyRunner extends Thread {
     }
     
     public boolean isValidVlan(String urn, String vtag) {
+        if (!AggregateState.isIdcVerifyEndpoints())
+            return true;
         if (vtag.equalsIgnoreCase("any")) {
             return true;
         }
