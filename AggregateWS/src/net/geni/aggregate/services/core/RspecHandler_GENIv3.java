@@ -247,7 +247,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     LinkPropertyContents lpc = (LinkPropertyContents)((JAXBElement)obj).getValue();
                     sourceId = lpc.getSourceId();
                     destId = lpc.getDestId();
-                    capacity = lpc.getCapacity();
+                    if (lpc.getCapacity() != null)
+                        capacity = lpc.getCapacity();
                 }
 
             }
