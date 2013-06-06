@@ -101,40 +101,42 @@ public class AggregateRspecManager extends Thread{
         List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
         List<AggregateExternalResource> ERs = AggregateState.getAggregateExtResources().getAll();
 
-        for (AggregateRspec aggrRspec: aggrRspecs) {
-            //reload computeSlices
-           for (AggregateSlice slice: slices) {
-                if (slice.getRspecId() == aggrRspec.getId())
-                    aggrRspec.getResources().add(slice);
+        synchronized(rspecThreads) {
+            for (AggregateRspec aggrRspec: aggrRspecs) {
+                //reload computeSlices
+               for (AggregateSlice slice: slices) {
+                    if (slice.getRspecId() == aggrRspec.getId())
+                        aggrRspec.getResources().add(slice);
+                }
+                //reload p2pVlans
+                for (AggregateP2PVlan p2pvlan: p2pvlans) {
+                    if (p2pvlan.getRspecId() == aggrRspec.getId())
+                        aggrRspec.getResources().add(p2pvlan);
+                }
+                //reload ext_resources
+                for (AggregateExternalResource ER: ERs) {
+                    if (ER.getRspecId() == aggrRspec.getId())
+                        aggrRspec.getResources().add(ER);
+                }
+                //reconstruct nodes and interfaces
+                recalibrateRspecResources(aggrRspec);
+                if (aggrRspec.isDeleted()) {
+                    log.debug(String.format("AggregateRspecManager.reloadFromDB: removing defunct instance for RSpec '%s'", aggrRspec.getRspecName()));
+                    aggrRspecs.remove(aggrRspec);
+                    if (aggrRspecs.isEmpty())
+                        break;
+                    continue;
+                } 
+                //start rspec runner
+                log.debug(String.format("AggregateRspecManager.reloadFromDB: reloading instance for RSpec '%s'", aggrRspec.getRspecName()));
+                AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
+                synchronized (rspecThreads) {
+                    rspecThreads.add(rspecRunner);
+                }
+                rspecRunner.setReloaded(true);
+                rspecRunner.setPollInterval(AggregateState.getPollInterval());
+                rspecRunner.start();
             }
-            //reload p2pVlans
-            for (AggregateP2PVlan p2pvlan: p2pvlans) {
-                if (p2pvlan.getRspecId() == aggrRspec.getId())
-                    aggrRspec.getResources().add(p2pvlan);
-            }
-            //reload ext_resources
-            for (AggregateExternalResource ER: ERs) {
-                if (ER.getRspecId() == aggrRspec.getId())
-                    aggrRspec.getResources().add(ER);
-            }
-            //reconstruct nodes and interfaces
-            recalibrateRspecResources(aggrRspec);
-            if (aggrRspec.isDeleted()) {
-                log.debug(String.format("AggregateRspecManager.reloadFromDB: removing defunct instance for RSpec '%s'", aggrRspec.getRspecName()));
-                aggrRspecs.remove(aggrRspec);
-                if (aggrRspecs.isEmpty())
-                    break;
-                continue;
-            } 
-            //start rspec runner
-            log.debug(String.format("AggregateRspecManager.reloadFromDB: reloading instance for RSpec '%s'", aggrRspec.getRspecName()));
-            AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
-            synchronized (rspecThreads) {
-                rspecThreads.add(rspecRunner);
-            }
-            rspecRunner.setReloaded(true);
-            rspecRunner.setPollInterval(AggregateState.getPollInterval());
-            rspecRunner.start();
         }
     }
 
