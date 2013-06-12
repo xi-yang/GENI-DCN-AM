@@ -43,7 +43,7 @@ public class AggregateP2PVlan extends AggregateResource {
     long startTime = 0;
     long endTime = 0;
     String errMessage = "";
-    String status = "";
+    String status = "INIT"; // a "IN*" status -> 'changing'
     boolean hasVlanOnNodes = false;
 
     private String stitchingResourceId = "";
@@ -256,7 +256,6 @@ public class AggregateP2PVlan extends AggregateResource {
             errMessage = "Error: cannot recreate an existing circuit";
             return status;
         }
-        status = "FAILED";
         try {
             status = apiClient.createReservation(source, destination, vtag, bandwidth, description, startTime, endTime);
             errMessage = "";
@@ -272,6 +271,10 @@ public class AggregateP2PVlan extends AggregateResource {
             errMessage = "RemoteException returned from createReservation: " +e.getMessage();
         } catch (Exception e) {
             errMessage = "OSCARSStub threw exception in createReservation: " +e.getMessage();
+        } finally {
+            if (status.equals("INIT")) {
+                status = "FAILED";
+            }
         }
 
         log.debug("setupVlan: gri="+gri+" source="+source+", destination="+destination+",vtag="+vtag+",startTime="+Long.toString(startTime)+",endTime="+Long.toString(endTime));
@@ -280,20 +283,7 @@ public class AggregateP2PVlan extends AggregateResource {
             status = "FAILED";
             errMessage = "IDC_APIClient::createReservation returned null GRI.";
         }
-        /*
-        else {
-            if (vtag.contains("any")) {
-                //wait for 10 seconds for IDC to compute path and vlan tag
-                AggregateUtils.justSleep(20);
-                this.queryVlan();
-            }
 
-            if (!status.equalsIgnoreCase("FAILED") && !setVlanOnNodes(true)) {
-                status = "FAILED";
-                errMessage = "setupVlan FAILED to add VLAN interface on source or destination node";
-            }
-        }
-        */
         return status;
      }
 
@@ -348,7 +338,6 @@ public class AggregateP2PVlan extends AggregateResource {
             if (status.equals("CANCELLED") || status.equals("FAILED") || status.equals("UNKNOWN") || status.equals("INTEARDOWN")) {
                 return status;
             }
-            status = "FAILED";
             status = apiClient.cancelReservation(gri);
             if (status.contains("Reservation cancellation status: ")) {
                 status = status.replaceAll("Reservation cancellation status:\\s", "").toUpperCase();
@@ -403,11 +392,9 @@ public class AggregateP2PVlan extends AggregateResource {
      public VlanReservationResultType queryVlan() {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
-        HashMap hmRet = new HashMap();
-        status = "FAILED";
-        hmRet.put("status", status);
+        boolean finishedQuery = false;
         try {
-            hmRet = apiClient.queryReservation(gri);
+            HashMap hmRet = apiClient.queryReservation(gri);
             if (hmRet.get("status") != null) {
                 status = hmRet.get("status").toString();
             }
@@ -423,6 +410,7 @@ public class AggregateP2PVlan extends AggregateResource {
                     errMessage = "VLAN circuit in unknown status";
                 }
             }
+            finishedQuery = true;
         } catch (AxisFault e) {
             if (errMessage.isEmpty())
                 errMessage = "AxisFault from queryReservation: " +e.getMessage();
@@ -438,6 +426,10 @@ public class AggregateP2PVlan extends AggregateResource {
         } catch (Exception e) {
             if (errMessage.isEmpty())
                 errMessage = "OSCARSStub threw exception in queryReservation: " +e.getMessage();
+        } finally {
+            if (!finishedQuery) {
+                status = "UNKNOWN"; // Allow for second chance to correct query result.
+            }
         }
 
         return getVlanResvResult();
