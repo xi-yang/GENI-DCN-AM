@@ -197,7 +197,7 @@ public class AggregateNodes {
                 }
             } else if (node.matches("[a-zA-Z0-9\\.\\s]+")) {
                 for (AggregateNode n : cachedNodes) {
-                    if (n.getDescription().equalsIgnoreCase(node)) {
+                    if (n.getDescription().contains(node)) {
                         aggrNode = n;
                         break;
                     }

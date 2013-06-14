@@ -127,6 +127,11 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
         } else if (sliceName.contains("+") || sliceName.contains(".") || sliceName.contains(":")) {
             return "";
         }
+        sliceName = sliceName.replace("-", "");
+        String[] sliceNameFrags = sliceName.split(":");
+        if (sliceNameFrags.length > 1)
+            sliceName = sliceNameFrags[sliceNameFrags.length - 1];
+        sliceName = sliceName.toLowerCase();
         return sliceName;
     }
     
