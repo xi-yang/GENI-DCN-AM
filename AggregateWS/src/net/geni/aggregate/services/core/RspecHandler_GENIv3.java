@@ -380,13 +380,14 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         if (stitchingTopology.getPath() == null || stitchingTopology.getPath().isEmpty()) {
             throw new AggregateException("RspecHandler_GENIv3::parseStitchingResources stitching <topology> must have at least one <path>.");
         }
+        boolean hasLocalPath = false;
         for (PathContent path: stitchingTopology.getPath()) {
             List<HopContent> localHops = getAggregateLocalHops(path);
             // privision edge-to-edge -- skip explicit path hops in between (if any) 
             if (localHops.size() == 0) {
-                throw new AggregateException("RspecHandler_GENIv3::parseStitchingResources stitching <path id=\"" 
-                        + path.getId() + "\"> must have at least one <hop> elements.");
+                continue;
             }
+            hasLocalPath = true;
             LinkContent srcLink = localHops.get(0).getLink();
             LinkContent dstLink = null;
             if (localHops.size() > 1) {
@@ -501,6 +502,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             stitchingP2PVlan.setClientId(path.getId());
             stitchingP2PVlan.setExternalResourceId("legacy-non-empty");
             rspec.getResources().add((AggregateResource)stitchingP2PVlan);
+        }
+        if (!hasLocalPath) {
+            throw new AggregateException("RspecHandler_GENIv3::parseStitchingResources stitching extension must have at least one <path> with local <hop> elements.");
         }
     }
 
