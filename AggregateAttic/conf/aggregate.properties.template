@@ -46,3 +46,4 @@ aggregate.external.protogeni.ssl_cert_path=/root/.ssl/encrypted.pem
 aggregate.external.protogeni.ssl_password=
 aggregate.external.protogeni.sm_urn=https://www.emulab.net:443/protogeni/xmlrpc/sa
 aggregate.external.protogeni.am_urn=https://www.emulab.net:443/protogeni/xmlrpc/cm
+
