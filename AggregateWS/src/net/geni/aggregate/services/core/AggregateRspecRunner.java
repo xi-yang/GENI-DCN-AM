@@ -134,7 +134,13 @@ public class AggregateRspecRunner extends Thread {
                 rollback(); //revert
                 return;
             }
-            rspec.setStatus("VLANS-CREATED");
+
+            long now = System.currentTimeMillis()/1000;
+            if (now < rspec.getStartTime()) {
+                rspec.setStatus("VLANS-ALLOCATED");
+            } else {
+                rspec.setStatus("VLANS-CREATED");
+            }
             manager.updateRspec(rspec);
         }
 
@@ -146,10 +152,15 @@ public class AggregateRspecRunner extends Thread {
                     break;
                 }
             }
-            if (rspec.getStatus().equalsIgnoreCase("RENEWING")) {
+
+            if (rspec.getStatus().equalsIgnoreCase("PROVISIONING")) {
+                manager.updateRspec(rspec);
+                this.provision();
+            } else  if (rspec.getStatus().equalsIgnoreCase("RENEWING")) {
                 manager.updateRspec(rspec);
                 this.renew();
             }
+
             if (goRun && goPoll) {
                 try {
                     this.pollP2PVlans();
@@ -227,13 +238,13 @@ public class AggregateRspecRunner extends Thread {
         }
     }
 
-    private void renewSlice() throws AggregateException {
+    private void modifySlice() throws AggregateException {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("computeSlice")) {
                 AggregateSlice slice = (AggregateSlice)resources.get(i);
                 log.debug("start - renew slice: "+ slice.getSliceName());
-                AggregateState.getAggregateSlices().renewSlice(slice.getSliceName(), (int)rspec.getEndTime());
+                AggregateState.getAggregateSlices().modifySlice(slice.getSliceName(), (int)rspec.getEndTime());
                 log.debug("end - renew slice: "+ slice.getSliceName());
             }
         }
@@ -342,19 +353,24 @@ public class AggregateRspecRunner extends Thread {
             rspec.setStatus("VLANS-ACTIVE");
     }
 
-    private void renewP2PVlans() throws AggregateException {
+    private void modifyP2PVlans() throws AggregateException {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("p2pVlan")) {
                 AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(i);
-                log.debug("start - renew p2pvlan: "+ p2pvlan.getDescription());
+                log.debug("start - modify p2pvlan: "+ p2pvlan.getDescription());
+                p2pvlan.setStartTime(rspec.getStartTime());
+                long now = System.currentTimeMillis() / 1000;
+                if (p2pvlan.getStartTime() - now < 120 && p2pvlan.getEndTime() == rspec.getEndTime()) {
+                    log.debug("skip - no need to modify p2pvlan: "+ p2pvlan.getDescription());
+                }
                 p2pvlan.setEndTime(rspec.getEndTime());
-                String status = p2pvlan.renewVlan();
-                if (!status.equalsIgnoreCase("RENEWED")) {
+                String status = p2pvlan.modifyVlan();
+                if (!status.equalsIgnoreCase("MODIFIED")) {
                     throw new AggregateException(String.format("P2PVlan '%s' failed to renew due to '%s'", p2pvlan.getDescription(), p2pvlan.getErrorMessage()));
                 }
                 AggregateState.getAggregateP2PVlans().update(p2pvlan);
-                log.debug("end - renew p2pvlan: "+ p2pvlan.getDescription());
+                log.debug("end - modify p2pvlan: "+ p2pvlan.getDescription());
             }
         }
     }
@@ -480,19 +496,30 @@ public class AggregateRspecRunner extends Thread {
         }
     }
 
+    private void provision() {
+        log.debug("start - provisioning rspec: "+ rspec.getRspecName());
+        try {
+            //this.modifySlice();
+            this.modifyP2PVlans();
+        } catch (AggregateException e) {
+            log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
+            e.printStackTrace();
+        }
+        log.debug("end - provisioning rspec: "+ rspec.getRspecName());
+    }
+    
     private void renew() {
         log.debug("start - renewing rspec: "+ rspec.getRspecName());
         try {
-            this.renewSlice();
-            this.renewP2PVlans();
+            this.modifySlice();
+            this.modifyP2PVlans();
         } catch (AggregateException e) {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
             e.printStackTrace();
         }
         log.debug("end - renewing rspec: "+ rspec.getRspecName());
     }
-    
-    
+        
     private void rollback() {
         log.debug("start - rolling back rspec: "+ rspec.getRspecName() + " with status:" + rspec.getStatus());
         try {

@@ -287,7 +287,7 @@ public class AggregateRspecManager extends Thread{
         }
     }
 
-    public synchronized String createRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice) throws AggregateException {
+    public synchronized String createRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice, long timeOffset) throws AggregateException {
         synchronized(rspecThreads) {
             for (AggregateRspec rspec: aggrRspecs)
                 if (rspecId.equalsIgnoreCase(rspec.getRspecName()) && !rspec.isDeleted())
@@ -304,7 +304,7 @@ public class AggregateRspecManager extends Thread{
         aggrRspec = AggregateState.getRspecHandler().parseRspecXml(rspecXML);
         aggrRspec.setRspecName(rspecId);
         aggrRspec.setAddPlcSlice(addPlcSlice);
-
+        aggrRspec.setStartTime(aggrRspec.getStartTime() + timeOffset);
         if (aggrRspec.getRspecName().isEmpty() || aggrRspec.getStartTime() == 0
             || aggrRspec.getStartTime() == 0 || aggrRspec.getResources().size() == 0)
             throw new AggregateException("Rspec parsing failed!");
@@ -341,6 +341,36 @@ public class AggregateRspecManager extends Thread{
         return aggrRspec.getStatus();
     }
 
+    public String allocateRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice) throws AggregateException {
+        long timeOffset = 600; // 10 minutes; TBD: configuratble
+        return createRspec(rspecId, rspecXML, authUser, addPlcSlice, timeOffset);
+    }
+    
+    public synchronized String provisionRspec(String rspecName) throws AggregateException {
+        synchronized(rspecThreads) {
+            for (AggregateRspec aggrRspec: aggrRspecs) {
+                if (rspecName.equalsIgnoreCase(aggrRspec.getRspecName()) && !aggrRspec.isDeleted()) {
+                    if (aggrRspec.getStatus().contains("ALLOCATED")) {
+                        aggrRspec.setStatus("PROVISIONING");
+                        for (AggregateRspecRunner rspecThread: rspecThreads) {
+                            if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecName)) {
+                                rspecThread.setPollInterval(defaultPollInterval);
+                                rspecThread.interrupt();
+                                return "PROVISIONING";
+                            }
+                        }
+                        throw new AggregateException("No active RSpecRunnner thread '"+rspecName+"' to provision!");            
+                    } else if (aggrRspec.getStatus().equalsIgnoreCase("PROVISIONING")) {
+                        return "PROVISIONING";
+                    } else {
+                        throw new AggregateException(String.format("RSpec '%s' is in '%s' status -- cannot provision for now!", rspecName, aggrRspec.getStatus()));
+                    }
+                }
+            }
+            throw new AggregateException("provisionRspec: Unkown Rspec: "+rspecName);
+        }
+    }
+    
     public synchronized String renewRspec(String rspecName, String expires) throws AggregateException {
         synchronized(rspecThreads) {
             for (AggregateRspec aggrRspec: aggrRspecs) {
@@ -370,7 +400,7 @@ public class AggregateRspecManager extends Thread{
                                 return "RENEWING";
                             }
                         }
-                        throw new AggregateException("No active RSpecRunnner thread '"+rspecName+"' to excute renewal!");            
+                        throw new AggregateException("No active RSpecRunnner thread '"+rspecName+"' to renewa!");            
                     } else if (aggrRspec.getStatus().equalsIgnoreCase("RENEWING")) {
                         return "RENEWING";
                     } else {

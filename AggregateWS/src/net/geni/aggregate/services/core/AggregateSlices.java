@@ -210,7 +210,7 @@ public class AggregateSlices {
         return ret;
     }
 
-    public synchronized int renewSlice(String sliceName, int newExpires) {
+    public synchronized int modifySlice(String sliceName, int newExpires) {
         int ret = -1;
         AggregateSlice slice = this.getByName(sliceName);
         if (slice == null) {
@@ -224,7 +224,7 @@ public class AggregateSlices {
             slice.setExpiredTime(newExpires);
             this.update(slice);
         }else {
-            log.error("Failed to renew slice '"+sliceName+"' with the PLC");
+            log.error("Failed to modify slice '"+sliceName+"' with the PLC");
         }
         plcClient.logoff();
         return ret;

@@ -788,7 +788,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         String message = "";
         try {
             //TODO pass authUser into createRspec!
-            status = AggregateState.getRspecManager().createRspec(rspecId, rspecXml, authUser.getEmail(), addPlcSlice);
+            status = AggregateState.getRspecManager().createRspec(rspecId, rspecXml, authUser.getEmail(), addPlcSlice, 0);
             message = "";
         } catch (AggregateException e) {
             status = "FAILED";

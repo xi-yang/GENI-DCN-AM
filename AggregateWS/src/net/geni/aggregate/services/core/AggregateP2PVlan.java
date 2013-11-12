@@ -292,7 +292,7 @@ public class AggregateP2PVlan extends AggregateResource {
      * @param
      * @return
      */
-     public String renewVlan() {
+     public String modifyVlan() {
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         try {
@@ -304,7 +304,7 @@ public class AggregateP2PVlan extends AggregateResource {
                 long modifiedEndTime = Long.valueOf(hmRet.get("endTime").toString());
                 if (modifiedEndTime == this.endTime) {
                     errMessage = "";
-                    return "RENEWED";
+                    return "MODIFIED";
                 }
             }
         } catch (AxisFault e) {
@@ -319,7 +319,7 @@ public class AggregateP2PVlan extends AggregateResource {
             errMessage = "OSCARSStub threw exception in modifyReservation: " +e.getMessage();
         }
         if (errMessage.isEmpty()) {
-            errMessage = "Failed to renew the VLAN circuit via modifyReservation.";
+            errMessage = "Failed to modify the VLAN circuit via modifyReservation.";
         }
         return "FAILED";
      }
