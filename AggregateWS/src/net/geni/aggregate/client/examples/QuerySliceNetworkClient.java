@@ -52,6 +52,7 @@ public class QuerySliceNetworkClient extends ExampleClient {
     public void outputResponse(QuerySliceNetworkResponseType response) {
         System.out.println("============ QuerySliceNetworkResponse Response =========== ");
         System.out.println("\t Slice Status => " + response.getSliceStatus());
+        System.out.println("\t Expires => " + response.getExpires());
         System.out.println("\t = P2P VLANs =");
         VlanReservationResultType[] vlanResultList = response.getVlanResvResult();
         for (VlanReservationResultType vlanResult: vlanResultList) {

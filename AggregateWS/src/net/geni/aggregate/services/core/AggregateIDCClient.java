@@ -126,6 +126,60 @@ public class AggregateIDCClient {
     }
 
     /**
+     *  modifyReservation
+     *
+     */
+    public String modifyReservation(String aGri, String src, String dst, String vtag, float bw, String descr, long startTime, long endTime)
+        throws AxisFault, AAAFaultMessage, BSSFaultMessage, RemoteException, Exception {
+        if (gri == null)
+            return "FAILED";
+
+        if (!aGri.equals(""))
+            this.gri.setGri(aGri);
+        
+        if (v6Client != null) {
+            return v6Client.requestModifyReservation(aGri, src, dst, vtag, bw, descr, startTime, endTime);
+        }
+
+        Client client = new Client();
+
+        /* Initialize client instance */
+        client.setUp(true, idcURL, idcRepo);
+        /* Send Request */
+        ModifyResContent content = new ModifyResContent();
+        content.setGlobalReservationId(aGri);
+        PathInfo pathInfo = new PathInfo();
+        Layer2Info layer2Info = new Layer2Info();
+        layer2Info.setSrcEndpoint(src);
+        layer2Info.setDestEndpoint(dst);
+        if (vtag.equalsIgnoreCase("untagged"))
+            vtag = "0";
+        VlanTag srcVtag = new VlanTag();
+        srcVtag.setString(AggregateUtils.parseVlanTag(vtag, true));
+        srcVtag.setTagged(true);
+        layer2Info.setSrcVtag(srcVtag);
+        VlanTag destVtag = new VlanTag();
+        // same as srcVtag for now
+        destVtag.setString(AggregateUtils.parseVlanTag(vtag, false));
+        destVtag.setTagged(true);
+        layer2Info.setDestVtag(destVtag);
+
+        content.setDescription(descr);
+        content.setStartTime(startTime);
+        content.setEndTime(endTime);
+        content.setBandwidth((int)bw);
+
+        pathInfo.setPathSetupMode("timer-automatic");
+        pathInfo.setLayer2Info(layer2Info);
+        content.setPathInfo(pathInfo);
+        ModifyResReply response = client.modifyReservation(content);
+        client.cleanUp();
+        /* Extract repsponse information */
+        return response.getReservation().getStatus();
+    }
+
+
+    /**
      *  cancelReservation
      *
      */
@@ -185,14 +239,14 @@ public class AggregateIDCClient {
         hmRet.put("GRI", response.getGlobalReservationId());
         hmRet.put("login", response.getLogin());
         hmRet.put("status", response.getStatus());
-        hmRet.put("startTime", response.getStartTime());
-        hmRet.put("endTime", response.getEndTime());
-        hmRet.put("cratedTime", response.getCreateTime());
-        hmRet.put("bandwidth", response.getBandwidth());
+        hmRet.put("startTime", Long.toString(response.getStartTime()));
+        hmRet.put("endTime", Long.toString(response.getEndTime()));
+        hmRet.put("cratedTime", Long.toString(response.getCreateTime()));
+        hmRet.put("bandwidth", Integer.toString(response.getBandwidth()));
         hmRet.put("description", response.getDescription());
         hmRet.put("source", layer2Info.getSrcEndpoint());
         hmRet.put("destination", layer2Info.getDestEndpoint());
-        hmRet.put("vlanTag", layer2Info.getSrcVtag()+":"+layer2Info.getDestVtag());
+        hmRet.put("vlanTag", layer2Info.getSrcVtag().toString()+":"+layer2Info.getDestVtag().toString());
         /* Get path ERO */
         String ero = " ";
         CtrlPlanePathContent path = pathInfo.getPath();

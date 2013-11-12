@@ -123,10 +123,15 @@ public class AggregatePLC_APIClient extends AggregateCLIClient {
             if (items.length < 4 || !items[items.length-2].equals("slice")) {
                 return "";
             }
-            return (items[items.length-3].replace(".", "") + "_" + items[items.length-1]);
+            sliceName = items[items.length-3].replace(".", "") + "_" + items[items.length-1];
         } else if (sliceName.contains("+") || sliceName.contains(".") || sliceName.contains(":")) {
             return "";
         }
+        sliceName = sliceName.replace("-", "");
+        String[] sliceNameFrags = sliceName.split(":");
+        if (sliceNameFrags.length > 1)
+            sliceName = sliceNameFrags[sliceNameFrags.length - 1];
+        sliceName = sliceName.toLowerCase();
         return sliceName;
     }
     

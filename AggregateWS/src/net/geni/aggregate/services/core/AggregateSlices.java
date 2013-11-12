@@ -210,6 +210,26 @@ public class AggregateSlices {
         return ret;
     }
 
+    public synchronized int renewSlice(String sliceName, int newExpires) {
+        int ret = -1;
+        AggregateSlice slice = this.getByName(sliceName);
+        if (slice == null) {
+            log.error("Unkonwn sliceName '"+sliceName+"' in Aggregate DB");
+            return ret;
+        }
+        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
+        ret = plcClient.updateSlice(slice.getSliceName(), slice.getUrl(), slice.getDescription(), 
+                newExpires, slice.getUsers(), slice.getNodes());
+        if (ret == 1) { //slice successfully updateded with PLC
+            slice.setExpiredTime(newExpires);
+            this.update(slice);
+        }else {
+            log.error("Failed to renew slice '"+sliceName+"' with the PLC");
+        }
+        plcClient.logoff();
+        return ret;
+    }
+    
     public synchronized int updateSlice(String sliceName, String url, String descr, int expires, String[] users, String[] nodes) {
         int ret = -1;
         AggregateSlice slice = this.getByName(sliceName);

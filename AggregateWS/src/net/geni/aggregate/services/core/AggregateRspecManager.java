@@ -14,12 +14,16 @@ import net.es.oscars.oscars.BSSFaultMessage;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  *
  * @author Xi Yang
  */
 public class AggregateRspecManager extends Thread{
+    final int defaultPollInterval = 30000; // 3 seconds
     final int extendedPollInterval = 900000; // 15 minutes
     private volatile boolean goRun = false;
     private volatile List<AggregateRspec> aggrRspecs;
@@ -97,40 +101,42 @@ public class AggregateRspecManager extends Thread{
         List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
         List<AggregateExternalResource> ERs = AggregateState.getAggregateExtResources().getAll();
 
-        for (AggregateRspec aggrRspec: aggrRspecs) {
-            //reload computeSlices
-           for (AggregateSlice slice: slices) {
-                if (slice.getRspecId() == aggrRspec.getId())
-                    aggrRspec.getResources().add(slice);
+        synchronized(rspecThreads) {
+            for (AggregateRspec aggrRspec: aggrRspecs) {
+                //reload computeSlices
+               for (AggregateSlice slice: slices) {
+                    if (slice.getRspecId() == aggrRspec.getId())
+                        aggrRspec.getResources().add(slice);
+                }
+                //reload p2pVlans
+                for (AggregateP2PVlan p2pvlan: p2pvlans) {
+                    if (p2pvlan.getRspecId() == aggrRspec.getId())
+                        aggrRspec.getResources().add(p2pvlan);
+                }
+                //reload ext_resources
+                for (AggregateExternalResource ER: ERs) {
+                    if (ER.getRspecId() == aggrRspec.getId())
+                        aggrRspec.getResources().add(ER);
+                }
+                //reconstruct nodes and interfaces
+                recalibrateRspecResources(aggrRspec);
+                if (aggrRspec.isDeleted()) {
+                    log.debug(String.format("AggregateRspecManager.reloadFromDB: removing defunct instance for RSpec '%s'", aggrRspec.getRspecName()));
+                    aggrRspecs.remove(aggrRspec);
+                    if (aggrRspecs.isEmpty())
+                        break;
+                    continue;
+                } 
+                //start rspec runner
+                log.debug(String.format("AggregateRspecManager.reloadFromDB: reloading instance for RSpec '%s'", aggrRspec.getRspecName()));
+                AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
+                synchronized (rspecThreads) {
+                    rspecThreads.add(rspecRunner);
+                }
+                rspecRunner.setReloaded(true);
+                rspecRunner.setPollInterval(AggregateState.getPollInterval());
+                rspecRunner.start();
             }
-            //reload p2pVlans
-            for (AggregateP2PVlan p2pvlan: p2pvlans) {
-                if (p2pvlan.getRspecId() == aggrRspec.getId())
-                    aggrRspec.getResources().add(p2pvlan);
-            }
-            //reload ext_resources
-            for (AggregateExternalResource ER: ERs) {
-                if (ER.getRspecId() == aggrRspec.getId())
-                    aggrRspec.getResources().add(ER);
-            }
-            //reconstruct nodes and interfaces
-            recalibrateRspecResources(aggrRspec);
-            if (aggrRspec.isDeleted()) {
-                log.debug(String.format("AggregateRspecManager.reloadFromDB: removing defunct instance for RSpec '%s'", aggrRspec.getRspecName()));
-                aggrRspecs.remove(aggrRspec);
-                if (aggrRspecs.isEmpty())
-                    break;
-                continue;
-            } 
-            //start rspec runner
-            log.debug(String.format("AggregateRspecManager.reloadFromDB: reloading instance for RSpec '%s'", aggrRspec.getRspecName()));
-            AggregateRspecRunner rspecRunner = new AggregateRspecRunner(this, aggrRspec);
-            synchronized (rspecThreads) {
-                rspecThreads.add(rspecRunner);
-            }
-            rspecRunner.setReloaded(true);
-            rspecRunner.setPollInterval(AggregateState.getPollInterval());
-            rspecRunner.start();
         }
     }
 
@@ -335,6 +341,47 @@ public class AggregateRspecManager extends Thread{
         return aggrRspec.getStatus();
     }
 
+    public synchronized String renewRspec(String rspecName, String expires) throws AggregateException {
+        synchronized(rspecThreads) {
+            for (AggregateRspec aggrRspec: aggrRspecs) {
+                if (rspecName.equalsIgnoreCase(aggrRspec.getRspecName()) && !aggrRspec.isDeleted()) {
+                    if (aggrRspec.getStatus().equalsIgnoreCase("WORKING")) {
+                        long now = System.currentTimeMillis()/1000;
+                        if (aggrRspec.getEndTime() - now < 900) {
+                            throw new AggregateException("Cannot renew an RSpec that will expire in 15 minutes!");
+                        }
+                        long newEndTime = 0;
+                        try {
+                            XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(expires);
+                            Date dateExpires = xgc.toGregorianCalendar().getTime();
+                            newEndTime = dateExpires.getTime()/1000;
+                        } catch (DatatypeConfigurationException ex) {
+                            throw new AggregateException(String.format("Mailformed renewal time '%s'", expires));
+                        }
+                        if (newEndTime - aggrRspec.getEndTime() < 900) {
+                            throw new AggregateException("The new expiration time must be at least 15 minutes from the current expiration time!");                            
+                        }
+                        aggrRspec.setEndTime(newEndTime);
+                        aggrRspec.setStatus("RENEWING");
+                        for (AggregateRspecRunner rspecThread: rspecThreads) {
+                            if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecName)) {
+                                rspecThread.setPollInterval(defaultPollInterval);
+                                rspecThread.interrupt();
+                                return "RENEWING";
+                            }
+                        }
+                        throw new AggregateException("No active RSpecRunnner thread '"+rspecName+"' to excute renewal!");            
+                    } else if (aggrRspec.getStatus().equalsIgnoreCase("RENEWING")) {
+                        return "RENEWING";
+                    } else {
+                        throw new AggregateException(String.format("RSpec '%s' is in '%s' status -- cannot renew for now!", rspecName, aggrRspec.getStatus()));
+                    }
+                }
+            }
+            throw new AggregateException("renewRspec: Unkown Rspec: "+rspecName);
+        }
+    }
+    
     public synchronized String deleteRspec(String rspecName) throws AggregateException {
         synchronized(rspecThreads) {
             for (AggregateRspecRunner rspecThread: rspecThreads) {
