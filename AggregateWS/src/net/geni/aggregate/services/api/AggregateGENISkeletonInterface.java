@@ -15,6 +15,36 @@
         /**
          * Auto generated method signature
          * 
+                                    * @param provisionSliceNetwork
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.ProvisionSliceNetworkResponse ProvisionSliceNetwork
+                (
+                  net.geni.aggregate.services.api.ProvisionSliceNetwork provisionSliceNetwork
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
+                                    * @param allocateSliceNetwork
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.AllocateSliceNetworkResponse AllocateSliceNetwork
+                (
+                  net.geni.aggregate.services.api.AllocateSliceNetwork allocateSliceNetwork
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
                                     * @param updateSlice
              * @throws AggregateFaultMessage : 
          */

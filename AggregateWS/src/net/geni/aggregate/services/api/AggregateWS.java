@@ -807,13 +807,87 @@ public class AggregateWS implements AggregateGENISkeletonInterface
     /**
      * 
      *
+     * @param allocateSliceNetwork10
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.AllocateSliceNetworkResponse AllocateSliceNetwork(
+            net.geni.aggregate.services.api.AllocateSliceNetwork allocateSliceNetwork10)
+            throws AggregateFaultMessage {
+        AllocateSliceNetworkType allocateSliceNework = allocateSliceNetwork10.getAllocateSliceNetwork();
+        String rspecId = allocateSliceNework.getRspecID();
+        RSpecTopologyType rspecTopo = allocateSliceNework.getRspecNetwork();
+        String rspecXml = "";
+        for (String s: rspecTopo.getStatement()) {
+            rspecXml += s;
+        }
+        boolean addPlcSlice = allocateSliceNework.getAddPlcSlice();
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
+        String status = "";
+        String message = "";
+        try {
+            status = AggregateState.getRspecManager().allocateRspec(rspecId, rspecXml, authUser.getEmail(), addPlcSlice);
+            message = "";
+        } catch (AggregateException e) {
+            status = "FAILED";
+            message = e.getMessage();
+        }
+
+        //form response
+        AllocateSliceNetworkResponseType allocateSliceNetworkResponseType = new AllocateSliceNetworkResponseType();
+        AllocateSliceNetworkResponse allocateSliceNetworkResponse = new AllocateSliceNetworkResponse();
+        allocateSliceNetworkResponseType.setStatus(status);
+        allocateSliceNetworkResponseType.setMessage(message);
+        allocateSliceNetworkResponse.setAllocateSliceNetworkResponse(allocateSliceNetworkResponseType);
+        return allocateSliceNetworkResponse;
+    }
+
+    /**
+     * 
+     *
+     * @param provisionSliceNetwork12
+     * @throws AggregateFaultMessage :
+     */
+    public net.geni.aggregate.services.api.ProvisionSliceNetworkResponse ProvisionSliceNetwork(
+            net.geni.aggregate.services.api.ProvisionSliceNetwork provisionSliceNetwork12)
+            throws AggregateFaultMessage {
+        ProvisionSliceNetworkType provisionSliceNework = provisionSliceNetwork12.getProvisionSliceNetwork();
+        String rspecId = provisionSliceNework.getRspecID();
+
+        //get authorized/registered user. AggregateFaultMessage thrown if failed
+        AggregateUser authUser = this.getAuthorizedUser();
+
+        String status = "";
+        String message = "";
+        try {
+            status = AggregateState.getRspecManager().provisionRspec(rspecId);
+            message = "";
+        } catch (AggregateException e) {
+            status = "FAILED";
+            message = e.getMessage();
+        }
+
+        //form response
+        ProvisionSliceNetworkResponseType provisionSliceNetworkResponseType = new ProvisionSliceNetworkResponseType();
+        ProvisionSliceNetworkResponse provisionSliceNetworkResponse = new ProvisionSliceNetworkResponse();
+        provisionSliceNetworkResponseType.setStatus(status);
+        provisionSliceNetworkResponseType.setMessage(message);
+        provisionSliceNetworkResponse.setProvisionSliceNetworkResponse(provisionSliceNetworkResponseType);
+        return provisionSliceNetworkResponse;
+    }
+
+    /**
+     * 
+     *
      * @param renewSliceNetwork22
      * @throws AggregateFaultMessage :
      */
     public net.geni.aggregate.services.api.RenewSliceNetworkResponse RenewSliceNetwork(
-            net.geni.aggregate.services.api.RenewSliceNetwork renewSliceNetwork4)
+            net.geni.aggregate.services.api.RenewSliceNetwork renewSliceNetwork22)
             throws AggregateFaultMessage {
-        RenewSliceNetworkType renewSliceNework = renewSliceNetwork4.getRenewSliceNetwork();
+        RenewSliceNetworkType renewSliceNework = renewSliceNetwork22.getRenewSliceNetwork();
         String rspecName = renewSliceNework.getRspecID();
         String expires = renewSliceNework.getExpires();
 

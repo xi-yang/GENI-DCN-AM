@@ -420,6 +420,42 @@
                 </xs:sequence>
             </xs:complexType>
 
+            <!-- AllocateSliceNetwork request definitions -->
+            <xs:element name="AllocateSliceNetwork" type="tns:AllocateSliceNetworkType"/>
+            <xs:complexType name="AllocateSliceNetworkType">
+                <xs:sequence>
+                    <xs:element name="rspecID" type="xs:string"/>
+                    <xs:element name="rspecNetwork" type="tns:RSpecTopologyType"/>
+                    <xs:element name="addPlcSlice" type="xs:boolean" default="true"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- AllocateSliceNetwork response definitions -->
+            <xs:element name="AllocateSliceNetworkResponse" type="tns:AllocateSliceNetworkResponseType"/>
+            <xs:complexType name="AllocateSliceNetworkResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                    <xs:element name="message" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- ProvisionSliceNetwork request definitions -->
+            <xs:element name="ProvisionSliceNetwork" type="tns:ProvisionSliceNetworkType"/>
+            <xs:complexType name="ProvisionSliceNetworkType">
+                <xs:sequence>
+                    <xs:element name="rspecID" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <!-- ProvisionSliceNetwork response definitions -->
+            <xs:element name="ProvisionSliceNetworkResponse" type="tns:ProvisionSliceNetworkResponseType"/>
+            <xs:complexType name="ProvisionSliceNetworkResponseType">
+                <xs:sequence>
+                    <xs:element name="status" type="xs:string"/>
+                    <xs:element name="message" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
             <!-- RenewSliceNetwork request definitions -->
             <xs:element name="RenewSliceNetwork" type="tns:RenewSliceNetworkType"/>
             <xs:complexType name="RenewSliceNetworkType">
@@ -601,6 +637,22 @@
         <part name="CreateSliceNetworkMsgResp" element="tns:CreateSliceNetworkResponse" />
     </message>
 
+    <message name="AllocateSliceNetworkRequestMsg">
+        <part name="AllocateSliceNetworkMsgResp" element="tns:AllocateSliceNetwork" />
+    </message>
+
+    <message name="AllocateSliceNetworkResponseMsg">
+        <part name="AllocateSliceNetworkMsgResp" element="tns:AllocateSliceNetworkResponse" />
+    </message>
+
+    <message name="ProvisionSliceNetworkRequestMsg">
+        <part name="ProvisionSliceNetworkMsgResp" element="tns:ProvisionSliceNetwork" />
+    </message>
+
+    <message name="ProvisionSliceNetworkResponseMsg">
+        <part name="ProvisionSliceNetworkMsgResp" element="tns:ProvisionSliceNetworkResponse" />
+    </message>
+
     <message name="RenewSliceNetworkRequestMsg">
         <part name="RenewSliceNetworkMsgReq" element="tns:RenewSliceNetwork" />
     </message>
@@ -701,6 +753,16 @@
         <operation name="CreateSliceNetwork">
             <input message="tns:CreateSliceNetworkRequestMsg" />
             <output message="tns:CreateSliceNetworkResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="AllocateSliceNetwork">
+            <input message="tns:AllocateSliceNetworkRequestMsg" />
+            <output message="tns:AllocateSliceNetworkResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="ProvisionSliceNetwork">
+            <input message="tns:ProvisionSliceNetworkRequestMsg" />
+            <output message="tns:ProvisionSliceNetworkResponseMsg" />
             <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
         </operation>
         <operation name="RenewSliceNetwork">
@@ -911,6 +973,36 @@
         <operation name="CreateSliceNetwork">
             <wsp:PolicyReference URI="#X509BindingPolicy"  />
             <soap:operation soapAction="CreateSliceNetwork" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="AllocateSliceNetwork">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="AllocateSliceNetwork" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+
+        <operation name="ProvisionSliceNetwork">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="ProvisionSliceNetwork" />
             <input>
                 <wsp:PolicyReference URI="#signedMsgPolicy"  />
                 <soap:body use="literal" />

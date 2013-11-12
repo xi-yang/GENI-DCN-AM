@@ -36,310 +36,346 @@
 
         
 
+            if("ProvisionSliceNetwork".equals(methodName)){
+                
+                net.geni.aggregate.services.api.ProvisionSliceNetworkResponse provisionSliceNetworkResponse39 = null;
+	                        net.geni.aggregate.services.api.ProvisionSliceNetwork wrappedParam =
+                                                             (net.geni.aggregate.services.api.ProvisionSliceNetwork)fromOM(
+                                    msgContext.getEnvelope().getBody().getFirstElement(),
+                                    net.geni.aggregate.services.api.ProvisionSliceNetwork.class,
+                                    getEnvelopeNamespaces(msgContext.getEnvelope()));
+                                                
+                                               provisionSliceNetworkResponse39 =
+                                                   
+                                                   
+                                                         skel.ProvisionSliceNetwork(wrappedParam)
+                                                    ;
+                                            
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), provisionSliceNetworkResponse39, false);
+                                    } else 
+
+            if("AllocateSliceNetwork".equals(methodName)){
+                
+                net.geni.aggregate.services.api.AllocateSliceNetworkResponse allocateSliceNetworkResponse41 = null;
+	                        net.geni.aggregate.services.api.AllocateSliceNetwork wrappedParam =
+                                                             (net.geni.aggregate.services.api.AllocateSliceNetwork)fromOM(
+                                    msgContext.getEnvelope().getBody().getFirstElement(),
+                                    net.geni.aggregate.services.api.AllocateSliceNetwork.class,
+                                    getEnvelopeNamespaces(msgContext.getEnvelope()));
+                                                
+                                               allocateSliceNetworkResponse41 =
+                                                   
+                                                   
+                                                         skel.AllocateSliceNetwork(wrappedParam)
+                                                    ;
+                                            
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), allocateSliceNetworkResponse41, false);
+                                    } else 
+
             if("UpdateSlice".equals(methodName)){
                 
-                net.geni.aggregate.services.api.UpdateSliceResponse updateSliceResponse35 = null;
+                net.geni.aggregate.services.api.UpdateSliceResponse updateSliceResponse43 = null;
 	                        net.geni.aggregate.services.api.UpdateSlice wrappedParam =
                                                              (net.geni.aggregate.services.api.UpdateSlice)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.UpdateSlice.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               updateSliceResponse35 =
+                                               updateSliceResponse43 =
                                                    
                                                    
                                                          skel.UpdateSlice(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), updateSliceResponse35, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), updateSliceResponse43, false);
                                     } else 
 
             if("StopSlice".equals(methodName)){
                 
-                net.geni.aggregate.services.api.StopSliceResponse stopSliceResponse37 = null;
+                net.geni.aggregate.services.api.StopSliceResponse stopSliceResponse45 = null;
 	                        net.geni.aggregate.services.api.StopSlice wrappedParam =
                                                              (net.geni.aggregate.services.api.StopSlice)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.StopSlice.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               stopSliceResponse37 =
+                                               stopSliceResponse45 =
                                                    
                                                    
                                                          skel.StopSlice(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), stopSliceResponse37, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), stopSliceResponse45, false);
                                     } else 
 
             if("DeleteSliceNetwork".equals(methodName)){
                 
-                net.geni.aggregate.services.api.DeleteSliceNetworkResponse deleteSliceNetworkResponse39 = null;
+                net.geni.aggregate.services.api.DeleteSliceNetworkResponse deleteSliceNetworkResponse47 = null;
 	                        net.geni.aggregate.services.api.DeleteSliceNetwork wrappedParam =
                                                              (net.geni.aggregate.services.api.DeleteSliceNetwork)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.DeleteSliceNetwork.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               deleteSliceNetworkResponse39 =
+                                               deleteSliceNetworkResponse47 =
                                                    
                                                    
                                                          skel.DeleteSliceNetwork(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), deleteSliceNetworkResponse39, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), deleteSliceNetworkResponse47, false);
                                     } else 
 
             if("QuerySlice".equals(methodName)){
                 
-                net.geni.aggregate.services.api.QuerySliceResponse querySliceResponse41 = null;
+                net.geni.aggregate.services.api.QuerySliceResponse querySliceResponse49 = null;
 	                        net.geni.aggregate.services.api.QuerySlice wrappedParam =
                                                              (net.geni.aggregate.services.api.QuerySlice)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.QuerySlice.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               querySliceResponse41 =
+                                               querySliceResponse49 =
                                                    
                                                    
                                                          skel.QuerySlice(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), querySliceResponse41, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), querySliceResponse49, false);
                                     } else 
 
             if("RenewSliceNetwork".equals(methodName)){
                 
-                net.geni.aggregate.services.api.RenewSliceNetworkResponse renewSliceNetworkResponse43 = null;
+                net.geni.aggregate.services.api.RenewSliceNetworkResponse renewSliceNetworkResponse51 = null;
 	                        net.geni.aggregate.services.api.RenewSliceNetwork wrappedParam =
                                                              (net.geni.aggregate.services.api.RenewSliceNetwork)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.RenewSliceNetwork.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               renewSliceNetworkResponse43 =
+                                               renewSliceNetworkResponse51 =
                                                    
                                                    
                                                          skel.RenewSliceNetwork(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), renewSliceNetworkResponse43, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), renewSliceNetworkResponse51, false);
                                     } else 
 
             if("GetResourceTopology".equals(methodName)){
                 
-                net.geni.aggregate.services.api.GetResourceTopologyResponse getResourceTopologyResponse45 = null;
+                net.geni.aggregate.services.api.GetResourceTopologyResponse getResourceTopologyResponse53 = null;
 	                        net.geni.aggregate.services.api.GetResourceTopology wrappedParam =
                                                              (net.geni.aggregate.services.api.GetResourceTopology)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.GetResourceTopology.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               getResourceTopologyResponse45 =
+                                               getResourceTopologyResponse53 =
                                                    
                                                    
                                                          skel.GetResourceTopology(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), getResourceTopologyResponse45, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), getResourceTopologyResponse53, false);
                                     } else 
 
             if("CreateSliceNetwork".equals(methodName)){
                 
-                net.geni.aggregate.services.api.CreateSliceNetworkResponse createSliceNetworkResponse47 = null;
+                net.geni.aggregate.services.api.CreateSliceNetworkResponse createSliceNetworkResponse55 = null;
 	                        net.geni.aggregate.services.api.CreateSliceNetwork wrappedParam =
                                                              (net.geni.aggregate.services.api.CreateSliceNetwork)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.CreateSliceNetwork.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               createSliceNetworkResponse47 =
+                                               createSliceNetworkResponse55 =
                                                    
                                                    
                                                          skel.CreateSliceNetwork(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), createSliceNetworkResponse47, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), createSliceNetworkResponse55, false);
                                     } else 
 
             if("ListNodes".equals(methodName)){
                 
-                net.geni.aggregate.services.api.ListNodesResponse listNodesResponse49 = null;
+                net.geni.aggregate.services.api.ListNodesResponse listNodesResponse57 = null;
 	                        net.geni.aggregate.services.api.ListNodes wrappedParam =
                                                              (net.geni.aggregate.services.api.ListNodes)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.ListNodes.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               listNodesResponse49 =
+                                               listNodesResponse57 =
                                                    
                                                    
                                                          skel.ListNodes(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), listNodesResponse49, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), listNodesResponse57, false);
                                     } else 
 
             if("StartSlice".equals(methodName)){
                 
-                net.geni.aggregate.services.api.StartSliceResponse startSliceResponse51 = null;
+                net.geni.aggregate.services.api.StartSliceResponse startSliceResponse59 = null;
 	                        net.geni.aggregate.services.api.StartSlice wrappedParam =
                                                              (net.geni.aggregate.services.api.StartSlice)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.StartSlice.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               startSliceResponse51 =
+                                               startSliceResponse59 =
                                                    
                                                    
                                                          skel.StartSlice(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), startSliceResponse51, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), startSliceResponse59, false);
                                     } else 
 
             if("CreateSlice".equals(methodName)){
                 
-                net.geni.aggregate.services.api.CreateSliceResponse createSliceResponse53 = null;
+                net.geni.aggregate.services.api.CreateSliceResponse createSliceResponse61 = null;
 	                        net.geni.aggregate.services.api.CreateSlice wrappedParam =
                                                              (net.geni.aggregate.services.api.CreateSlice)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.CreateSlice.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               createSliceResponse53 =
+                                               createSliceResponse61 =
                                                    
                                                    
                                                          skel.CreateSlice(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), createSliceResponse53, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), createSliceResponse61, false);
                                     } else 
 
             if("ListSlices".equals(methodName)){
                 
-                net.geni.aggregate.services.api.ListSlicesResponse listSlicesResponse55 = null;
+                net.geni.aggregate.services.api.ListSlicesResponse listSlicesResponse63 = null;
 	                        net.geni.aggregate.services.api.ListSlices wrappedParam =
                                                              (net.geni.aggregate.services.api.ListSlices)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.ListSlices.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               listSlicesResponse55 =
+                                               listSlicesResponse63 =
                                                    
                                                    
                                                          skel.ListSlices(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), listSlicesResponse55, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), listSlicesResponse63, false);
                                     } else 
 
             if("DeleteSlice".equals(methodName)){
                 
-                net.geni.aggregate.services.api.DeleteSliceResponse deleteSliceResponse57 = null;
+                net.geni.aggregate.services.api.DeleteSliceResponse deleteSliceResponse65 = null;
 	                        net.geni.aggregate.services.api.DeleteSlice wrappedParam =
                                                              (net.geni.aggregate.services.api.DeleteSlice)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.DeleteSlice.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               deleteSliceResponse57 =
+                                               deleteSliceResponse65 =
                                                    
                                                    
                                                          skel.DeleteSlice(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), deleteSliceResponse57, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), deleteSliceResponse65, false);
                                     } else 
 
             if("ListCapabilities".equals(methodName)){
                 
-                net.geni.aggregate.services.api.ListCapabilitiesResponse listCapabilitiesResponse59 = null;
+                net.geni.aggregate.services.api.ListCapabilitiesResponse listCapabilitiesResponse67 = null;
 	                        net.geni.aggregate.services.api.ListCapabilities wrappedParam =
                                                              (net.geni.aggregate.services.api.ListCapabilities)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.ListCapabilities.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               listCapabilitiesResponse59 =
+                                               listCapabilitiesResponse67 =
                                                    
                                                    
                                                          skel.ListCapabilities(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), listCapabilitiesResponse59, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), listCapabilitiesResponse67, false);
                                     } else 
 
             if("QuerySliceNetwork".equals(methodName)){
                 
-                net.geni.aggregate.services.api.QuerySliceNetworkResponse querySliceNetworkResponse61 = null;
+                net.geni.aggregate.services.api.QuerySliceNetworkResponse querySliceNetworkResponse69 = null;
 	                        net.geni.aggregate.services.api.QuerySliceNetwork wrappedParam =
                                                              (net.geni.aggregate.services.api.QuerySliceNetwork)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.QuerySliceNetwork.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               querySliceNetworkResponse61 =
+                                               querySliceNetworkResponse69 =
                                                    
                                                    
                                                          skel.QuerySliceNetwork(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), querySliceNetworkResponse61, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), querySliceNetworkResponse69, false);
                                     } else 
 
             if("QuerySliceVlan".equals(methodName)){
                 
-                net.geni.aggregate.services.api.QuerySliceVlanResponse querySliceVlanResponse63 = null;
+                net.geni.aggregate.services.api.QuerySliceVlanResponse querySliceVlanResponse71 = null;
 	                        net.geni.aggregate.services.api.QuerySliceVlan wrappedParam =
                                                              (net.geni.aggregate.services.api.QuerySliceVlan)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.QuerySliceVlan.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               querySliceVlanResponse63 =
+                                               querySliceVlanResponse71 =
                                                    
                                                    
                                                          skel.QuerySliceVlan(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), querySliceVlanResponse63, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), querySliceVlanResponse71, false);
                                     } else 
 
             if("DeleteSliceVlan".equals(methodName)){
                 
-                net.geni.aggregate.services.api.DeleteSliceVlanResponse deleteSliceVlanResponse65 = null;
+                net.geni.aggregate.services.api.DeleteSliceVlanResponse deleteSliceVlanResponse73 = null;
 	                        net.geni.aggregate.services.api.DeleteSliceVlan wrappedParam =
                                                              (net.geni.aggregate.services.api.DeleteSliceVlan)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.DeleteSliceVlan.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               deleteSliceVlanResponse65 =
+                                               deleteSliceVlanResponse73 =
                                                    
                                                    
                                                          skel.DeleteSliceVlan(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), deleteSliceVlanResponse65, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), deleteSliceVlanResponse73, false);
                                     } else 
 
             if("CreateSliceVlan".equals(methodName)){
                 
-                net.geni.aggregate.services.api.CreateSliceVlanResponse createSliceVlanResponse67 = null;
+                net.geni.aggregate.services.api.CreateSliceVlanResponse createSliceVlanResponse75 = null;
 	                        net.geni.aggregate.services.api.CreateSliceVlan wrappedParam =
                                                              (net.geni.aggregate.services.api.CreateSliceVlan)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     net.geni.aggregate.services.api.CreateSliceVlan.class,
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 
-                                               createSliceVlanResponse67 =
+                                               createSliceVlanResponse75 =
                                                    
                                                    
                                                          skel.CreateSliceVlan(wrappedParam)
                                                     ;
                                             
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), createSliceVlanResponse67, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), createSliceVlanResponse75, false);
                                     
             } else {
               throw new java.lang.RuntimeException("method not found");
@@ -364,6 +400,76 @@
         }
         
         //
+            private  org.apache.axiom.om.OMElement  toOM(net.geni.aggregate.services.api.ProvisionSliceNetwork param, boolean optimizeContent)
+            throws org.apache.axis2.AxisFault {
+
+            
+                        try{
+                             return param.getOMElement(net.geni.aggregate.services.api.ProvisionSliceNetwork.MY_QNAME,
+                                          org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                        } catch(org.apache.axis2.databinding.ADBException e){
+                            throw org.apache.axis2.AxisFault.makeFault(e);
+                        }
+                    
+
+            }
+        
+            private  org.apache.axiom.om.OMElement  toOM(net.geni.aggregate.services.api.ProvisionSliceNetworkResponse param, boolean optimizeContent)
+            throws org.apache.axis2.AxisFault {
+
+            
+                        try{
+                             return param.getOMElement(net.geni.aggregate.services.api.ProvisionSliceNetworkResponse.MY_QNAME,
+                                          org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                        } catch(org.apache.axis2.databinding.ADBException e){
+                            throw org.apache.axis2.AxisFault.makeFault(e);
+                        }
+                    
+
+            }
+        
+            private  org.apache.axiom.om.OMElement  toOM(net.geni.aggregate.services.api.AggregateFault param, boolean optimizeContent)
+            throws org.apache.axis2.AxisFault {
+
+            
+                        try{
+                             return param.getOMElement(net.geni.aggregate.services.api.AggregateFault.MY_QNAME,
+                                          org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                        } catch(org.apache.axis2.databinding.ADBException e){
+                            throw org.apache.axis2.AxisFault.makeFault(e);
+                        }
+                    
+
+            }
+        
+            private  org.apache.axiom.om.OMElement  toOM(net.geni.aggregate.services.api.AllocateSliceNetwork param, boolean optimizeContent)
+            throws org.apache.axis2.AxisFault {
+
+            
+                        try{
+                             return param.getOMElement(net.geni.aggregate.services.api.AllocateSliceNetwork.MY_QNAME,
+                                          org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                        } catch(org.apache.axis2.databinding.ADBException e){
+                            throw org.apache.axis2.AxisFault.makeFault(e);
+                        }
+                    
+
+            }
+        
+            private  org.apache.axiom.om.OMElement  toOM(net.geni.aggregate.services.api.AllocateSliceNetworkResponse param, boolean optimizeContent)
+            throws org.apache.axis2.AxisFault {
+
+            
+                        try{
+                             return param.getOMElement(net.geni.aggregate.services.api.AllocateSliceNetworkResponse.MY_QNAME,
+                                          org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                        } catch(org.apache.axis2.databinding.ADBException e){
+                            throw org.apache.axis2.AxisFault.makeFault(e);
+                        }
+                    
+
+            }
+        
             private  org.apache.axiom.om.OMElement  toOM(net.geni.aggregate.services.api.UpdateSlice param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
@@ -384,20 +490,6 @@
             
                         try{
                              return param.getOMElement(net.geni.aggregate.services.api.UpdateSliceResponse.MY_QNAME,
-                                          org.apache.axiom.om.OMAbstractFactory.getOMFactory());
-                        } catch(org.apache.axis2.databinding.ADBException e){
-                            throw org.apache.axis2.AxisFault.makeFault(e);
-                        }
-                    
-
-            }
-        
-            private  org.apache.axiom.om.OMElement  toOM(net.geni.aggregate.services.api.AggregateFault param, boolean optimizeContent)
-            throws org.apache.axis2.AxisFault {
-
-            
-                        try{
-                             return param.getOMElement(net.geni.aggregate.services.api.AggregateFault.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -854,6 +946,44 @@
 
             }
         
+                    private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, net.geni.aggregate.services.api.ProvisionSliceNetworkResponse param, boolean optimizeContent)
+                        throws org.apache.axis2.AxisFault{
+                      try{
+                          org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+                           
+                                    emptyEnvelope.getBody().addChild(param.getOMElement(net.geni.aggregate.services.api.ProvisionSliceNetworkResponse.MY_QNAME,factory));
+                                
+
+                         return emptyEnvelope;
+                    } catch(org.apache.axis2.databinding.ADBException e){
+                        throw org.apache.axis2.AxisFault.makeFault(e);
+                    }
+                    }
+                    
+                         private net.geni.aggregate.services.api.ProvisionSliceNetworkResponse wrapProvisionSliceNetwork(){
+                                net.geni.aggregate.services.api.ProvisionSliceNetworkResponse wrappedElement = new net.geni.aggregate.services.api.ProvisionSliceNetworkResponse();
+                                return wrappedElement;
+                         }
+                    
+                    private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, net.geni.aggregate.services.api.AllocateSliceNetworkResponse param, boolean optimizeContent)
+                        throws org.apache.axis2.AxisFault{
+                      try{
+                          org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+                           
+                                    emptyEnvelope.getBody().addChild(param.getOMElement(net.geni.aggregate.services.api.AllocateSliceNetworkResponse.MY_QNAME,factory));
+                                
+
+                         return emptyEnvelope;
+                    } catch(org.apache.axis2.databinding.ADBException e){
+                        throw org.apache.axis2.AxisFault.makeFault(e);
+                    }
+                    }
+                    
+                         private net.geni.aggregate.services.api.AllocateSliceNetworkResponse wrapAllocateSliceNetwork(){
+                                net.geni.aggregate.services.api.AllocateSliceNetworkResponse wrappedElement = new net.geni.aggregate.services.api.AllocateSliceNetworkResponse();
+                                return wrappedElement;
+                         }
+                    
                     private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, net.geni.aggregate.services.api.UpdateSliceResponse param, boolean optimizeContent)
                         throws org.apache.axis2.AxisFault{
                       try{
@@ -1194,6 +1324,48 @@
 
         try {
         
+                if (net.geni.aggregate.services.api.ProvisionSliceNetwork.class.equals(type)){
+                
+                           return net.geni.aggregate.services.api.ProvisionSliceNetwork.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                    
+
+                }
+           
+                if (net.geni.aggregate.services.api.ProvisionSliceNetworkResponse.class.equals(type)){
+                
+                           return net.geni.aggregate.services.api.ProvisionSliceNetworkResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                    
+
+                }
+           
+                if (net.geni.aggregate.services.api.AggregateFault.class.equals(type)){
+                
+                           return net.geni.aggregate.services.api.AggregateFault.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                    
+
+                }
+           
+                if (net.geni.aggregate.services.api.AllocateSliceNetwork.class.equals(type)){
+                
+                           return net.geni.aggregate.services.api.AllocateSliceNetwork.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                    
+
+                }
+           
+                if (net.geni.aggregate.services.api.AllocateSliceNetworkResponse.class.equals(type)){
+                
+                           return net.geni.aggregate.services.api.AllocateSliceNetworkResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                    
+
+                }
+           
+                if (net.geni.aggregate.services.api.AggregateFault.class.equals(type)){
+                
+                           return net.geni.aggregate.services.api.AggregateFault.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                    
+
+                }
+           
                 if (net.geni.aggregate.services.api.UpdateSlice.class.equals(type)){
                 
                            return net.geni.aggregate.services.api.UpdateSlice.Factory.parse(param.getXMLStreamReaderWithoutCaching());
