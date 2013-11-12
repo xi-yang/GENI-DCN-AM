@@ -342,7 +342,13 @@ public class AggregateRspecManager extends Thread{
     }
 
     public String allocateRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice) throws AggregateException {
-        long timeOffset = 600; // 10 minutes; TBD: configuratble
+        
+        long timeOffset = 600;
+        try {
+            timeOffset = Long.parseLong(AggregateState.getApiAllocateTimeout());
+        } catch (NumberFormatException ex) {
+            log.warn("allocateRspec caught NumberFormatException for api.allocate_timeout=" + AggregateState.getApiAllocateTimeout());
+        }
         return createRspec(rspecId, rspecXML, authUser, addPlcSlice, timeOffset);
     }
     

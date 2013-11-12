@@ -63,6 +63,8 @@ public class AggregateState
     private static String protoGeniSslCert = "";
     private static String protoGeniSslPass = "";
 
+    private static String apiAllocateTimeout = "";
+
     // Resrouces
     private static AggregateCapabilities aggregateCaps = null;
     private static AggregateNodes aggregateNodes = null;
@@ -146,6 +148,8 @@ public class AggregateState
         protoGeniSslPass = aggregateProps.getProperty("aggregate.external.protogeni.ssl_password", "");
         protoGeniSmUrn = aggregateProps.getProperty("aggregate.external.protogeni.sm_urn", "https://www.emulab.net:443/protogeni/xmlrpc/sa");
         protoGeniAmUrn = aggregateProps.getProperty("aggregate.external.protogeni.am_urn", "https://www.emulab.net:443/protogeni/xmlrpc/cm");
+        
+        apiAllocateTimeout = aggregateProps.getProperty("aggregate.api.allocate_timeout", "600");
         
         //init rspec handler
         String rspecHandlerClass = aggregateProps.getProperty("aggregate.rspec.handler", "net.geni.aggregate.services.core.RspecHandler_MAX");
@@ -414,5 +418,9 @@ public class AggregateState
 
     public static String getAggregateCRDBFilePath() { //computeResource DB file
         return aggregateProps.getProperty("aggregate.crdb.path", null);
+    }
+
+    public static String getApiAllocateTimeout() {
+        return apiAllocateTimeout;
     }
 }

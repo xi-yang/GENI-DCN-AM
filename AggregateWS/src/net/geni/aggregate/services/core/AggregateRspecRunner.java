@@ -367,7 +367,7 @@ public class AggregateRspecRunner extends Thread {
                 p2pvlan.setEndTime(rspec.getEndTime());
                 String status = p2pvlan.modifyVlan();
                 if (!status.equalsIgnoreCase("MODIFIED")) {
-                    throw new AggregateException(String.format("P2PVlan '%s' failed to renew due to '%s'", p2pvlan.getDescription(), p2pvlan.getErrorMessage()));
+                    throw new AggregateException(String.format("P2PVlan '%s' failed to modify due to '%s'", p2pvlan.getDescription(), p2pvlan.getErrorMessage()));
                 }
                 AggregateState.getAggregateP2PVlans().update(p2pvlan);
                 log.debug("end - modify p2pvlan: "+ p2pvlan.getDescription());
