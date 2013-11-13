@@ -821,14 +821,14 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             rspecXml += s;
         }
         boolean addPlcSlice = allocateSliceNework.getAddPlcSlice();
-
+        String expires = allocateSliceNework.getExpires();
         //get authorized/registered user. AggregateFaultMessage thrown if failed
         AggregateUser authUser = this.getAuthorizedUser();
 
         String status = "";
         String message = "";
         try {
-            status = AggregateState.getRspecManager().allocateRspec(rspecId, rspecXml, authUser.getEmail(), addPlcSlice);
+            status = AggregateState.getRspecManager().allocateRspec(rspecId, rspecXml, authUser.getEmail(), addPlcSlice, expires);
             message = "";
         } catch (AggregateException e) {
             status = "FAILED";

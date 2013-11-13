@@ -14,6 +14,8 @@ import net.es.oscars.oscars.BSSFaultMessage;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -287,7 +289,7 @@ public class AggregateRspecManager extends Thread{
         }
     }
 
-    public synchronized String createRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice, long timeOffset) throws AggregateException {
+    public synchronized String createRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice, long startTime) throws AggregateException {
         synchronized(rspecThreads) {
             for (AggregateRspec rspec: aggrRspecs)
                 if (rspecId.equalsIgnoreCase(rspec.getRspecName()) && !rspec.isDeleted())
@@ -304,7 +306,9 @@ public class AggregateRspecManager extends Thread{
         aggrRspec = AggregateState.getRspecHandler().parseRspecXml(rspecXML);
         aggrRspec.setRspecName(rspecId);
         aggrRspec.setAddPlcSlice(addPlcSlice);
-        aggrRspec.setStartTime(aggrRspec.getStartTime() + timeOffset);
+        long now = System.currentTimeMillis()/1000;
+        if (startTime > now)
+            aggrRspec.setStartTime(startTime);
         if (aggrRspec.getRspecName().isEmpty() || aggrRspec.getStartTime() == 0
             || aggrRspec.getStartTime() == 0 || aggrRspec.getResources().size() == 0)
             throw new AggregateException("Rspec parsing failed!");
@@ -341,15 +345,26 @@ public class AggregateRspecManager extends Thread{
         return aggrRspec.getStatus();
     }
 
-    public String allocateRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice) throws AggregateException {
-        
-        long timeOffset = 600;
+    public String allocateRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice, String expires) throws AggregateException {
+        long now = System.currentTimeMillis()/1000;
+        long startTime = 0;
         try {
-            timeOffset = Long.parseLong(AggregateState.getApiAllocateTimeout());
+            long timeOffset = Long.parseLong(AggregateState.getApiAllocateTimeout());
+            startTime = now + timeOffset; 
         } catch (NumberFormatException ex) {
             log.warn("allocateRspec caught NumberFormatException for api.allocate_timeout=" + AggregateState.getApiAllocateTimeout());
         }
-        return createRspec(rspecId, rspecXML, authUser, addPlcSlice, timeOffset);
+        if (expires != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            try {
+                Date dateExpires = simpleDateFormat.parse(expires);
+                startTime = dateExpires.getTime()/1000;
+            } catch (ParseException ex) {
+                java.util.logging.Logger.getLogger(AggregateRspecManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
+            
+        }
+        return createRspec(rspecId, rspecXML, authUser, addPlcSlice, startTime);
     }
     
     public synchronized String provisionRspec(String rspecName) throws AggregateException {

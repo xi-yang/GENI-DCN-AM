@@ -235,6 +235,32 @@ public class AggregateClient {
         return createSliceNetResponse.getCreateSliceNetworkResponse();
     }
 
+    public AllocateSliceNetworkResponseType allocateSliceNetwork(String rspecId, String rsepcXml[], boolean addPlcSlice, String expires)
+           throws AggregateFaultMessage, Exception {
+        AllocateSliceNetwork allocateSliceNet = new AllocateSliceNetwork();
+        AllocateSliceNetworkType allocateSliceNetType = new AllocateSliceNetworkType();
+        allocateSliceNetType.setRspecID(rspecId);
+        RSpecTopologyType rspecTopoType = new RSpecTopologyType();
+        rspecTopoType.setStatement(rsepcXml);
+        allocateSliceNetType.setRspecNetwork(rspecTopoType);
+        allocateSliceNetType.setAddPlcSlice(addPlcSlice);
+        if (expires != null && !expires.isEmpty())
+            allocateSliceNetType.setExpires(expires);
+        allocateSliceNet.setAllocateSliceNetwork(allocateSliceNetType);
+        AllocateSliceNetworkResponse allocateSliceNetResponse = this.stub.AllocateSliceNetwork(allocateSliceNet);
+        return allocateSliceNetResponse.getAllocateSliceNetworkResponse();
+    }
+
+    public ProvisionSliceNetworkResponseType provisionSliceNetwork(String rspecName)
+           throws AggregateFaultMessage, Exception {
+        ProvisionSliceNetwork provisionSliceNet = new ProvisionSliceNetwork();
+        ProvisionSliceNetworkType provisionSliceNetType = new ProvisionSliceNetworkType();
+        provisionSliceNetType.setRspecID(rspecName);
+        provisionSliceNet.setProvisionSliceNetwork(provisionSliceNetType);
+        ProvisionSliceNetworkResponse provisionSliceNetResponse = this.stub.ProvisionSliceNetwork(provisionSliceNet);
+        return provisionSliceNetResponse.getProvisionSliceNetworkResponse();
+    }
+    
     public DeleteSliceNetworkResponseType deleteSliceNetwork(String rspecName)
            throws AggregateFaultMessage, Exception {
         DeleteSliceNetwork deleteSliceNet = new DeleteSliceNetwork();

@@ -427,6 +427,7 @@
                     <xs:element name="rspecID" type="xs:string"/>
                     <xs:element name="rspecNetwork" type="tns:RSpecTopologyType"/>
                     <xs:element name="addPlcSlice" type="xs:boolean" default="true"/>
+                    <xs:element name="expires" type="xs:string" minOccurs="0"/>
                 </xs:sequence>
             </xs:complexType>
 
