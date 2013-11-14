@@ -301,7 +301,7 @@ public class AggregateP2PVlan extends AggregateResource {
                 AggregateUtils.justSleep(60); // sleep 60 seconds waiting for modification to finish
                 HashMap hmRet = apiClient.queryReservation(gri);
                 status = hmRet.get("status").toString();
-                if (status.contains("MODIFY") || status.contains("CACULAT") || status.contains("COMMIT")) {
+                if (status.contains("IN") || status.contains("CACULAT") || status.contains("COMMIT")) {
                     continue;
                 } else {
                     return status;
