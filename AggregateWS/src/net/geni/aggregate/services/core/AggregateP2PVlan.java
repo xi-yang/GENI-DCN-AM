@@ -301,10 +301,10 @@ public class AggregateP2PVlan extends AggregateResource {
                 AggregateUtils.justSleep(60); // sleep 60 seconds waiting for modification to finish
                 HashMap hmRet = apiClient.queryReservation(gri);
                 status = hmRet.get("status").toString();
-                long modifiedEndTime = Long.valueOf(hmRet.get("endTime").toString());
-                if (modifiedEndTime == this.endTime) {
-                    errMessage = "";
-                    return "MODIFIED";
+                if (status.contains("MODIFY") || status.contains("CACULAT") || status.contains("COMMIT")) {
+                    continue;
+                } else {
+                    return status;
                 }
             }
         } catch (AxisFault e) {
@@ -316,7 +316,7 @@ public class AggregateP2PVlan extends AggregateResource {
         } catch (java.rmi.RemoteException e) {
             errMessage = "RemoteException returned from modifyReservation: " +e.getMessage();
         }catch (Exception e) {
-            errMessage = "OSCARSStub threw exception in modifyReservation: " +e.getMessage();
+            errMessage = "OSCARS modifyReservation has failed or aborted.";
         }
         if (errMessage.isEmpty()) {
             errMessage = "Failed to modify the VLAN circuit via modifyReservation.";
