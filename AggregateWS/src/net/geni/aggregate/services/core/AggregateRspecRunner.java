@@ -359,11 +359,12 @@ public class AggregateRspecRunner extends Thread {
             if (resources.get(i).getType().equalsIgnoreCase("p2pVlan")) {
                 AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(i);
                 log.debug("start - modify p2pvlan: "+ p2pvlan.getDescription());
-                p2pvlan.setStartTime(rspec.getStartTime());
                 long now = System.currentTimeMillis() / 1000;
                 if (p2pvlan.getStartTime() - now < 120 && p2pvlan.getEndTime() == rspec.getEndTime()) {
                     log.debug("skip - no need to modify p2pvlan: "+ p2pvlan.getDescription());
+                    continue;
                 }
+                p2pvlan.setStartTime(rspec.getStartTime());
                 p2pvlan.setEndTime(rspec.getEndTime());
                 String status = p2pvlan.modifyVlan();
                 if (!status.equalsIgnoreCase("MODIFIED")) {

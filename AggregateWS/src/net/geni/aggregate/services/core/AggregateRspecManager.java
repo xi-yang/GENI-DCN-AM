@@ -372,6 +372,8 @@ public class AggregateRspecManager extends Thread{
             for (AggregateRspec aggrRspec: aggrRspecs) {
                 if (rspecName.equalsIgnoreCase(aggrRspec.getRspecName()) && !aggrRspec.isDeleted()) {
                     if (aggrRspec.getStatus().contains("ALLOCATED")) {
+                        long now = System.currentTimeMillis() / 1000;
+                        aggrRspec.setStartTime(now);
                         aggrRspec.setStatus("PROVISIONING");
                         for (AggregateRspecRunner rspecThread: rspecThreads) {
                             if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecName)) {
