@@ -398,7 +398,7 @@ public class AggregateRspecManager extends Thread{
         synchronized(rspecThreads) {
             for (AggregateRspec aggrRspec: aggrRspecs) {
                 if (rspecName.equalsIgnoreCase(aggrRspec.getRspecName()) && !aggrRspec.isDeleted()) {
-                    if (aggrRspec.getStatus().equalsIgnoreCase("WORKING")) {
+                    if (aggrRspec.getStatus().equalsIgnoreCase("WORKING") || aggrRspec.getStatus().contains("ALLOCATED")) {
                         long now = System.currentTimeMillis()/1000;
                         if (aggrRspec.getEndTime() - now < 900) {
                             throw new AggregateException("Cannot renew an RSpec that will expire in 15 minutes!");
