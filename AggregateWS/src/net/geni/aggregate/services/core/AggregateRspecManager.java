@@ -253,11 +253,18 @@ public class AggregateRspecManager extends Thread{
             synchronized(rspecThreads) {
                 for (AggregateRspecRunner rspecThread: rspecThreads) {
                     AggregateRspec rspec = rspecThread.getRspec();
+                    long now = System.currentTimeMillis()/1000;
+                    // terminating allocation-expiring (in 30 seconds) thread
+                    if (rspec.getStatus().contains("ALLOCATED") && (now - rspec.getStartTime()) < 30) {
+                        rspecThread.setGoRun(false);
+                        rspecThread.interrupt();
+                    }
                     if (rspec.getStatus().equalsIgnoreCase("WORKING")) {
                         //rspec in working state, polling interval increased
                         if (rspecThread.getPollInterval() < extendedPollInterval)
                             rspecThread.setPollInterval(extendedPollInterval);
-                        if (rspec.getEndTime() <= System.currentTimeMillis()/1000) {
+                        // terminating provision-expired thread
+                        if (rspec.getEndTime() <= now) {
                             rspecThread.setGoRun(false);
                             rspecThread.interrupt();
                         }
@@ -358,7 +365,7 @@ public class AggregateRspecManager extends Thread{
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             try {
                 Date dateExpires = simpleDateFormat.parse(expires);
-                startTime = dateExpires.getTime()/1000;
+                startTime = dateExpires.getTime()/1000 + 30; // 30 seconds lead time
             } catch (ParseException ex) {
                 java.util.logging.Logger.getLogger(AggregateRspecManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
