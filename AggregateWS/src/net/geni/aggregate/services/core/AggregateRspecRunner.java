@@ -318,6 +318,7 @@ public class AggregateRspecRunner extends Thread {
 
     private void pollP2PVlans() throws AggregateException {
         boolean allActive = true;
+        boolean allReserved = true;
         boolean hasP2PVlan = false;
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
@@ -344,13 +345,18 @@ public class AggregateRspecRunner extends Thread {
                                 + " failed to add VLAN interface on source or destination node"));
                     }
                     p2pvlan.setHasVlanOnNodes(true);
+                } else if (p2pvlan.getStatus().equalsIgnoreCase("RESERVED")) {
+                    allActive = false;
                 } else {
                     allActive = false;
+                    allReserved = false;
                 }
             }
         }
         if (allActive && hasP2PVlan)
             rspec.setStatus("VLANS-ACTIVE");
+        if (allReserved && hasP2PVlan)
+            rspec.setStatus("VLANS-ALLOCATED");
     }
 
     private void modifyP2PVlans() throws AggregateException {
