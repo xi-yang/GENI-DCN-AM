@@ -25,7 +25,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * @author Xi Yang
  */
 public class AggregateRspecManager extends Thread{
-    final int defaultPollInterval = 30000; // 3 seconds
+    final int defaultPollInterval = 30000; // 30 seconds
     final int extendedPollInterval = 900000; // 15 minutes
     private volatile boolean goRun = false;
     private volatile List<AggregateRspec> aggrRspecs;
@@ -255,9 +255,8 @@ public class AggregateRspecManager extends Thread{
                     AggregateRspec rspec = rspecThread.getRspec();
                     long now = System.currentTimeMillis()/1000;
                     // terminating allocation-expiring (in 30 seconds) thread
-                    if (rspec.getStatus().contains("ALLOCATED") && (rspec.getStartTime() - now) < 30) {
-                        if (rspecThread.getPollInterval() < extendedPollInterval)
-                            rspecThread.setPollInterval(extendedPollInterval);
+                    if (rspecThread.isGoRun() && rspec.getStatus().contains("ALLOCATED") 
+                            && (rspec.getStartTime() - now) < 30) {
                         rspecThread.setGoRun(false);
                         rspecThread.interrupt();
                     }
