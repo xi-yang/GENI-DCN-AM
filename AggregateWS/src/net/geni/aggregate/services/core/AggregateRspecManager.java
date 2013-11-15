@@ -256,6 +256,8 @@ public class AggregateRspecManager extends Thread{
                     long now = System.currentTimeMillis()/1000;
                     // terminating allocation-expiring (in 30 seconds) thread
                     if (rspec.getStatus().contains("ALLOCATED") && (rspec.getStartTime() - now) < 30) {
+                        if (rspecThread.getPollInterval() < extendedPollInterval)
+                            rspecThread.setPollInterval(extendedPollInterval);
                         rspecThread.setGoRun(false);
                         rspecThread.interrupt();
                     }

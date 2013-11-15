@@ -54,7 +54,7 @@ public class AggregateP2PVlan extends AggregateResource {
     * constructors
     */
     public AggregateP2PVlan(){
-        log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
+        log = org.apache.log4j.Logger.getLogger(this.getClass());
         type = "p2pVlan";
         hasVlanOnNodes = false;
     }
@@ -288,7 +288,7 @@ public class AggregateP2PVlan extends AggregateResource {
      }
 
      /**
-     * teardown p2p vlan
+     * modify p2p vlan
      * @param
      * @return
      */
