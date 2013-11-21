@@ -22,7 +22,7 @@
     <interfaceA>
       <componentId>urn:publicid:IDN+instageni.gpolab.bbn.com+interface+procurve2:5.24b</componentId>
       <aggregateManagerUrl>https://www.instageni.gpolab.bbn.com:12369/protogeni/xmlrpc/am/2.0</aggregateManagerUrl>
-      <description>BBN GPO-IG to NLR</description>
+      <description>BBN GPO-IG to NLR (TBD)</description>
     </interfaceA>
     <interfaceZ>
       <componentId>urn:publicid:IDN+NLR+interface+BBNIFACE</componentId>
