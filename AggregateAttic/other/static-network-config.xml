@@ -1,6 +1,6 @@
 <staticNetwork xmlns="http://geni.net/schema/staticNetwork/20130708/" xmlns:GeniStaticNetwork="http://geni.net/schema/staticNetwork/20130708/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://geni.net/schema/staticNetwork/20130708/ geni-static-network-v0.1.xsd">
 
-  <link id="NOX1">
+  <link id="gpo-ig_to_ion.newy.ae0">
     <interfaceA>
       <componentId>urn:publicid:IDN+instageni.gpolab.bbn.com+interface+procurve2:5.24</componentId>
       <aggregateManagerUrl>https://www.instageni.gpolab.bbn.com:12369/protogeni/xmlrpc/am/2.0</aggregateManagerUrl>
@@ -18,11 +18,11 @@
     <vlanRangeAvailability>3726-3732,3747-3749</vlanRangeAvailability>
   </link>
 
-  <link id="NOX2">
+  <link id="gpo-ig_to_nlr.chic.gi9/2">
     <interfaceA>
       <componentId>urn:publicid:IDN+instageni.gpolab.bbn.com+interface+procurve2:5.24b</componentId>
       <aggregateManagerUrl>https://www.instageni.gpolab.bbn.com:12369/protogeni/xmlrpc/am/2.0</aggregateManagerUrl>
-      <description>BBN GPO-IG to NLR (TBD)</description>
+      <description>BBN GPO-IG to NLR</description>
     </interfaceA>
     <interfaceZ>
       <componentId>urn:publicid:IDN+NLR+interface+BBNIFACE</componentId>
@@ -36,7 +36,7 @@
     <vlanRangeAvailability>2644-2649</vlanRangeAvailability>
   </link>
 
-  <link id="NOX3">
+  <link id="gpo-eg_to_ion.newy.ae0">
     <interfaceA>
       <componentId>urn:publicid:IDN+exogeni.net:bbnNet+interface+BbnNet:IBM:G8052:GigabitEthernet:1:2:ethernet</componentId>
       <aggregateManagerUrl>http://geni.renci.org:11443/orca/xmlrpc</aggregateManagerUrl>
@@ -53,7 +53,7 @@
     <vlanRangeAvailability>3736-3739,3741</vlanRangeAvailability>
   </link>
 
-  <link id="UEN1">
+  <link id="utah-pg_to_ion.salt.ge-10/2/7">
     <interfaceA>
       <componentId>urn:publicid:IDN+emulab.net+interface+procurve-pgeni-salt:3.21</componentId>
       <aggregateManagerUrl>https://www.emulab.net:12369/protogeni/xmlrpc/am</aggregateManagerUrl>
@@ -68,10 +68,10 @@
     <capacity>1000Mbps</capacity>
     <maximumReservableCapacity>1000Mbps</maximumReservableCapacity>
     <minimumReservableCapacity>1Mbps</minimumReservableCapacity>
-    <vlanRangeAvailability>3747-3749</vlanRangeAvailability>
+    <vlanRangeAvailability>750-1000</vlanRangeAvailability>
   </link>
 
-  <link id="COTN(CENIC)">
+  <link id="stanford-testpoint_to_ion.losa.xe-0/1/0">
     <interfaceA>
       <componentId>urn:publicid:IDN+ion.internet2.edu+interface+rtr.losa:xe-0/1/0:*</componentId>
       <aggregateManagerUrl>http://geni-am.net.internet2.edu:12346</aggregateManagerUrl>
@@ -90,7 +90,7 @@
     <vlanRangeAvailability>3721</vlanRangeAvailability>
   </link>
 
-  <link id="KYRON">
+  <link id="uky-pg_to_ion.atla.xe-0/1/3">
     <interfaceA>
       <componentId>urn:publicid:IDN+ion.internet2.edu+interface+rtr.atla:xe-0/1/3:*</componentId>
       <aggregateManagerUrl>http://geni-am.net.internet2.edu:12346</aggregateManagerUrl>
@@ -109,7 +109,7 @@
     <vlanRangeAvailability>2-4094</vlanRangeAvailability>
   </link>
 
-  <link id="NYSERNet1">
+  <link id="nysernet-ig_to_ion.newy.xe-0/2/0">
     <interfaceA>
       <componentId>urn:publicid:IDN+ion.internet2.edu+interface+rtr.newy:xe-0/2/0:nysernet-ig</componentId>
       <aggregateManagerUrl>http://geni-am.net.internet2.edu:12346</aggregateManagerUrl>
@@ -127,7 +127,7 @@
     <vlanRangeAvailability>1700-1719</vlanRangeAvailability>
   </link>
 
-  <link id="GPN1">
+  <link id="missouri-ig_to_ion.kans.xe-0/0/3">
     <interfaceA>
       <componentId>urn:publicid:IDN+ion.internet2.edu+interface+rtr.kans:xe-0/0/3:missouri-ig</componentId>
       <aggregateManagerUrl>http://geni-am.net.internet2.edu:12346</aggregateManagerUrl>
