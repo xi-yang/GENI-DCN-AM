@@ -146,4 +146,23 @@
     <vlanRangeAvailability>1150-1160</vlanRangeAvailability>
   </link>
 
+  <link id="wisconsin-ig_to_ion.chic.et-8/0/0">
+    <interfaceA>
+      <componentId>urn:publicid:IDN+ion.internet2.edu+interface+rtr.chic:et-8/0/0:wisconsin-ig</componentId>
+      <aggregateManagerUrl>http://geni-am.net.internet2.edu:12346</aggregateManagerUrl>
+      <description>Internet2 ION to U of Wisconsin-Madison GENI Rack</description>
+    </interfaceA>
+    <interfaceZ>
+      <componentId>urn:publicid:IDN+instageni.wisc.edu+interface+procurve2:1.19</componentId>
+      <aggregateManagerUrl>https://instageni.wisc.edu:12369/protogeni/xmlrpc/am</aggregateManagerUrl>
+      <description>U of Wisconsin-Madison GENI Rack to I2 ION (place holder)</description>
+    </interfaceZ>
+    <vlanProviderAtoZ id="urn:publicid:IDN+omnipop.cic.net"/>
+    <vlanProviderAtoZ id="urn:publicid:IDN+wisc.edu"/>
+    <capacity>1000Mbps</capacity>
+    <maximumReservableCapacity>10000Mbps</maximumReservableCapacity>
+    <minimumReservableCapacity>1Mbps</minimumReservableCapacity>
+    <vlanRangeAvailability>930-939</vlanRangeAvailability>
+  </link>
+
 </staticNetwork>
