@@ -2,7 +2,7 @@
 
   <link id="gpo-ig_to_ion.newy.ae0">
     <interfaceA>
-      <componentId>urn:publicid:IDN+instageni.gpolab.bbn.com+interface+procurve2:5.24</componentId>
+      <componentId>urn:publicid:IDN+instageni.gpolab.bbn.com+interface+procurve2:5.24:ion.newy.ae0"</componentId>
       <aggregateManagerUrl>https://www.instageni.gpolab.bbn.com:12369/protogeni/xmlrpc/am/2.0</aggregateManagerUrl>
       <description>BBN GPO-IG to Internet2 ION via NOX</description>
     </interfaceA>
@@ -20,7 +20,7 @@
 
   <link id="gpo-ig_to_nlr.chic.gi9/2">
     <interfaceA>
-      <componentId>urn:publicid:IDN+instageni.gpolab.bbn.com+interface+procurve2:5.24b</componentId>
+      <componentId>urn:publicid:IDN+instageni.gpolab.bbn.com+interface+procurve2:5.24:nlr.bost.gi-9_2</componentId>
       <aggregateManagerUrl>https://www.instageni.gpolab.bbn.com:12369/protogeni/xmlrpc/am/2.0</aggregateManagerUrl>
       <description>BBN GPO-IG to NLR</description>
     </interfaceA>
@@ -116,7 +116,7 @@
       <description>Internet2 ION to NYSERNet GENI Rack</description>
     </interfaceA>
     <interfaceZ>
-      <componentId>urn:publicid:IDN+instageni.nysernet.org+interface+procurve2:1.19:ion.newy.xe-0/2/0</componentId>
+      <componentId>urn:publicid:IDN+instageni.nysernet.org+interface+procurve2:1.19:ion.newy.xe-0_2_0</componentId>
       <aggregateManagerUrl>https://instageni.nysernet.org:12369/protogeni/xmlrpc/am</aggregateManagerUrl>
       <description>NYSERNet GENI Rack to I2 ION (place holder)</description>
     </interfaceZ>
