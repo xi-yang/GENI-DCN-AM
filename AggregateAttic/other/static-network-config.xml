@@ -165,4 +165,38 @@
     <vlanRangeAvailability>930-939</vlanRangeAvailability>
   </link>
 
+  <link id="max-ig_to_max-dragon.clpk.1-1-2">
+    <interfaceA>
+      <componentId>urn:publicid:IDN+instageni.maxgigapop.net+interface+procurve2:1.22</componentId>
+      <aggregateManagerUrl>https://instageni.maxgigapop.net:12369/protogeni/xmlrpc/am</aggregateManagerUrl>
+      <description>MAX Gigapop GENI Rack to MAX Gigapop Dragon</description>
+    </interfaceA>
+    <interfaceZ>
+      <componentId>urn:publicid:IDN+dragon.maxgigapop.net+interface+clpk:1-1-2:*</componentId>
+      <aggregateManagerUrl>http://max-myplc.dragon.maxgigapop.net:12346</aggregateManagerUrl>
+      <description>MAX Gigapop Dragon to MAX Gigapop GENI Rack</description>
+    </interfaceZ>
+    <capacity>1000Mbps</capacity>
+    <maximumReservableCapacity>10000Mbps</maximumReservableCapacity>
+    <minimumReservableCapacity>1Mbps</minimumReservableCapacity>
+    <vlanRangeAvailability>550-569,3020-3030,3100-3109,3200-3219</vlanRangeAvailability>
+  </link>
+
+  <link id="max-dragon.clpk.1-2-3_to_ion.newy.xe-0/1/1">
+    <interfaceA>
+      <componentId>urn:publicid:IDN+dragon.maxgigapop.net+interface+clpk:1-2-3:*</componentId>
+      <aggregateManagerUrl>http://max-myplc.dragon.maxgigapop.net:12346</aggregateManagerUrl>
+      <description>MAX Gigapop Dragon to I2 ION (place holder)</description>
+    </interfaceA>
+    <interfaceZ>
+      <componentId>urn:publicid:IDN+ion.internet2.edu+interface+rtr.newy:xe-0/1/1:*</componentId>
+      <aggregateManagerUrl>http://geni-am.net.internet2.edu:12346</aggregateManagerUrl>
+      <description>I2 ION to MAX Gigapop Dragon</description>
+    </interfaceZ>
+    <capacity>1000Mbps</capacity>
+    <maximumReservableCapacity>10000Mbps</maximumReservableCapacity>
+    <minimumReservableCapacity>1Mbps</minimumReservableCapacity>
+    <vlanRangeAvailability>3020-3030,3100-3109,3200-3219</vlanRangeAvailability>
+  </link>
+
 </staticNetwork>
