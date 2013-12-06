@@ -176,6 +176,7 @@
       <aggregateManagerUrl>http://max-myplc.dragon.maxgigapop.net:12346</aggregateManagerUrl>
       <description>MAX Gigapop Dragon to MAX Gigapop GENI Rack</description>
     </interfaceZ>
+    <vlanProviderAtoZ id="urn:publicid:IDN+maxgigapop.net"/>
     <capacity>1000Mbps</capacity>
     <maximumReservableCapacity>10000Mbps</maximumReservableCapacity>
     <minimumReservableCapacity>1Mbps</minimumReservableCapacity>
@@ -193,6 +194,7 @@
       <aggregateManagerUrl>http://geni-am.net.internet2.edu:12346</aggregateManagerUrl>
       <description>I2 ION to MAX Gigapop Dragon</description>
     </interfaceZ>
+    <vlanProviderAtoZ id="urn:publicid:IDN+maxgigapop.net"/>
     <capacity>1000Mbps</capacity>
     <maximumReservableCapacity>10000Mbps</maximumReservableCapacity>
     <minimumReservableCapacity>1Mbps</minimumReservableCapacity>
