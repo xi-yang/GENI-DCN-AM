@@ -419,8 +419,8 @@ public class AggregateRspecManager extends Thread{
                         } catch (DatatypeConfigurationException ex) {
                             throw new AggregateException(String.format("Mailformed renewal time '%s'", expires));
                         }
-                        if (newEndTime - aggrRspec.getEndTime() < 900) {
-                            throw new AggregateException("The new expiration time must be at least 15 minutes from the current expiration time!");                            
+                        if (newEndTime - now < 900) {
+                            throw new AggregateException("The new expiration time must be at least 15 minutes from the present time!");                            
                         }
                         aggrRspec.setEndTime(newEndTime);
                         aggrRspec.setStatus("RENEWING");
