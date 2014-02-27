@@ -65,6 +65,8 @@ public class AggregateState
 
     private static String apiAllocateTimeout = "";
 
+    private static String opsMonBaseUrl = "";
+        
     // Resrouces
     private static AggregateCapabilities aggregateCaps = null;
     private static AggregateNodes aggregateNodes = null;
@@ -151,6 +153,8 @@ public class AggregateState
         
         apiAllocateTimeout = aggregateProps.getProperty("aggregate.api.allocate_timeout", "600");
         
+        opsMonBaseUrl = aggregateProps.getProperty("aggregate.ops.monitoring.base_url", "http://127.0.0.1:5000/");
+    
         //init rspec handler
         String rspecHandlerClass = aggregateProps.getProperty("aggregate.rspec.handler", "net.geni.aggregate.services.core.RspecHandler_MAX");
         try {
@@ -422,5 +426,9 @@ public class AggregateState
 
     public static String getApiAllocateTimeout() {
         return apiAllocateTimeout;
+    }
+
+    public static String getOpsMonBaseUrl() {
+        return opsMonBaseUrl;
     }
 }
