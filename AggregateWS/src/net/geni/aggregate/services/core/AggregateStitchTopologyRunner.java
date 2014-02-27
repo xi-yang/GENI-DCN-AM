@@ -161,44 +161,6 @@ public class AggregateStitchTopologyRunner extends Thread {
         }
     }
     
-/*
-localstore=> \d ops_aggregate_resource
-    Table "public.ops_aggregate_resource"
-    Column    |       Type        | Modifiers 
---------------+-------------------+-----------
- id           | character varying | 
- aggregate_id | character varying | 
- urn          | character varying | 
- selfRef      | character varying | 
-
-localstore=> \d ops_aggregate_sliver
-     Table "public.ops_aggregate_sliver"
-    Column    |       Type        | Modifiers 
---------------+-------------------+-----------
- id           | character varying | 
- aggregate_id | character varying | 
- urn          | character varying | 
- selfRef      | character varying | 
-
-localstore=> \d ops_node_interface
-    Table "public.ops_node_interface"
- Column  |       Type        | Modifiers 
----------+-------------------+-----------
- id      | character varying | 
- node_id | character varying | 
- urn     | character varying | 
- selfRef | character varying | 
-
-localstore=> \d ops_interface_vlan
-    Table "public.ops_node_interface"
- Column  |       Type        | Modifiers 
----------+-------------------+-----------
- id      | character varying | 
- interface_id | character varying | 
- urn     | character varying | 
- selfRef | character varying | 
- */
-
     private void updateTopologyPsql() {
         synchronized(this) {
             if (stitchObj == null)
@@ -208,9 +170,13 @@ localstore=> \d ops_interface_vlan
             sql += "LOCK TABLE ops_aggregate IN EXCLUSIVE MODE;\n";
             sql += "LOCK TABLE ops_node IN EXCLUSIVE MODE;\n";
             sql += "LOCK TABLE ops_interface IN EXCLUSIVE MODE;\n";
+            sql += "LOCK TABLE ops_aggregate_resource IN EXCLUSIVE MODE;\n";
+            sql += "LOCK TABLE ops_node_interface IN EXCLUSIVE MODE;\n";
             sql += "DELETE from ops_aggregate;\n";
             sql += "DELETE from ops_node;\n";
             sql += "DELETE from ops_interface;\n";
+            sql += "DELETE from ops_aggregate_resource;\n";
+            sql += "DELETE from ops_node_interface;\n";
             // add "insert ops_aggregate" row
             /*  
              * $schema      => "http://unis.incntre.iu.edu/schema/20120709/aggregate#"
@@ -244,9 +210,11 @@ localstore=> \d ops_interface_vlan
                      * mem_total_kb => null
                      */
                     String nodeUrn = node.getId();
-                    String nodeId = aggrId + "." + AggregateUtils.getUrnField(nodeUrn, "node");;
+                    String nodeId = aggrId + "." + AggregateUtils.getUrnField(nodeUrn, "node");
                     sql += String.format("INSERT INTO ops_node VALUES ('http://unis.incntre.iu.edu/schema/20120709/node#', '%s', '%s', '%s', %d, null);\n",
                         nodeId, baseUrl+"info/node/"+nodeId, nodeUrn, ts);
+                    sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
+                        nodeId, aggrId, nodeUrn, baseUrl+"info/node/"+nodeId);
                     for (PortContent port: node.getPort()) {
                         for (LinkContent link: port.getLink()) {
                             //$$ add "insert ops_interface" row
@@ -268,6 +236,8 @@ localstore=> \d ops_interface_vlan
                             String ifId = aggrId + "." + ifUrnFields[ifUrnFields.length-1].replace('/', '_');
                             sql += String.format("INSERT INTO ops_interface VALUES ('http://unis.incntre.iu.edu/schema/20120709/port#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
                                 ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts, Long.parseLong(link.getCapacity()));
+                            sql += String.format("INSERT INTO ops_node_interface VALUES ('%s', '%s', '%s', '%s');\n",
+                                ifId, nodeId, ifUrn, baseUrl+"info/interface/"+ifId);
                         }
                     }
                 }
@@ -287,6 +257,8 @@ localstore=> \d ops_interface_vlan
         String baseUrl = AggregateState.getOpsMonBaseUrl();
         String sql = "BEGIN WORK;\n";
         sql += "LOCK TABLE ops_vlan IN SHARE ROW EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_aggregate_sliver IN EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_interface_vlan IN EXCLUSIVE MODE;\n";
         List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
         if (listCurrentVlanGri == null) {
             listCurrentVlanGri = new ArrayList<String>();
@@ -313,6 +285,8 @@ localstore=> \d ops_interface_vlan
                 } catch (AggregateException ex) {
                     continue;
                 }
+                String ifUrnFields[] = ifUrn.split("\\+");
+                String ifId = ifUrnFields[1] + "." + ifUrnFields[ifUrnFields.length - 1].replace('/', '_');
                 String vlanUrn = ifUrn.replace("+interface+", "+vlan+");
                 String vlans[] = p2pvlan.getVtag().split(":");
                 vlanUrn = vlanUrn + ":" + vlans[0];
@@ -321,22 +295,34 @@ localstore=> \d ops_interface_vlan
                 String gri = p2pvlan.getGlobalReservationId();
                 String sliceUrn = p2pvlan.getSliceName();
                 String sliverUrn = sliceUrn.replace("+slice+", "+sliver+");
+                String sliverId = vlanId + "_vlan_" + gri;
                 sliverUrn = sliverUrn + "_vlan_" + gri;
                 // add VLAN for ingress
                 sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20120709/vlan#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
                     vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), sliceUrn, sliverUrn, gri);
+                sql += String.format("INSERT INTO ops_aggregate_sliver VALUES ('%s', '%s', '%s', '%s');\n",
+                        sliverId, ifUrnFields[1], sliverUrn, baseUrl+"info/sliver/"+sliverId);
+                sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
+                        vlanId, ifId, ifUrn, baseUrl+"info/vlan/"+vlanId);
                 try {
                     ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getDstInterface()).replace("/", "_");
                 } catch (AggregateException ex) {
                     continue;
                 }
+                ifUrnFields = ifUrn.split("\\+");
+                ifId = ifUrnFields[1] + "." + ifUrnFields[ifUrnFields.length - 1].replace('/', '_');
                 vlanUrn = ifUrn.replace("+interface+", "+vlan+");
                 vlanUrn = vlanUrn + ":" + (vlans.length > 1 ?  vlans[1] : vlans[0]);
                 vlanUrnFields = vlanUrn.split("\\+");
                 vlanId = vlanUrnFields[1] + "." + vlanUrnFields[vlanUrnFields.length-1];
+                sliverId = vlanId + "_vlan_" + gri;
                 // add VLAN for egress
                 sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20120709/vlan#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
                     vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), sliceUrn, sliverUrn, gri);
+                sql += String.format("INSERT INTO ops_aggregate_sliver VALUES ('%s', '%s', '%s', '%s');\n",
+                        sliverId, ifUrnFields[1], sliverUrn, baseUrl+"info/sliver/"+sliverId);
+                sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
+                        vlanId, ifId, ifUrn, baseUrl+"info/vlan/"+vlanId);
             }
         }
         Iterator<String> itGri = listCurrentVlanGri.iterator();
