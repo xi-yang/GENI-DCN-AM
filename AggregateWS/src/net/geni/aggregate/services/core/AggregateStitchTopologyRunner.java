@@ -192,7 +192,7 @@ public class AggregateStitchTopologyRunner extends Thread {
             long ts = date.getTime();            
             for (AggregateContent aggregate: stitchObj.getAggregate()) {
                 String aggrUrn = aggregate.getId();
-                String aggrId = AggregateUtils.getUrnField(aggrUrn, "aggregate");
+                String aggrId = aggrUrn.split("\\+")[1];
                 sql += String.format("INSERT INTO ops_aggregate VALUES ('http://unis.incntre.iu.edu/schema/20120709/aggregate#', '%s', '%s', '%s', %d, '%s');\n",
                         aggrId, baseUrl+"info/aggregate/"+aggrId, aggrUrn, ts, baseUrl+"data");
                 for (NodeContent node: aggregate.getNode()) {
