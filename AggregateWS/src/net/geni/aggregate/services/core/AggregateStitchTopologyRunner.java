@@ -282,13 +282,13 @@ public class AggregateStitchTopologyRunner extends Thread {
                  */
                 String ifUrn;
                 try {
-                    ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getSrcInterface());
+                    ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getSource());
                 } catch (AggregateException ex) {
                     continue;
                 }
-                String aggrId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "domain");
-                String nodeId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "node");
-                String portId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "port");
+                String aggrId = AggregateUtils.getUrnField(p2pvlan.getSource(), "domain");
+                String nodeId = AggregateUtils.getUrnField(p2pvlan.getSource(), "node");
+                String portId = AggregateUtils.getUrnField(p2pvlan.getSource(), "port");
                 String ifId = aggrId + "/" + nodeId + "/" + portId;
                 String vlanUrn = ifUrn.replace("+interface+", "+vlan+");
                 String vlans[] = p2pvlan.getVtag().split(":");
@@ -307,13 +307,13 @@ public class AggregateStitchTopologyRunner extends Thread {
                 sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
                         vlanId, ifId, ifUrn, baseUrl+"info/port-vlan/"+vlanId);
                 try {
-                    ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getDstInterface()).replace("/", "_");
+                    ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getDestination()).replace("/", "_");
                 } catch (AggregateException ex) {
                     continue;
                 }
-                aggrId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "domain");
-                nodeId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "node");
-                portId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "port");
+                aggrId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "domain");
+                nodeId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "node");
+                portId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "port");
                 ifId = aggrId + "/" + nodeId + "/" + portId;
                 vlanUrn = ifUrn.replace("+interface+", "+vlan+");
                 vlanUrn = vlanUrn + ":" + (vlans.length > 1 ?  vlans[1] : vlans[0]);
@@ -343,10 +343,10 @@ public class AggregateStitchTopologyRunner extends Thread {
             }
         }
         sql += "COMMIT WORK;\n";
-        log.info("updating ops_mon_vlan.sql");
         if (!sql.contains("INSERT") && !sql.contains("DELETE")) {
             return;
         }
+        log.info("updating ops_mon_vlan.sql");
         try {
             FileOutputStream out = new FileOutputStream("/tmp/ops_mon_vlan.sql");
             out.write(sql.getBytes());
