@@ -160,44 +160,6 @@ public class AggregateStitchTopologyRunner extends Thread {
             minutes++;
         }
     }
-    
-/*
-localstore=> \d ops_aggregate_resource
-    Table "public.ops_aggregate_resource"
-    Column    |       Type        | Modifiers 
---------------+-------------------+-----------
- id           | character varying | 
- aggregate_id | character varying | 
- urn          | character varying | 
- selfRef      | character varying | 
-
-localstore=> \d ops_aggregate_sliver
-     Table "public.ops_aggregate_sliver"
-    Column    |       Type        | Modifiers 
---------------+-------------------+-----------
- id           | character varying | 
- aggregate_id | character varying | 
- urn          | character varying | 
- selfRef      | character varying | 
-
-localstore=> \d ops_node_interface
-    Table "public.ops_node_interface"
- Column  |       Type        | Modifiers 
----------+-------------------+-----------
- id      | character varying | 
- node_id | character varying | 
- urn     | character varying | 
- selfRef | character varying | 
-
-localstore=> \d ops_interface_vlan
-    Table "public.ops_node_interface"
- Column  |       Type        | Modifiers 
----------+-------------------+-----------
- id      | character varying | 
- interface_id | character varying | 
- urn     | character varying | 
- selfRef | character varying | 
- */
 
     private void updateTopologyPsql() {
         synchronized(this) {
@@ -279,6 +241,7 @@ localstore=> \d ops_interface_vlan
                 }
             }
             sql += "COMMIT WORK;\n";
+            log.info("updating ops_mon_aggr.sql");
             try {
                 FileOutputStream out = new FileOutputStream("/tmp/ops_mon_aggr.sql");
                 out.write(sql.getBytes());
@@ -375,11 +338,15 @@ localstore=> \d ops_interface_vlan
                 }
             }
             if (needToDelete) {
-                sql += String.format("DELETE from ops_vlan WHERE circuitRef='%s';\n", gri);
+                sql += String.format("DELETE from ops_vlan WHERE circuitId='%s';\n", gri);
                 itGri.remove();
             }
         }
         sql += "COMMIT WORK;\n";
+        log.info("updating ops_mon_vlan.sql");
+        if (!sql.contains("INSERT") && !sql.contains("DELETE")) {
+            return;
+        }
         try {
             FileOutputStream out = new FileOutputStream("/tmp/ops_mon_vlan.sql");
             out.write(sql.getBytes());
