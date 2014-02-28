@@ -248,7 +248,7 @@ localstore=> \d ops_interface_vlan
                      * mem_total_kb => null
                      */
                     String nodeUrn = node.getId();
-                    String nodeId = AggregateUtils.getUrnField(nodeUrn, "node") + "." + aggrId;
+                    String nodeId = aggrId + "/" + AggregateUtils.getUrnField(nodeUrn, "node") + "." + aggrId;
                     sql += String.format("INSERT INTO ops_node VALUES ('http://unis.incntre.iu.edu/schema/20120709/node#', '%s', '%s', '%s', %d, null);\n",
                         nodeId, baseUrl+"info/node/"+nodeId, nodeUrn, ts);
                     sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
@@ -268,10 +268,10 @@ localstore=> \d ops_interface_vlan
                              * max_bps      => capacity  
                              * max_pps      => n/a
                              */
-                            String ifUrn = port.getId();
-                            String ifUrnFields[] = ifUrn.split("\\+");
+                            String ifUrn = port.getId().replace("stitchport", "interface");
+                            String ifUrnFields[] = ifUrn.split(":");
                             //String ifId = aggrId + "." + ifUrnFields[ifUrnFields.length-1].replace('/', '_');
-                            String ifId = nodeId + "/" + ifUrnFields[ifUrnFields.length-1];
+                            String ifId = aggrId + "/" + nodeId + "/" + ifUrnFields[1];
                             sql += String.format("INSERT INTO ops_interface VALUES ('http://unis.incntre.iu.edu/schema/20120709/port#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
                                 ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts, Long.parseLong(port.getCapacity()));
                             sql += String.format("INSERT INTO ops_node_interface VALUES ('%s', '%s', '%s', '%s');\n",
@@ -320,17 +320,18 @@ localstore=> \d ops_interface_vlan
                  */
                 String ifUrn;
                 try {
-                    ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getSrcInterface()).replace("/", "_");
+                    ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getSrcInterface());
                 } catch (AggregateException ex) {
                     continue;
                 }
-                String ifUrnFields[] = ifUrn.split("\\+");
-                String ifId = ifUrnFields[1] + "." + ifUrnFields[ifUrnFields.length - 1].replace('/', '_');
+                String aggrId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "domain");
+                String nodeId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "node");
+                String portId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "port");
+                String ifId = aggrId + "/" + nodeId + "/" + portId;
                 String vlanUrn = ifUrn.replace("+interface+", "+vlan+");
                 String vlans[] = p2pvlan.getVtag().split(":");
                 vlanUrn = vlanUrn + ":" + vlans[0];
-                String vlanUrnFields[] = vlanUrn.split("\\+");
-                String vlanId = vlanUrnFields[1] + "." + vlanUrnFields[vlanUrnFields.length-1];
+                String vlanId = aggrId + "/" + nodeId + "/" + portId + "/" + vlans[0];
                 String gri = p2pvlan.getGlobalReservationId();
                 String sliceUrn = p2pvlan.getSliceName();
                 String sliverUrn = sliceUrn.replace("+slice+", "+sliver+");
@@ -340,7 +341,7 @@ localstore=> \d ops_interface_vlan
                 sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', %s, %d, %d, '%s',  '%s');\n",
                     vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), vlans[0], gri);
                 sql += String.format("INSERT INTO ops_aggregate_sliver VALUES ('%s', '%s', '%s', '%s');\n",
-                        sliverId, ifUrnFields[1], sliverUrn, baseUrl+"info/sliver/"+sliverId);
+                        sliverId, aggrId, sliverUrn, baseUrl+"info/sliver/"+sliverId);
                 sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
                         vlanId, ifId, ifUrn, baseUrl+"info/port-vlan/"+vlanId);
                 try {
@@ -348,18 +349,19 @@ localstore=> \d ops_interface_vlan
                 } catch (AggregateException ex) {
                     continue;
                 }
-                ifUrnFields = ifUrn.split("\\+");
-                ifId = ifUrnFields[1] + "." + ifUrnFields[ifUrnFields.length - 1].replace('/', '_');
+                aggrId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "domain");
+                nodeId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "node");
+                portId = AggregateUtils.getUrnField(p2pvlan.getSrcInterface(), "port");
+                ifId = aggrId + "/" + nodeId + "/" + portId;
                 vlanUrn = ifUrn.replace("+interface+", "+vlan+");
                 vlanUrn = vlanUrn + ":" + (vlans.length > 1 ?  vlans[1] : vlans[0]);
-                vlanUrnFields = vlanUrn.split("\\+");
-                vlanId = vlanUrnFields[1] + "." + vlanUrnFields[vlanUrnFields.length-1];
+                vlanId = aggrId + "/" + nodeId + "/" + portId + "/" + (vlans.length > 1 ?  vlans[1] : vlans[0]);
                 sliverId = vlanId + "_vlan_" + gri;
                 // add VLAN for egress
                 sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', %s, %d, %d, '%s',  '%s');\n",
                     vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), sliceUrn, sliverUrn, gri);
                 sql += String.format("INSERT INTO ops_aggregate_sliver VALUES ('%s', '%s', '%s', '%s');\n",
-                        sliverId, ifUrnFields[1], sliverUrn, baseUrl+"info/sliver/"+sliverId);
+                        sliverId, aggrId, sliverUrn, baseUrl+"info/sliver/"+sliverId);
                 sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
                         vlanId, ifId, ifUrn, baseUrl+"info/port-vlan/"+vlanId);
             }
