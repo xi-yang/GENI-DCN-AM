@@ -161,6 +161,44 @@ public class AggregateStitchTopologyRunner extends Thread {
         }
     }
     
+/*
+localstore=> \d ops_aggregate_resource
+    Table "public.ops_aggregate_resource"
+    Column    |       Type        | Modifiers 
+--------------+-------------------+-----------
+ id           | character varying | 
+ aggregate_id | character varying | 
+ urn          | character varying | 
+ selfRef      | character varying | 
+
+localstore=> \d ops_aggregate_sliver
+     Table "public.ops_aggregate_sliver"
+    Column    |       Type        | Modifiers 
+--------------+-------------------+-----------
+ id           | character varying | 
+ aggregate_id | character varying | 
+ urn          | character varying | 
+ selfRef      | character varying | 
+
+localstore=> \d ops_node_interface
+    Table "public.ops_node_interface"
+ Column  |       Type        | Modifiers 
+---------+-------------------+-----------
+ id      | character varying | 
+ node_id | character varying | 
+ urn     | character varying | 
+ selfRef | character varying | 
+
+localstore=> \d ops_interface_vlan
+    Table "public.ops_node_interface"
+ Column  |       Type        | Modifiers 
+---------+-------------------+-----------
+ id      | character varying | 
+ interface_id | character varying | 
+ urn     | character varying | 
+ selfRef | character varying | 
+ */
+
     private void updateTopologyPsql() {
         synchronized(this) {
             if (stitchObj == null)
@@ -210,13 +248,12 @@ public class AggregateStitchTopologyRunner extends Thread {
                      * mem_total_kb => null
                      */
                     String nodeUrn = node.getId();
-                    String nodeId = aggrId + "." + AggregateUtils.getUrnField(nodeUrn, "node");
+                    String nodeId = AggregateUtils.getUrnField(nodeUrn, "node") + "." + aggrId;
                     sql += String.format("INSERT INTO ops_node VALUES ('http://unis.incntre.iu.edu/schema/20120709/node#', '%s', '%s', '%s', %d, null);\n",
                         nodeId, baseUrl+"info/node/"+nodeId, nodeUrn, ts);
                     sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
                         nodeId, aggrId, nodeUrn, baseUrl+"info/node/"+nodeId);
                     for (PortContent port: node.getPort()) {
-                        for (LinkContent link: port.getLink()) {
                             //$$ add "insert ops_interface" row
                             // INSERT INTO ops_interface VALUES ('', '', '', '', 0, null, null, '', 0, null);
                             /*
@@ -231,14 +268,14 @@ public class AggregateStitchTopologyRunner extends Thread {
                              * max_bps      => capacity  
                              * max_pps      => n/a
                              */
-                            String ifUrn = link.getId();
+                            String ifUrn = port.getId();
                             String ifUrnFields[] = ifUrn.split("\\+");
-                            String ifId = aggrId + "." + ifUrnFields[ifUrnFields.length-1].replace('/', '_');
+                            //String ifId = aggrId + "." + ifUrnFields[ifUrnFields.length-1].replace('/', '_');
+                            String ifId = nodeId + "/" + ifUrnFields[ifUrnFields.length-1];
                             sql += String.format("INSERT INTO ops_interface VALUES ('http://unis.incntre.iu.edu/schema/20120709/port#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
-                                ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts, Long.parseLong(link.getCapacity()));
+                                ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts, Long.parseLong(port.getCapacity()));
                             sql += String.format("INSERT INTO ops_node_interface VALUES ('%s', '%s', '%s', '%s');\n",
                                 ifId, nodeId, ifUrn, baseUrl+"info/interface/"+ifId);
-                        }
                     }
                 }
             }
@@ -253,6 +290,7 @@ public class AggregateStitchTopologyRunner extends Thread {
         }
     }
 
+    // TODO: add sliver_vlan table and slice_vlan table ?
     private void updateVlanPsql() {
         String baseUrl = AggregateState.getOpsMonBaseUrl();
         String sql = "BEGIN WORK;\n";
@@ -275,9 +313,10 @@ public class AggregateStitchTopologyRunner extends Thread {
                  * urn          => geni interface_urn -> vlan+id
                  * ts           => startTime convert to epoch
                  * expires      => endTime convert to epoch
-                 * sliceUrn     => sliceName
-                 * sliverUrn    => urn + '_vlan_' + GRI 
-                 * circuitRef   => GRI
+                 * tag           => vlanTag
+                 * circuitId   => GRI
+                 * sliceUrn     => sliceName            ??  
+                 * sliverUrn    => urn + '_vlan_' + GRI         ??
                  */
                 String ifUrn;
                 try {
@@ -298,12 +337,12 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String sliverId = vlanId + "_vlan_" + gri;
                 sliverUrn = sliverUrn + "_vlan_" + gri;
                 // add VLAN for ingress
-                sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20120709/vlan#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
-                    vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), sliceUrn, sliverUrn, gri);
+                sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', %s, %d, %d, '%s',  '%s');\n",
+                    vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), vlans[0], gri);
                 sql += String.format("INSERT INTO ops_aggregate_sliver VALUES ('%s', '%s', '%s', '%s');\n",
                         sliverId, ifUrnFields[1], sliverUrn, baseUrl+"info/sliver/"+sliverId);
                 sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
-                        vlanId, ifId, ifUrn, baseUrl+"info/vlan/"+vlanId);
+                        vlanId, ifId, ifUrn, baseUrl+"info/port-vlan/"+vlanId);
                 try {
                     ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getDstInterface()).replace("/", "_");
                 } catch (AggregateException ex) {
@@ -317,12 +356,12 @@ public class AggregateStitchTopologyRunner extends Thread {
                 vlanId = vlanUrnFields[1] + "." + vlanUrnFields[vlanUrnFields.length-1];
                 sliverId = vlanId + "_vlan_" + gri;
                 // add VLAN for egress
-                sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20120709/vlan#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
+                sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', %s, %d, %d, '%s',  '%s');\n",
                     vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), sliceUrn, sliverUrn, gri);
                 sql += String.format("INSERT INTO ops_aggregate_sliver VALUES ('%s', '%s', '%s', '%s');\n",
                         sliverId, ifUrnFields[1], sliverUrn, baseUrl+"info/sliver/"+sliverId);
                 sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
-                        vlanId, ifId, ifUrn, baseUrl+"info/vlan/"+vlanId);
+                        vlanId, ifId, ifUrn, baseUrl+"info/port-vlan/"+vlanId);
             }
         }
         Iterator<String> itGri = listCurrentVlanGri.iterator();
