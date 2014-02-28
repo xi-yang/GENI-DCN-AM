@@ -269,8 +269,7 @@ localstore=> \d ops_interface_vlan
                              * max_pps      => n/a
                              */
                             String ifUrn = port.getId().replace("stitchport", "interface");
-                            String portId = AggregateUtils.getUrnField(port.getId(), "port");
-                            //String ifId = aggrId + "." + ifUrnFields[ifUrnFields.length-1].replace('/', '_');
+                            String portId = AggregateUtils.getUrnField(ifUrn, "port");
                             String ifId = aggrId + "/" + nodeId + "/" + portId;
                             sql += String.format("INSERT INTO ops_interface VALUES ('http://unis.incntre.iu.edu/schema/20120709/port#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
                                 ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts, Long.parseLong(port.getCapacity()));
