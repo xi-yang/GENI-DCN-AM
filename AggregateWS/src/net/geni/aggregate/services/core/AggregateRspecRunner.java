@@ -355,7 +355,7 @@ public class AggregateRspecRunner extends Thread {
         }
         if (allActive && hasP2PVlan)
             rspec.setStatus("VLANS-ACTIVE");
-        if (allReserved && hasP2PVlan)
+        else if (allReserved && hasP2PVlan)
             rspec.setStatus("VLANS-ALLOCATED");
     }
 
