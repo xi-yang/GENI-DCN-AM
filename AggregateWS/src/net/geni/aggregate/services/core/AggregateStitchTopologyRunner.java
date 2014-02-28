@@ -299,13 +299,14 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String gri = p2pvlan.getGlobalReservationId();
                 String sliceUrn = p2pvlan.getSliceName();
                 String sliverUrn = sliceUrn.replace("+slice+", "+sliver+");
-                String sliverId = vlanId + "_vlan_" + gri;
+                String sliverId = p2pvlan.getSliceName() + "_vlan_" + gri;
                 sliverUrn = sliverUrn + "_vlan_" + gri;
+                // add sliver_aggregate relation
+                sql += String.format("INSERT INTO ops_aggregate_sliver VALUES ('%s', '%s', '%s', '%s');\n",
+                        sliverId, aggrId, sliverUrn, baseUrl+"info/sliver/"+sliverId);
                 // add VLAN for ingress
                 sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', %s, %d, %d, '%s',  '%s');\n",
                     vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), vlans[0], gri);
-                sql += String.format("INSERT INTO ops_aggregate_sliver VALUES ('%s', '%s', '%s', '%s');\n",
-                        sliverId, aggrId, sliverUrn, baseUrl+"info/sliver/"+sliverId);
                 sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
                         vlanId, ifId, ifUrn, baseUrl+"info/port-vlan/"+vlanId);
                 try {
@@ -320,12 +321,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                 vlanUrn = ifUrn.replace("+interface+", "+vlan+");
                 vlanUrn = vlanUrn + ":" + (vlans.length > 1 ?  vlans[1] : vlans[0]);
                 vlanId = aggrId + "/" + nodeId + "/" + portId + "/" + (vlans.length > 1 ?  vlans[1] : vlans[0]);
-                sliverId = vlanId + "_vlan_" + gri;
                 // add VLAN for egress
                 sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', %s, %d, %d, '%s',  '%s');\n",
                     vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), sliceUrn, sliverUrn, gri);
-                sql += String.format("INSERT INTO ops_aggregate_sliver VALUES ('%s', '%s', '%s', '%s');\n",
-                        sliverId, aggrId, sliverUrn, baseUrl+"info/sliver/"+sliverId);
                 sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
                         vlanId, ifId, ifUrn, baseUrl+"info/port-vlan/"+vlanId);
                 listCurrentVlanGri.add(p2pvlan.getGlobalReservationId());
