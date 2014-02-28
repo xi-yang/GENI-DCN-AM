@@ -265,7 +265,9 @@ public class AggregateStitchTopologyRunner extends Thread {
         }
         for (AggregateP2PVlan p2pvlan: p2pvlans) {
             if (!listCurrentVlanGri.contains(p2pvlan.getGlobalReservationId())) {
-                listCurrentVlanGri.add(p2pvlan.getGlobalReservationId());
+                if (p2pvlan.getVtag().isEmpty() || p2pvlan.getVtag().contains("any")) {
+                    continue;
+                }
                 //$$ add "insert VLAN" row(s)
                 // INSERT INTO ops_vlan VALUES ('', '', '', '', 0, 0, '', '', '');
                 /*
@@ -326,6 +328,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                         sliverId, aggrId, sliverUrn, baseUrl+"info/sliver/"+sliverId);
                 sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
                         vlanId, ifId, ifUrn, baseUrl+"info/port-vlan/"+vlanId);
+                listCurrentVlanGri.add(p2pvlan.getGlobalReservationId());
             }
         }
         Iterator<String> itGri = listCurrentVlanGri.iterator();
