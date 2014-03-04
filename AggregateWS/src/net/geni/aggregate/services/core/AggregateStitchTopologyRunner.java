@@ -315,8 +315,6 @@ public class AggregateStitchTopologyRunner extends Thread {
                 // add VLAN link/circuit one-per-vlan
                 sql += String.format("INSERT INTO ops_link VALUES ('http://unis.incntre.iu.edu/schema/20140131/link#', '%s', '%s', '%s', %d);\n",
                     linkId, baseUrl+"info/link/"+aggrId+"/"+linkId, linkUrn, p2pvlan.getStartTime());
-                sql += String.format("INSERT INTO ops_link_interfacevlan VALUES ('%s', '%s', '%s', '%s');\n",
-                    vlanId, linkId, vlanUrn, baseUrl+"info/port-vlan/"+vlanId);
                 sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
                     linkId, aggrId, linkUrn, baseUrl+"info/link/"+aggrId+"/"+linkId);
                 // add sliver_aggregate relation one-per-vlan
@@ -324,7 +322,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                         sliverId, aggrId, sliverUrn, baseUrl+"info/sliver/"+sliverId);
                 // add VLAN for ingress one-per-interface (two-per-vlan)
                 sql += String.format("INSERT INTO ops_interfacevlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s');\n",
-                    vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), Long.getLong(vlans[0]), ifUrn, baseUrl+"info/interface/"+ifId);
+                    vlanId, baseUrl+"info/port-vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), Long.getLong(vlans[0]), ifUrn, baseUrl+"info/interface/"+ifId);
+                sql += String.format("INSERT INTO ops_link_interfacevlan VALUES ('%s', '%s', '%s', '%s');\n",
+                    vlanId, linkId, vlanUrn, baseUrl+"info/port-vlan/"+vlanId);
                 sql += String.format("INSERT INTO ops_sliver_resource VALUES ('%s', '%s', '%s', '%s');\n",
                         vlanId, sliverId, vlanUrn, baseUrl+"info/port-vlan/"+vlanId);
                 try {
@@ -341,7 +341,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                 vlanId = aggrId + "/" + nodeId + "/" + portId + "/" + (vlans.length > 1 ?  vlans[1] : vlans[0]);
                 // add VLAN for egress one-per-interface (two-per-vlan)
                 sql += String.format("INSERT INTO ops_interfacevlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s');\n",
-                    vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), Long.getLong((vlans.length > 1 ?  vlans[1] : vlans[0])), ifUrn, baseUrl+"info/interface/"+ifId);
+                    vlanId, baseUrl+"info/port-vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), Long.getLong((vlans.length > 1 ?  vlans[1] : vlans[0])), ifUrn, baseUrl+"info/interface/"+ifId);
+                sql += String.format("INSERT INTO ops_link_interfacevlan VALUES ('%s', '%s', '%s', '%s');\n",
+                    vlanId, linkId, vlanUrn, baseUrl+"info/port-vlan/"+vlanId);
                 sql += String.format("INSERT INTO ops_sliver_resource VALUES ('%s', '%s', '%s', '%s');\n",
                         vlanId, sliverId, vlanUrn, baseUrl+"info/port-vlan/"+vlanId);
                 listCurrentVlanGri.add(gri);
