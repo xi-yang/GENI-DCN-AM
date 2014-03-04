@@ -332,11 +332,11 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String sliverId = sliverUrn.split("\\+")[sliverUrn.split("\\+").length-1];
                 // add VLAN sliver/vlan/circuit one-per-vlan
                 sql += String.format("INSERT INTO ops_sliver SELECT 'http://unis.incntre.iu.edu/schema/20140131/sliver#', '%s', '%s', '%s', null, %d, '%s', '%s', '%s', null, null, null, %d WHERE NOT EXISTS (SELECT * FROM ops_sliver WHERE id = '%s');\n",
-                    sliverId, baseUrl+"info/sliver/"+aggrId+"/"+sliverId, sliverUrn, p2pvlan.getStartTime(), aggrUrn, baseUrl+"info/aggregate/"+aggrId, sliceUrn, p2pvlan.getEndTime(), sliverId);
+                    sliverId, baseUrl+"info/sliver/"+sliverId, sliverUrn, p2pvlan.getStartTime(), aggrUrn, baseUrl+"info/aggregate/"+aggrId, sliceUrn, p2pvlan.getEndTime(), sliverId);
                 sql += String.format("INSERT INTO ops_link SELECT 'http://unis.incntre.iu.edu/schema/20140131/link#', '%s', '%s', '%s', %d WHERE NOT EXISTS (SELECT * FROM ops_link WHERE id = '%s');\n",
                     linkId, baseUrl+"info/link/"+aggrId+"/"+linkId, linkUrn, p2pvlan.getStartTime(), linkId);
                 sql += String.format("INSERT INTO ops_aggregate_resource SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_aggregate_resource WHERE id = '%s');\n",
-                    linkId, aggrId, linkUrn, baseUrl+"info/link/"+aggrId+"/"+linkId, linkId);
+                    linkId, aggrId, linkUrn, baseUrl+"info/link/"+linkId, linkId);
                 // add sliver_aggregate relation one-per-vlan
                 sql += String.format("INSERT INTO ops_aggregate_sliver SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_aggregate_sliver WHERE id = '%s');\n",
                         sliverId, aggrId, sliverUrn, baseUrl+"info/sliver/"+sliverId, sliverId);
