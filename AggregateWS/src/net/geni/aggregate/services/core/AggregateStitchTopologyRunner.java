@@ -256,12 +256,13 @@ public class AggregateStitchTopologyRunner extends Thread {
     private void updateVlanPsql() {
         String baseUrl = AggregateState.getOpsMonBaseUrl();
         String sql = "BEGIN WORK;\n";
-        sql += "LOCK TABLE ops_aggregate_resource IN EXCLUSIVE MODE;\n";
-        sql += "LOCK TABLE ops_sliver_resource IN EXCLUSIVE MODE;\n";
-        sql += "LOCK TABLE ops_link IN EXCLUSIVE MODE;\n";
-        sql += "LOCK TABLE ops_link_interfacevlan IN EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_aggregate_resource IN SHARE ROW EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_sliver_resource IN SHARE ROW EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_sliver IN SHARE ROW EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_link IN SHARE ROW EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_link_interfacevlan IN SHARE ROW EXCLUSIVE MODE;\n";
         sql += "LOCK TABLE ops_interfacevlan IN SHARE ROW EXCLUSIVE MODE;\n";
-        sql += "LOCK TABLE ops_aggregate_sliver IN EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_aggregate_sliver IN SHARE ROW EXCLUSIVE MODE;\n";
         List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
         if (listCurrentVlanGri == null) {
             listCurrentVlanGri = new ArrayList<String>();
@@ -272,6 +273,22 @@ public class AggregateStitchTopologyRunner extends Thread {
                     continue;
                 }
                 //$$ add "insert VLAN" row(s)
+                // INSERT INTO ops_sliver
+                /*
+                    $schema        => "http://www.gpolab.bbn.com/monitoring/schema/20140131/sliver#"
+                    id             => sliverId
+                    selfRef        => http://host:port/info/sliver/id
+                    urn            => urn +sliver+id 
+                    uuid           => null 
+                    ts             => startTime
+                    aggregate_urn  => aggrUrn 
+                    aggregate_href => url
+                    slice_urn      => sliceUrn
+                    slice_uuid     => null 
+                    creator        => null for now
+                    created        => null for now
+                    expires        => endTime
+                 */
                 // INSERT INTO ops_link VALUES ('', '', '', '', 0, 0, '', '', '');
                 /*
                     $schema      => "http://unis.incntre.iu.edu/schema/20140131/link#"
@@ -308,11 +325,14 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String gri = p2pvlan.getGlobalReservationId();
                 String linkId = gri;
                 String linkUrn = "urn:publicid:IDN+"+aggrId+"+link+"+gri;
+                String aggrUrn = "urn:publicid:IDN+"+aggrId+"+authority+am";
                 String sliceUrn = p2pvlan.getSliceName();
                 String sliverUrn = sliceUrn.replace("+slice+", "+sliver+");
                 String sliverId = p2pvlan.getSliceName() + "_vlan_" + gri;
                 sliverUrn = sliverUrn + "_vlan_" + gri;
-                // add VLAN link/circuit one-per-vlan
+                // add VLAN sliver/vlan/circuit one-per-vlan
+                sql += String.format("INSERT INTO ops_sliver SELECT 'http://unis.incntre.iu.edu/schema/20140131/sliver#', '%s', '%s', '%s', null, %d, '%s', '%s', '%s', null, null, null, %d WHERE NOT EXISTS (SELECT * FROM ops_sliver WHERE id = '%s');\n",
+                    sliverId, baseUrl+"info/sliver/"+aggrId+"/"+sliverId, sliverUrn, p2pvlan.getStartTime(), aggrUrn, baseUrl+"info/aggregate/"+aggrId, sliceUrn, p2pvlan.getEndTime(), sliverId);
                 sql += String.format("INSERT INTO ops_link SELECT 'http://unis.incntre.iu.edu/schema/20140131/link#', '%s', '%s', '%s', %d WHERE NOT EXISTS (SELECT * FROM ops_link WHERE id = '%s');\n",
                     linkId, baseUrl+"info/link/"+aggrId+"/"+linkId, linkUrn, p2pvlan.getStartTime(), linkId);
                 sql += String.format("INSERT INTO ops_aggregate_resource SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_aggregate_resource WHERE id = '%s');\n",
