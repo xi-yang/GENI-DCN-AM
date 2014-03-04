@@ -256,9 +256,12 @@ public class AggregateStitchTopologyRunner extends Thread {
     private void updateVlanPsql() {
         String baseUrl = AggregateState.getOpsMonBaseUrl();
         String sql = "BEGIN WORK;\n";
-        sql += "LOCK TABLE ops_vlan IN SHARE ROW EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_aggregate_resource IN EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_sliver_resource IN EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_link IN EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_link_interfacevlan IN EXCLUSIVE MODE;\n";
+        sql += "LOCK TABLE ops_interfacevlan IN SHARE ROW EXCLUSIVE MODE;\n";
         sql += "LOCK TABLE ops_aggregate_sliver IN EXCLUSIVE MODE;\n";
-        sql += "LOCK TABLE ops_interface_vlan IN EXCLUSIVE MODE;\n";
         List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
         if (listCurrentVlanGri == null) {
             listCurrentVlanGri = new ArrayList<String>();
@@ -269,18 +272,24 @@ public class AggregateStitchTopologyRunner extends Thread {
                     continue;
                 }
                 //$$ add "insert VLAN" row(s)
-                // INSERT INTO ops_vlan VALUES ('', '', '', '', 0, 0, '', '', '');
+                // INSERT INTO ops_link VALUES ('', '', '', '', 0, 0, '', '', '');
                 /*
-                 * $schema      => "http://unis.incntre.iu.edu/schema/20120709/vlan#"
-                 * id           => convert from interface_urn (aggr_id.interface_id:vlan) 
-                 * selfRef      => http://host:port/info/interface/id 
-                 * urn          => geni interface_urn -> vlan+id
-                 * ts           => startTime convert to epoch
-                 * expires      => endTime convert to epoch
-                 * tag           => vlanTag
-                 * circuitId   => GRI
-                 * sliceUrn     => sliceName            ??  
-                 * sliverUrn    => urn + '_vlan_' + GRI         ??
+                    $schema      => "http://unis.incntre.iu.edu/schema/20140131/link#"
+                    id           => convert from urn (aggr_id/gri) 
+                    selfRef      => http://host:port/info/link/id 
+                    urn          => geni +link+gri
+                    ts           => startTime convert to epoch
+                 */               
+                // INSERT INTO ops_interfacevlan VALUES ('', '', '', '', 0, 0, '', '');
+                /*
+                    $schema      => "http://unis.incntre.iu.edu/schema/20140131/port-vlan#"
+                    id           => convert from urn (aggr_id/interface_id/vlan_id) 
+                    selfRef      => http://host:port/info/interfacevlan/id 
+                    urn          => geni urn:vlan
+                    ts           => startTime convert to epoch
+                    tag          => bigint            | 
+                    interface_urn  =>  
+                    interface_href => 
                  */
                 String ifUrn;
                 try {
@@ -292,23 +301,32 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String nodeId = AggregateUtils.getUrnField(p2pvlan.getSource(), "node");
                 String portId = AggregateUtils.getUrnField(p2pvlan.getSource(), "port");
                 String ifId = aggrId + "/" + nodeId + "/" + portId;
-                String vlanUrn = ifUrn.replace("+interface+", "+vlan+");
+                String vlanUrn = ifUrn; //.replace("+interface+", "+vlan+");
                 String vlans[] = p2pvlan.getVtag().split(":");
                 vlanUrn = vlanUrn + ":" + vlans[0];
                 String vlanId = aggrId + "/" + nodeId + "/" + portId + "/" + vlans[0];
                 String gri = p2pvlan.getGlobalReservationId();
+                String linkId = gri;
+                String linkUrn = "urn:publicid:IDN+"+aggrId+"+link+"+gri;
                 String sliceUrn = p2pvlan.getSliceName();
                 String sliverUrn = sliceUrn.replace("+slice+", "+sliver+");
                 String sliverId = p2pvlan.getSliceName() + "_vlan_" + gri;
                 sliverUrn = sliverUrn + "_vlan_" + gri;
-                // add sliver_aggregate relation
+                // add VLAN link/circuit one-per-vlan
+                sql += String.format("INSERT INTO ops_link VALUES ('http://unis.incntre.iu.edu/schema/20140131/link#', '%s', '%s', '%s', %d);\n",
+                    linkId, baseUrl+"info/link/"+aggrId+"/"+linkId, linkUrn, p2pvlan.getStartTime());
+                sql += String.format("INSERT INTO ops_link_interfacevlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/link#', '%s', '%s', '%s', %d);\n",
+                    vlanId, linkId, vlanUrn, baseUrl+"info/port-vlan/"+vlanId);
+                sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
+                    linkId, aggrId, linkUrn, baseUrl+"info/link/"+aggrId+"/"+linkId);
+                // add sliver_aggregate relation one-per-vlan
                 sql += String.format("INSERT INTO ops_aggregate_sliver VALUES ('%s', '%s', '%s', '%s');\n",
                         sliverId, aggrId, sliverUrn, baseUrl+"info/sliver/"+sliverId);
-                // add VLAN for ingress
-                sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', %s, %d, %d, '%s',  '%s');\n",
-                    vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), vlans[0], gri);
-                sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
-                        vlanId, ifId, ifUrn, baseUrl+"info/port-vlan/"+vlanId);
+                // add VLAN for ingress one-per-interface (two-per-vlan)
+                sql += String.format("INSERT INTO ops_interfacevlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s');\n",
+                    vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), Long.getLong(vlans[0]), ifUrn, baseUrl+"info/interface/"+ifId);
+                sql += String.format("INSERT INTO ops_sliver_resource VALUES ('%s', '%s', '%s', '%s');\n",
+                        vlanId, sliverId, vlanUrn, baseUrl+"info/port-vlan/"+vlanId);
                 try {
                     ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getDestination()).replace("/", "_");
                 } catch (AggregateException ex) {
@@ -318,15 +336,15 @@ public class AggregateStitchTopologyRunner extends Thread {
                 nodeId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "node");
                 portId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "port");
                 ifId = aggrId + "/" + nodeId + "/" + portId;
-                vlanUrn = ifUrn.replace("+interface+", "+vlan+");
+                vlanUrn = ifUrn; //.replace("+interface+", "+vlan+");
                 vlanUrn = vlanUrn + ":" + (vlans.length > 1 ?  vlans[1] : vlans[0]);
                 vlanId = aggrId + "/" + nodeId + "/" + portId + "/" + (vlans.length > 1 ?  vlans[1] : vlans[0]);
-                // add VLAN for egress
-                sql += String.format("INSERT INTO ops_vlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', %s, %d, %d, '%s',  '%s');\n",
-                    vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), p2pvlan.getEndTime(), sliceUrn, sliverUrn, gri);
-                sql += String.format("INSERT INTO ops_interface_vlan VALUES ('%s', '%s', '%s', '%s');\n",
-                        vlanId, ifId, ifUrn, baseUrl+"info/port-vlan/"+vlanId);
-                listCurrentVlanGri.add(p2pvlan.getGlobalReservationId());
+                // add VLAN for egress one-per-interface (two-per-vlan)
+                sql += String.format("INSERT INTO ops_interfacevlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s');\n",
+                    vlanId, baseUrl+"info/vlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), Long.getLong((vlans.length > 1 ?  vlans[1] : vlans[0])), ifUrn, baseUrl+"info/interface/"+ifId);
+                sql += String.format("INSERT INTO ops_sliver_resource VALUES ('%s', '%s', '%s', '%s');\n",
+                        vlanId, sliverId, vlanUrn, baseUrl+"info/port-vlan/"+vlanId);
+                listCurrentVlanGri.add(gri);
             }
         }
         Iterator<String> itGri = listCurrentVlanGri.iterator();
@@ -339,7 +357,10 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
             }
             if (needToDelete) {
-                sql += String.format("DELETE from ops_vlan WHERE circuitId='%s';\n", gri);
+                sql += String.format("DELETE from ops_link WHERE id='%s';\n", gri);
+                sql += String.format("DELETE from ops_link_interfacevlan WHERE link_id='%s';\n", gri);
+                sql += String.format("DELETE from ops_aggregate_resource WHERE id='%s';\n", gri);
+                sql += String.format("DELETE from ops_sliver_resource WHERE sliverId LIKE '%%_vlan_%s%%';\n", gri);
                 itGri.remove();
             }
         }
