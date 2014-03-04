@@ -328,8 +328,8 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String aggrUrn = "urn:publicid:IDN+"+aggrId+"+authority+am";
                 String sliceUrn = p2pvlan.getSliceName();
                 String sliverUrn = sliceUrn.replace("+slice+", "+sliver+");
-                String sliverId = p2pvlan.getSliceName() + "_vlan_" + gri;
                 sliverUrn = sliverUrn + "_vlan_" + gri;
+                String sliverId = sliverUrn.split("+")[sliverUrn.split("+").length-1];
                 // add VLAN sliver/vlan/circuit one-per-vlan
                 sql += String.format("INSERT INTO ops_sliver SELECT 'http://unis.incntre.iu.edu/schema/20140131/sliver#', '%s', '%s', '%s', null, %d, '%s', '%s', '%s', null, null, null, %d WHERE NOT EXISTS (SELECT * FROM ops_sliver WHERE id = '%s');\n",
                     sliverId, baseUrl+"info/sliver/"+aggrId+"/"+sliverId, sliverUrn, p2pvlan.getStartTime(), aggrUrn, baseUrl+"info/aggregate/"+aggrId, sliceUrn, p2pvlan.getEndTime(), sliverId);
