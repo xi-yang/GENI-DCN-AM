@@ -315,7 +315,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 // add VLAN link/circuit one-per-vlan
                 sql += String.format("INSERT INTO ops_link VALUES ('http://unis.incntre.iu.edu/schema/20140131/link#', '%s', '%s', '%s', %d);\n",
                     linkId, baseUrl+"info/link/"+aggrId+"/"+linkId, linkUrn, p2pvlan.getStartTime());
-                sql += String.format("INSERT INTO ops_link_interfacevlan VALUES ('http://unis.incntre.iu.edu/schema/20140131/link#', '%s', '%s', '%s', %d);\n",
+                sql += String.format("INSERT INTO ops_link_interfacevlan VALUES ('%s', '%s', '%s', '%s');\n",
                     vlanId, linkId, vlanUrn, baseUrl+"info/port-vlan/"+vlanId);
                 sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
                     linkId, aggrId, linkUrn, baseUrl+"info/link/"+aggrId+"/"+linkId);
@@ -357,10 +357,12 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
             }
             if (needToDelete) {
-                sql += String.format("DELETE from ops_link WHERE id='%s';\n", gri);
+                sql += String.format("DELETE from ops_interfacevlan WHERE id IN (SELECT from ops_link_interfacevlan WHERE link_id='%s');\n", gri);
                 sql += String.format("DELETE from ops_link_interfacevlan WHERE link_id='%s';\n", gri);
+                sql += String.format("DELETE from ops_link WHERE id='%s';\n", gri);
+                sql += String.format("DELETE from ops_sliver_resource WHERE sliver_id LIKE '%%_vlan_%s%%';\n", gri);
+                sql += String.format("DELETE from ops_aggregate_sliver WHERE id LIKE '%%_vlan_%s%%';\n", gri);
                 sql += String.format("DELETE from ops_aggregate_resource WHERE id='%s';\n", gri);
-                sql += String.format("DELETE from ops_sliver_resource WHERE sliverId LIKE '%%_vlan_%s%%';\n", gri);
                 itGri.remove();
             }
         }
