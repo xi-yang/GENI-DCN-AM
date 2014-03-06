@@ -202,7 +202,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 for (NodeContent node: aggregate.getNode()) {
                     //$$ add "insert ops_node" row
                     /*
-                     * $schema      => "http://www.gpolab.bbn.com/monitoring/schema/20140131/node#"
+                     * $schema      => "http://unis.incntre.iu.edu/schema/20120709/node#"
                      * id           => convert from urn (aggr_id.node_id) 
                      * selfRef      => http://host:port/info/node/id 
                      * urn          => geni urn
@@ -211,7 +211,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                      */
                     String nodeUrn = node.getId();
                     String nodeId = aggrId + "/" + AggregateUtils.getUrnField(nodeUrn, "node") + "." + aggrId;
-                    sql += String.format("INSERT INTO ops_node VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140131/node#', '%s', '%s', '%s', %d, null);\n",
+                    sql += String.format("INSERT INTO ops_node VALUES ('http://unis.incntre.iu.edu/schema/20120709/node#', '%s', '%s', '%s', %d, null);\n",
                         nodeId, baseUrl+"info/node/"+nodeId, nodeUrn, ts);
                     sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
                         nodeId, aggrId, nodeUrn, baseUrl+"info/node/"+nodeId);
@@ -219,7 +219,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                             //$$ add "insert ops_interface" row
                             // INSERT INTO ops_interface VALUES ('', '', '', '', 0, null, null, '', 0, null);
                             /*
-                             * $schema      => "http://www.gpolab.bbn.com/monitoring/schema/20140131/port#"
+                             * $schema      => "http://unis.incntre.iu.edu/schema/20120709/port#"
                              * id           => convert from urn (aggr_id.interface_id) 
                              * selfRef      => http://host:port/info/interface/id 
                              * urn          => geni urn
@@ -233,7 +233,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                             String ifUrn = port.getId().replace("stitchport", "interface");
                             String portId = AggregateUtils.getUrnField(ifUrn, "port");
                             String ifId = aggrId + "/" + nodeId + "/" + portId;
-                            sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140131/port#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
+                            sql += String.format("INSERT INTO ops_interface VALUES ('http://unis.incntre.iu.edu/schema/20120709/port#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
                                 ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts, Long.parseLong(port.getCapacity()));
                             sql += String.format("INSERT INTO ops_node_interface VALUES ('%s', '%s', '%s', '%s');\n",
                                 ifId, nodeId, ifUrn, baseUrl+"info/interface/"+ifId);
