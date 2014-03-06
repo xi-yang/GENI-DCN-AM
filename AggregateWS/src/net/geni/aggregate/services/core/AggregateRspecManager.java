@@ -298,6 +298,9 @@ public class AggregateRspecManager extends Thread{
     }
 
     public synchronized String createRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice, long startTime) throws AggregateException {
+        if (goRun == false) {
+            throw new AggregateException("Initilization not finished yet. Try again later...");
+        }
         synchronized(rspecThreads) {
             for (AggregateRspec rspec: aggrRspecs)
                 if (rspecId.equalsIgnoreCase(rspec.getRspecName()) && !rspec.isDeleted())
@@ -354,6 +357,9 @@ public class AggregateRspecManager extends Thread{
     }
 
     public String allocateRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice, String expires) throws AggregateException {
+        if (goRun == false) {
+            throw new AggregateException("Initilization not finished yet. Try again later...");
+        }
         long now = System.currentTimeMillis()/1000;
         long startTime = 0;
         try {
@@ -376,6 +382,9 @@ public class AggregateRspecManager extends Thread{
     }
     
     public synchronized String provisionRspec(String rspecName) throws AggregateException {
+        if (goRun == false) {
+            throw new AggregateException("Initilization not finished yet. Try again later...");
+        }
         synchronized(rspecThreads) {
             for (AggregateRspec aggrRspec: aggrRspecs) {
                 if (rspecName.equalsIgnoreCase(aggrRspec.getRspecName()) && !aggrRspec.isDeleted()) {
@@ -403,6 +412,9 @@ public class AggregateRspecManager extends Thread{
     }
     
     public synchronized String renewRspec(String rspecName, String expires) throws AggregateException {
+        if (goRun == false) {
+            throw new AggregateException("Initilization not finished yet. Try again later...");
+        }
         synchronized(rspecThreads) {
             for (AggregateRspec aggrRspec: aggrRspecs) {
                 if (rspecName.equalsIgnoreCase(aggrRspec.getRspecName()) && !aggrRspec.isDeleted()) {
@@ -444,6 +456,9 @@ public class AggregateRspecManager extends Thread{
     }
     
     public synchronized String deleteRspec(String rspecName) throws AggregateException {
+        if (goRun == false) {
+            throw new AggregateException("Initilization not finished yet. Try again later...");
+        }
         synchronized(rspecThreads) {
             for (AggregateRspecRunner rspecThread: rspecThreads) {
                 if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecName)) {
@@ -482,6 +497,9 @@ public class AggregateRspecManager extends Thread{
     }
 
     public synchronized HashMap queryRspec(String rspecName) throws AggregateException {
+        if (goRun == false) {
+            throw new AggregateException("Initilization not finished yet. Try again later...");
+        }
         synchronized(rspecThreads) {
             for (AggregateRspec aggrRspec: aggrRspecs) {
                 if (aggrRspec.getRspecName().equalsIgnoreCase(rspecName)) {
@@ -566,7 +584,7 @@ public class AggregateRspecManager extends Thread{
             }
         } else {
                 Vector<AggregateRspec> retRspecs = new Vector<AggregateRspec>();
-                synchronized (aggrRspecs) {
+                synchronized(rspecThreads) {
                     for (String name: rspecNames) {
                         for (AggregateRspec rspec: aggrRspecs) {
                             if (rspec.getRspecName().equalsIgnoreCase(name) && rspec.getResources().size() > 0) {
