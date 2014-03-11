@@ -385,6 +385,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 sql += String.format("DELETE from ops_sliver_resource WHERE sliver_id LIKE '%%_vlan_%s%%';\n", gri);
                 sql += String.format("DELETE from ops_aggregate_sliver WHERE id LIKE '%%_vlan_%s%%';\n", gri);
                 sql += String.format("DELETE from ops_aggregate_resource WHERE id='%s';\n", gri);
+                sql += String.format("DELETE from ops_sliver WHERE id LIKE '%%_vlan_%s%%';\n", gri);
                 itGri.remove();
             }
         }
