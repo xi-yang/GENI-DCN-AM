@@ -175,8 +175,8 @@ public class AggregateStitchTopologyRunner extends Thread {
             sql += "DELETE from ops_aggregate;\n";
             sql += "DELETE from ops_node;\n";
             sql += "DELETE from ops_interface;\n";
-            sql += "DELETE from ops_aggregate_resource;\n";
             sql += "DELETE from ops_node_interface;\n";
+            sql += "DELETE from ops_aggregate_resource WHERE urn LIKE '%%+node+%%';\n";
             // add "insert ops_aggregate" row
             /*  
              * $schema      => "http://www.gpolab.bbn.com/monitoring/schema/20140131/aggregate#"
