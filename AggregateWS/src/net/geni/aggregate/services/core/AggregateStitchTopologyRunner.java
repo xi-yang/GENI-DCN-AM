@@ -278,7 +278,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                     if (rspec.getId() == p2pvlan.getRspecId()) {
                         p2pvlan.setStartTime(rspec.getStartTime());
                         p2pvlan.setEndTime(rspec.getEndTime());
-                        if (rspec.getUsers().size() > 0)
+                        if (rspec.getUsers() != null && rspec.getUsers().size() > 0)
                             creator = rspec.getUsers().get(0);
                         break;
                     }
