@@ -232,7 +232,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                              */
                             String ifUrn = port.getId().replace("stitchport", "interface");
                             String portId = AggregateUtils.getUrnField(ifUrn, "port");
-                            String ifId = aggrId + "/" + nodeId + "/" + portId;
+                            String ifId = nodeId + "/" + portId;
                             sql += String.format("INSERT INTO ops_interface VALUES ('http://unis.incntre.iu.edu/schema/20120709/port#', '%s', '%s', '%s', %d, null, null, 'transport', %d, null);\n",
                                 ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts, Long.parseLong(port.getCapacity()));
                             sql += String.format("INSERT INTO ops_node_interface VALUES ('%s', '%s', '%s', '%s');\n",
@@ -264,6 +264,7 @@ public class AggregateStitchTopologyRunner extends Thread {
         sql += "LOCK TABLE ops_interfacevlan IN SHARE ROW EXCLUSIVE MODE;\n";
         sql += "LOCK TABLE ops_aggregate_sliver IN SHARE ROW EXCLUSIVE MODE;\n";
         List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
+        List<AggregateRspec> rspecs = AggregateState.getRspecManager().getAggrRspecs();
         if (listCurrentVlanGri == null) {
             listCurrentVlanGri = new ArrayList<String>();
         }
@@ -271,6 +272,13 @@ public class AggregateStitchTopologyRunner extends Thread {
             if (!listCurrentVlanGri.contains(p2pvlan.getGlobalReservationId())) {
                 if (p2pvlan.getVtag().isEmpty() || p2pvlan.getVtag().contains("any")) {
                     continue;
+                }
+                for (AggregateRspec rspec: rspecs) {
+                    if (rspec.getId() == p2pvlan.getRspecId()) {
+                        p2pvlan.setStartTime(rspec.getStartTime());
+                        p2pvlan.setEndTime(rspec.getEndTime());
+                        break;
+                    }
                 }
                 //$$ add "insert VLAN" row(s)
                 // INSERT INTO ops_sliver
@@ -330,9 +338,10 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String sliverUrn = sliceUrn.replace("+slice+", "+sliver+");
                 sliverUrn = sliverUrn + "_vlan_" + gri;
                 String sliverId = sliverUrn.split("\\+")[sliverUrn.split("\\+").length-1];
+                String slvierUUID = UUID.randomUUID().toString();
                 // add VLAN sliver/vlan/circuit one-per-vlan
-                sql += String.format("INSERT INTO ops_sliver SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140131/sliver#', '%s', '%s', '%s', null, %d, '%s', '%s', '%s', null, null, null, %d WHERE NOT EXISTS (SELECT * FROM ops_sliver WHERE id = '%s');\n",
-                    sliverId, baseUrl+"info/sliver/"+sliverId, sliverUrn, p2pvlan.getStartTime(), aggrUrn, baseUrl+"info/aggregate/"+aggrId, sliceUrn, p2pvlan.getEndTime(), sliverId);
+                sql += String.format("INSERT INTO ops_sliver SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140131/sliver#', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s', null, null, null, %d WHERE NOT EXISTS (SELECT * FROM ops_sliver WHERE id = '%s');\n",
+                    sliverId, baseUrl+"info/sliver/"+sliverId, sliverUrn, slvierUUID, p2pvlan.getStartTime(), aggrUrn, baseUrl+"info/aggregate/"+aggrId, sliceUrn, p2pvlan.getEndTime(), sliverId);
                 sql += String.format("INSERT INTO ops_link SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140131/link#', '%s', '%s', '%s', %d WHERE NOT EXISTS (SELECT * FROM ops_link WHERE id = '%s');\n",
                     linkId, baseUrl+"info/link/"+linkId, linkUrn, p2pvlan.getStartTime(), linkId);
                 sql += String.format("INSERT INTO ops_aggregate_resource SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_aggregate_resource WHERE id = '%s');\n",
@@ -342,7 +351,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                         sliverId, aggrId, sliverUrn, baseUrl+"info/sliver/"+sliverId, sliverId);
                 // add VLAN for ingress one-per-interface (two-per-vlan)
                 sql += String.format("INSERT INTO ops_interfacevlan SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140131/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_interfacevlan WHERE id = '%s');\n",
-                    vlanId, baseUrl+"info/interfacevlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), Long.getLong(vlans[0]), ifUrn, baseUrl+"info/interface/"+ifId, vlanId);
+                    vlanId, baseUrl+"info/interfacevlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), Long.parseLong(vlans[0]), ifUrn, baseUrl+"info/interface/"+ifId, vlanId);
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s');\n",
                     vlanId, linkId, vlanUrn, baseUrl+"info/interfacevlan/"+vlanId, vlanId);
                 sql += String.format("INSERT INTO ops_sliver_resource SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_sliver_resource WHERE id = '%s');\n",
@@ -361,7 +370,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 vlanId = aggrId + "/" + nodeId + "/" + portId + "/" + (vlans.length > 1 ?  vlans[1] : vlans[0]);
                 // add VLAN for egress one-per-interface (two-per-vlan)
                 sql += String.format("INSERT INTO ops_interfacevlan SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140131/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_interfacevlan WHERE id = '%s');\n",
-                    vlanId, baseUrl+"info/interfacevlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), Long.getLong((vlans.length > 1 ?  vlans[1] : vlans[0])), ifUrn, baseUrl+"info/interface/"+ifId, vlanId);
+                    vlanId, baseUrl+"info/interfacevlan/"+vlanId, vlanUrn, p2pvlan.getStartTime(), Long.parseLong((vlans.length > 1 ?  vlans[1] : vlans[0])), ifUrn, baseUrl+"info/interface/"+ifId, vlanId);
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_link_interfacevlan WHERE id = '%s');\n",
                     vlanId, linkId, vlanUrn, baseUrl+"info/interfacevlan/"+vlanId, vlanId);
                 sql += String.format("INSERT INTO ops_sliver_resource SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_sliver_resource WHERE id = '%s');\n",
