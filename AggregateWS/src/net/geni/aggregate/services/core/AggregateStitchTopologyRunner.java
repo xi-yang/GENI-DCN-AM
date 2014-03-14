@@ -326,7 +326,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                     continue;
                 }
                 String aggrId = AggregateUtils.getUrnField(p2pvlan.getSource(), "domain");
-                String nodeId = AggregateUtils.getUrnField(p2pvlan.getSource(), "node");
+                String nodeId = aggrId + "/" + AggregateUtils.getUrnField(p2pvlan.getSource(), "node") + "." + aggrId;
                 String portId = AggregateUtils.getUrnField(p2pvlan.getSource(), "port");
                 String ifId = aggrId + "/" + nodeId + "/" + portId;
                 String vlanUrn = ifUrn; //.replace("+interface+", "+vlan+");
@@ -365,7 +365,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                     continue;
                 }
                 aggrId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "domain");
-                nodeId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "node");
+                nodeId = aggrId + "/" + AggregateUtils.getUrnField(p2pvlan.getDestination(), "node") + "." + aggrId;
                 portId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "port");
                 ifId = aggrId + "/" + nodeId + "/" + portId;
                 vlanUrn = ifUrn; //.replace("+interface+", "+vlan+");
