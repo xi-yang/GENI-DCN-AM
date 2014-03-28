@@ -282,10 +282,12 @@ public class AggregateRspecManager extends Thread{
                             session.flush();
                             tx.commit();
                         } catch (Exception e) {
+                            log.error(String.format("Rspec '%s' DB transaction for updating TERMINATED status failed.", rspec.getRspecName()));
                             tx.rollback();
-                            e.printStackTrace();
                         } finally {
-                            if (session.isOpen()) session.close();
+                            if (session.isOpen()) {
+                                session.close();
+                            }
                         }
                         rspecThreads.remove(rspecThread);
                         aggrRspecs.remove(rspec);
