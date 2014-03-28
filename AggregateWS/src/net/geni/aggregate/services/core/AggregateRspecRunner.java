@@ -186,6 +186,7 @@ public class AggregateRspecRunner extends Thread {
         } else {
             this.terminate();
         }
+        manager.updateRspec(rspec);
     }
 
     private void createSlice() throws AggregateException {
