@@ -534,9 +534,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
     }
 
     public String generateAdvertisementRspec(AggregateRspec rspec) throws AggregateException {
-        Date dateExpires = new Date();
+        Date dateNow = new Date();
         GregorianCalendar c = new GregorianCalendar();
-        c.setTime(dateExpires);
+        c.setTime(dateNow.getTime() + 60 * 1000 * 60 * 60 * 24);
         XMLGregorianCalendar xgcExpires = null;
         try {
             xgcExpires = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
