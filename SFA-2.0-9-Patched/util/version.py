@@ -5,11 +5,16 @@ svn_info="$Revision$ $HeadURL$"
 import socket
 import re
  
-m = re.search('Revision: ([^ ]+) \$ \$HeadURL: ([^S]+) ', svn_info)
- 
+m = re.search('Revision: ([^ ]+) \$ \$HeadURL: ([^ ]+) ', svn_info)
+
+ver='r2.0-v'+m.group(1) 
+url=m.group(2) 
+indx=url.find('/SFA') 
+url=url[:indx]
+
 def version_core (more={}):
-    core = { 'code_tag' : 'r2.0-'+m.group(1),
-             'code_url' : m.group(2),
+    core = { 'code_tag' : ver,
+             'code_url' : url,
              'hostname' : socket.gethostname(),
              }
     core.update(more)
