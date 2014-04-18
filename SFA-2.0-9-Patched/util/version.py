@@ -5,7 +5,7 @@ svn_info="$Revision$ $HeadURL$"
 import socket
 import re
  
-m = re.search('Revision: ([^ ]+) \$ \$HeadURL: ([^ ]+) ', svn_info)
+m = re.search('Revision: ([^ ]+) \$ \$HeadURL: ([^S]+) ', svn_info)
  
 def version_core (more={}):
     core = { 'code_tag' : 'r2.0-'+m.group(1),
