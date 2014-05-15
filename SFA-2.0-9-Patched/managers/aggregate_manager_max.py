@@ -9,7 +9,7 @@ from sfa.util.config import Config
 from sfa.util.callids import Callids
 from sfa.util.version import version_core
 from sfa.util.xrn import urn_to_hrn, hrn_to_urn, Xrn
-from sfa.util.plxrn import hrn_to_pl_slicename
+from sfa.util.plxrn import hrn_to_pl_slicename, PlXrn
 
 # xxx the sfa.rspecs module is dead - this symbol is now undefined
 #from sfa.rspecs.sfa_rspec import sfa_rspec_version
@@ -214,11 +214,13 @@ class AggregateManagerMax (AggregateManager):
         return resources
     
     def slice_status(self, api, slice_xrn, creds):
-        urn = hrn_to_urn(slice_xrn, 'slice')
+        #logger.info("SLICE STATUS: URN (BEFORE): %s" % slice_xrn)
+        urn = PlXrn(xrn=slice_xrn, type='slice').get_urn()		
         result = {}
         top_level_status = 'unknown'
         #slice_id = self.get_plc_slice_id(creds, urn)
         slice_id = urn
+        #logger.info("SLICE STATUS: URN (After): %s" % slice_xrn)
         (ret, output) = self.call_am_apiclient("QuerySliceNetworkClient", [slice_id,], 5)
         # parse output into rspec XML
         if output.find("Unkown Rspec:") > 0:
@@ -277,6 +279,7 @@ class AggregateManagerMax (AggregateManager):
     
     def delete_slice(self, api, xrn, cred):
         #slice_id = self.get_plc_slice_id(cred, xrn)
+        logger.info("DELETE SLICE: %s" % xrn)
         slice_id = xrn
         (ret, output) = self.call_am_apiclient("DeleteSliceNetworkClient", [slice_id,], 3)
         if output.find("Unkown Rspec:") > 0:
