@@ -594,7 +594,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         GregorianCalendar c1 = new GregorianCalendar();
         c1.setTime(dateCreated);
         GregorianCalendar c2 = new GregorianCalendar();
-        c1.setTime(dateExpires);
+        c2.setTime(dateExpires);
         XMLGregorianCalendar xgcGenerated = null;
         XMLGregorianCalendar xgcCreated = null;
         XMLGregorianCalendar xgcExpires = null;
