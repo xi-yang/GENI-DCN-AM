@@ -223,7 +223,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                         opsconfigId, baseUrl+"info/opsconfig/"+opsconfigId, ts);
                 sql += String.format("INSERT INTO ops_aggregate VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/aggregate#', '%s', '%s', '%s', %d, '%s');\n",
                         aggrId, baseUrl+"info/aggregate/"+aggrId, aggrUrn, ts, baseUrl+"data");
-                sql += String.format("INSERT INTO ops_opsconfig_aggregate VALUES ('%s', '%s', 'max', '%s', '%s');\n",
+                sql += String.format("INSERT INTO ops_opsconfig_aggregate VALUES ('%s', '%s', 'ion', '%s', '%s');\n",
                         aggrId, opsconfigId, aggrUrn, baseUrl+"info/aggregate/"+aggrId);
                 for (NodeContent node: aggregate.getNode()) {
                     //$$ add "insert ops_node" row
