@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE page [
-<!ENTITY rampConfig SYSTEM "/usr/local/aggregate/AggregateAttic/conf/repo/rampConfig.xml">
+<!ENTITY rampConfig SYSTEM "/usr/local/geni-aggregate/AggregateAttic/conf/repo/rampConfig.xml">
 ]>
 
 <!-- This file was auto-generated from WSDL -->
