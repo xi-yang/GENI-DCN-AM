@@ -281,6 +281,7 @@ public class AggregateStitchTopologyRunner extends Thread {
 
     // TODO: add sliver_vlan table and slice_vlan table ?
     private void updateVlanPsql() {
+        log.info("start - update ops_mon_vlan.sql");
         String baseUrl = AggregateState.getOpsMonBaseUrl();
         String sql = "BEGIN WORK;\n";
         sql += "LOCK TABLE ops_aggregate_resource IN SHARE ROW EXCLUSIVE MODE;\n";
@@ -430,6 +431,7 @@ public class AggregateStitchTopologyRunner extends Thread {
         }
         sql += "COMMIT WORK;\n";
         if (!sql.contains("INSERT") && !sql.contains("DELETE")) {
+            log.info("end - update ops_mon_vlan.sql (no need to update)");
             return;
         }
         log.info("updating ops_mon_vlan.sql");
@@ -438,6 +440,7 @@ public class AggregateStitchTopologyRunner extends Thread {
             out.write(sql.getBytes());
             out.close();
         } finally {
+            log.info("end - update ops_mon_vlan.sql");
             return;
         }
     }
