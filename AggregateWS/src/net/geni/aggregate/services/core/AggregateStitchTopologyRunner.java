@@ -130,6 +130,23 @@ public class AggregateStitchTopologyRunner extends Thread {
     }
     
     public void run() {
+        // empty two ops_monitoring script file
+        FileOutputStream out;
+        try {
+            out = new FileOutputStream("/tmp/ops_mon_aggr.sql");
+            out.write((new String()).getBytes());
+            out.close();
+        } catch (Exception ex) {
+            log.warn("failed to empty /tmp/ops_mon_aggr.sql");
+        }
+        try {
+            out = new FileOutputStream("/tmp/ops_mon_vlan.sql");
+            out.write((new String()).getBytes());
+            out.close();
+        } catch (Exception ex) {
+            log.warn("failed to empty /tmp/ops_mon_vlan.sql");
+        }
+        // enter check and update loop
         int minutes = 0;
         long lastModified = 0;
         while (goRun) {            
@@ -298,7 +315,8 @@ public class AggregateStitchTopologyRunner extends Thread {
         }
         for (AggregateP2PVlan p2pvlan: p2pvlans) {
             if (!listCurrentVlanGri.contains(p2pvlan.getGlobalReservationId())) {
-                if (p2pvlan.getVtag().isEmpty() || p2pvlan.getVtag().contains("any")) {
+                if (p2pvlan.getVtag().isEmpty() || p2pvlan.getVtag().contains("any")
+                        || p2pvlan.getStatus().contains("ACTIVE")) {
                     continue;
                 }
                 String creator = "";
@@ -431,10 +449,9 @@ public class AggregateStitchTopologyRunner extends Thread {
         }
         sql += "COMMIT WORK;\n";
         if (!sql.contains("INSERT") && !sql.contains("DELETE")) {
-            log.info("end - update ops_mon_vlan.sql (no need to update)");
+            log.info("abort - update ops_mon_vlan.sql (no change)");
             return;
         }
-        log.info("updating ops_mon_vlan.sql");
         try {
             FileOutputStream out = new FileOutputStream("/tmp/ops_mon_vlan.sql");
             out.write(sql.getBytes());
