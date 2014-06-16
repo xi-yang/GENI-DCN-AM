@@ -285,12 +285,14 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
             }
             sql += "COMMIT WORK;\n";
-            log.info("updating ops_mon_aggr.sql");
             try {
                 FileOutputStream out = new FileOutputStream("/tmp/ops_mon_aggr.sql");
                 out.write(sql.getBytes());
                 out.close();
+            } catch (Exception ex) {
+                log.warn("failed to write ops_mon_aggr.sql");
             } finally {
+                log.warn("updated ops_mon_aggr.sql");
                 return;
             }
         }
@@ -298,7 +300,6 @@ public class AggregateStitchTopologyRunner extends Thread {
 
     // TODO: add sliver_vlan table and slice_vlan table ?
     private void updateVlanPsql() {
-        log.info("start - update ops_mon_vlan.sql");
         String baseUrl = AggregateState.getOpsMonBaseUrl();
         String sql = "BEGIN WORK;\n";
         sql += "LOCK TABLE ops_aggregate_resource IN SHARE ROW EXCLUSIVE MODE;\n";
@@ -316,7 +317,7 @@ public class AggregateStitchTopologyRunner extends Thread {
         for (AggregateP2PVlan p2pvlan: p2pvlans) {
             if (!listCurrentVlanGri.contains(p2pvlan.getGlobalReservationId())) {
                 if (p2pvlan.getVtag().isEmpty() || p2pvlan.getVtag().contains("any")
-                        || p2pvlan.getStatus().contains("ACTIVE")) {
+                        || !p2pvlan.getStatus().contains("ACTIVE")) {
                     continue;
                 }
                 String creator = "";
@@ -449,17 +450,18 @@ public class AggregateStitchTopologyRunner extends Thread {
         }
         sql += "COMMIT WORK;\n";
         if (!sql.contains("INSERT") && !sql.contains("DELETE")) {
-            log.info("abort - update ops_mon_vlan.sql (no change)");
             return;
         }
         try {
             FileOutputStream out = new FileOutputStream("/tmp/ops_mon_vlan.sql");
             out.write(sql.getBytes());
             out.close();
-        } finally {
-            log.info("end - update ops_mon_vlan.sql");
-            return;
-        }
+            } catch (Exception ex) {
+                log.warn("failed to write ops_mon_vlan.sql");
+            } finally {
+                log.warn("updated ops_mon_vlan.sql");
+                return;
+            }
     }
    
     
