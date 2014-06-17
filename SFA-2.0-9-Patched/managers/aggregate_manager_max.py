@@ -177,11 +177,11 @@ class AggregateManagerMax (AggregateManager):
         # translate hrn to remove 'hyphen'
 	hrn = re.sub('-', '', hrn)
         # ensure site record exists
-        site = slices.verify_site(hrn, slice_record, peer, sfa_peer)
+        #site = slices.verify_site(hrn, slice_record, peer, sfa_peer)
         # ensure slice record exists
-        slice = slices.verify_slice(hrn, slice_record, peer, sfa_peer)
+        #slice = slices.verify_slice(hrn, slice_record, peer, sfa_peer)
         # ensure person records exists
-        persons = slices.verify_persons(hrn, slice, users, peer, sfa_peer)
+        #persons = slices.verify_persons(hrn, slice, users, peer, sfa_peer)
     
     def parse_resources(self, text, slice_xrn):
         resources = []
