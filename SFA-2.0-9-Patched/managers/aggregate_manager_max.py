@@ -251,7 +251,7 @@ class AggregateManagerMax (AggregateManager):
         if indx1 > -1 and indx2 > indx1:
             rspec = rspec[indx1+len("<RSpec type=\"SFA\">"):indx2-1]
         rspec_path = self.save_rspec_to_file(rspec)
-        self.prepare_slice(api, xrn, cred, users)
+        #self.prepare_slice(api, xrn, cred, users)
         #slice_id = self.get_plc_slice_id(cred, xrn)
         slice_id = xrn
         sys_cmd = "sed -i \"s/rspec id=\\\"[^\\\"]*/rspec id=\\\"" +slice_id+ "/g\" " + rspec_path + ";sed -i \"s/:rspec=[^:'<\\\" ]*/:rspec=" +slice_id+ "/g\" " + rspec_path
