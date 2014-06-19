@@ -256,7 +256,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                     String nodeUrn = node.getId();
                     String nodeId = aggrId + "/" + AggregateUtils.getUrnField(nodeUrn, "node") + "." + aggrId;
                     sql += String.format("INSERT INTO ops_node VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/node#', '%s', '%s', '%s', %d, null, null);\n",
-                        nodeId, baseUrl+"info/node/"+nodeId, nodeUrn, ts*1000000);
+                        nodeId, baseUrl+"info/node/"+nodeId, nodeUrn, ts*1000);
                     sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
                         nodeId, aggrId, nodeUrn, baseUrl+"info/node/"+nodeId);
                     for (PortContent port: node.getPort()) {
@@ -325,10 +325,14 @@ public class AggregateStitchTopologyRunner extends Thread {
                     if (rspec.getId() == p2pvlan.getRspecId()) {
                         p2pvlan.setStartTime(rspec.getStartTime());
                         p2pvlan.setEndTime(rspec.getEndTime());
-                        if (rspec.getUsers() != null && rspec.getUsers().size() > 0)
+                        if (rspec.getUsers() != null && rspec.getUsers().size() > 0) {
                             creator = rspec.getUsers().get(0);
+                        }
                         break;
                     }
+                }
+                if (p2pvlan.getStartTime() == 0) {
+                    continue;
                 }
                 //$$ add "insert VLAN" row(s)
                 // INSERT INTO ops_sliver
