@@ -279,8 +279,10 @@ public class AggregateStitchTopologyRunner extends Thread {
                              * max_bps      => capacity  
                              * max_pps      => n/a
                              */
-                            String ifUrn = port.getId().replace("stitchport", "interface");
-                            String portId = AggregateUtils.getUrnField(ifUrn, "port");
+                            //String ifUrn = port.getId().replace("stitchport", "interface");
+                            String portId = AggregateUtils.getUrnField(port.getId(), "port");
+                            String ifUrn = nodeUrn.replace("node", "interface");
+                            ifUrn = ifUrn + ":" + portId;
                             String ifId = nodeId + "/" + portId;
                             sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/port#', '%s', '%s', '%s', %d, 'mac', '00:00:00:00:00:00', 'transport', %d, null);\n",
                                 ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts*1000, Long.parseLong(port.getCapacity()));
