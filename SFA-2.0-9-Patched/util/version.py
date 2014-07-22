@@ -1,5 +1,4 @@
 ### updated by the toplevel Makefile
-
 version_tag="2.0-9"
 scm_url="git://git.onelab.eu/sfa.git@sfa-2.0-9"
 svn_info="$Revision$ $HeadURL$"
