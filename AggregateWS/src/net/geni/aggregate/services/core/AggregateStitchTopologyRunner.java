@@ -237,9 +237,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String aggrUrn = aggregate.getId();
                 String aggrId = aggrUrn.split("\\+")[1];
                 sql += String.format("INSERT INTO ops_opsconfig VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/opsconfig#', '%s', '%s', %d);\n",
-                        opsconfigId, baseUrl+"info/opsconfig/"+opsconfigId, ts);
+                        opsconfigId, baseUrl+"info/opsconfig/"+opsconfigId, ts*1000);
                 sql += String.format("INSERT INTO ops_aggregate VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/aggregate#', '%s', '%s', '%s', %d, '%s');\n",
-                        aggrId, baseUrl+"info/aggregate/"+aggrId, aggrUrn, ts, baseUrl+"data");
+                        aggrId, baseUrl+"info/aggregate/"+aggrId, aggrUrn, ts*1000, baseUrl+"data");
                 sql += String.format("INSERT INTO ops_opsconfig_aggregate VALUES ('%s', '%s', 'ion', '%s', '%s');\n",
                         aggrId, opsconfigId, aggrUrn, baseUrl+"info/aggregate/"+aggrId);
                 for (NodeContent node: aggregate.getNode()) {
@@ -254,7 +254,12 @@ public class AggregateStitchTopologyRunner extends Thread {
                      * vm_server_type => null
                      */
                     String nodeUrn = node.getId();
+                    nodeUrn = nodeUrn + "." + aggrId;
                     String nodeId = aggrId + "/" + AggregateUtils.getUrnField(nodeUrn, "node") + "." + aggrId;
+                    // hard coded for now: mapping rtr.newy into rtr.newy32aoa
+                    nodeUrn = nodeUrn.replaceAll("rtr.newy", "rtr.newy32aoa");
+                    // hard coded for now: mapping rtr.newy into rtr.newy32aoa
+                    nodeId = nodeId.replaceAll("rtr.newy", "rtr.newy32aoa");
                     sql += String.format("INSERT INTO ops_node VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/node#', '%s', '%s', '%s', %d, null, null);\n",
                         nodeId, baseUrl+"info/node/"+nodeId, nodeUrn, ts*1000);
                     sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
@@ -278,7 +283,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                             String portId = AggregateUtils.getUrnField(ifUrn, "port");
                             String ifId = nodeId + "/" + portId;
                             sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/port#', '%s', '%s', '%s', %d, 'mac', '00:00:00:00:00:00', 'transport', %d, null);\n",
-                                ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts, Long.parseLong(port.getCapacity()));
+                                ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts*1000, Long.parseLong(port.getCapacity()));
                             sql += String.format("INSERT INTO ops_node_interface VALUES ('%s', '%s', '%s', '%s');\n",
                                 ifId, nodeId, ifUrn, baseUrl+"info/interface/"+ifId);
                     }
@@ -389,6 +394,10 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String linkUrn = "urn:publicid:IDN+"+aggrId+"+link+"+gri;
                 String aggrUrn = "urn:publicid:IDN+"+aggrId+"+authority+am";
                 String sliceUrn = p2pvlan.getSliceName();
+                int urnIndex = sliceUrn.indexOf("urn:");
+                if (urnIndex > 0) {
+                    sliceUrn = sliceUrn.substring(urnIndex);
+                }
                 String sliverUrn = sliceUrn.replace("+slice+", "+sliver+");
                 sliverUrn = sliverUrn + "_vlan_" + gri;
                 String sliverId = sliverUrn.split("\\+")[sliverUrn.split("\\+").length-1];
