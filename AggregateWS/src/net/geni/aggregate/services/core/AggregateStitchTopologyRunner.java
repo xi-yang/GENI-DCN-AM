@@ -255,7 +255,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                      */
                     String nodeUrn = node.getId();
                     nodeUrn = nodeUrn + "." + aggrId;
-                    String nodeId = aggrId + "/" + AggregateUtils.getUrnField(nodeUrn, "node") + "." + aggrId;
+                    String nodeId = aggrId + "/" + AggregateUtils.getUrnField(nodeUrn, "node");
                     // hard coded for now: mapping rtr.newy into rtr.newy32aoa
                     nodeUrn = nodeUrn.replaceAll("rtr.newy", "rtr.newy32aoa");
                     // hard coded for now: mapping rtr.newy into rtr.newy32aoa
