@@ -183,6 +183,7 @@ public class AggregateStitchTopologyRunner extends Thread {
             if (stitchObj == null)
                 return;
             String baseUrl = AggregateState.getOpsMonBaseUrl();
+            String measRefUrl = AggregateState.getOpsMonDataUrl();
             String sql = "BEGIN WORK;\n";
             sql += "LOCK TABLE ops_opsconfig IN EXCLUSIVE MODE;\n";
             sql += "LOCK TABLE ops_aggregate IN EXCLUSIVE MODE;\n";
@@ -239,7 +240,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 sql += String.format("INSERT INTO ops_opsconfig VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/opsconfig#', '%s', '%s', %d);\n",
                         opsconfigId, baseUrl+"info/opsconfig/"+opsconfigId, ts*1000);
                 sql += String.format("INSERT INTO ops_aggregate VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/aggregate#', '%s', '%s', '%s', %d, '%s');\n",
-                        aggrId, baseUrl+"info/aggregate/"+aggrId, aggrUrn, ts*1000, baseUrl+"data");
+                        aggrId, baseUrl+"info/aggregate/"+aggrId, aggrUrn, ts*1000, measRefUrl);
                 sql += String.format("INSERT INTO ops_opsconfig_aggregate VALUES ('%s', '%s', 'ion', '%s', '%s');\n",
                         aggrId, opsconfigId, aggrUrn, baseUrl+"info/aggregate/"+aggrId);
                 for (NodeContent node: aggregate.getNode()) {
