@@ -259,8 +259,10 @@ public class AggregateStitchTopologyRunner extends Thread {
                     String nodeId = aggrId + "/" + AggregateUtils.getUrnField(nodeUrn, "node");
                     // hard coded for now: mapping rtr.newy into rtr.newy32aoa
                     nodeUrn = nodeUrn.replaceAll("rtr.newy", "rtr.newy32aoa");
+                    nodeUrn = nodeUrn.replaceAll("\\.ion.internet2.edu", ".net.internet2.edu");
                     // hard coded for now: mapping rtr.newy into rtr.newy32aoa
                     nodeId = nodeId.replaceAll("rtr.newy", "rtr.newy32aoa");
+                    nodeUrn = nodeUrn.replaceAll("\\.ion.internet2.edu", ".net.internet2.edu");
                     sql += String.format("INSERT INTO ops_node VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/node#', '%s', '%s', '%s', %d, null, null);\n",
                         nodeId, baseUrl+"info/node/"+nodeId, nodeUrn, ts*1000);
                     sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
@@ -282,6 +284,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                              */
                             //String ifUrn = port.getId().replace("stitchport", "interface");
                             String portId = AggregateUtils.getUrnField(port.getId(), "port");
+                            if (portId.equals("*")) {
+                                continue;
+                            }
                             String ifUrn = nodeUrn.replace("node", "interface");
                             ifUrn = ifUrn + ":" + portId;
                             String ifId = nodeId + "/" + portId;
@@ -386,6 +391,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
                 String aggrId = AggregateUtils.getUrnField(p2pvlan.getSource(), "domain");
                 String nodeId = AggregateUtils.getUrnField(p2pvlan.getSource(), "node") + "." + aggrId;
+                // hard coded mapping
+                nodeId = nodeId.replaceAll("\\.ion.internet2.edu", ".net.internet2.edu");
+                nodeId = nodeId.replaceAll("rtr.newy", "rtr.newy32aoa");
                 String portId = AggregateUtils.getUrnField(p2pvlan.getSource(), "port");
                 String ifId = aggrId + "/" + nodeId + "/" + portId;
                 String vlanUrn = ifUrn; //.replace("+interface+", "+vlan+");
@@ -432,6 +440,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
                 aggrId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "domain");
                 nodeId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "node") + "." + aggrId;
+                // hard coded mapping
+                nodeId = nodeId.replaceAll("\\.ion.internet2.edu", ".net.internet2.edu");
+                nodeId = nodeId.replaceAll("rtr.newy", "rtr.newy32aoa");
                 portId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "port");
                 ifId = aggrId + "/" + nodeId + "/" + portId;
                 vlanUrn = ifUrn; //.replace("+interface+", "+vlan+");
