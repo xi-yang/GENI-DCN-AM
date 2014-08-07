@@ -22,16 +22,15 @@ class DeleteSliver(Method):
         Parameter(dict, "options"),
         ]
 
-    returns = Parameter(int, "1 if successful")
+    returns = Parameter(bool, "True if successful")
     
     def call(self, xrn, creds, options):
         (hrn, type) = urn_to_hrn(xrn)
-        valid_creds = self.api.auth.checkCredentials(creds, 'deletesliver', hrn)
+        valid_creds = self.api.auth.checkCredentials(creds, 'deletesliver', hrn, options=options)
 
         #log the call
         origin_hrn = Credential(string=valid_creds[0]).get_gid_caller().get_hrn()
         self.api.logger.info("interface: %s\tcaller-hrn: %s\ttarget-hrn: %s\tmethod-name: %s"%(self.api.interface, origin_hrn, hrn, self.name))
 
-        self.api.manager.DeleteSliver(self.api, xrn, creds, options)
+        return self.api.manager.DeleteSliver(self.api, xrn, creds, options)
  
-        return 1 

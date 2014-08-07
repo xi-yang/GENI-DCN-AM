@@ -38,7 +38,7 @@ class ListResources(Method):
         (hrn, _) = urn_to_hrn(xrn)
 
         # Find the valid credentials
-        valid_creds = self.api.auth.checkCredentials(creds, 'listnodes', hrn)
+        valid_creds = self.api.auth.checkCredentials(creds, 'listnodes', hrn, options=options)
 
         # get hrn of the original caller 
         origin_hrn = options.get('origin_hrn', None)

@@ -16,7 +16,7 @@ class CreateSliver(Method):
     @param slice_urn (string) URN of slice to allocate to
     @param credentials ([string]) of credentials
     @param rspec (string) rspec to allocate
-
+    
     """
     interfaces = ['aggregate', 'slicemgr']
     accepts = [
@@ -35,16 +35,15 @@ class CreateSliver(Method):
         self.api.logger.info("interface: %s\ttarget-hrn: %s\tmethod-name: %s"%(self.api.interface, hrn, self.name))
 
         # Find the valid credentials
-        valid_creds = self.api.auth.checkCredentials(creds, 'createsliver', hrn)
+        valid_creds = self.api.auth.checkCredentials(creds, 'createsliver', hrn, options=options)
         origin_hrn = Credential(string=valid_creds[0]).get_gid_caller().get_hrn()
 
         # make sure users info is specified
         if not users:
-            msg = "'users' musst be specified and cannot be null. You may need to update your client."
-            raise SfaInvalidArgument(name='users', extra=msg)
+            msg = "'users' must be specified and cannot be null. You may need to update your client." 
+            raise SfaInvalidArgument(name='users', extra=msg)  
 
         # flter rspec through sfatables
-        """ To use MAX RSpec, bypass this for now.
         if self.api.interface in ['aggregate']:
             chain_name = 'INCOMING'
         elif self.api.interface in ['slicemgr']:
@@ -53,7 +52,6 @@ class CreateSliver(Method):
         rspec = run_sfatables(chain_name, hrn, origin_hrn, rspec)
         slivers = RSpec(rspec).version.get_nodes_with_slivers()
         if not slivers:
-            raise InvalidRSpec("Missing <sliver_type> or <sliver> element. Request rspec must explicitly allocate slivers")
-        """
+            raise InvalidRSpec("Missing <sliver_type> or <sliver> element. Request rspec must explicitly allocate slivers")    
         result = self.api.manager.CreateSliver(self.api, slice_xrn, creds, rspec, users, options)
         return result

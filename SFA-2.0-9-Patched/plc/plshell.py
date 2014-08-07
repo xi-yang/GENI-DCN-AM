@@ -47,7 +47,6 @@ class PlShell:
             if url_ip==local_ip: is_local=True
         except:
             pass
-
         if is_local:
             try:
                 # too bad this is not installed properly

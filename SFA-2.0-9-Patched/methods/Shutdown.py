@@ -14,11 +14,10 @@ class Shutdown(Stop):
     accepts = [
         Parameter(str, "Slice URN"),
         Parameter(type([str]), "List of credentials"),
-        Parameter(dict, "options"),
         ]
     returns = Parameter(bool, "Success or Failure")
 
-    def call(self, slice_xrn, creds, options):
+    def call(self, slice_xrn, creds):
 
-        return Stop.call(self, slice_xrn, creds, options)
+        return Stop.call(self, slice_xrn, creds)
     

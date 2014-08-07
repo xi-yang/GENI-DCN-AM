@@ -21,12 +21,11 @@ class SliverStatus(Method):
 
     def call(self, slice_xrn, creds, options):
         hrn, type = urn_to_hrn(slice_xrn)
-        self.api.logger.info("###DEBUG:SliverStatus.py called")
-        valid_creds = self.api.auth.checkCredentials(creds, 'sliverstatus', hrn)
+        valid_creds = self.api.auth.checkCredentials(creds, 'sliverstatus', hrn, options) 
 
         self.api.logger.info("interface: %s\ttarget-hrn: %s\tmethod-name: %s"%(self.api.interface, hrn, self.name))
     
-        status = self.api.manager.SliverStatus(self.api, hrn, valid_creds, options)
+        status = self.api.manager.SliverStatus(self.api, hrn, valid_creds, options=options)
 
         return status
     

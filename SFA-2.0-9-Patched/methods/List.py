@@ -5,7 +5,6 @@ from sfa.util.method import Method
 from sfa.trust.credential import Credential
 
 from sfa.storage.parameter import Parameter, Mixed
-from sfa.storage.record import SfaRecord
 
 class List(Method):
     """
@@ -23,9 +22,10 @@ class List(Method):
               Parameter(type([str]), "List of credentials")),
         ]
 
-    returns = [SfaRecord]
+    # xxx used to be [SfaRecord]
+    returns = [Parameter(dict, "registry record")]
     
-    def call(self, xrn, creds):
+    def call(self, xrn, creds, options={}):
         hrn, type = urn_to_hrn(xrn)
         valid_creds = self.api.auth.checkCredentials(creds, 'list')
 
@@ -33,4 +33,4 @@ class List(Method):
         origin_hrn = Credential(string=valid_creds[0]).get_gid_caller().get_hrn()
         self.api.logger.info("interface: %s\tcaller-hrn: %s\ttarget-hrn: %s\tmethod-name: %s"%(self.api.interface, origin_hrn, hrn, self.name))
        
-        return self.api.manager.List(self.api, xrn) 
+        return self.api.manager.List(self.api, xrn, options=options) 

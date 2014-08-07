@@ -33,7 +33,7 @@ class RenewSliver(Method):
         self.api.logger.info("interface: %s\ttarget-hrn: %s\tcaller-creds: %s\tmethod-name: %s"%(self.api.interface, hrn, creds, self.name))
 
         # Find the valid credentials
-        valid_creds = self.api.auth.checkCredentials(creds, 'renewsliver', hrn)
+        valid_creds = self.api.auth.checkCredentials(creds, 'renewsliver', hrn, options=options)
 
         # Validate that the time does not go beyond the credential's expiration time
         requested_time = utcparse(expiration_time)
@@ -42,5 +42,5 @@ class RenewSliver(Method):
             raise InsufficientRights('Renewsliver: Credential expires before requested expiration time')
         if requested_time > datetime.datetime.utcnow() + datetime.timedelta(days=max_renew_days):
             raise Exception('Cannot renew > %s days from now' % max_renew_days)
-        return self.api.manager.RenewSliver(self.api, slice_xrn, valid_creds, expiration_time, options)    
+        return self.api.manager.RenewSliver(self.api, slice_xrn, valid_creds, expiration_time, options)
     
