@@ -463,11 +463,12 @@ public class AggregateStitchTopologyRunner extends Thread {
                 sql += String.format("INSERT INTO ops_sliver_resource SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_sliver_resource WHERE id = '%s');\n",
                     linkId, sliverId, linkUrn, baseUrl+"info/link/"+linkId, linkId);
                 try {
-                    ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getDestination()).replace("/", "_");
+                    ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getDestination());
                 } catch (AggregateException ex) {
                     continue;
                 }
                 remoteIfUrn = remoteLinkUrnMap.get(ifUrn);
+                ifUrn = ifUrn.replace("/", "_");
                 aggrId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "domain");
                 nodeId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "node") + "." + aggrId;
                 // hard coded mapping
