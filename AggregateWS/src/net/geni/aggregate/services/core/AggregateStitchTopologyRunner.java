@@ -260,7 +260,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                      */
                     String nodeUrn = node.getId();
                     nodeUrn = nodeUrn + "." + aggrId;
-                    String nodeId = aggrId + "/" + AggregateUtils.getUrnField(nodeUrn, "node");
+                    String nodeId = AggregateUtils.getUrnField(nodeUrn, "node");
                     // hard coded for now: mapping rtr.newy into rtr.newy32aoa
                     nodeUrn = nodeUrn.replaceAll("rtr.newy", "rtr.newy32aoa");
                     //nodeUrn = nodeUrn.replaceAll("\\.ion.internet2.edu", ".net.internet2.edu");
@@ -268,9 +268,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                     nodeId = nodeId.replaceAll("rtr.newy", "rtr.newy32aoa");
                     //nodeUrn = nodeUrn.replaceAll("\\.ion.internet2.edu", ".net.internet2.edu");
                     sql += String.format("INSERT INTO ops_node VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/node#', '%s', '%s', '%s', %d, null, null);\n",
-                        nodeId, baseUrl+"info/node/"+nodeId, nodeUrn, ts*1000);
+                        nodeId, baseUrl+"info/node/"+aggrId +"/"+nodeId, nodeUrn, ts*1000);
                     sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
-                        nodeId, aggrId, nodeUrn, baseUrl+"info/node/"+nodeId);
+                        nodeId, aggrId, nodeUrn, baseUrl+"info/node/"+aggrId+"/"+nodeId);
                     for (PortContent port: node.getPort()) {
                             //$$ add "insert ops_interface" row
                             // INSERT INTO ops_interface VALUES ('', '', '', '', 0, null, null, '', 0, null);
@@ -293,11 +293,11 @@ public class AggregateStitchTopologyRunner extends Thread {
                             }
                             String ifUrn = nodeUrn.replace("node", "interface");
                             ifUrn = ifUrn + ":" + portId;
-                            String ifId = nodeId + "/" + portId;
+                            String ifId = nodeId+":"+portId;
                             sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/port#', '%s', '%s', '%s', %d, 'mac', '00:00:00:00:00:00', 'transport', %d, null);\n",
-                                ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts*1000, Long.parseLong(port.getCapacity()));
+                                ifId, baseUrl+"info/interface/"+aggrId +"/"+nodeId+"/"+portId, ifUrn, ts*1000, Long.parseLong(port.getCapacity()));
                             sql += String.format("INSERT INTO ops_node_interface VALUES ('%s', '%s', '%s', '%s');\n",
-                                ifId, nodeId, ifUrn, baseUrl+"info/interface/"+ifId);
+                                ifId, nodeId, ifUrn, baseUrl+"info/interface/"+aggrId +"/"+nodeId+"/"+portId);
                             // only to get the remoteLinkId
                             for (LinkContent link: port.getLink()) {
                                 String linkUrn = link.getId();
@@ -413,8 +413,8 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String vlans[] = p2pvlan.getVtag().split(":");
                 String vlanUrn = ifUrn + ":" + vlans[0];
                 String remoteVlanUrn = remoteIfUrn + ":" + vlans[0];
-                String vlanId = aggrId + "/" + nodeId + "/" + portId + "/" + vlans[0];
-                String remoteVlanId = aggrId + "/" + nodeId + "/" + portId + "/foreign/" + vlans[0];
+                String vlanId = nodeId + ":" + portId + "/" + vlans[0];
+                String remoteVlanId = nodeId + ":" + portId + "/foreign/" + vlans[0];
                 String gri = p2pvlan.getGlobalReservationId();
                 String linkId = gri;
                 String linkUrn = "urn:publicid:IDN+"+aggrId+"+link+"+gri;
@@ -478,9 +478,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                 ifId = aggrId + "/" + nodeId + "/" + portId;
                 String vlanTag = (vlans.length > 1 ?  vlans[1] : vlans[0]);
                 vlanUrn = ifUrn + ":" + vlanTag;
-                vlanId = aggrId + "/" + nodeId + "/" + portId + "/" + vlanTag;
+                vlanId = nodeId + ":" + portId + "/" + vlanTag;
                 remoteVlanUrn = remoteIfUrn + ":" + vlanTag;
-                remoteVlanId = aggrId + "/" + nodeId + "/" + portId + "/foreign/" + vlanTag;
+                remoteVlanId = nodeId + ":" + portId + "/foreign/" + vlanTag;
                 remoteLinkId = linkId+"-egress";
                 remoteLinkUrn = linkUrn+"-egress"; 
                 // add VLAN for egress one-per-interface (two-per-vlan)
