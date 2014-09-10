@@ -80,6 +80,12 @@ class AggregateManagerMax (AggregateManager):
         slice_id = hrn.split(sep)[-2] + '_' + hrn.split(sep)[-1]
         return slice_id
     
+    # replace urn autohrity with a given string
+    def replace_urn_authority(self, urn, hrn):
+        fields = urn.split('+')
+        fields[1] = hrn
+        return '+'.join(fields) 
+
     # extract xml 
     def get_xml_by_tag(self, text, tag):
         indx1 = text.find('<'+tag)
@@ -238,7 +244,8 @@ class AggregateManagerMax (AggregateManager):
             result['geni_resources'] = self.parse_resources(output, slice_xrn)
             if not result['geni_resources']:
                 top_level_status = 'failed'
-        result['geni_urn'] = urn
+        sliver_urn = self.replace_urn_authority(urn, Xrn(api.hrn).get_hrn())
+        result['geni_urn'] = sliver_urn
         result['geni_status'] = top_level_status
         expires = re.search("Expires => ([^\n]*)", output)
         if expires:
