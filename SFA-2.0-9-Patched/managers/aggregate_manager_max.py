@@ -189,7 +189,7 @@ class AggregateManagerMax (AggregateManager):
         # ensure person records exists
         #persons = slices.verify_persons(hrn, slice, users, peer, sfa_peer)
     
-    def parse_resources(self, text, slice_xrn):
+    def parse_resources(self, api, text, slice_xrn):
         resources = []
         urn = hrn_to_urn(slice_xrn, 'sliver')
         plc_slice = re.search("Slice Status => ([^\n]+)", text)
@@ -243,7 +243,7 @@ class AggregateManagerMax (AggregateManager):
                 top_level_status = 'changing'
             else:
                 top_level_status = 'ready'
-            result['geni_resources'] = self.parse_resources(output, slice_xrn)
+            result['geni_resources'] = self.parse_resources(api, output, slice_xrn)
             if not result['geni_resources']:
                 top_level_status = 'failed'
         result['geni_urn'] = urn
