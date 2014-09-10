@@ -205,7 +205,9 @@ class AggregateManagerMax (AggregateManager):
         for vlan in vlans:
             res = {}
             res['geni_error'] = ''
-            res['geni_urn'] = urn + '_vlan_' + vlan[0]
+            sliver_urn = urn + '_vlan_' + vlan[0]
+            sliver_urn = self.replace_urn_authority(sliver_urn, Xrn(api.hrn).get_hrn())
+            res['geni_urn'] = sliver_urn
             if vlan[1] == 'ACTIVE':
                 res['geni_status'] = 'ready'
             elif vlan[1] == 'FAILED' or vlan[1] == 'UNKNOWN':
@@ -244,8 +246,7 @@ class AggregateManagerMax (AggregateManager):
             result['geni_resources'] = self.parse_resources(output, slice_xrn)
             if not result['geni_resources']:
                 top_level_status = 'failed'
-        sliver_urn = self.replace_urn_authority(urn, Xrn(api.hrn).get_hrn())
-        result['geni_urn'] = sliver_urn
+        result['geni_urn'] = urn
         result['geni_status'] = top_level_status
         expires = re.search("Expires => ([^\n]*)", output)
         if expires:
