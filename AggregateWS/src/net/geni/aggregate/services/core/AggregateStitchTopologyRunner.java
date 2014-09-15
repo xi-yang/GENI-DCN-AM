@@ -455,14 +455,14 @@ public class AggregateStitchTopologyRunner extends Thread {
                     remoteVlanId, "none", remoteVlanUrn, p2pvlan.getStartTime()*1000000, Long.parseLong(vlans[0]), remoteIfUrn, "none", remoteVlanId);
                 // add ingress VLAN (remote and local endpoints) to ingress link
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
-                    remoteVlanId, remoteLinkId);
+                    remoteVlanId, remoteLinkId, remoteVlanId, remoteLinkId);
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
-                    vlanId, remoteLinkId);
+                    vlanId, remoteLinkId, vlanId, remoteLinkId);
                 // add ingress VLAN (endpoint) to link
                 sql += String.format("INSERT INTO ops_interfacevlan SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_interfacevlan WHERE id = '%s');\n",
                     vlanId, baseUrl+"info/interfacevlan/"+vlanId, vlanUrn, p2pvlan.getStartTime()*1000000, Long.parseLong(vlans[0]), ifUrn, baseUrl+"info/interface/"+ifId, vlanId);
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
-                    vlanId, linkId);
+                    vlanId, linkId, vlanId, linkId);
                 try {
                     ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getDestination());
                 } catch (AggregateException ex) {
@@ -488,7 +488,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 sql += String.format("INSERT INTO ops_interfacevlan SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_interfacevlan WHERE id = '%s');\n",
                     vlanId, baseUrl+"info/interfacevlan/"+vlanId, vlanUrn, p2pvlan.getStartTime()*1000000, Long.parseLong(vlanTag), ifUrn, baseUrl+"info/interface/"+ifId, vlanId);
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
-                    vlanId, linkId);
+                    vlanId, linkId, vlanId, linkId);
                 // add egress VLAN (remote endpoint)
                 sql += String.format("INSERT INTO ops_interfacevlan SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_interfacevlan WHERE id = '%s');\n",
                     remoteVlanId, "none", remoteVlanUrn, p2pvlan.getStartTime()*1000000, Long.parseLong(vlanTag), remoteIfUrn, "none", remoteVlanId);
@@ -497,9 +497,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                     remoteLinkId, baseUrl+"info/link/"+remoteLinkId, remoteLinkUrn, p2pvlan.getStartTime()*1000000, remoteLinkId);
                  // add egress VLAN (local and remote endpoints) to egress link
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
-                    vlanId, remoteLinkId);
-                sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
-                    remoteVlanId, remoteLinkId);
+                    vlanId, remoteLinkId, vlanId, remoteLinkId);
+                sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
+                    remoteVlanId, remoteLinkId, remoteVlanId, remoteLinkId);
                 // add egress link to aggreate resources
                 sql += String.format("INSERT INTO ops_aggregate_resource SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_aggregate_resource WHERE id = '%s');\n",
                     remoteLinkId, aggrId, remoteLinkUrn, baseUrl+"info/link/"+remoteLinkId, remoteLinkId);
