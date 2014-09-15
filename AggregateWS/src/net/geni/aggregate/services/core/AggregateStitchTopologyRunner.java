@@ -477,7 +477,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                     continue;
                 }
                 remoteIfUrn = remoteLinkUrnMap.get(ifUrn);
-                int lastColon = ifUrn.lastIndexOf(":");
+                lastColon = ifUrn.lastIndexOf(":");
                 ifUrn = ifUrn.substring(0, lastColon-1);
                 ifUrn = ifUrn.replace("/", "_");
                 aggrId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "domain");
