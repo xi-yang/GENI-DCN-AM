@@ -448,7 +448,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String slvierUUID = UUID.randomUUID().toString();
                 // add VLAN sliver/vlan/circuit one-per-vlan
                 sql += String.format("INSERT INTO ops_sliver SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/sliver#', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s', '', '%s', %d, %d, null, '%s' WHERE NOT EXISTS (SELECT * FROM ops_sliver WHERE id = '%s');\n",
-                    sliverId, baseUrl+"info/sliver/"+sliverId, sliverUrn, slvierUUID,  p2pvlan.getStartTime()*1000000, aggrUrn, baseUrl+"info/aggregate/"+aggrId, sliceUrn, creator, p2pvlan.getStartTime()*1000000, p2pvlan.getEndTime()*1000000, sliverId, linkId);
+                    sliverId, baseUrl+"info/sliver/"+sliverId, sliverUrn, slvierUUID,  p2pvlan.getStartTime()*1000000, aggrUrn, baseUrl+"info/aggregate/"+aggrId, sliceUrn, creator, p2pvlan.getStartTime()*1000000, p2pvlan.getEndTime()*1000000, linkId, sliverId);
                 sql += String.format("INSERT INTO ops_link SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/link#', '%s', '%s', '%s', 'layer2', %d WHERE NOT EXISTS (SELECT * FROM ops_link WHERE id = '%s');\n",
                     linkId, baseUrl+"info/link/"+linkId, linkUrn, p2pvlan.getStartTime()*1000000, linkId);
                 sql += String.format("INSERT INTO ops_link SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/link#', '%s', '%s', '%s', 'layer2', %d WHERE NOT EXISTS (SELECT * FROM ops_link WHERE id = '%s');\n",
@@ -507,7 +507,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 sql += String.format("INSERT INTO ops_interfacevlan SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_interfacevlan WHERE id = '%s');\n",
                     remoteVlanId, baseUrl+"info/interface/"+remoteVlanId, remoteVlanUrn, p2pvlan.getStartTime()*1000000, Long.parseLong(vlanTag), remoteIfUrn, baseUrl+"info/interface/"+"fake-"+remoteIfUrn, remoteVlanId);
                 // add egress link
-                sql += String.format("INSERT INTO ops_link SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/link#', '%s', '%s', '%s', %d WHERE NOT EXISTS (SELECT * FROM ops_link WHERE id = '%s');\n",
+                sql += String.format("INSERT INTO ops_link SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/link#', '%s', '%s', '%s', 'layer2', %d WHERE NOT EXISTS (SELECT * FROM ops_link WHERE id = '%s');\n",
                     remoteLinkId, baseUrl+"info/link/"+remoteLinkId, remoteLinkUrn, p2pvlan.getStartTime()*1000000, remoteLinkId);
                  // add egress VLAN (local and remote endpoints) to egress link
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
