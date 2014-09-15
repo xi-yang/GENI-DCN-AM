@@ -34,6 +34,7 @@ public class AggregateStitchTopologyRunner extends Thread {
     private String stitchXml = "";
     private StitchContent stitchObj = null;
     private List<String> listCurrentVlanGri = null;
+    private Map<String, String> linkInterfaceUrnMap = null;
     private Map<String, String> remoteLinkUrnMap = null;
     
     public AggregateStitchTopologyRunner() {
@@ -237,6 +238,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                 return;
             }                
             long ts = date.getTime();
+            if (linkInterfaceUrnMap == null) {
+                linkInterfaceUrnMap = new HashMap<String, String>();
+            }
             if (remoteLinkUrnMap == null) {
                 remoteLinkUrnMap = new HashMap<String, String>();
             }
@@ -313,6 +317,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                                     sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/port#', '%s', '%s', '%s', %d, 'transport', %d, null);\n",
                                         remoteIfId, baseUrl+"info/interface/"+remoteIfId, remoteLinkUrn, ts*1000, Long.parseLong(link.getCapacity()));
                                 }
+                                linkInterfaceUrnMap.put(linkUrn, ifUrn);
                                 remoteLinkUrnMap.put(linkUrn, remoteLinkUrn);
                             }
                     }
@@ -406,17 +411,14 @@ public class AggregateStitchTopologyRunner extends Thread {
                     interface_urn  =>  
                     interface_href => 
                  */
-                String ifUrn;
+                String ifLinkUrn;
                 try {
-                    ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getSource());
+                    ifLinkUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getSource());
                 } catch (AggregateException ex) {
                     continue;
                 }
-                String remoteIfUrn = remoteLinkUrnMap.get(ifUrn);
-                int lastColon = ifUrn.lastIndexOf(":");
-                if (lastColon > 0) {
-                    ifUrn = ifUrn.substring(0, lastColon);
-                }
+                String remoteIfUrn = remoteLinkUrnMap.get(ifLinkUrn);
+                String ifUrn = linkInterfaceUrnMap.get(ifLinkUrn); // replace with the true interface Urn
                 String aggrId = AggregateUtils.getUrnField(p2pvlan.getSource(), "domain");
                 String nodeId = AggregateUtils.getUrnField(p2pvlan.getSource(), "node") + "." + aggrId;
                 // hard coded mapping
@@ -474,16 +476,13 @@ public class AggregateStitchTopologyRunner extends Thread {
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
                     vlanId, linkId, vlanId, linkId);
                 try {
-                    ifUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getDestination());
+                    ifLinkUrn = AggregateUtils.convertDcnToGeniUrn(p2pvlan.getDestination());
                 } catch (AggregateException ex) {
                     continue;
                 }
-                remoteIfUrn = remoteLinkUrnMap.get(ifUrn);
-                lastColon = ifUrn.lastIndexOf(":");
-                if (lastColon > 0) {
-                    ifUrn = ifUrn.substring(0, lastColon);
-                }
-                ifUrn = ifUrn.replace("/", "_");
+                remoteIfUrn = remoteLinkUrnMap.get(ifLinkUrn);
+                ifUrn = linkInterfaceUrnMap.get(ifLinkUrn);
+                //ifUrn = ifUrn.replace("/", "_");
                 aggrId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "domain");
                 nodeId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "node") + "." + aggrId;
                 // hard coded mapping
