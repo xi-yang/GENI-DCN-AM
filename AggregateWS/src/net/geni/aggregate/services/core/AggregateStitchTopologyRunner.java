@@ -258,9 +258,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                      * selfRef      => http://host:port/info/node/id 
                      * urn          => geni urn
                      * ts           => stitchObj.lastUpdateTime convert to epoch
-                     * ops_monitoring:mem_total_kb": 0,
                      * node_type": "switch",
-                     * virtualization_type": "n/a",
+                     * ops_monitoring:mem_total_kb": null,
+                     * virtualization_type": null,
                      */
                     String nodeUrn = node.getId();
                     nodeUrn = nodeUrn + "." + aggrId;
@@ -271,7 +271,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                     // hard coded for now: mapping rtr.newy into rtr.newy32aoa
                     nodeId = nodeId.replaceAll("rtr.newy", "rtr.newy32aoa");
                     //nodeUrn = nodeUrn.replaceAll("\\.ion.internet2.edu", ".net.internet2.edu");
-                    sql += String.format("INSERT INTO ops_node VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/node#', '%s', '%s', '%s', %d, 0, 'switch', 'n/a');\n",
+                    sql += String.format("INSERT INTO ops_node VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/node#', '%s', '%s', '%s', %d, 'switch', null, null);\n",
                         nodeId, baseUrl+"info/node/"+nodeId, nodeUrn, ts*1000);
                     sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
                         nodeId, aggrId, nodeUrn, baseUrl+"info/node/"+nodeId);
@@ -435,7 +435,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 String sliverId = sliverUrn.split("\\+")[sliverUrn.split("\\+").length-1];
                 String slvierUUID = UUID.randomUUID().toString();
                 // add VLAN sliver/vlan/circuit one-per-vlan
-                sql += String.format("INSERT INTO ops_sliver SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/sliver#', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s', '', '%s', %d, %d, null, %s WHERE NOT EXISTS (SELECT * FROM ops_sliver WHERE id = '%s');\n",
+                sql += String.format("INSERT INTO ops_sliver SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/sliver#', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s', '', '%s', %d, %d, null, '%s' WHERE NOT EXISTS (SELECT * FROM ops_sliver WHERE id = '%s');\n",
                     sliverId, baseUrl+"info/sliver/"+sliverId, sliverUrn, slvierUUID,  p2pvlan.getStartTime()*1000000, aggrUrn, baseUrl+"info/aggregate/"+aggrId, sliceUrn, creator, p2pvlan.getStartTime()*1000000, p2pvlan.getEndTime()*1000000, sliverId, linkId);
                 sql += String.format("INSERT INTO ops_link SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/link#', '%s', '%s', '%s', 'layer2', %d WHERE NOT EXISTS (SELECT * FROM ops_link WHERE id = '%s');\n",
                     linkId, baseUrl+"info/link/"+linkId, linkUrn, p2pvlan.getStartTime()*1000000, linkId);
@@ -498,7 +498,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                  // add egress VLAN (local and remote endpoints) to egress link
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
                     vlanId, remoteLinkId, vlanId, remoteLinkId);
-                sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
+                sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
                     remoteVlanId, remoteLinkId, remoteVlanId, remoteLinkId);
                 // add egress link to aggreate resources
                 sql += String.format("INSERT INTO ops_aggregate_resource SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_aggregate_resource WHERE id = '%s');\n",
