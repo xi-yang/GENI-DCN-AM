@@ -296,7 +296,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                             String ifUrn = nodeUrn.replace("node", "interface");
                             ifUrn = ifUrn + ":" + portId;
                             String ifId = nodeId+":"+portId;
-                            sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/port#', '%s', '%s', '%s', %d, 'transport', %d, %d);\n",
+                            sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/port#', '%s', '%s', '%s', %d, 'transport', %d, null);\n",
                                 ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts*1000, Long.parseLong(port.getCapacity()));
                             sql += String.format("INSERT INTO ops_node_interface VALUES ('%s', '%s', '%s', '%s');\n",
                                 ifId, nodeId, ifUrn, baseUrl+"info/interface/"+ifId);
@@ -310,7 +310,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                                 else {
                                     // fake foreign interface
                                     String remoteIfId = "fake-" + remoteLinkUrn;
-                                    sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/port#', '%s', '%s', '%s', %d, 'transport', %d, %d);\n",
+                                    sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140501/port#', '%s', '%s', '%s', %d, 'transport', %d, null);\n",
                                         remoteIfId, baseUrl+"info/interface/"+remoteIfId, remoteLinkUrn, ts*1000, Long.parseLong(link.getCapacity()));
                                 }
                                 remoteLinkUrnMap.put(linkUrn, remoteLinkUrn);
@@ -459,14 +459,14 @@ public class AggregateStitchTopologyRunner extends Thread {
                 // add ingress VLAN (remote endpoint)  
                 sql += String.format("INSERT INTO ops_interfacevlan SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_interfacevlan WHERE id = '%s');\n",
                     remoteVlanId, "none", remoteVlanUrn, p2pvlan.getStartTime()*1000000, Long.parseLong(vlans[0]), remoteIfUrn, baseUrl+"info/interface/"+"fake-"+remoteIfUrn, remoteVlanId);
+                // add ingress VLAN (endpoint) to link
+                sql += String.format("INSERT INTO ops_interfacevlan SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_interfacevlan WHERE id = '%s');\n",
+                    vlanId, baseUrl+"info/interfacevlan/"+vlanId, vlanUrn, p2pvlan.getStartTime()*1000000, Long.parseLong(vlans[0]), ifUrn, baseUrl+"info/interface/"+ifId, vlanId);
                 // add ingress VLAN (remote and local endpoints) to ingress link
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
                     remoteVlanId, remoteLinkId, remoteVlanId, remoteLinkId);
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
                     vlanId, remoteLinkId, vlanId, remoteLinkId);
-                // add ingress VLAN (endpoint) to link
-                sql += String.format("INSERT INTO ops_interfacevlan SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_interfacevlan WHERE id = '%s');\n",
-                    vlanId, baseUrl+"info/interfacevlan/"+vlanId, vlanUrn, p2pvlan.getStartTime()*1000000, Long.parseLong(vlans[0]), ifUrn, baseUrl+"info/interface/"+ifId, vlanId);
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
                     vlanId, linkId, vlanId, linkId);
                 try {
