@@ -413,6 +413,8 @@ public class AggregateStitchTopologyRunner extends Thread {
                     continue;
                 }
                 String remoteIfUrn = remoteLinkUrnMap.get(ifUrn);
+                int lastColon = ifUrn.lastIndexOf(":");
+                ifUrn = ifUrn.substring(0, lastColon-1);
                 String aggrId = AggregateUtils.getUrnField(p2pvlan.getSource(), "domain");
                 String nodeId = AggregateUtils.getUrnField(p2pvlan.getSource(), "node") + "." + aggrId;
                 // hard coded mapping
@@ -475,6 +477,8 @@ public class AggregateStitchTopologyRunner extends Thread {
                     continue;
                 }
                 remoteIfUrn = remoteLinkUrnMap.get(ifUrn);
+                int lastColon = ifUrn.lastIndexOf(":");
+                ifUrn = ifUrn.substring(0, lastColon-1);
                 ifUrn = ifUrn.replace("/", "_");
                 aggrId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "domain");
                 nodeId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "node") + "." + aggrId;
@@ -493,6 +497,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 // add VLAN for egress one-per-interface (two-per-vlan)
                 sql += String.format("INSERT INTO ops_interfacevlan SELECT 'http://www.gpolab.bbn.com/monitoring/schema/20140501/port-vlan#', '%s', '%s', '%s', %d, %d, '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_interfacevlan WHERE id = '%s');\n",
                     vlanId, baseUrl+"info/interfacevlan/"+vlanId, vlanUrn, p2pvlan.getStartTime()*1000000, Long.parseLong(vlanTag), ifUrn, baseUrl+"info/interface/"+ifId, vlanId);
+                // add egress VLAN (local endpoint)
                 sql += String.format("INSERT INTO ops_link_interfacevlan SELECT '%s', '%s' WHERE NOT EXISTS  (SELECT * FROM ops_link_interfacevlan WHERE id = '%s' AND link_id= '%s');\n",
                     vlanId, linkId, vlanId, linkId);
                 // add egress VLAN (remote endpoint)
