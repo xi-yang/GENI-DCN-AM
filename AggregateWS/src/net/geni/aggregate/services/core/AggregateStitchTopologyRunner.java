@@ -414,7 +414,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
                 String remoteIfUrn = remoteLinkUrnMap.get(ifUrn);
                 int lastColon = ifUrn.lastIndexOf(":");
-                ifUrn = ifUrn.substring(0, lastColon-1);
+                if (lastColon > 0) {
+                    ifUrn = ifUrn.substring(0, lastColon-1);
+                }
                 String aggrId = AggregateUtils.getUrnField(p2pvlan.getSource(), "domain");
                 String nodeId = AggregateUtils.getUrnField(p2pvlan.getSource(), "node") + "." + aggrId;
                 // hard coded mapping
@@ -478,7 +480,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
                 remoteIfUrn = remoteLinkUrnMap.get(ifUrn);
                 lastColon = ifUrn.lastIndexOf(":");
-                ifUrn = ifUrn.substring(0, lastColon-1);
+                if (lastColon > 0) {
+                    ifUrn = ifUrn.substring(0, lastColon-1);
+                }
                 ifUrn = ifUrn.replace("/", "_");
                 aggrId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "domain");
                 nodeId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "node") + "." + aggrId;
