@@ -202,12 +202,13 @@ public class AggregateStitchTopologyRunner extends Thread {
             sql += "DELETE from ops_node_interface;\n";
             sql += "DELETE from ops_aggregate_sliver;\n";
             sql += "DELETE from ops_link_interfacevlan;\n";
+            sql += "DELETE from ops_sliver;\n";
+            sql += "DELETE from ops_link;\n";
             sql += "DELETE from ops_opsconfig;\n";
             sql += "DELETE from ops_aggregate;\n";
             sql += "DELETE from ops_node;\n";
+            sql += "DELETE from ops_interfacevlan;\n";
             sql += "DELETE from ops_interface;\n";
-            sql += "DELETE from ops_sliver;\n";
-            sql += "DELETE from ops_link;\n";
             
             // INSERT INTO ops_opsconfig
             /*
@@ -506,7 +507,7 @@ public class AggregateStitchTopologyRunner extends Thread {
             } catch (Exception ex) {
                 log.warn("failed to write ops_mon_aggr.sql");
             } finally {
-                log.warn("updated ops_mon_aggr.sql");
+                log.warn("updated /tmp/ops_mon.sql");
                 return;
             }
         }
