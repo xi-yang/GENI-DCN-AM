@@ -291,7 +291,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                             //$$ add "insert ops_interface" row
                             // INSERT INTO ops_interface VALUES ('', '', '', '', 0, null, null, '', 0, null);
                             /*
-                             * $schema      => "http://www.gpolab.bbn.com/monitoring/schema/20140828/port#"
+                             * $schema      => "http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#"
                              * id           => convert from urn (aggr_id.interface_id) 
                              * selfRef      => http://host:port/info/interface/id 
                              * urn          => geni urn
@@ -308,7 +308,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                             String ifUrn = nodeUrn.replace("node", "interface");
                             ifUrn = ifUrn + ":" + portId;
                             String ifId = nodeId+":"+portId;
-                            sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/port#', '%s', '%s', '%s', %d, 'transport', %d, null);\n",
+                            sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '%s', '%s', '%s', %d, 'transport', %d, null);\n",
                                 ifId, baseUrl+"info/interface/"+ifId, ifUrn, ts*1000, Long.parseLong(port.getCapacity()));
                             sql += String.format("INSERT INTO ops_node_interface VALUES ('%s', '%s', '%s', '%s');\n",
                                 ifId, nodeId, ifUrn, baseUrl+"info/interface/"+ifId);
@@ -321,7 +321,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                             } else {
                                 // fake foreign interface
                                 String remoteIfId = "fake-" + remoteLinkUrn;
-                                sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/port#', '%s', '%s', '%s', %d, 'transport', %d, null);\n",
+                                sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '%s', '%s', '%s', %d, 'transport', %d, null);\n",
                                         remoteIfId, baseUrl + "info/interface/" + remoteIfId, remoteLinkUrn, ts * 1000, Long.parseLong(link.getCapacity()));
                             }
                             linkInterfaceUrnMap.put(linkUrn, ifUrn);
