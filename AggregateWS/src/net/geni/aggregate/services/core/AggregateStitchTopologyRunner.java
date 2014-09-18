@@ -338,7 +338,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                         || !p2pvlan.getStatus().contains("ACTIVE")) {
                     continue;
                 }
-                String creator = "";
+                String creator = "n/a";
                 for (AggregateRspec rspec : rspecs) {
                     if (rspec.getId() == p2pvlan.getRspecId()) {
                         p2pvlan.setStartTime(rspec.getStartTime());
