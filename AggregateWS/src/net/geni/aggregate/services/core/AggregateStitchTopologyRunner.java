@@ -338,7 +338,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                         || !p2pvlan.getStatus().contains("ACTIVE")) {
                     continue;
                 }
-                String creator = null;
+                String creator = "";
                 for (AggregateRspec rspec : rspecs) {
                     if (rspec.getId() == p2pvlan.getRspecId()) {
                         p2pvlan.setStartTime(rspec.getStartTime());
@@ -349,6 +349,8 @@ public class AggregateStitchTopologyRunner extends Thread {
                         break;
                     }
                 }
+                if (creator.isEmpty())
+                    creator = null;
                 if (p2pvlan.getStartTime() == 0) {
                     continue;
                 }
@@ -439,7 +441,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 // add ingress link to aggregate resources
                 sql += String.format("INSERT INTO ops_aggregate_resource SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_aggregate_resource WHERE id = '%s');\n",
                         remoteLinkId, aggrId, remoteLinkUrn, baseUrl + "info/link/" + remoteLinkId, remoteLinkId);
-                // add sliver_aggregate relation one-per-vlan
+                // add sliver_aggregate relation one-per-vlan   
                 sql += String.format("INSERT INTO ops_aggregate_sliver SELECT '%s', '%s', '%s', '%s' WHERE NOT EXISTS (SELECT * FROM ops_aggregate_sliver WHERE id = '%s');\n",
                         sliverId, aggrId, sliverUrn, baseUrl + "info/sliver/" + sliverId, sliverId);
                 // add ingress VLAN (remote endpoint)  
@@ -507,7 +509,7 @@ public class AggregateStitchTopologyRunner extends Thread {
             } catch (Exception ex) {
                 log.warn("failed to write ops_mon_aggr.sql");
             } finally {
-                log.debug("updated /tmp/ops_mon.sql");
+                //log.debug("updated /tmp/ops_mon.sql");
                 return;
             }
         }
