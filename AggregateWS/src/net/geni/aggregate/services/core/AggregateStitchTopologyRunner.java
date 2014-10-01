@@ -332,14 +332,14 @@ public class AggregateStitchTopologyRunner extends Thread {
                             if (remoteInterfaceUrn == null) {
                                 remoteInterfaceUrn = "";
                             } else {
-                                // fake foreign interface
+                                // foreign interface
                                 if (stitchingInterfaceUrnMap.contains(remoteInterfaceUrn)) {
                                     remoteInterfaceUrn = stitchingInterfaceUrnMap.getProperty(remoteInterfaceUrn);
-                                }
-                                String fields[] = remoteInterfaceUrn.split("\\+");
-                                String remoteIfId = fields[fields.length - 1];
-                                sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '%s', '%s', '%s', %d, 'stub', %d, null);\n",
+                                    String fields[] = remoteInterfaceUrn.split("\\+");
+                                    String remoteIfId = fields[fields.length - 1];
+                                    sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '%s', '%s', '%s', %d, 'stub', %d, null);\n",
                                         remoteIfId, baseUrl + "info/interface/" + remoteIfId, remoteInterfaceUrn, ts * 1000, Long.parseLong(link.getCapacity()));
+                                }
                             }
                             linkInterfaceUrnMap.put(linkUrn, ifUrn);
                             remoteLinkUrnMap.put(linkUrn, remoteInterfaceUrn);
