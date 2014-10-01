@@ -35,6 +35,7 @@ public class AggregateStitchTopologyRunner extends Thread {
     private StitchContent stitchObj = null;
     private Map<String, String> linkInterfaceUrnMap = null;
     private Map<String, String> remoteLinkUrnMap = null;
+    private Properties stitchingInterfaceUrnMap = null;
     
     public AggregateStitchTopologyRunner() {
         super();
@@ -246,6 +247,17 @@ public class AggregateStitchTopologyRunner extends Thread {
                 return;
             }                
             long ts = date.getTime();
+            if (stitchingInterfaceUrnMap == null) {   
+                stitchingInterfaceUrnMap = new Properties();
+                try {
+                    FileInputStream in = new FileInputStream(AggregateState.getOpsMonUrnMapFile());
+                    stitchingInterfaceUrnMap.load(in);
+                    in.close();
+                } catch (IOException e) {
+                     log.error("failed to load stitching interface URN map from " + AggregateState.getOpsMonUrnMapFile());
+                     return;
+                }
+            }
             if (linkInterfaceUrnMap == null) {
                 linkInterfaceUrnMap = new HashMap<String, String>();
             }
@@ -320,9 +332,14 @@ public class AggregateStitchTopologyRunner extends Thread {
                                  remoteLinkUrn = "";
                             } else {
                                 // fake foreign interface
-                                String remoteIfId = "fake-" + remoteLinkUrn;
-                                sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '%s', '%s', '%s', %d, 'experimental', %d, null);\n",
-                                        remoteIfId, baseUrl + "info/interface/" + remoteIfId, remoteLinkUrn, ts * 1000, Long.parseLong(link.getCapacity()));
+                                String remoteInterfaceUrn = remoteLinkUrn;
+                                if (stitchingInterfaceUrnMap.contains(remoteLinkUrn)) {
+                                    remoteInterfaceUrn = stitchingInterfaceUrnMap.getProperty(remoteLinkUrn);
+                                }
+                                String fields[] = remoteInterfaceUrn.split("\\+");
+                                String remoteIfId = fields[fields.length-1];
+                                sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '%s', '%s', '%s', %d, 'stub', %d, null);\n",
+                                        remoteIfId, baseUrl + "info/interface/" + remoteIfId, remoteInterfaceUrn, ts * 1000, Long.parseLong(link.getCapacity()));
                             }
                             linkInterfaceUrnMap.put(linkUrn, ifUrn);
                             remoteLinkUrnMap.put(linkUrn, remoteLinkUrn);

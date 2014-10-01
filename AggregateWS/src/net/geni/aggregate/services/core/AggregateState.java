@@ -67,6 +67,7 @@ public class AggregateState
 
     private static String opsMonBaseUrl = "";
     private static String opsMonDataUrl = "";
+    private static String opsMonUrnMapFile = "";
         
     // Resrouces
     private static AggregateCapabilities aggregateCaps = null;
@@ -156,6 +157,7 @@ public class AggregateState
         
         opsMonBaseUrl = aggregateProps.getProperty("aggregate.ops.monitoring.base_url", "http://127.0.0.1:5000/");
         opsMonDataUrl = aggregateProps.getProperty("aggregate.ops.monitoring.data_url", opsMonBaseUrl+"data");
+        opsMonUrnMapFile = aggregateProps.getProperty("aggregate.ops.monitoring.urn_map_file", aggregateHome+"/ops_mon_urns.properties");
     
         //init rspec handler
         String rspecHandlerClass = aggregateProps.getProperty("aggregate.rspec.handler", "net.geni.aggregate.services.core.RspecHandler_MAX");
@@ -436,5 +438,9 @@ public class AggregateState
 
     public static String getOpsMonDataUrl() {
         return opsMonDataUrl;
+    }
+
+    public static String getOpsMonUrnMapFile() {
+        return opsMonUrnMapFile;
     }
 }
