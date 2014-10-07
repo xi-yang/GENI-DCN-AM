@@ -685,8 +685,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             if (sliverId == null || sliverId.isEmpty()) {
                 sliverId = "null";
             }
-            linkObj.setSliverId(String.format("%s+sliver+%s", AggregateState.getAmUrn(), sliverId));
-
+            String sliceIdFields[] = rspec.getRspecName().split("\\+");
+            linkObj.setSliverId(String.format("%s+sliver+%s_vlan_%s", AggregateState.getAmUrn(), sliceIdFields[sliceIdFields.length-1], sliverId));
             String[] vlanTags = ppvLink.getVtag().split(":");
             linkObj.setVlantag(((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?ppvLink.getVtag():vlanTags[0]));
         }
