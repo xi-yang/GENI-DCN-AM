@@ -336,7 +336,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                                 if (stitchingInterfaceUrnMap.getProperty(remoteInterfaceUrn) != null) {
                                     remoteInterfaceUrn = stitchingInterfaceUrnMap.getProperty(remoteInterfaceUrn);
                                     String fields[] = remoteInterfaceUrn.split("\\+");
-                                    String remoteIfId = fields[fields.length - 1];
+                                    String remoteIfId = fields[1] + ":" + fields[fields.length - 1];
                                     sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '%s', '%s', '%s', %d, 'stub', %d, null);\n",
                                         remoteIfId, baseUrl + "info/interface/" + remoteIfId, remoteInterfaceUrn, ts * 1000, Long.parseLong(link.getCapacity()));
                                 }
@@ -416,7 +416,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
                 String remoteIfUrn = remoteLinkUrnMap.get(ifLinkUrn);
                 String fields[] = remoteIfUrn.split("\\+");
-                String remoteIfId = fields[fields.length - 1];
+                String remoteIfId = fields[1] + ":" + fields[fields.length - 1];
                 String ifUrn = linkInterfaceUrnMap.get(ifLinkUrn); // replace with the true interface Urn
                 String aggrId = AggregateUtils.getUrnField(p2pvlan.getSource(), "domain");
                 String nodeId = AggregateUtils.getUrnField(p2pvlan.getSource(), "node") + "." + aggrId;
@@ -481,7 +481,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
                 remoteIfUrn = remoteLinkUrnMap.get(ifLinkUrn);
                 fields = remoteIfUrn.split("\\+");
-                remoteIfId = fields[fields.length - 1];
+                remoteIfId = fields[1] + ":"  + fields[fields.length - 1];
                 ifUrn = linkInterfaceUrnMap.get(ifLinkUrn);
                 //ifUrn = ifUrn.replace("/", "_");
                 aggrId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "domain");
