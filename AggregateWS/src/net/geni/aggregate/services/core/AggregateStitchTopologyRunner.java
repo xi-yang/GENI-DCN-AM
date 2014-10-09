@@ -346,7 +346,13 @@ public class AggregateStitchTopologyRunner extends Thread {
                         }
                     }
                 }
+                // safeguard code against wildcard remoteLinkId
+                sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '*:*:*', 'https://geni-am.net.internet2.edu/info/interface/*:*:*', 'urn:publicid:IDN+*+interface+*:*', %d, 'stub', 0, null);\n",
+                    ts * 1000);
+                sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '%s:*:*', 'https://geni-am.net.internet2.edu/info/interface/%s:*:*', 'urn:publicid:IDN+%s+interface+*:*', %d, 'stub', 0, null);\n",
+                    aggrId, aggrId, aggrId, ts * 1000);
             }
+            
             // insert VLAN circuit slivers
             List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
             List<AggregateRspec> rspecs = AggregateState.getRspecManager().getAggrRspecs();
