@@ -271,6 +271,28 @@ public class AggregateRspecManager extends Thread{
                         }
                     } else if (rspec.getStatus().startsWith("ROLLBACKED")) {
                         rspecThreads.remove(rspecThread);
+                        if (!rspecThread.isGoRun()) {
+                            AggregateRspec aggrRspec = rspecThread.getRspec();
+                            log.info("start - delete defunct rspec");
+                            try {
+                                aggrRspec.getResources().clear();
+                                aggrRspec.setDeleted(true);
+                                session = HibernateUtil.getSessionFactory().openSession();
+                                tx = session.beginTransaction();
+                                session.update(aggrRspec);
+                                session.flush();
+                                tx.commit();
+                            } catch (Exception e) {
+                                tx.rollback();
+                                e.printStackTrace();
+                            } finally {
+                                if (session.isOpen()) {
+                                    session.close();
+                                }
+                            }
+                            aggrRspecs.remove(aggrRspec);
+                            log.info("end - delete defunct rspec");
+                        }
                         break;  // go loop again!
                     } else if (rspec.getStatus().startsWith("TERMINATED")) {
                         try {
