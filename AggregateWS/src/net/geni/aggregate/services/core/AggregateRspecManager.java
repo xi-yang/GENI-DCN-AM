@@ -487,7 +487,8 @@ public class AggregateRspecManager extends Thread{
             for (AggregateRspecRunner rspecThread: rspecThreads) {
                 if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecName)) {
                     rspecThread.setGoRun(false);
-                    rspecThread.interrupt();
+                    if (!rspecThread.getRspec().getStatus().contains("FAILED")) // do not interrupt when rollbacking
+                        rspecThread.interrupt();
                     return "STOPPING";
                 }
             }
