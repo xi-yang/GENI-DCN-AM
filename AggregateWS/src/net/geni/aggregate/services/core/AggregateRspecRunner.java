@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package net.geni.aggregate.services.core;
 
 import java.util.*;
@@ -13,6 +12,7 @@ import org.apache.log4j.*;
  * @author Xi Yang
  */
 public class AggregateRspecRunner extends Thread {
+
     private volatile boolean goRun = true;
     private volatile boolean goPoll = true;
     private volatile int pollInterval = 30000; //30 secs by default
@@ -21,7 +21,8 @@ public class AggregateRspecRunner extends Thread {
     private AggregateRspec rspec;
     private AggregateRspecManager manager;
 
-    private AggregateRspecRunner() {}
+    private AggregateRspecRunner() {
+    }
 
     public AggregateRspecRunner(AggregateRspecManager manager, AggregateRspec rspec) {
         super();
@@ -86,7 +87,7 @@ public class AggregateRspecRunner extends Thread {
                 rollback(); //revert
                 return;
             }
-            
+
             //log.info("SLICE-STARTING ");
             rspec.setStatus("SLICE-STARTING");
             manager.updateRspec(rspec);
@@ -135,7 +136,7 @@ public class AggregateRspecRunner extends Thread {
                 return;
             }
 
-            long now = System.currentTimeMillis()/1000;
+            long now = System.currentTimeMillis() / 1000;
             if (now < rspec.getStartTime()) {
                 rspec.setStatus("VLANS-ALLOCATED");
             } else {
@@ -156,7 +157,7 @@ public class AggregateRspecRunner extends Thread {
             if (rspec.getStatus().equalsIgnoreCase("PROVISIONING")) {
                 manager.updateRspec(rspec);
                 this.provision();
-            } else  if (rspec.getStatus().equalsIgnoreCase("RENEWING")) {
+            } else if (rspec.getStatus().equalsIgnoreCase("RENEWING")) {
                 manager.updateRspec(rspec);
                 this.renew();
             }
@@ -170,13 +171,13 @@ public class AggregateRspecRunner extends Thread {
                         rspec.setStatus("WORKING");
                         manager.updateRspec(rspec);
                     }
-                }catch (AggregateException e) {
-                    log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
+                } catch (AggregateException e) {
+                    log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
                     e.printStackTrace();
                     //rollback();
                     rspec.setStatus("VLANS-FAILED");
                     manager.updateRspec(rspec);
-                    goRun = false;
+                    break;
                 }
             }
         }
@@ -186,21 +187,23 @@ public class AggregateRspecRunner extends Thread {
         } else {
             this.terminate();
         }
-   }
+    }
 
     private void createSlice() throws AggregateException {
         String nodes = "";
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("planetlabNodeSliver")
-                || resources.get(i).getType().equalsIgnoreCase("computeNode")) {
-                AggregateNode node = (AggregateNode)resources.get(i);
+                    || resources.get(i).getType().equalsIgnoreCase("computeNode")) {
+                AggregateNode node = (AggregateNode) resources.get(i);
                 //verify planetlab capability
-                if (!node.getCapabilities().contains("planetlab"))
+                if (!node.getCapabilities().contains("planetlab")) {
                     continue;
+                }
                 nodes = nodes + AggregateUtils.getUrnField(node.getUrn(), "node").toLowerCase();
-                if (i < resources.size()-1)
+                if (i < resources.size() - 1) {
                     nodes += ":";
+                }
             }
         }
         if (nodes.isEmpty()) {
@@ -208,11 +211,11 @@ public class AggregateRspecRunner extends Thread {
             return;
         }
         //TODO: Regulate the slicename (limit-length, no dashes etc.)
-        String sliceName = AggregateState.getPlcPrefix()+rspec.getRspecName();
+        String sliceName = AggregateState.getPlcPrefix() + rspec.getRspecName();
         String url = "http://" + rspec.getAggregateName();
         String description = "Rspec:" + rspec.getRspecName() + " on aggregate:" + rspec.getAggregateName();
         AggregateSlice aggrSlice = AggregateState.getAggregateSlices().createSlice(sliceName, url, description,
-                ((rspec.getUsers()==null || rspec.getUsers().isEmpty() || rspec.getUsers().size()==1)?AggregateState.getPlcPI():rspec.getUsers().get(1)),
+                ((rspec.getUsers() == null || rspec.getUsers().isEmpty() || rspec.getUsers().size() == 1) ? AggregateState.getPlcPI() : rspec.getUsers().get(1)),
                 nodes.split(":"), rspec.isAddPlcSlice());
         if (aggrSlice != null) {
             aggrSlice.setStatus("CREATED");
@@ -222,7 +225,7 @@ public class AggregateRspecRunner extends Thread {
             AggregateState.getAggregateSlices().update(aggrSlice);
         } else {
             rspec.setStatus("SLICE-FAILED");
-            throw (new AggregateException("Failed to create slice:"+sliceName));
+            throw (new AggregateException("Failed to create slice:" + sliceName));
         }
     }
 
@@ -230,10 +233,10 @@ public class AggregateRspecRunner extends Thread {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("computeSlice")) {
-                AggregateSlice slice = (AggregateSlice)resources.get(i);
-                log.debug("start - delete slice: "+ slice.getSliceName());
+                AggregateSlice slice = (AggregateSlice) resources.get(i);
+                log.debug("start - delete slice: " + slice.getSliceName());
                 AggregateState.getAggregateSlices().deleteSlice(slice.getSliceName());
-                log.debug("end - delete slice: "+ slice.getSliceName());
+                log.debug("end - delete slice: " + slice.getSliceName());
             }
         }
     }
@@ -242,73 +245,78 @@ public class AggregateRspecRunner extends Thread {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("computeSlice")) {
-                AggregateSlice slice = (AggregateSlice)resources.get(i);
-                log.debug("start - renew slice: "+ slice.getSliceName());
-                AggregateState.getAggregateSlices().modifySlice(slice.getSliceName(), (int)rspec.getEndTime());
-                log.debug("end - renew slice: "+ slice.getSliceName());
+                AggregateSlice slice = (AggregateSlice) resources.get(i);
+                log.debug("start - renew slice: " + slice.getSliceName());
+                AggregateState.getAggregateSlices().modifySlice(slice.getSliceName(), (int) rspec.getEndTime());
+                log.debug("end - renew slice: " + slice.getSliceName());
             }
         }
     }
-    
+
     private void createP2PVlans() throws AggregateException {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("networkInterface")) {
-                AggregateNetworkInterface netIf1 = (AggregateNetworkInterface)resources.get(i);
-                if (netIf1.getPeers() == null || (netIf1.getParentNode() != null 
-                        && !netIf1.getParentNode().getCapabilities().contains("dragon")))
+                AggregateNetworkInterface netIf1 = (AggregateNetworkInterface) resources.get(i);
+                if (netIf1.getPeers() == null || (netIf1.getParentNode() != null
+                        && !netIf1.getParentNode().getCapabilities().contains("dragon"))) {
                     continue;
+                }
                 for (int j = 0; j < resources.size(); j++) {
                     if (resources.get(j).getType().equalsIgnoreCase("networkInterface")) {
                         //verify dragon capability?
-                        AggregateNetworkInterface netIf2 = (AggregateNetworkInterface)resources.get(j);
+                        AggregateNetworkInterface netIf2 = (AggregateNetworkInterface) resources.get(j);
                         if (netIf2.getPeers() == null || (netIf2.getParentNode() != null
-                                && !netIf2.getParentNode().getCapabilities().contains("dragon")))
+                                && !netIf2.getParentNode().getCapabilities().contains("dragon"))) {
                             continue;
+                        }
                         int[] ifIndices = netIf1.pairupInterfaces(netIf2);
                         if (ifIndices[0] != -1 && ifIndices[1] != -1) {
                             netIf1.getPeers().remove(ifIndices[0]);
                             netIf2.getPeers().remove(ifIndices[1]);
                             String source = netIf1.getLinks().isEmpty() ? AggregateUtils.getIDCQualifiedUrn(netIf1.getUrn())
                                     : AggregateUtils.getIDCQualifiedUrn(netIf1.getLinks().get(0));
-                            if (source == null)
-                                throw (new AggregateException("Failed to setup P2PVlan from unrecorgnized srcURN: 2"+netIf1.getUrn()));
+                            if (source == null) {
+                                throw (new AggregateException("Failed to setup P2PVlan from unrecorgnized srcURN: 2" + netIf1.getUrn()));
+                            }
                             String destination = netIf2.getLinks().isEmpty() ? AggregateUtils.getIDCQualifiedUrn(netIf2.getUrn())
                                     : AggregateUtils.getIDCQualifiedUrn(netIf2.getLinks().get(0));
-                            if (destination == null)
-                                throw (new AggregateException("Failed to setup P2PVlan to unrecorgnized dstURN: "+netIf2.getUrn()));
-                            String vtag = netIf1.getVlanTag()+":"+netIf2.getVlanTag();
+                            if (destination == null) {
+                                throw (new AggregateException("Failed to setup P2PVlan to unrecorgnized dstURN: " + netIf2.getUrn()));
+                            }
+                            String vtag = netIf1.getVlanTag() + ":" + netIf2.getVlanTag();
                             String description = rspec.getRspecName() + String.format(" (%s-%s)", netIf1.getClientId(), netIf2.getClientId());
                             float bandwidth = AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity());
-                            HashMap hmRet = new HashMap<String,String>();
+                            HashMap hmRet = new HashMap<String, String>();
                             long startTime = rspec.getStartTime();
                             long endTime = rspec.getEndTime();
-                            if (startTime < System.currentTimeMillis()/1000) {
-                                    endTime += (System.currentTimeMillis()/1000 - startTime);
-                                    startTime = System.currentTimeMillis()/1000;
-			    }
+                            if (startTime < System.currentTimeMillis() / 1000) {
+                                endTime += (System.currentTimeMillis() / 1000 - startTime);
+                                startTime = System.currentTimeMillis() / 1000;
+                            }
                             AggregateP2PVlan p2pvlan = AggregateState.getAggregateP2PVlans().createVlan(
-                                    AggregateState.getPlcPrefix()+rspec.getRspecName(), //sliceName
+                                    AggregateState.getPlcPrefix() + rspec.getRspecName(), //sliceName
                                     source, netIf1.getDeviceName(), netIf1.getIpAddress(),
                                     destination, netIf2.getDeviceName(), netIf2.getIpAddress(),
                                     vtag, bandwidth, description, startTime, endTime, hmRet);
-                            log.debug("start - create vlan: "+description+" return status: "+hmRet);
+                            log.debug("start - create vlan: " + description + " return status: " + hmRet);
                             if (p2pvlan == null) {
-                                throw (new AggregateException("Failed to create P2PVlan:"+description));
+                                throw (new AggregateException("Failed to create P2PVlan:" + description));
                             }
                             p2pvlan.setType("p2pVlan");
                             p2pvlan.setRspecId(rspec.getId());
                             resources.add(p2pvlan);
                             AggregateState.getAggregateP2PVlans().update(p2pvlan);
-                            if (p2pvlan.getStatus().equalsIgnoreCase("FAILED"))
-                                throw (new AggregateException("Failed to setup P2PVlan:"+description));
-                            if(netIf1.getVlanTag().equalsIgnoreCase("any") && !AggregateUtils.parseVlanTag(p2pvlan.getVtag(), true).equalsIgnoreCase("any")) {
-                                netIf1.setVlanTag("any("+AggregateUtils.parseVlanTag(p2pvlan.getVtag(), true)+")");
+                            if (p2pvlan.getStatus().equalsIgnoreCase("FAILED")) {
+                                throw (new AggregateException("Failed to setup P2PVlan:" + description));
                             }
-                            if(netIf2.getVlanTag().equalsIgnoreCase("any") && !AggregateUtils.parseVlanTag(p2pvlan.getVtag(), false).equalsIgnoreCase("any")) {
-                                netIf2.setVlanTag("any("+AggregateUtils.parseVlanTag(p2pvlan.getVtag(), false)+")");
+                            if (netIf1.getVlanTag().equalsIgnoreCase("any") && !AggregateUtils.parseVlanTag(p2pvlan.getVtag(), true).equalsIgnoreCase("any")) {
+                                netIf1.setVlanTag("any(" + AggregateUtils.parseVlanTag(p2pvlan.getVtag(), true) + ")");
                             }
-                            log.debug("end - create vlan: "+description+" return status: "+hmRet);
+                            if (netIf2.getVlanTag().equalsIgnoreCase("any") && !AggregateUtils.parseVlanTag(p2pvlan.getVtag(), false).equalsIgnoreCase("any")) {
+                                netIf2.setVlanTag("any(" + AggregateUtils.parseVlanTag(p2pvlan.getVtag(), false) + ")");
+                            }
+                            log.debug("end - create vlan: " + description + " return status: " + hmRet);
                         }
                     }
                 }
@@ -323,25 +331,27 @@ public class AggregateRspecRunner extends Thread {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("p2pVlan")) {
-                AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(i);
+                AggregateP2PVlan p2pvlan = (AggregateP2PVlan) resources.get(i);
                 hasP2PVlan = true;
-                log.debug("polling p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
+                log.debug("polling p2pVlan:" + p2pvlan.getDescription() + " status=" + p2pvlan.getStatus());
                 String lastStatus = p2pvlan.getStatus();
                 p2pvlan.queryVlan();
                 if (lastStatus.equalsIgnoreCase("UNKNOWN") && p2pvlan.getStatus().equalsIgnoreCase("UNKNOWN")) {
                     // VLAN circuit is considered failed if staying in UNKNOWN twice
                     p2pvlan.setStatus("FAILED");
                 }
-                log.debug("polled p2pVlan:"+p2pvlan.getDescription()+" status="+p2pvlan.getStatus());
-                if (p2pvlan.getStatus().equalsIgnoreCase("FAILED"))
-                    throw (new AggregateException("P2PVlan:"+p2pvlan.getDescription()
-                        +" creation failed."));
-                if (!AggregateState.getAggregateP2PVlans().update(p2pvlan))
-                    throw (new AggregateException("Cannot update P2PVlan:"+p2pvlan.getDescription()
-                        +" with AggregateDB."));
+                log.debug("polled p2pVlan:" + p2pvlan.getDescription() + " status=" + p2pvlan.getStatus());
+                if (p2pvlan.getStatus().equalsIgnoreCase("FAILED")) {
+                    throw (new AggregateException("P2PVlan:" + p2pvlan.getDescription()
+                            + " creation failed."));
+                }
+                if (!AggregateState.getAggregateP2PVlans().update(p2pvlan)) {
+                    throw (new AggregateException("Cannot update P2PVlan:" + p2pvlan.getDescription()
+                            + " with AggregateDB."));
+                }
                 if (p2pvlan.getStatus().equalsIgnoreCase("ACTIVE")) {
                     if (!p2pvlan.hasVlanOnNodes() && !p2pvlan.setVlanOnNodes(true)) {
-                        throw (new AggregateException("P2PVlan:"+p2pvlan.getDescription()
+                        throw (new AggregateException("P2PVlan:" + p2pvlan.getDescription()
                                 + " failed to add VLAN interface on source or destination node"));
                     }
                     p2pvlan.setHasVlanOnNodes(true);
@@ -353,21 +363,22 @@ public class AggregateRspecRunner extends Thread {
                 }
             }
         }
-        if (allActive && hasP2PVlan)
+        if (allActive && hasP2PVlan) {
             rspec.setStatus("VLANS-ACTIVE");
-        else if (allReserved && hasP2PVlan)
+        } else if (allReserved && hasP2PVlan) {
             rspec.setStatus("VLANS-ALLOCATED");
+        }
     }
 
     private void modifyP2PVlans() throws AggregateException {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("p2pVlan")) {
-                AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(i);
-                log.debug("start - modify p2pvlan: "+ p2pvlan.getDescription());
+                AggregateP2PVlan p2pvlan = (AggregateP2PVlan) resources.get(i);
+                log.debug("start - modify p2pvlan: " + p2pvlan.getDescription());
                 long now = System.currentTimeMillis() / 1000;
                 if (p2pvlan.getStartTime() - now < 120 && p2pvlan.getEndTime() == rspec.getEndTime()) {
-                    log.debug("skip - no need to modify p2pvlan: "+ p2pvlan.getDescription());
+                    log.debug("skip - no need to modify p2pvlan: " + p2pvlan.getDescription());
                     continue;
                 }
                 p2pvlan.setStartTime(rspec.getStartTime());
@@ -377,7 +388,7 @@ public class AggregateRspecRunner extends Thread {
                     throw new AggregateException(String.format("P2PVlan '%s' failed to modify due to '%s'", p2pvlan.getDescription(), p2pvlan.getErrorMessage()));
                 }
                 AggregateState.getAggregateP2PVlans().update(p2pvlan);
-                log.debug("end - modify p2pvlan: "+ p2pvlan.getDescription());
+                log.debug("end - modify p2pvlan: " + p2pvlan.getDescription());
             }
         }
     }
@@ -386,36 +397,36 @@ public class AggregateRspecRunner extends Thread {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("p2pVlan")) {
-                AggregateP2PVlan p2pvlan = (AggregateP2PVlan)resources.get(i);
-                if (!p2pvlan.getStitchingResourceId().isEmpty())
+                AggregateP2PVlan p2pvlan = (AggregateP2PVlan) resources.get(i);
+                if (!p2pvlan.getStitchingResourceId().isEmpty()) {
                     continue; //have been taken care of by deleteStitchingResources()
-                log.debug("start - delete p2pvlan: "+ p2pvlan.getDescription());
+                }
+                log.debug("start - delete p2pvlan: " + p2pvlan.getDescription());
                 AggregateState.getAggregateP2PVlans().delete(p2pvlan);
                 p2pvlan.teardownVlan();
-                log.debug("end - delete p2pvlan: "+ p2pvlan.getDescription());
+                log.debug("end - delete p2pvlan: " + p2pvlan.getDescription());
             }
         }
     }
-
 
     private void createExternalSliver() throws AggregateException {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("externalResource")) {
-                AggregateExternalResource aggrER = (AggregateExternalResource)resources.get(i);
+                AggregateExternalResource aggrER = (AggregateExternalResource) resources.get(i);
                 if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
-                    log.debug("start - create external protoGENI sliver: "+ aggrER.getUrn());
+                    log.debug("start - create external protoGENI sliver: " + aggrER.getUrn());
                     String status = aggrER.createResource();
                     if (status.toUpperCase().contains("FAILED")) {
                         rspec.setStatus("EXT-SLIVER-FAILED");
-                        throw (new AggregateException("Failed to allocate externalResource:"+aggrER.getUrn()));
+                        throw (new AggregateException("Failed to allocate externalResource:" + aggrER.getUrn()));
                     }
                     aggrER.setStatus("CREATED");
                     aggrER.setRspecId(rspec.getId());
                     if (AggregateState.getAggregateExtResources().add(aggrER) == false) {
-                        throw new AggregateException("Cannot add externalResource:" + aggrER.getUrn() +" to DB ");
+                        throw new AggregateException("Cannot add externalResource:" + aggrER.getUrn() + " to DB ");
                     }
-                    log.debug("end - create external protoGENI sliver: "+ aggrER.getUrn());
+                    log.debug("end - create external protoGENI sliver: " + aggrER.getUrn());
                 }
             }
         }
@@ -425,18 +436,17 @@ public class AggregateRspecRunner extends Thread {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("externalResource")) {
-                AggregateExternalResource aggrER = (AggregateExternalResource)resources.get(i);
-                log.debug("externalResource = "+ aggrER.getUrn()); //xxxx
+                AggregateExternalResource aggrER = (AggregateExternalResource) resources.get(i);
+                log.debug("externalResource = " + aggrER.getUrn()); //xxxx
                 if (aggrER.getSubType().equalsIgnoreCase("ProtoGENI")) {
-                    log.debug("start - delete external protoGENI sliver: "+ aggrER.getUrn());
+                    log.debug("start - delete external protoGENI sliver: " + aggrER.getUrn());
                     AggregateState.getAggregateExtResources().delete(aggrER.getUrn());
                     aggrER.deleteResource();
-                    log.debug("end - delete external protoGENI sliver: "+ aggrER.getUrn());
+                    log.debug("end - delete external protoGENI sliver: " + aggrER.getUrn());
                 }
             }
         }
     }
-
 
     void createStitchingResources() throws AggregateException {
         List<AggregateResource> resources = rspec.getResources();
@@ -465,7 +475,7 @@ public class AggregateRspecRunner extends Thread {
                     long startTime = rspec.getStartTime();
                     long endTime = rspec.getEndTime();
                     if (slice != null) {
-                        startTime = System.currentTimeMillis()/1000;
+                        startTime = System.currentTimeMillis() / 1000;
                         if (slice.getExpiredTime() >= endTime) {
                             endTime = slice.getExpiredTime();
                         } else {//the slice would expire bfore VLAN
@@ -492,7 +502,7 @@ public class AggregateRspecRunner extends Thread {
         for (int j = 0; j < resources.size(); j++) {
             if (resources.get(j).getType().equalsIgnoreCase("p2pvlan")) {
                 AggregateP2PVlan p2pvlan = (AggregateP2PVlan) resources.get(j);
-                log.debug("p2pvlan = "+p2pvlan.getDescription()); //xxxx
+                log.debug("p2pvlan = " + p2pvlan.getDescription()); //xxxx
                 if (!p2pvlan.getStitchingResourceId().isEmpty()) {
                     log.debug("start - deleting stitching p2pvlan: " + p2pvlan.getDescription());
                     AggregateState.getAggregateP2PVlans().delete(p2pvlan);
@@ -504,31 +514,31 @@ public class AggregateRspecRunner extends Thread {
     }
 
     private void provision() {
-        log.debug("start - provisioning rspec: "+ rspec.getRspecName());
+        log.debug("start - provisioning rspec: " + rspec.getRspecName());
         try {
             //this.modifySlice();
             this.modifyP2PVlans();
         } catch (AggregateException e) {
-            log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
+            log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
             e.printStackTrace();
         }
-        log.debug("end - provisioning rspec: "+ rspec.getRspecName());
+        log.debug("end - provisioning rspec: " + rspec.getRspecName());
     }
-    
+
     private void renew() {
-        log.debug("start - renewing rspec: "+ rspec.getRspecName());
+        log.debug("start - renewing rspec: " + rspec.getRspecName());
         try {
             this.modifySlice();
             this.modifyP2PVlans();
         } catch (AggregateException e) {
-            log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
+            log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
             e.printStackTrace();
         }
-        log.debug("end - renewing rspec: "+ rspec.getRspecName());
+        log.debug("end - renewing rspec: " + rspec.getRspecName());
     }
-        
+
     private void rollback() {
-        log.debug("start - rolling back rspec: "+ rspec.getRspecName() + " with status:" + rspec.getStatus());
+        log.debug("start - rolling back rspec: " + rspec.getRspecName() + " with status:" + rspec.getStatus());
         try {
             if (rspec.getStatus().matches("^VLANS.*")) {
                 deleteP2PVlans();
@@ -549,27 +559,27 @@ public class AggregateRspecRunner extends Thread {
                 deleteExternalSliver();
             }
         } catch (AggregateException e) {
-            log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
+            log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
             e.printStackTrace();
         }
-        rspec.setStatus("ROLLBACKED:"+rspec.getStatus());
-        log.debug("end - rolling back rspec: "+ rspec.getRspecName());
+        rspec.setStatus("ROLLBACKED:" + rspec.getStatus());
+        log.debug("end - rolling back rspec: " + rspec.getRspecName());
     }
 
     private void terminate() {
-        log.debug("start - terminating rspec: "+ rspec.getRspecName());
+        log.debug("start - terminating rspec: " + rspec.getRspecName());
         try {
             deleteP2PVlans();
             deleteStitchingResources();
             deleteSlice();
             deleteExternalSliver();
         } catch (AggregateException e) {
-            log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName()+") Exception:" + e.getMessage());
+            log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
             e.printStackTrace();
         }
         goRun = false;
         goPoll = false;
-        rspec.setStatus("TERMINATED:"+rspec.getStatus());
-        log.debug("end - terminating rspec: "+ rspec.getRspecName());
+        rspec.setStatus("TERMINATED:" + rspec.getStatus());
+        log.debug("end - terminating rspec: " + rspec.getRspecName());
     }
 }
