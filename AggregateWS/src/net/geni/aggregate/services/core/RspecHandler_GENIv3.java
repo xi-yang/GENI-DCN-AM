@@ -671,26 +671,28 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
         }
         
-        for (LinkContents linkObj: linkObjList) {
-            AggregateP2PVlan ppvLink = null;
-            for (AggregateP2PVlan ppv: ppvLinks) {
-                if (ppv.getClientId().equals(linkObj.getClientId())) {
-                    ppvLink = ppv;
-                    break;
+        if (linkObjList != null) {
+            for (LinkContents linkObj: linkObjList) {
+                AggregateP2PVlan ppvLink = null;
+                for (AggregateP2PVlan ppv: ppvLinks) {
+                    if (ppv.getClientId().equals(linkObj.getClientId())) {
+                        ppvLink = ppv;
+                        break;
+                    }
                 }
+                if (ppvLink == null)
+                    continue;
+                String sliverId = ppvLink.getGri();
+                if (sliverId == null || sliverId.isEmpty()) {
+                    sliverId = "null";
+                }
+                String sliceIdFields[] = rspec.getRspecName().split("\\+");
+                linkObj.setSliverId(String.format("%s+sliver+%s_vlan_%s", AggregateState.getAmUrn(), sliceIdFields[sliceIdFields.length-1], sliverId));
+                String[] vlanTags = ppvLink.getVtag().split(":");
+                linkObj.setVlantag(((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?ppvLink.getVtag():vlanTags[0]));
             }
-            if (ppvLink == null)
-                continue;
-            String sliverId = ppvLink.getGri();
-            if (sliverId == null || sliverId.isEmpty()) {
-                sliverId = "null";
-            }
-            String sliceIdFields[] = rspec.getRspecName().split("\\+");
-            linkObj.setSliverId(String.format("%s+sliver+%s_vlan_%s", AggregateState.getAmUrn(), sliceIdFields[sliceIdFields.length-1], sliverId));
-            String[] vlanTags = ppvLink.getVtag().split(":");
-            linkObj.setVlantag(((vlanTags.length == 2 && !vlanTags[0].equals(vlanTags[1]))?ppvLink.getVtag():vlanTags[0]));
         }
-
+        
         if (!ppvStitches.isEmpty() && stitchObj != null && !stitchObj.getPath().isEmpty()) {
             stitchObj.setLastUpdateTime(xgcGenerated.toString());
             for (PathContent pathObj: stitchObj.getPath()) {
