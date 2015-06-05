@@ -20,6 +20,7 @@ public class AggregateRspec implements java.io.Serializable {
     private String rspecName = "";
     private String aggregateName = "";
     private String description = "";
+    private String geniUser = "";
     private long startTime = 0;
     private long endTime = 0;
     private List<String> users = null;
@@ -74,6 +75,14 @@ public class AggregateRspec implements java.io.Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getGeniUser() {
+        return geniUser;
+    }
+
+    public void setGeniUser(String geniUser) {
+        this.geniUser = geniUser;
     }
 
     public long getStartTime() {

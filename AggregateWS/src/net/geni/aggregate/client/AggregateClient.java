@@ -221,11 +221,12 @@ public class AggregateClient {
         return querySliceVlanResponse.getQuerySliceVlanResponse();
     }
 
-    public CreateSliceNetworkResponseType createSliceNetwork(String rspecId, String rsepcXml[], boolean addPlcSlice)
+    public CreateSliceNetworkResponseType createSliceNetwork(String rspecId, String userId, String rsepcXml[], boolean addPlcSlice)
            throws AggregateFaultMessage, Exception {
         CreateSliceNetwork createSliceNet = new CreateSliceNetwork();
         CreateSliceNetworkType createSliceNetType = new CreateSliceNetworkType();
         createSliceNetType.setRspecID(rspecId);
+        createSliceNetType.setUserID(userId);
         RSpecTopologyType rspecTopoType = new RSpecTopologyType();
         rspecTopoType.setStatement(rsepcXml);
         createSliceNetType.setRspecNetwork(rspecTopoType);
@@ -235,11 +236,12 @@ public class AggregateClient {
         return createSliceNetResponse.getCreateSliceNetworkResponse();
     }
 
-    public AllocateSliceNetworkResponseType allocateSliceNetwork(String rspecId, String rsepcXml[], boolean addPlcSlice, String expires)
+    public AllocateSliceNetworkResponseType allocateSliceNetwork(String rspecId, String userId, String rsepcXml[], boolean addPlcSlice, String expires)
            throws AggregateFaultMessage, Exception {
         AllocateSliceNetwork allocateSliceNet = new AllocateSliceNetwork();
         AllocateSliceNetworkType allocateSliceNetType = new AllocateSliceNetworkType();
         allocateSliceNetType.setRspecID(rspecId);
+        allocateSliceNetType.setUserID(userId);
         RSpecTopologyType rspecTopoType = new RSpecTopologyType();
         rspecTopoType.setStatement(rsepcXml);
         allocateSliceNetType.setRspecNetwork(rspecTopoType);
