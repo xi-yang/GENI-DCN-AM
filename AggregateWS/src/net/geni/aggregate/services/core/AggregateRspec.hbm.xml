@@ -8,6 +8,7 @@
       <property column="rspecName" name="rspecName"/>
       <property column="aggregateName" name="aggregateName"/>
       <property column="description" name="description"/>
+      <property column="geniUser" name="geniUser"/>
       <property column="startTime" name="startTime"/>
       <property column="endTime" name="endTime"/>
       <property column="requestXml" name="requestXml"/>

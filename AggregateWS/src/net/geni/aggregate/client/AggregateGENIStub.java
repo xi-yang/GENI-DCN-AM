@@ -37448,6 +37448,50 @@
                             
 
                         /**
+                        * field for UserID
+                        */
+
+                        
+                                    protected java.lang.String localUserID ;
+                                
+                           /*  This tracker boolean wil be used to detect whether the user called the set method
+                          *   for this attribute. It will be used to determine whether to include this field
+                           *   in the serialized XML
+                           */
+                           protected boolean localUserIDTracker = false ;
+                           
+
+                           /**
+                           * Auto generated getter method
+                           * @return java.lang.String
+                           */
+                           public  java.lang.String getUserID(){
+                               return localUserID;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param UserID
+                               */
+                               public void setUserID(java.lang.String param){
+                            
+                                       if (param != null){
+                                          //update the setting tracker
+                                          localUserIDTracker = true;
+                                       } else {
+                                          localUserIDTracker = false;
+                                              
+                                       }
+                                   
+                                            this.localUserID=param;
+                                    
+
+                               }
+                            
+
+                        /**
                         * field for RspecNetwork
                         */
 
@@ -37638,7 +37682,41 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                              if (localUserIDTracker){
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
+                                            xmlWriter.writeStartElement(prefix,"userID", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"userID");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("userID");
+                                    }
+                                
+
+                                          if (localUserID==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("userID cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localUserID);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                             }
                                             if (localRspecNetwork==null){
                                                  throw new org.apache.axis2.databinding.ADBException("rspecNetwork cannot be null!!");
                                             }
@@ -37844,7 +37922,16 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("rspecID cannot be null!!");
                                         }
-                                    
+                                     if (localUserIDTracker){
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "userID"));
+                                 
+                                        if (localUserID != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localUserID));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("userID cannot be null!!");
+                                        }
+                                    }
                             elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "rspecNetwork"));
                             
@@ -37954,6 +38041,24 @@
                                     throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                                 }
                             
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","userID").equals(reader.getName())){
+                                
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setUserID(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                    else {
+                                        
+                                    }
+                                
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
@@ -38756,6 +38861,50 @@
                             
 
                         /**
+                        * field for UserID
+                        */
+
+                        
+                                    protected java.lang.String localUserID ;
+                                
+                           /*  This tracker boolean wil be used to detect whether the user called the set method
+                          *   for this attribute. It will be used to determine whether to include this field
+                           *   in the serialized XML
+                           */
+                           protected boolean localUserIDTracker = false ;
+                           
+
+                           /**
+                           * Auto generated getter method
+                           * @return java.lang.String
+                           */
+                           public  java.lang.String getUserID(){
+                               return localUserID;
+                           }
+
+                           
+                        
+                            /**
+                               * Auto generated setter method
+                               * @param param UserID
+                               */
+                               public void setUserID(java.lang.String param){
+                            
+                                       if (param != null){
+                                          //update the setting tracker
+                                          localUserIDTracker = true;
+                                       } else {
+                                          localUserIDTracker = false;
+                                              
+                                       }
+                                   
+                                            this.localUserID=param;
+                                    
+
+                               }
+                            
+
+                        /**
                         * field for RspecNetwork
                         */
 
@@ -38990,7 +39139,41 @@
                                           }
                                     
                                    xmlWriter.writeEndElement();
-                             
+                              if (localUserIDTracker){
+                                    namespace = "http://aggregate.geni.net/services/api/";
+                                    if (! namespace.equals("")) {
+                                        prefix = xmlWriter.getPrefix(namespace);
+
+                                        if (prefix == null) {
+                                            prefix = generatePrefix(namespace);
+
+                                            xmlWriter.writeStartElement(prefix,"userID", namespace);
+                                            xmlWriter.writeNamespace(prefix, namespace);
+                                            xmlWriter.setPrefix(prefix, namespace);
+
+                                        } else {
+                                            xmlWriter.writeStartElement(namespace,"userID");
+                                        }
+
+                                    } else {
+                                        xmlWriter.writeStartElement("userID");
+                                    }
+                                
+
+                                          if (localUserID==null){
+                                              // write the nil attribute
+                                              
+                                                     throw new org.apache.axis2.databinding.ADBException("userID cannot be null!!");
+                                                  
+                                          }else{
+
+                                        
+                                                   xmlWriter.writeCharacters(localUserID);
+                                            
+                                          }
+                                    
+                                   xmlWriter.writeEndElement();
+                             }
                                             if (localRspecNetwork==null){
                                                  throw new org.apache.axis2.databinding.ADBException("rspecNetwork cannot be null!!");
                                             }
@@ -39230,7 +39413,16 @@
                                         } else {
                                            throw new org.apache.axis2.databinding.ADBException("rspecID cannot be null!!");
                                         }
-                                    
+                                     if (localUserIDTracker){
+                                      elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
+                                                                      "userID"));
+                                 
+                                        if (localUserID != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localUserID));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("userID cannot be null!!");
+                                        }
+                                    }
                             elementList.add(new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/",
                                                                       "rspecNetwork"));
                             
@@ -39349,6 +39541,24 @@
                                     throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                                 }
                             
+                                    
+                                    while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
+                                
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://aggregate.geni.net/services/api/","userID").equals(reader.getName())){
+                                
+                                    java.lang.String content = reader.getElementText();
+                                    
+                                              object.setUserID(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                              
+                                        reader.next();
+                                    
+                              }  // End of if for expected property start element
+                                
+                                    else {
+                                        
+                                    }
+                                
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 

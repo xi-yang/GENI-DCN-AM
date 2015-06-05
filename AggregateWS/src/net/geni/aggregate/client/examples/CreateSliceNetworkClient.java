@@ -29,17 +29,24 @@ public class CreateSliceNetworkClient extends ExampleClient {
         super.init(args);
 
         String rspecId = "";
+        String userId = "";
         String rspecFile = "";
         boolean addingPlcSlice = false;
         if (args.length == 4) {
             //args[0] for repo; args[1] for service_url;
             rspecId = args[2];
             rspecFile = args[3];
+        } else if (args.length == 5) {
+            //args[0] for repo; args[1] for service_url;
+            rspecId = args[2];
+            userId = args[3];
+            rspecFile = args[4];
         } else {
             try {
                 // Prompt for input parameters
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-                rspecId = Args.getArg(br, "Rspec ID/Name", rspecId);
+                rspecId = Args.getArg(br, "Rspec ID/URN", rspecId);
+                userId = Args.getArg(br, "User ID/URN", userId);
                 rspecFile = Args.getArg(br, "Rspec XML file path", rspecFile);
                 String yn = Args.getArg(br, "Adding PLC slice (y/n)?", "y");
                 if (yn.equalsIgnoreCase("y"))
@@ -67,7 +74,7 @@ public class CreateSliceNetworkClient extends ExampleClient {
         String rspecXml[] = {(new String(buffer))};
 
         // make the call to the server
-        CreateSliceNetworkResponseType response = this.getClient().createSliceNetwork(rspecId, rspecXml, addingPlcSlice);
+        CreateSliceNetworkResponseType response = this.getClient().createSliceNetwork(rspecId, userId, rspecXml, addingPlcSlice);
         this.outputResponse(response);
         super.cleanup();
     }

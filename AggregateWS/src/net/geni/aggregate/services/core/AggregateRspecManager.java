@@ -254,9 +254,9 @@ public class AggregateRspecManager extends Thread{
                 for (AggregateRspecRunner rspecThread: rspecThreads) {
                     AggregateRspec rspec = rspecThread.getRspec();
                     long now = System.currentTimeMillis()/1000;
-                    // terminating allocation-expiring (in 30 seconds) thread
+                    // terminating allocation-expiring (in 60 seconds) thread
                     if (rspecThread.isGoRun() && rspec.getStatus().contains("ALLOCATED") 
-                            && (rspec.getStartTime() - now) < 30) {
+                            && (rspec.getStartTime() - now) < 60) {
                         rspecThread.setGoRun(false);
                         rspecThread.interrupt();
                     }
@@ -321,7 +321,7 @@ public class AggregateRspecManager extends Thread{
         }
     }
 
-    public synchronized String createRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice, long startTime) throws AggregateException {
+    public synchronized String createRspec(String rspecId, String rspecXML, String geniUser, String authUser, boolean addPlcSlice, long startTime) throws AggregateException {
         if (goRun == false) {
             throw new AggregateException("Initilization not finished yet. Try again later...");
         }
@@ -340,6 +340,7 @@ public class AggregateRspecManager extends Thread{
         }
         aggrRspec = AggregateState.getRspecHandler().parseRspecXml(rspecXML);
         aggrRspec.setRspecName(rspecId);
+        aggrRspec.setGeniUser(geniUser);
         aggrRspec.setAddPlcSlice(addPlcSlice);
         long now = System.currentTimeMillis()/1000;
         if (startTime > now)
@@ -380,7 +381,7 @@ public class AggregateRspecManager extends Thread{
         return aggrRspec.getStatus();
     }
 
-    public String allocateRspec(String rspecId, String rspecXML, String authUser, boolean addPlcSlice, String expires) throws AggregateException {
+    public String allocateRspec(String rspecId, String rspecXML, String geniUser, String authUser, boolean addPlcSlice, String expires) throws AggregateException {
         if (goRun == false) {
             throw new AggregateException("Initilization not finished yet. Try again later...");
         }
@@ -402,7 +403,7 @@ public class AggregateRspecManager extends Thread{
             }
             
         }
-        return createRspec(rspecId, rspecXML, authUser, addPlcSlice, startTime);
+        return createRspec(rspecId, rspecXML, geniUser, authUser, addPlcSlice, startTime);
     }
     
     public synchronized String provisionRspec(String rspecName) throws AggregateException {

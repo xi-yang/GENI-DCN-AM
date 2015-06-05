@@ -29,6 +29,7 @@ public class AllocateSliceNetworkClient extends ExampleClient {
         super.init(args);
 
         String rspecId = "";
+        String userId = "";
         String rspecFile = "";
         boolean addingPlcSlice = false;
         String expires = "";
@@ -37,11 +38,18 @@ public class AllocateSliceNetworkClient extends ExampleClient {
             rspecId = args[2];
             rspecFile = args[3];
             expires = args[4];
+        } else if (args.length == 6) {
+            //args[0] for repo; args[1] for service_url;
+            rspecId = args[2];
+            userId = args[3];
+            rspecFile = args[4];
+            expires = args[5];
         } else {
             try {
                 // Prompt for input parameters
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-                rspecId = Args.getArg(br, "Rspec ID/Name", rspecId);
+                rspecId = Args.getArg(br, "Rspec ID/URN", rspecId);
+                userId = Args.getArg(br, "User ID/URN", userId);
                 rspecFile = Args.getArg(br, "Rspec XML file path", rspecFile);
                 String yn = Args.getArg(br, "Adding PLC slice (y/n)?", "y");
                 if (yn.equalsIgnoreCase("y"))
@@ -70,7 +78,7 @@ public class AllocateSliceNetworkClient extends ExampleClient {
         String rspecXml[] = {(new String(buffer))};
 
         // make the call to the server
-        AllocateSliceNetworkResponseType response = this.getClient().allocateSliceNetwork(rspecId, rspecXml, addingPlcSlice, expires);
+        AllocateSliceNetworkResponseType response = this.getClient().allocateSliceNetwork(rspecId, userId, rspecXml, addingPlcSlice, expires);
         this.outputResponse(response);
         super.cleanup();
     }

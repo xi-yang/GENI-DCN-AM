@@ -25,7 +25,7 @@ aggregate.idc.v6.trust_keystore_password=
 
 #PlanetLab-PLCAPI
 aggregate.plc.url=https://max-myplc.dragon.maxgigapop.net/PLCAPI/
-aggregate.plc.pi=xyang@maxgigapop.net
+aggregate.plc.pi=someone@maxgigapop.net
 aggregate.plc.pass=
 aggregate.plc.base=maxpl
 

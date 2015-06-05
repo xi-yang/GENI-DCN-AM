@@ -83,6 +83,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "rspecName varchar(255) NOT NULL, " +
                     "aggregateName varchar(255) NOT NULL, " +
                     "description text NOT NULL, " +
+                    "geniUser varchar(255) default NULL, " +
                     "startTime bigint(20) default NULL, " +
                     "endTime bigint(20) default NULL, " +
                     "requestXml longtext default NULL, " +
@@ -201,7 +202,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             return;
         }
         try {
-            //init the networks table
+            //init the resources table
             AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getExtResourcesTab() + " ( " +
                     "id int(11) NOT NULL auto_increment, " +
                     "urn varchar(255) NOT NULL, " +
@@ -774,6 +775,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             throws AggregateFaultMessage {
         CreateSliceNetworkType createSliceNework = createSliceNetwork8.getCreateSliceNetwork();
         String rspecId = createSliceNework.getRspecID();
+        String geniUser = createSliceNework.getUserID();
         RSpecTopologyType rspecTopo = createSliceNework.getRspecNetwork();
         String rspecXml = "";
         for (String s: rspecTopo.getStatement()) {
@@ -788,7 +790,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         String message = "";
         try {
             //TODO pass authUser into createRspec!
-            status = AggregateState.getRspecManager().createRspec(rspecId, rspecXml, authUser.getEmail(), addPlcSlice, 0);
+            status = AggregateState.getRspecManager().createRspec(rspecId, rspecXml, geniUser, authUser.getEmail(), addPlcSlice, 0);
             message = "";
         } catch (AggregateException e) {
             status = "FAILED";
@@ -815,6 +817,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             throws AggregateFaultMessage {
         AllocateSliceNetworkType allocateSliceNework = allocateSliceNetwork10.getAllocateSliceNetwork();
         String rspecId = allocateSliceNework.getRspecID();
+        String geniUser = allocateSliceNework.getUserID();
         RSpecTopologyType rspecTopo = allocateSliceNework.getRspecNetwork();
         String rspecXml = "";
         for (String s: rspecTopo.getStatement()) {
@@ -828,7 +831,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         String status = "";
         String message = "";
         try {
-            status = AggregateState.getRspecManager().allocateRspec(rspecId, rspecXml, authUser.getEmail(), addPlcSlice, expires);
+            status = AggregateState.getRspecManager().allocateRspec(rspecId, rspecXml, geniUser, authUser.getEmail(), addPlcSlice, expires);
             message = "";
         } catch (AggregateException e) {
             status = "FAILED";
