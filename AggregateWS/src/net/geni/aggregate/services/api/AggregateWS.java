@@ -1031,6 +1031,23 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         return getResourceTopologyResponse;
     }
 
+
+    public net.geni.aggregate.services.api.GetAllResourceInfoResponse GetAllResourceInfo(
+            net.geni.aggregate.services.api.GetAllResourceInfo getAllResourceInfo) 
+            throws AggregateFaultMessage {
+        GetAllResourceInfoResponseType getAllResourceInfoResponseType = new GetAllResourceInfoResponseType();
+        GetAllResourceInfoResponse getAllResourceInfoResponse = new GetAllResourceInfoResponse();
+        try {
+            HashMap hmRet = AggregateState.getRspecManager().getAllRspecsInfo();
+            getAllResourceInfoResponseType.setInfo(hmRet.toString());
+            getAllResourceInfoResponse.setGetAllResourceInfoResponse(getAllResourceInfoResponseType);
+        } catch (AggregateException e) {
+            throw new AggregateFaultMessage("Failed to retrieve all rspec information for the aggregate: "
+                + " AggregateException: " + e.getMessage());
+        }
+        return getAllResourceInfoResponse;
+    }
+    
     /**
      * Borrowed from OSCARS Project to get the DN out of the message context.
      *
