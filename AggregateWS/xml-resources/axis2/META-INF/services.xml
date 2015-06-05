@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE page [
-<!ENTITY rampConfig SYSTEM "/usr/local/aggregate/AggregateAttic/conf/repo/rampConfig.xml">
+<!ENTITY rampConfig SYSTEM "/usr/local/geni-aggregate/AggregateAttic/conf/repo/rampConfig.xml">
 ]>
 
 <!-- This file was auto-generated from WSDL -->
@@ -45,6 +45,10 @@
                 <policy-subject identifier="binding:soap12/operation:QuerySliceVlan" />
                 <policy-subject identifier="binding:soap11/operation:CreateSliceNetwork" />
                 <policy-subject identifier="binding:soap12/operation:CreateSliceNetwork" />
+                <policy-subject identifier="binding:soap11/operation:AllocateSliceNetwork" />
+                <policy-subject identifier="binding:soap12/operation:AllocateSliceNetwork" />
+                <policy-subject identifier="binding:soap11/operation:ProvisionSliceNetwork" />
+                <policy-subject identifier="binding:soap12/operation:ProvisionSliceNetwork" />
                 <policy-subject identifier="binding:soap11/operation:RenewSliceNetwork" />
                 <policy-subject identifier="binding:soap12/operation:RenewSliceNetwork" />
                 <policy-subject identifier="binding:soap11/operation:DeleteSliceNetwork" />
@@ -138,6 +142,10 @@
                 <policy-subject identifier="binding:soap12/operation:QuerySliceVlan/in" />
                 <policy-subject identifier="binding:soap11/operation:CreateSliceNetwork/in" />
                 <policy-subject identifier="binding:soap12/operation:CreateSliceNetwork/in" />
+                <policy-subject identifier="binding:soap11/operation:AllocateSliceNetwork/in" />
+                <policy-subject identifier="binding:soap12/operation:AllocateSliceNetwork/in" />
+                <policy-subject identifier="binding:soap11/operation:ProvisionSliceNetwork/in" />
+                <policy-subject identifier="binding:soap12/operation:ProvisionSliceNetwork/in" />
                 <policy-subject identifier="binding:soap11/operation:RenewSliceNetwork/in" />
                 <policy-subject identifier="binding:soap12/operation:RenewSliceNetwork/in" />
                 <policy-subject identifier="binding:soap11/operation:DeleteSliceNetwork/in" />
@@ -209,6 +217,20 @@
             <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/CreateSliceNetworkResponse</outputActionMapping>
             <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/CreateSliceNetwork/Fault/AggregateException</faultActionMapping>
             <faultActionMapping faultName="AggregateFaultMessage">urn:CreateSliceNetworkAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="AllocateSliceNetwork" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <module ref="rampart" />
+            <actionMapping>AllocateSliceNetwork</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/AllocateSliceNetworkResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/AllocateSliceNetwork/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:AllocateSliceNetworkAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="ProvisionSliceNetwork" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <module ref="rampart" />
+            <actionMapping>ProvisionSliceNetwork</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/ProvisionSliceNetworkResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/ProvisionSliceNetwork/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:ProvisionSliceNetworkAggregateFaultMessage</faultActionMapping>
         </operation>
         <operation name="ListNodes" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <module ref="rampart" />
