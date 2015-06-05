@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import net.geni.aggregate.services.api.VlanReservationResultType;
 
 /**
  *
@@ -617,15 +618,38 @@ public class AggregateRspecManager extends Thread{
     }
 
     public synchronized HashMap getAllRspecsInfo() throws AggregateException {
-       if (goRun == false) {
+        if (goRun == false) {
             throw new AggregateException("Initilization not finished yet. Try again later...");
         }
         HashMap allRspecsMap = new HashMap();
-        synchronized(rspecThreads) {
-            for (AggregateRspec aggrRspec: aggrRspecs) {
-                HashMap rspecMap = this.queryRspec(aggrRspec.getRspecName());
+        synchronized (rspecThreads) {
+            for (AggregateRspec aggrRspec : aggrRspecs) {
+                HashMap rspecMap = aggrRspec.retrieveRspecInfo();
+                if (rspecMap.containsKey("vlanResults"))
+                    rspecMap.remove("vlanResults");
+                for (AggregateResource rc : aggrRspec.getResources()) {
+                    if (rc.getType().equalsIgnoreCase("p2pVlan")) {
+                        AggregateP2PVlan p2pvlan = (AggregateP2PVlan) rc;
+                        HashMap vlanMap = new HashMap();
+                        vlanMap.put("description", p2pvlan.getDescription());
+                        vlanMap.put("source", p2pvlan.getSource());
+                        vlanMap.put("srcInterface", p2pvlan.getSrcInterface());
+                        vlanMap.put("srcIpAndMask", p2pvlan.getSrcIpAndMask());
+                        vlanMap.put("destination", p2pvlan.getDestination());
+                        vlanMap.put("dstInterface", p2pvlan.getDstInterface());
+                        vlanMap.put("dstIpAndMask", p2pvlan.getDstIpAndMask());
+                        vlanMap.put("bandwidth", p2pvlan.getBandwidth());
+                        vlanMap.put("vtag", p2pvlan.getVtag());
+                        Vector<HashMap> vlanMaps = (Vector<HashMap>) rspecMap.get("vlans");
+                        if (vlanMaps == null) {
+                            vlanMaps = new Vector<HashMap>();
+                            rspecMap.put("vlans", vlanMaps);
+                        }
+                        vlanMaps.add(vlanMap);
+                    }
+                }
                 allRspecsMap.put(aggrRspec.getRspecName(), rspecMap);
-           }
+            }
         }
         return allRspecsMap;
     }
