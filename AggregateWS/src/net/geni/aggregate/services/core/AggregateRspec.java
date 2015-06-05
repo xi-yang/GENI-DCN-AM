@@ -147,6 +147,9 @@ public class AggregateRspec implements java.io.Serializable {
 
     HashMap retrieveRspecInfo() {
         HashMap hm = new HashMap();
+        if (geniUser != null) {
+            hm.put("geniUser", geniUser);
+        }
         for (AggregateResource rc: resources) {
             if (rc.getType().equalsIgnoreCase("computeSlice")) {
                 AggregateSlice slice = (AggregateSlice)rc;

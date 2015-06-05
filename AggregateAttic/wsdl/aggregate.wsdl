@@ -530,7 +530,22 @@
                     <xs:element name="resourceTopology" type="tns:RSpecTopologyType"/>
                 </xs:sequence>
             </xs:complexType>
-
+            
+            <!-- GetAllResourceInfo request definitions -->
+            <xs:element name="GetAllResourceInfo" type="tns:GetAllResourceInfoType"/>
+            <xs:complexType name="GetAllResourceInfoType">
+                <xs:sequence>
+                    <xs:element name="filter" minOccurs="0" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            
+            <!-- GetAllResourceInfo response definitions -->
+            <xs:element name="GetAllResourceInfoResponse" type="tns:GetAllResourceInfoResponseType"/>
+            <xs:complexType name="GetAllResourceInfoResponseType">
+                <xs:sequence>
+                    <xs:element name="info" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
         </xs:schema>
     </types>
 
@@ -687,6 +702,14 @@
     <message name="GetResourceTopologyResponseMsg">
         <part name="GetResourceTopologyMsgResp" element="tns:GetResourceTopologyResponse" />
     </message>
+    
+    <message name="GetAllResourceInfoRequestMsg">
+        <part name="GetAllResourceInfoMsgReq" element="tns:GetAllResourceInfo" />
+    </message>
+    
+    <message name="GetAllResourceInfoResponseMsg">
+        <part name="GetAllResourceInfoMsgResp" element="tns:GetAllResourceInfoResponse" />
+    </message>
 
     <message name="AggregateFaultMessage">
         <part name="fault" element="tns:AggregateFault" />
@@ -786,6 +809,11 @@
         <operation name="GetResourceTopology">
             <input message="tns:GetResourceTopologyRequestMsg" />
             <output message="tns:GetResourceTopologyResponseMsg" />
+            <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
+        </operation>
+        <operation name="GetAllResourceInfo">
+            <input message="tns:GetAllResourceInfoRequestMsg" />
+            <output message="tns:GetAllResourceInfoResponseMsg" />
             <fault  name="AggregateException" message="tns:AggregateFaultMessage" />
         </operation>
     </portType>
@@ -1066,6 +1094,21 @@
         <operation name="GetResourceTopology">
             <wsp:PolicyReference URI="#X509BindingPolicy"  />
             <soap:operation soapAction="GetResourceTopology" />
+            <input>
+                <wsp:PolicyReference URI="#signedMsgPolicy"  />
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="AggregateException">
+                <soap:fault name="AggregateException" use="literal" />
+            </fault>
+        </operation>
+        
+        <operation name="GetAllResourceInfo">
+            <wsp:PolicyReference URI="#X509BindingPolicy"  />
+            <soap:operation soapAction="GetAllResourceInfo" />
             <input>
                 <wsp:PolicyReference URI="#signedMsgPolicy"  />
                 <soap:body use="literal" />

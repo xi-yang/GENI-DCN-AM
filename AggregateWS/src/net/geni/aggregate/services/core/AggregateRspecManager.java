@@ -513,7 +513,6 @@ public class AggregateRspecManager extends Thread{
         throw new AggregateException("queryRspec: Unkown Rspec: "+rspecName);
     }
 
-
     public synchronized void updateRspec(AggregateRspec aggrRspec) {
         synchronized(this) {
             if (aggrRspec.isDeleted()) {
@@ -617,4 +616,17 @@ public class AggregateRspecManager extends Thread{
         return statements;
     }
 
+    public synchronized HashMap getAllRspecsInfo() throws AggregateException {
+       if (goRun == false) {
+            throw new AggregateException("Initilization not finished yet. Try again later...");
+        }
+        HashMap allRspecsMap = new HashMap();
+        synchronized(rspecThreads) {
+            for (AggregateRspec aggrRspec: aggrRspecs) {
+                HashMap rspecMap = this.queryRspec(aggrRspec.getRspecName());
+                allRspecsMap.put(aggrRspec.getRspecName(), rspecMap);
+           }
+        }
+        return allRspecsMap;
+    }
 }

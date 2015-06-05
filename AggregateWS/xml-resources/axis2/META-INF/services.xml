@@ -57,6 +57,8 @@
                 <policy-subject identifier="binding:soap12/operation:QuerySliceNetwork" />
                 <policy-subject identifier="binding:soap11/operation:GetResourceTopology" />
                 <policy-subject identifier="binding:soap12/operation:GetResourceTopology" />
+                <policy-subject identifier="binding:soap11/operation:GetAllResourceInfo" />
+                <policy-subject identifier="binding:soap12/operation:GetAllResourceInfo" />
             </wsp:AppliesTo>
 
             <wsp:Policy wsu:Id="X509EndPointPolicy"
@@ -154,6 +156,8 @@
                 <policy-subject identifier="binding:soap12/operation:QuerySliceNetwork/in" />
                 <policy-subject identifier="binding:soap11/operation:GetResourceTopology/in" />
                 <policy-subject identifier="binding:soap12/operation:GetResourceTopology/in" />
+                <policy-subject identifier="binding:soap11/operation:GetAllResourceInfo/in" />
+                <policy-subject identifier="binding:soap12/operation:GetAllResourceInfo/in" />
             </wsp:AppliesTo>
             <wsp:Policy wsu:id="signedMsgPolicy"
           			xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
@@ -210,6 +214,13 @@
             <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/GetResourceTopologyResponse</outputActionMapping>
             <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/GetResourceTopology/Fault/AggregateException</faultActionMapping>
             <faultActionMapping faultName="AggregateFaultMessage">urn:GetResourceTopologyAggregateFaultMessage</faultActionMapping>
+        </operation>
+        <operation name="GetAllResourceInfo" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
+            <module ref="rampart" />
+            <actionMapping>GetAllResourceInfo</actionMapping>
+            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/GetAllResourceInfoResponse</outputActionMapping>
+            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/GetAllResourceInfo/Fault/AggregateException</faultActionMapping>
+            <faultActionMapping faultName="AggregateFaultMessage">urn:GetAllResourceInfoAggregateFaultMessage</faultActionMapping>
         </operation>
         <operation name="CreateSliceNetwork" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <module ref="rampart" />

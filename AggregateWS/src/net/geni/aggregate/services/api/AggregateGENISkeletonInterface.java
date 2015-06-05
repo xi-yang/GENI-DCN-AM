@@ -15,6 +15,21 @@
         /**
          * Auto generated method signature
          * 
+                                    * @param getAllResourceInfo
+             * @throws AggregateFaultMessage : 
+         */
+
+        
+                public net.geni.aggregate.services.api.GetAllResourceInfoResponse GetAllResourceInfo
+                (
+                  net.geni.aggregate.services.api.GetAllResourceInfo getAllResourceInfo
+                 )
+            throws AggregateFaultMessage;
+        
+         
+        /**
+         * Auto generated method signature
+         * 
                                     * @param provisionSliceNetwork
              * @throws AggregateFaultMessage : 
          */
