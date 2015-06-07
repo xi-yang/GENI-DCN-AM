@@ -1037,9 +1037,10 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             throws AggregateFaultMessage {
         GetAllResourceInfoResponseType getAllResourceInfoResponseType = new GetAllResourceInfoResponseType();
         GetAllResourceInfoResponse getAllResourceInfoResponse = new GetAllResourceInfoResponse();
+        String filter = getAllResourceInfo.getGetAllResourceInfo().getFilter();
         try {
-            HashMap hmRet = AggregateState.getRspecManager().getAllRspecsInfo();
-            getAllResourceInfoResponseType.setInfo(hmRet.toString());
+            String allRspecsInfo = AggregateState.getRspecManager().getAllRspecsInfo(filter);
+            getAllResourceInfoResponseType.setInfo(allRspecsInfo);
             getAllResourceInfoResponse.setGetAllResourceInfoResponse(getAllResourceInfoResponseType);
         } catch (AggregateException e) {
             throw new AggregateFaultMessage("Failed to retrieve all rspec information for the aggregate: "

@@ -617,40 +617,40 @@ public class AggregateRspecManager extends Thread{
         return statements;
     }
 
-    public synchronized HashMap getAllRspecsInfo() throws AggregateException {
+    //TODO: JSON format with exact data required by GramResourceManager
+    /*                entry = {'sliver_urn' : 'not_set_yet',
+                         'slice_urn' : slice_urn,
+                         'user_urn' : user_urn,
+                         'start_time' : str(start_time),
+                         'end_time' : str(end_time),
+                         'measurements' : {'VLAN' : requested_vlans,
+                                           'CAPACITY' : requested_capacity}}
+    
+                sliver_urn = slice_urn + '_vlan_' + vlan[0]
+    */
+    public synchronized String getAllRspecsInfo(String filter) throws AggregateException {
         if (goRun == false) {
             throw new AggregateException("Initilization not finished yet. Try again later...");
         }
-        HashMap allRspecsMap = new HashMap();
+        String allRspecsInfo = "";
+        
         synchronized (rspecThreads) {
             for (AggregateRspec aggrRspec : aggrRspecs) {
-                HashMap rspecMap = aggrRspec.retrieveRspecInfo();
-                if (rspecMap.containsKey("vlanResults"))
-                    rspecMap.remove("vlanResults");
-                for (AggregateResource rc : aggrRspec.getResources()) {
-                    if (rc.getType().equalsIgnoreCase("p2pVlan")) {
-                        AggregateP2PVlan p2pvlan = (AggregateP2PVlan) rc;
-                        HashMap vlanMap = new HashMap();
-                        vlanMap.put("description", p2pvlan.getDescription());
-                        vlanMap.put("source", p2pvlan.getSource());
-                        vlanMap.put("srcInterface", p2pvlan.getSrcInterface());
-                        vlanMap.put("srcIpAndMask", p2pvlan.getSrcIpAndMask());
-                        vlanMap.put("destination", p2pvlan.getDestination());
-                        vlanMap.put("dstInterface", p2pvlan.getDstInterface());
-                        vlanMap.put("dstIpAndMask", p2pvlan.getDstIpAndMask());
-                        vlanMap.put("bandwidth", p2pvlan.getBandwidth());
-                        vlanMap.put("vtag", p2pvlan.getVtag());
-                        Vector<HashMap> vlanMaps = (Vector<HashMap>) rspecMap.get("vlans");
-                        if (vlanMaps == null) {
-                            vlanMaps = new Vector<HashMap>();
-                            rspecMap.put("vlans", vlanMaps);
-                        }
-                        vlanMaps.add(vlanMap);
-                    }
+                if (filter.contains("user=") && (aggrRspec.getGeniUser() == null || !filter.contains(aggrRspec.getGeniUser()))) {
+                    continue;
                 }
-                allRspecsMap.put(aggrRspec.getRspecName(), rspecMap);
+                allRspecsInfo += "<rspecInfo>";
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSSSSS");
+                String startTime  = dateFormat.format(new Date(aggrRspec.getStartTime()*1000000));
+                allRspecsInfo += "<startTime>"+startTime+"</startTime>";
+                String endTime  = dateFormat.format(new Date(aggrRspec.getEndTime()*1000000));
+                allRspecsInfo += "<endTime>"+startTime+"</endTime>";
+                if (aggrRspec.getManifestXml() != null && !aggrRspec.getManifestXml().isEmpty())
+                    allRspecsInfo += aggrRspec.getManifestXml();
+                else 
+                    allRspecsInfo += aggrRspec.getRequestXml();
             }
         }
-        return allRspecsMap;
+        return allRspecsInfo;
     }
 }
