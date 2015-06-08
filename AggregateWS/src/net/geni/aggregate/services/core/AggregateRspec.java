@@ -20,7 +20,7 @@ public class AggregateRspec implements java.io.Serializable {
     private String rspecName = "";
     private String aggregateName = "";
     private String description = "";
-    private String geniUser = "";
+    private String geniUser = null;
     private long startTime = 0;
     private long endTime = 0;
     private List<String> users = null;

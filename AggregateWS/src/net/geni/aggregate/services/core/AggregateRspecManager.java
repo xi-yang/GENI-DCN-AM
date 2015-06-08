@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import net.geni.aggregate.services.api.VlanReservationResultType;
 
 /**
  *
@@ -639,17 +640,41 @@ public class AggregateRspecManager extends Thread{
         return statements;
     }
 
-    public synchronized HashMap getAllRspecsInfo() throws AggregateException {
-       if (goRun == false) {
+    //TODO: JSON format with exact data required by GramResourceManager
+    /*                entry = {'sliver_urn' : 'not_set_yet',
+                         'slice_urn' : slice_urn,
+                         'user_urn' : user_urn,
+                         'start_time' : str(start_time),
+                         'end_time' : str(end_time),
+                         'measurements' : {'VLAN' : requested_vlans,
+                                           'CAPACITY' : requested_capacity}}
+    
+                sliver_urn = slice_urn + '_vlan_' + vlan[0]
+    */
+    public synchronized String getAllRspecsInfo(String filter) throws AggregateException {
+        if (goRun == false) {
             throw new AggregateException("Initilization not finished yet. Try again later...");
         }
-        HashMap allRspecsMap = new HashMap();
-        synchronized(rspecThreads) {
-            for (AggregateRspec aggrRspec: aggrRspecs) {
-                HashMap rspecMap = this.queryRspec(aggrRspec.getRspecName());
-                allRspecsMap.put(aggrRspec.getRspecName(), rspecMap);
-           }
+        String allRspecsInfo = "";
+        
+        synchronized (rspecThreads) {
+            for (AggregateRspec aggrRspec : aggrRspecs) {
+                if (filter != null && filter.contains("user=") && (aggrRspec.getGeniUser() == null || aggrRspec.getGeniUser().isEmpty() || !filter.contains(aggrRspec.getGeniUser()))) {
+                    continue;
+                }
+                allRspecsInfo += "<rInfo>";
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSSSSS");
+                String startTime  = dateFormat.format(new Date(aggrRspec.getStartTime()*1000));
+                allRspecsInfo += "<startTime>"+startTime+"</startTime>";
+                String endTime  = dateFormat.format(new Date(aggrRspec.getEndTime()*1000));
+                allRspecsInfo += "<endTime>"+endTime+"</endTime>"; 
+                if (aggrRspec.getManifestXml() != null && !aggrRspec.getManifestXml().isEmpty())
+                    allRspecsInfo += aggrRspec.getManifestXml();
+                else 
+                    allRspecsInfo += aggrRspec.getRequestXml();
+                allRspecsInfo += "</rInfo>";
+            }
         }
-        return allRspecsMap;
+        return allRspecsInfo;
     }
 }
