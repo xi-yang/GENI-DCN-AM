@@ -307,10 +307,11 @@ public class AggregateClient {
         return getResourceTopoResponse.getGetResourceTopologyResponse();
     }
 
-    public GetAllResourceInfoResponseType getAllResourceInfo()
+    public GetAllResourceInfoResponseType getAllResourceInfo(String filter)
            throws AggregateFaultMessage, Exception {
         GetAllResourceInfo getAllResourceInfo = new GetAllResourceInfo();
         GetAllResourceInfoType getAllResourceInfoType = new GetAllResourceInfoType();
+        getAllResourceInfoType.setFilter(filter);
         getAllResourceInfo.setGetAllResourceInfo(getAllResourceInfoType);
         GetAllResourceInfoResponse getAllResourceInfoResponse = this.stub.GetAllResourceInfo(getAllResourceInfo);
         return getAllResourceInfoResponse.getGetAllResourceInfoResponse();

@@ -636,19 +636,20 @@ public class AggregateRspecManager extends Thread{
         
         synchronized (rspecThreads) {
             for (AggregateRspec aggrRspec : aggrRspecs) {
-                if (filter.contains("user=") && (aggrRspec.getGeniUser() == null || !filter.contains(aggrRspec.getGeniUser()))) {
+                if (filter != null && filter.contains("user=") && (aggrRspec.getGeniUser() == null || aggrRspec.getGeniUser().isEmpty() || !filter.contains(aggrRspec.getGeniUser()))) {
                     continue;
                 }
-                allRspecsInfo += "<rspecInfo>";
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSSSSS");
-                String startTime  = dateFormat.format(new Date(aggrRspec.getStartTime()*1000000));
+                allRspecsInfo += "<rInfo>";
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSSSSS");
+                String startTime  = dateFormat.format(new Date(aggrRspec.getStartTime()*1000));
                 allRspecsInfo += "<startTime>"+startTime+"</startTime>";
-                String endTime  = dateFormat.format(new Date(aggrRspec.getEndTime()*1000000));
-                allRspecsInfo += "<endTime>"+startTime+"</endTime>";
+                String endTime  = dateFormat.format(new Date(aggrRspec.getEndTime()*1000));
+                allRspecsInfo += "<endTime>"+endTime+"</endTime>"; 
                 if (aggrRspec.getManifestXml() != null && !aggrRspec.getManifestXml().isEmpty())
                     allRspecsInfo += aggrRspec.getManifestXml();
                 else 
                     allRspecsInfo += aggrRspec.getRequestXml();
+                allRspecsInfo += "</rInfo>";
             }
         }
         return allRspecsInfo;
