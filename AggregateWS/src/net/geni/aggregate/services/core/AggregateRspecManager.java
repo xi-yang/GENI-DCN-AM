@@ -663,6 +663,7 @@ public class AggregateRspecManager extends Thread{
                     continue;
                 }
                 allRspecsInfo += "<rInfo>";
+                allRspecsInfo += "<sliceName>"+aggrRspec.getRspecName()+"</sliceName>";
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSSSSS");
                 String startTime  = dateFormat.format(new Date(aggrRspec.getStartTime()*1000));
                 allRspecsInfo += "<startTime>"+startTime+"</startTime>";
