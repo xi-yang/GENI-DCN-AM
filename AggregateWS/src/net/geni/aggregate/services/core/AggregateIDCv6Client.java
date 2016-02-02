@@ -6,6 +6,7 @@ package net.geni.aggregate.services.core;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,12 +97,28 @@ public class AggregateIDCv6Client {
         if (pos1 == -1) {
             return "";
         }
-        int taglen = xml.indexOf(String.format(">", tag), pos1) - pos1+1;
+        int taglen = xml.indexOf(">", pos1) - pos1+1;
         int pos2 = xml.indexOf(String.format("</%s>", tag), pos1);
         if (pos2 == -1) {
             return "";
         }
         return xml.substring(pos1 + taglen, pos2);
+    }
+
+    private List<String> extractXmlValueListByTag(String xml, String tag) {
+        List<String> valueList = null;
+        int pos1 = xml.indexOf(String.format("<%s", tag), 0);
+        while (pos1 >= 0) {
+            int taglen = xml.indexOf(">", pos1) - pos1+1;
+            int pos2 = xml.indexOf(String.format("</%s>", tag), pos1);
+            String value = xml.substring(pos1 + taglen, pos2);
+            if (valueList == null) {
+                valueList = new ArrayList<String>();
+            }
+            valueList.add(value);
+            pos1 = xml.indexOf(String.format("<%s", tag), pos2 + taglen+1);
+        }
+        return valueList;
     }
 
     /**
@@ -213,7 +230,11 @@ public class AggregateIDCv6Client {
         hmRet.put("description", extractXmlValueByTag(responseXml, "ns3:description"));
         String reservedConstraintXml = extractXmlValueByTag(responseXml, "ns3:reservedConstraint");
         if (reservedConstraintXml != null &&  !reservedConstraintXml.isEmpty()) {
-            hmRet.put("vlanTag", extractXmlValueByTag(reservedConstraintXml, "ns3:srcVtag")+":"+extractXmlValueByTag(reservedConstraintXml, "ns3:destVtag"));
+            List<String> hopVtagList = extractXmlValueListByTag(reservedConstraintXml, "ns4:suggestedVLANRange");
+            if (hopVtagList == null || hopVtagList.size() < 2) {
+                throw new Exception("AggregateIDCv6Client::requestQueryReservation cannot extract src and dst VLAN tags");
+            }
+            hmRet.put("vlanTag", hopVtagList.get(0)+":"+hopVtagList.get(hopVtagList.size()-1));
         }
         String errReport1Xml = extractXmlValueByTag(responseXml, "ns3:errorReport");
         if (errReport1Xml != null &&  !errReport1Xml.isEmpty()) {

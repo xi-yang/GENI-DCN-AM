@@ -1,0 +1,7 @@
+- Extra patches 
+
+1. Apply the below to PLCAPI code under /usr/share/plc_api/PLC/ (allow for long site/project/slice names)
+
+http://git.planet-lab.org/?p=plcapi.git;a=commit;h=ef7eb588062b3b8481a18b3afed9a105e5381f2c
+http://git.planet-lab.org/?p=plcapi.git;a=commit;h=6ffdbf9ac330341884e1e6e171b6d22787f5e0da
+

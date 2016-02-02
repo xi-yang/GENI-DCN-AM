@@ -272,6 +272,28 @@ public class AggregateRspecManager extends Thread{
                         }
                     } else if (rspec.getStatus().startsWith("ROLLBACKED")) {
                         rspecThreads.remove(rspecThread);
+                        if (!rspecThread.isGoRun()) {
+                            AggregateRspec aggrRspec = rspecThread.getRspec();
+                            log.info("start - delete defunct rspec");
+                            try {
+                                aggrRspec.getResources().clear();
+                                aggrRspec.setDeleted(true);
+                                session = HibernateUtil.getSessionFactory().openSession();
+                                tx = session.beginTransaction();
+                                session.update(aggrRspec);
+                                session.flush();
+                                tx.commit();
+                            } catch (Exception e) {
+                                tx.rollback();
+                                e.printStackTrace();
+                            } finally {
+                                if (session.isOpen()) {
+                                    session.close();
+                                }
+                            }
+                            aggrRspecs.remove(aggrRspec);
+                            log.info("end - delete defunct rspec");
+                        }
                         break;  // go loop again!
                     } else if (rspec.getStatus().startsWith("TERMINATED")) {
                         try {
@@ -467,7 +489,8 @@ public class AggregateRspecManager extends Thread{
             for (AggregateRspecRunner rspecThread: rspecThreads) {
                 if (rspecThread.getRspec() != null && rspecThread.getRspec().getRspecName().equalsIgnoreCase(rspecName)) {
                     rspecThread.setGoRun(false);
-                    rspecThread.interrupt();
+                    if (!rspecThread.getRspec().getStatus().contains("FAILED")) // do not interrupt when rollbacking
+                        rspecThread.interrupt();
                     return "STOPPING";
                 }
             }
@@ -640,6 +663,7 @@ public class AggregateRspecManager extends Thread{
                     continue;
                 }
                 allRspecsInfo += "<rInfo>";
+                allRspecsInfo += "<sliceName>"+aggrRspec.getRspecName()+"</sliceName>";
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSSSSS");
                 String startTime  = dateFormat.format(new Date(aggrRspec.getStartTime()*1000));
                 allRspecsInfo += "<startTime>"+startTime+"</startTime>";
