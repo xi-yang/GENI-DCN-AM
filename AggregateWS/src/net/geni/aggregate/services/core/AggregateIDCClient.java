@@ -33,6 +33,7 @@ public class AggregateIDCClient {
     private String idcURL = "";
     private String idcRepo = "";
     private AggregateIDCv6Client v6Client= null;
+    private AggregateNSI2Client nsiClient= null;
     private GlobalReservationId gri = null;
     private Logger log;
 
@@ -42,6 +43,8 @@ public class AggregateIDCClient {
         gri = new GlobalReservationId();
         if (AggregateState.getIdcVersion().equals("0.6")) 
             v6Client = new AggregateIDCv6Client();
+        else if (AggregateState.getIdcVersion().equals("nsi2"))
+            nsiClient = new AggregateNSI2Client();
         log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
     }
     /**
@@ -65,6 +68,11 @@ public class AggregateIDCClient {
             String resCreateYaml = v6Client.generateCreateResevationContent(src, dst, vtag, bw, descr, startTime, endTime);
             String status = v6Client.requestCreateReservation(resCreateYaml);
             this.gri.setGri(v6Client.getGlobalReservationId());
+            return status;
+        } else if (nsiClient != null) {
+            String options = nsiClient.generateReserveOptions(src, dst, vtag, vtag, bw, descr, startTime, endTime);
+            String status = nsiClient.requestCreateReservation(options);
+            this.gri.setGri(nsiClient.getGlobalReservationId());
             return status;
         }
         
@@ -139,6 +147,8 @@ public class AggregateIDCClient {
         
         if (v6Client != null) {
             return v6Client.requestModifyReservation(aGri, src, dst, vtag, bw, descr, startTime, endTime);
+        } else if (nsiClient != null) {
+            return nsiClient.requestModifyReservation(aGri, src, dst, vtag, bw, descr, startTime, endTime);
         }
 
         Client client = new Client();
@@ -193,6 +203,8 @@ public class AggregateIDCClient {
         
         if (v6Client != null) {
             return v6Client.requestCancelReservation(aGri);
+        } else if (nsiClient != null) {
+            return nsiClient.requestCancelReservation(aGri);
         }
 
         Client client = new Client();
@@ -220,10 +232,12 @@ public class AggregateIDCClient {
         } else {
             throw new Exception("queryReservation on null or empty GRI");
         }
-	log.debug("### queryReservation GRI= "+ gri.getGri());
+        log.debug("### queryReservation GRI= "+ gri.getGri());
 
         if (v6Client != null) {
             return v6Client.requestQueryReservation(aGri);
+        } else if (nsiClient != null) {
+            return nsiClient.requestQueryReservation(aGri);
         }
 
         HashMap hmRet = new HashMap();

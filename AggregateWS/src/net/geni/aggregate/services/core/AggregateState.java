@@ -46,6 +46,8 @@ public class AggregateState
     private static String idc6TrustKeystore = "";
     private static String idc6TrustKeystorePassword = "";
     private static String idcVerifyEndpoints = "";
+    private static String nsiDir = "";
+    private static String nsaUrl = "";
 
     private static String plcURL = "";
     private static String plcPI = "";
@@ -134,6 +136,9 @@ public class AggregateState
         idcVerifyEndpoints = aggregateProps.getProperty("aggregate.idc.verifyendpoints", "true");
         log.info("aggregate.idc.verifyendpoints set to " + idcVerifyEndpoints);
         
+        nsiDir = aggregateProps.getProperty("aggregate.nsi.client_dir", "/usr/local/geni-aggregate/AggregateAttic/conf/oscars_nsi2");
+        nsaUrl = aggregateProps.getProperty("aggregate.nsi.server_url", "https://idc.maxgigapop.net:8500/nsi-v2/ConnectionServiceProvider");
+
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         log.info("aggregate.plc.url set to " + plcURL);
         plcPI = aggregateProps.getProperty("aggregate.plc.pi", "xyang@east.isi.edu");
@@ -358,6 +363,14 @@ public class AggregateState
 
     public static boolean isIdcVerifyEndpoints() {
         return idcVerifyEndpoints.equalsIgnoreCase("true");
+    }
+
+    public static String getNsiDir() {
+        return nsiDir;
+    }
+
+    public static String getNsaUrl() {
+        return nsaUrl;
     }
     
     public static String getPlcURL() {
