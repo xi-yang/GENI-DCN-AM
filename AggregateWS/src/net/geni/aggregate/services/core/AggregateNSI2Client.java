@@ -73,7 +73,7 @@ public class AggregateNSI2Client {
     
     public String generateReserveOptions(String srcUrn, String dstUrn, String srcVlan, String dstVlan, float bw, String descr, long startTime, long endTime) 
         throws Exception {
-        String options = " -c " + (int)bw + " -p " + descr;
+        String options = " -c " + (int)bw + " -p '" + descr +"'";
     	options += String.format(" --src-stp %s?vlan=%s", srcUrn, srcVlan);
     	options += String.format(" --dst-stp %s?vlan=%s", dstUrn, dstVlan);
         options += String.format(" -b %d -e %d", startTime, endTime);

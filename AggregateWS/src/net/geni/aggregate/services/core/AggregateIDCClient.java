@@ -70,7 +70,14 @@ public class AggregateIDCClient {
             this.gri.setGri(v6Client.getGlobalReservationId());
             return status;
         } else if (nsiClient != null) {
-            String options = nsiClient.generateReserveOptions(src, dst, vtag, vtag, bw, descr, startTime, endTime);
+            String srcVtag = vtag;
+            String dstVtag = vtag;
+            if (vtag.contains(":")) {
+                String[] vtags = vtag.split(":");
+                srcVtag = vtags[0];
+                dstVtag = vtags[1];
+            } 
+            String options = nsiClient.generateReserveOptions(src, dst, srcVtag, dstVtag, bw, descr, startTime, endTime);
             String status = nsiClient.requestCreateReservation(options);
             this.gri.setGri(nsiClient.getGlobalReservationId());
             return status;
