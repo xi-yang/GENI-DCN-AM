@@ -32,6 +32,7 @@ public class AggregateNSI2Client {
     }
 
     private String executeShellCommand(String cmd) throws Exception {
+        log.info("NSI2Client exec cmd: " + cmd);
     	Process p = null;
     	ReadStream rsIn = null;
     	ReadStream rsErr = null;
@@ -158,29 +159,61 @@ public class AggregateNSI2Client {
         }
         this.gri = aGri;
         String response = this.nsiQueryRaw(this.gri);
-        String connId = extractValue(response, "Connection ID");
+    	if (response.isEmpty() || response.contains("Error") || response.contains("Exception")) {
+            throw new Exception("queryReservation gets error '" + response + "' for " + this.gri);
+        }
+        String patterns[] = {
+            "Connection ID: ", //trailing space
+            "Global Reservation ID:", 
+            "Requester NSA:", 
+            "Description:", 
+            "Life Cycle State:", 
+            "Reservations State:", // no trailing space
+            "Provision State:",
+            "Dataplane Status:"};
+        int[] indx = new int[patterns.length];
+        String[] values = new String[patterns.length-1];
+        for (int i = 0; i < patterns.length; i++) {
+            indx[i] = response.indexOf(patterns[i]);
+        }
+        for (int i = 0; i < patterns.length-1; i++) {
+            if (indx[i] > 0 && indx[i+1] > indx[i]) {
+                values[i] = response.substring(indx[i]+patterns[i].length(), indx[i+1]);
+            } else {
+                values[i] = "";
+            }
+        }
+        String connId = values[0];
         if (connId.isEmpty() || !connId.equals(this.gri)) {
             throw new Exception("queryReservation cannot retrive information for " + this.gri);
         }
         HashMap hmRet = new HashMap();
         hmRet.put("GRI", this.gri);
-        hmRet.put("login", extractValue(response, "Requester NSA"));
-        String lifeCycleStatus = extractValue(response, "Life Cycle State");
-        String reserveStatus = extractValue(response, "Reservations State");
-        String provisionStatus = extractValue(response, "Provision State");
+        hmRet.put("login", values[2]);
+        hmRet.put("description", values[3]);
+        String lifeCycleStatus = values[4];
+        String reserveStatus = values[5];
+        String provisionStatus = values[6];
         //TODO: map the three status into a single status
-        hmRet.put("status", lifeCycleStatus);
+        String status = "INSETUP";
+        if (lifeCycleStatus.equals("Created") && provisionStatus.equals("Provisioned")) {
+            status = "ACTIVE";
+        } else if (lifeCycleStatus.equals("Terminated") && provisionStatus.equals("Released")) {
+            status = "DELETED";
+        } else if (lifeCycleStatus.contains("Failed") || reserveStatus.contains("Failed") || reserveStatus.contains("Timeout")) {
+            status = "FAILED";
+        }
+        hmRet.put("status", status);
         hmRet.put("startTime", extractValue(response, "Start Time"));
         hmRet.put("endTime", extractValue(response, "End Time"));
         hmRet.put("cratedTime", extractValue(response, "Start Time"));
         hmRet.put("bandwidth", extractValue(response, "Capacity"));
-        hmRet.put("description", extractValue(response, "Description"));
         String srcStp = extractValue(response, "Source STP");
         String dstStp = extractValue(response, "Destination STP");
         String srcVlan = srcStp.substring(srcStp.indexOf("vlan=")+5);
         String dstVlan = dstStp.substring(srcStp.indexOf("vlan=")+5);
         hmRet.put("vlanTag", srcVlan+":"+dstVlan);
-        
+        log.info("queryNSI hashMap = " + hmRet.toString());
         return hmRet;
     }
 
@@ -226,6 +259,7 @@ public class AggregateNSI2Client {
     	String queryCmd = String.format("java -Done-jar.main.class=net.es.oscars.nsibridge.client.cli.QueryCLIClient -Djava.net.preferIPv4Stack=true -jar %s/nsibridge.one-jar.jar -f %s/client-bus-ssl.xml  -u %s -i %s",
                 this.nsiDir, this.nsiDir, this.nsaUrl, connId);
     	String response = this.executeShellCommand(queryCmd);
+        log.info("queryNSI reuturns: " + response);
     	if (response.isEmpty() || response.contains("Exception"))
     		return "UNKNOWN";
         if (response.equals("INTERRUPTED")) {
