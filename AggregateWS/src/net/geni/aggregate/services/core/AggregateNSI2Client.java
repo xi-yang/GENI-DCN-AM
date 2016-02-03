@@ -90,22 +90,22 @@ public class AggregateNSI2Client {
         if (this.gri == null || this.gri.isEmpty()) {
             return "FAILED";
         }
-        String nsiStatus = this.nsiUpdate(this.gri, "RESERVE_COMMIT", true);
-        if (nsiStatus.equals("UNKNOWN")) {
-            throw new Exception(String.format("applyDelta for connection '%s' cannot get status after RESERVE_COMMIT", this.gri));
-        }
-        String triStatus[] = nsiStatus.split("\\s");
-        if (triStatus.length != 3 || !triStatus[0].equals("Created") || !triStatus[1].equals("ReserveStart") || !triStatus[2].equals("Released")) {
-            throw new Exception(String.format("applyDelta for connection '%s' get tri-states='%s' after RESERVE_COMMIT", this.gri, nsiStatus));
-        }
-        nsiStatus = this.nsiUpdate(this.gri, "PROVISION", true);
-        if (nsiStatus.equals("UNKNOWN")) {
-            throw new Exception(String.format("applyDelta for connection '%s' cannot get status after PROVISION", this.gri));
-        }
-        triStatus = nsiStatus.split("\\s");
-        if (triStatus.length != 3 || !triStatus[0].equals("Created") || !triStatus[1].equals("ReserveStart") || !triStatus[2].equals("Provisioned")) {
-            throw new Exception(String.format("applyDelta for connection '%s' get tri-states='%s' after RESERVE_COMMIT", this.gri, nsiStatus));
-        }
+        String nsiStatus = this.nsiUpdate(this.gri, "RESERVE_COMMIT", false);
+        //if (nsiStatus.equals("UNKNOWN")) {
+        //    throw new Exception(String.format("applyDelta for connection '%s' cannot get status after RESERVE_COMMIT", this.gri));
+        //}
+        //String triStatus[] = nsiStatus.split("\\s");
+        //if (triStatus.length != 3 || !triStatus[0].equals("Created") || !triStatus[1].equals("ReserveStart") || !triStatus[2].equals("Released")) {
+        //    throw new Exception(String.format("applyDelta for connection '%s' get tri-states='%s' after RESERVE_COMMIT", this.gri, nsiStatus));
+        //}
+        nsiStatus = this.nsiUpdate(this.gri, "PROVISION", false);
+        //if (nsiStatus.equals("UNKNOWN")) {
+        //    throw new Exception(String.format("applyDelta for connection '%s' cannot get status after PROVISION", this.gri));
+        //}
+        //triStatus = nsiStatus.split("\\s");
+        //if (triStatus.length != 3 || !triStatus[0].equals("Created") || !triStatus[1].equals("ReserveStart") || !triStatus[2].equals("Provisioned")) {
+        //    throw new Exception(String.format("applyDelta for connection '%s' get tri-states='%s' after RESERVE_COMMIT", this.gri, nsiStatus));
+        //}
         return "ACCEPTED";
     }
 
@@ -164,20 +164,20 @@ public class AggregateNSI2Client {
         }
         String patterns[] = {
             "Connection ID: ", //trailing space
-            "Global Reservation ID:", 
-            "Requester NSA:", 
-            "Description:", 
-            "Life Cycle State:", 
-            "Reservations State:", // no trailing space
-            "Provision State:",
-            "Dataplane Status:"};
+            "Global Reservation ID: ", 
+            "Requester NSA: ", 
+            "Description: ", 
+            "Life Cycle State: ", 
+            "Reservations State: ", // no trailing space
+            "Provision State: ",
+            "Dataplane Status: "};
         int[] indx = new int[patterns.length];
         String[] values = new String[patterns.length-1];
         for (int i = 0; i < patterns.length; i++) {
             indx[i] = response.indexOf(patterns[i]);
         }
         for (int i = 0; i < patterns.length-1; i++) {
-            if (indx[i] > 0 && indx[i+1] > indx[i]) {
+            if (indx[i] >= 0 && indx[i+1] > indx[i]) {
                 values[i] = response.substring(indx[i]+patterns[i].length(), indx[i+1]);
             } else {
                 values[i] = "";
@@ -301,7 +301,7 @@ public class AggregateNSI2Client {
         Pattern pat = Pattern.compile(pattern);
         Matcher match = pat.matcher(text);
         if (match.find())
-            return match.group(0);
+            return match.group(1);
         return "";
     }
     
