@@ -180,21 +180,6 @@ public class AggregateP2PVlans {
             message = "GRI=" + p2pvlan.getGlobalReservationId() + ", Status=" + p2pvlan.getStatus() +
                     "\nNote: You may delete the VLAN and re-create.";
         } else {
-            AggregateSlices slices = AggregateState.getAggregateSlices();
-            AggregateSlice slice = slices.getByName(sliceName);
-            //TODO update with RSPEC times
-            if (slice != null) {
-                if (slice.getCreatedTime() > startTime) {
-                    startTime = slice.getCreatedTime();
-                }
-                if (slice.getExpiredTime() >= endTime) {
-                    endTime = slice.getExpiredTime();
-                } else {//the slice would expire bfore VLAN
-                    //status = "FAILED";
-                    //message = "Slice=" + sliceName + " would be expired before the VLAN ends. No VLAN created.";
-                    log.warn("Slice=" + sliceName + " would be expired before the VLAN ends. but VLAN created anyway.");
-                }
-            } 
             // We no longer fail the vlanCreate due to nonexistence of slice. 
             // There is valid cases asking for stitching only p2pVlan. 
             //else {

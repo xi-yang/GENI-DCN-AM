@@ -13,15 +13,11 @@ import net.geni.aggregate.services.core.AggregateCapabilities;
 import org.apache.log4j.*;
 import net.geni.aggregate.services.core.AggregateState;
 import net.geni.aggregate.services.core.AggregateRspecManager;
-import net.geni.aggregate.services.core.AggregateSlicesPoller;
 import net.geni.aggregate.services.core.AggregateCapability;
 import net.geni.aggregate.services.core.AggregateException;
 import net.geni.aggregate.services.core.AggregateNode;
-import net.geni.aggregate.services.core.AggregateSlice;
 import net.geni.aggregate.services.core.AggregateP2PVlan;
 import net.geni.aggregate.services.core.AggregateP2PVlans;
-import net.geni.aggregate.services.core.AggregatePLC_APIClient;
-import net.geni.aggregate.services.core.AggregateSlices;
 import net.geni.aggregate.services.core.AggregateStitchTopologyRunner;
 import net.geni.aggregate.services.core.AggregateUser;
 import net.geni.aggregate.services.core.AggregateUtils;
@@ -145,27 +141,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
             return;
         }
         try {
-            //init the slices table
-          AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getSlicesTab() + " ( " +
-                    "id int(11) NOT NULL, " +
-                    "sliceId int(11) NOT NULL, " +
-                    "sliceName varchar(255) NOT NULL default '', " +
-                    "url text NOT NULL, " +
-                    "description text NOT NULL, " +
-                    "users text NOT NULL, " +
-                    "nodes text NOT NULL, " +
-                    "creatorId int(11) NOT NULL, " +
-                    "createdTime bigint(20) default NULL, " +
-                    "expiredTime bigint(20) default NULL, " +
-                    "addedSlice int(1) default NULL, " +
-                    "status varchar(255) NOT NULL default '', " +
-                    "PRIMARY KEY (id, sliceid)" +
-                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
-        } catch(AggregateException ex) {
-            ex.printStackTrace();
-            return;
-        }
-        try {
             //init the p2pvlans table
           AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS " + AggregateState.getP2PVlansTab() + " ( " +
                     "id int(11) NOT NULL, " +
@@ -180,6 +155,20 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "dstIpANdMask varchar(255) NOT NULL default '', " +
                     "bandwidth float NOT NULL, " +
                     "globalReservationId varchar(255) NOT NULL default '', " +
+                    "status varchar(255) NOT NULL default '', " +
+                    "PRIMARY KEY (id)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
+        } catch(AggregateException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        try {
+            //init the sdx_slivers table
+          AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS sdx_slivers ( " +
+                    "id int(11) NOT NULL, " +
+                    "sliceName varchar(255) NOT NULL, " +
+                    "requestJson longtext default NULL, " +
+                    "manifestJson longtext default NULL, " +
                     "status varchar(255) NOT NULL default '', " +
                     "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");
@@ -245,12 +234,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         AggregateStitchTopologyRunner stitchTopoRunner = new AggregateStitchTopologyRunner();
         stitchTopoRunner.start();
         AggregateState.setStitchTopoRunner(stitchTopoRunner);
-        
-        // PLC polling and DB sync thread
-        AggregateSlicesPoller aggregateSlicesPoller = new AggregateSlicesPoller();
-        //aggregateSlicesPoller.setPollInterval(AggregateState.getPollInterval());
-        aggregateSlicesPoller.start();
-        AggregateState.setSlicesPoller(aggregateSlicesPoller);
 
         log.info("AggregateWS init() finished!");
     }
@@ -261,252 +244,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
      */
     public void destroy(ServiceContext serviceContext) {
 
-    }
-
-    /**
-     * 
-     *
-     * @param createSlice14
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.CreateSliceResponse CreateSlice(
-            net.geni.aggregate.services.api.CreateSlice createSlice14)
-            throws AggregateFaultMessage {
-        CreateSliceType createSlice = createSlice14.getCreateSlice();
-        String sliceName = createSlice.getSliceID();
-        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceName.contains(AggregateState.getPlcPrefix())) {
-            sliceName = AggregateState.getPlcPrefix() + sliceName;
-        }
-        String url = createSlice.getUrl();
-        String description = createSlice.getDescription();
-        String user = createSlice.getUser();
-        String[] nodes = createSlice.getNode();
-
-        //get authorized/registered user. AggregateFaultMessage thrown if failed
-        AggregateUser authUser = this.getAuthorizedUser();
-        if (!(user.equalsIgnoreCase(authUser.getName()) || user.equalsIgnoreCase(authUser.getEmail()))){
-            throw new AggregateFaultMessage("CreateSlice: user " + user + " is not the message signer");
-        }
-
-        AggregateSlices slices = AggregateState.getAggregateSlices();
-        AggregateSlice slice = slices.createSlice(sliceName, url, description, user, nodes, true);
-        String status = (slice == null?"FAILED":"SUCCESSFUL");
-
-        //form response
-        CreateSliceResponseType createSliceResponseType = new CreateSliceResponseType();
-        CreateSliceResponse createSliceResponse = new CreateSliceResponse();
-        createSliceResponseType.setSliceID(sliceName);
-        createSliceResponseType.setStatus(status);
-        createSliceResponse.setCreateSliceResponse(createSliceResponseType);
-        return createSliceResponse;
-    }
-
-    /**
-     * 
-     *
-     * @param updateSlice0
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.UpdateSliceResponse UpdateSlice(
-            net.geni.aggregate.services.api.UpdateSlice updateSlice0)
-            throws AggregateFaultMessage {
-        UpdateSliceType updateSlice = updateSlice0.getUpdateSlice();
-        String sliceName = updateSlice.getSliceID();
-        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceName.contains(AggregateState.getPlcPrefix())) {
-            sliceName = AggregateState.getPlcPrefix() + sliceName;
-        }
-        String url = updateSlice.getUrl();
-        String description = updateSlice.getDescription();
-        String[] users = updateSlice.getUser();
-        String[] nodes = updateSlice.getNode();
-        int expires = updateSlice.getExpires();
-
-        //get authorized/registered user. AggregateFaultMessage thrown if failed
-        AggregateUser authUser = this.getAuthorizedUser();
-        //TODO: verify the authUser is the creator of the slice
-
-        AggregateSlices slices = AggregateState.getAggregateSlices();
-        int ret = slices.updateSlice(sliceName, url, description, expires, users, nodes);
-
-        //form response
-        UpdateSliceResponseType updateSliceResponseType = new UpdateSliceResponseType();
-        UpdateSliceResponse updateSliceResponse = new UpdateSliceResponse();
-        String status = "";
-        switch (ret) {
-            case 1: 
-                status = "SUCCESSFUL";
-                break;
-            case 2: 
-                status = "FAILED";
-                break;
-            default: status = "FAILED";
-        }
-        updateSliceResponseType.setStatus(status);
-        updateSliceResponse.setUpdateSliceResponse(updateSliceResponseType);
-        return updateSliceResponse;
-    }
-
-    /**
-     * 
-     *
-     * @param deleteSlice18
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.DeleteSliceResponse DeleteSlice(
-            net.geni.aggregate.services.api.DeleteSlice deleteSlice18)
-            throws AggregateFaultMessage {
-        DeleteSliceType deleteSlice = deleteSlice18.getDeleteSlice();
-        String sliceName = deleteSlice.getSliceID();
-        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceName.contains(AggregateState.getPlcPrefix())) {
-            sliceName = AggregateState.getPlcPrefix() + sliceName;
-        }
-
-        //get authorized/registered user. AggregateFaultMessage thrown if failed
-        AggregateUser authUser = this.getAuthorizedUser();
-        //TODO: verify the authUser is the creator of the slice
-
-        AggregateSlices slices = AggregateState.getAggregateSlices();
-        int ret = slices.deleteSlice(sliceName);
-
-        //form response
-        DeleteSliceResponseType deleteSliceResponseType = new DeleteSliceResponseType();
-        DeleteSliceResponse deleteSliceResponse = new DeleteSliceResponse();
-        String status = "";
-        switch (ret) {
-            case 1: 
-                status = "SUCCESSFUL";
-                break;
-            case 2: 
-                status = "FAILED";
-                break;
-            default: status = "FAILED";
-        }
-
-        deleteSliceResponseType.setStatus(status);
-        deleteSliceResponse.setDeleteSliceResponse(deleteSliceResponseType);
-        return deleteSliceResponse;
-    }
-
-    /**
-     * 
-     *
-     * @param querySlice6
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.QuerySliceResponse QuerySlice(
-            net.geni.aggregate.services.api.QuerySlice querySlice6)
-            throws AggregateFaultMessage {
-        QuerySliceType querySlice = querySlice6.getQuerySlice();
-        String[] sliceNames = querySlice.getSliceID();
-        for (int i = 0; i < sliceNames.length; i++) {
-            if (!AggregateState.getPlcPrefix().isEmpty() && !sliceNames[i].contains(AggregateState.getPlcPrefix())) {
-                sliceNames[i] = AggregateState.getPlcPrefix() + sliceNames[i];
-            }
-        }
-
-        //get authorized/registered user. AggregateFaultMessage thrown if failed
-        AggregateUser authUser = this.getAuthorizedUser();
-
-        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
-        Vector<HashMap> hmSlices = new Vector<HashMap>();
-        plcClient.querySlice(sliceNames, hmSlices);
-        plcClient.logoff();
-        if (hmSlices.isEmpty() || hmSlices.get(0).isEmpty()) {
-            throw new AggregateFaultMessage("Unkown Slice '" + sliceNames[0] + "' or Failure in retrieve slice data from PLC");
-        }
-
-        //form response
-        QuerySliceResponseType querySliceResponseType = new QuerySliceResponseType();
-        QuerySliceResponse querySliceResponse = new QuerySliceResponse();
-        Vector<String> qrsV = new Vector<String>();
-        for (HashMap hm: hmSlices) {
-            qrsV.add(hm.toString());
-        }
-        String[] qrs = new String[qrsV.size()];
-        qrs = qrsV.toArray(qrs);
-        querySliceResponseType.setQueryResult(qrs);
-        querySliceResponse.setQuerySliceResponse(querySliceResponseType);
-        return querySliceResponse;        
-    }
-
-    /**
-     * 
-     *
-     * @param startSlice12
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.StartSliceResponse StartSlice(
-            net.geni.aggregate.services.api.StartSlice startSlice12)
-            throws AggregateFaultMessage {
-        StartSliceType startSlice = startSlice12.getStartSlice();
-        String sliceName = startSlice.getSliceID();
-        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceName.contains(AggregateState.getPlcPrefix())) {
-            sliceName = AggregateState.getPlcPrefix() + sliceName;
-        }
-
-        //get authorized/registered user. AggregateFaultMessage thrown if failed
-        AggregateUser authUser = this.getAuthorizedUser();
-
-        //The below logic wil be moved into AggregateSlices
-        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
-        int ret = plcClient.startStopSlice(sliceName, true);
-
-        //form response
-        StartSliceResponseType startSliceResponseType = new StartSliceResponseType();
-        StartSliceResponse startSliceResponse = new StartSliceResponse();
-        String status = "";
-        switch (ret) {
-            case 1: 
-                status = "SUCCESSFUL";
-                break;
-            case 2: 
-                status = "FAILED";
-                break;
-            default: status = "FAILED";
-        }
-        startSliceResponseType.setStatus(status);
-        startSliceResponse.setStartSliceResponse(startSliceResponseType);
-        return startSliceResponse;
-    }
-
-    /**
-     * 
-     *
-     * @param stopSlice2
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.StopSliceResponse StopSlice(
-            net.geni.aggregate.services.api.StopSlice stopSlice2)
-            throws AggregateFaultMessage {
-        StopSliceType stopSlice = stopSlice2.getStopSlice();
-        String sliceName = stopSlice.getSliceID();
-        if (!AggregateState.getPlcPrefix().isEmpty() && !sliceName.contains(AggregateState.getPlcPrefix())) {
-            sliceName = AggregateState.getPlcPrefix() + sliceName;
-        }
-
-        //get authorized/registered user. AggregateFaultMessage thrown if failed
-        AggregateUser authUser = this.getAuthorizedUser();
-
-        //The below logic wil be moved into AggregateSlices
-        AggregatePLC_APIClient plcClient = AggregatePLC_APIClient.getPLCClient();
-        int ret = plcClient.startStopSlice(sliceName, false);
-
-        //form response
-        StopSliceResponseType stopSliceResponseType = new StopSliceResponseType();
-        StopSliceResponse stopSliceResponse = new StopSliceResponse();
-        String status = "";
-        switch (ret) {
-            case 1: 
-                status = "SUCCESSFUL";
-                break;
-            case 2: 
-                status = "FAILED";
-                break;
-            default: status = "FAILED";
-        }
-        stopSliceResponseType.setStatus(status);
-        stopSliceResponse.setStopSliceResponse(stopSliceResponseType);
-        return stopSliceResponse;
     }
 
     /**
@@ -552,54 +289,6 @@ public class AggregateWS implements AggregateGENISkeletonInterface
         listNodesResponseType.setListNodesResponseTypeSequence((ListNodesResponseTypeSequence[]) lnrtsV.toArray(new ListNodesResponseTypeSequence[]{}));
         listNodesResponse.setListNodesResponse(listNodesResponseType);
         return listNodesResponse;
-    }
-
-    /**
-     * 
-     *
-     * @param listSlices16
-     * @throws AggregateFaultMessage :
-     */
-    public net.geni.aggregate.services.api.ListSlicesResponse ListSlices(
-            net.geni.aggregate.services.api.ListSlices listSlices16)
-            throws AggregateFaultMessage {
-        ListSlicesType listSlices = listSlices16.getListSlices();
-        ListSlicesTypeSequence[] listSlicesSeq = listSlices.getListSlicesTypeSequence();
-        String filter = listSlicesSeq[0].getFilter();
-
-        //get authorized/registered user. AggregateFaultMessage thrown if failed
-        AggregateUser authUser = this.getAuthorizedUser();
-
-        //form response
-        ListSlicesResponseType listSlicesResponseType = new ListSlicesResponseType();
-        ListSlicesResponse listSlicesResponse = new ListSlicesResponse();
-        List<AggregateSlice> slices = AggregateState.getAggregateSlices().getAll();
-        Vector<ListSlicesResponseTypeSequence> listSlicesResponseSeq = new Vector<ListSlicesResponseTypeSequence>();
-
-        for (int i = 0; i < slices.size(); i++) {
-            SliceDescriptorType sliceDesc = new SliceDescriptorType();
-            ListSlicesResponseTypeSequence listSlicesResponseTypeSeq = new ListSlicesResponseTypeSequence();
-            sliceDesc.setName(slices.get(i).getSliceName());
-            sliceDesc.setUrl(slices.get(i).getUrl());
-            sliceDesc.setDescription(slices.get(i).getDescription());
-            sliceDesc.setNodes(slices.get(i).getNodes());
-            int userId = slices.get(i).getCreatorId();
-            String creator = "userID=" + Integer.toString(userId, 10);
-            AggregateUser user = AggregateState.getAggregateUsers().getById(userId);
-            if (user != null) { //get the user name
-                creator = user.getName();
-            }
-            
-            sliceDesc.setCreator(creator);
-            sliceDesc.setCreatedTime(slices.get(i).getCreatedTime());
-            sliceDesc.setExpiredTime(slices.get(i).getExpiredTime());
-            listSlicesResponseTypeSeq.setSlice(sliceDesc);
-            listSlicesResponseSeq.add(listSlicesResponseTypeSeq);
-        }
-        listSlicesResponseType.setListSlicesResponseTypeSequence((ListSlicesResponseTypeSequence[]) listSlicesResponseSeq.toArray(new ListSlicesResponseTypeSequence[]{}));
-        listSlicesResponse.setListSlicesResponse(listSlicesResponseType);
-
-        return listSlicesResponse;
     }
 
     /**

@@ -28,7 +28,6 @@ public class AggregateState
     private static String capsTab = "capabilities";
     private static String nodesTab = "nodes";
     private static String interfacesTab = "interfaces";
-    private static String slicesTab = "slices";
     private static String usersTab = "users";
     private static String p2pvlansTab = "p2pvlans";
     private static String networksTab = "networks";
@@ -75,7 +74,6 @@ public class AggregateState
     private static AggregateCapabilities aggregateCaps = null;
     private static AggregateNodes aggregateNodes = null;
     private static AggregateNetworkInterfaces aggregateInterfaces = null;
-    private static AggregateSlices aggregateSlices = null;
     private static AggregateP2PVlans aggregateP2PVlans = null;
     private static AggregateExternalResources aggregateExtResources = null;
     private static AggregateUsers aggregateUsers = null;
@@ -83,7 +81,6 @@ public class AggregateState
     // Global states
     private static AggregateRspecManager aggregateRspecManager = null;
     private static AggregateRspecHandler aggregateRspecHandler = null;
-    private static AggregateSlicesPoller aggregateSlicesPoller = null;
     private static AggregateStitchTopologyRunner stitchTopoRunner = null;
     private static final int pollInterval = 60000; //miliseconds
 
@@ -186,7 +183,6 @@ public class AggregateState
         aggregateCaps = new AggregateCapabilities();
         aggregateNodes = new AggregateNodes();
         aggregateInterfaces = new AggregateNetworkInterfaces();
-        aggregateSlices = new AggregateSlices();
         aggregateP2PVlans = new AggregateP2PVlans();
         aggregateExtResources = new AggregateExternalResources();
         aggregateUsers = new AggregateUsers();
@@ -209,10 +205,6 @@ public class AggregateState
         return aggregateRspecHandler;
     }
 
-    public static AggregateSlicesPoller getSlicesPoller() {
-        return aggregateSlicesPoller;
-    }
-
     public static AggregateStitchTopologyRunner getStitchTopoRunner() {
         return stitchTopoRunner;
     }
@@ -223,10 +215,6 @@ public class AggregateState
 
     public static void setRspecManager(AggregateRspecManager rspecMan) {
         AggregateState.aggregateRspecManager = rspecMan;
-    }
-
-    public static void setSlicesPoller(AggregateSlicesPoller aggregateSlicesPoller) {
-        AggregateState.aggregateSlicesPoller = aggregateSlicesPoller;
     }
 
     public static int getPollInterval() {
@@ -243,10 +231,6 @@ public class AggregateState
 
     public static AggregateNetworkInterfaces getAggregateInterfaces() {
         return aggregateInterfaces;
-    }
-
-    public static AggregateSlices getAggregateSlices() {
-        return aggregateSlices;
     }
 
     public static AggregateP2PVlans getAggregateP2PVlans() {
@@ -291,10 +275,6 @@ public class AggregateState
 
     public static String getInterfacesTab() {
         return interfacesTab;
-    }
-
-    public static String getSlicesTab() {
-        return slicesTab;
     }
 
     public static String getUsersTab() {

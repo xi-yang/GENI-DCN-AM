@@ -28,6 +28,7 @@ import javax.xml.transform.dom.*;
 import org.w3c.dom.*;
 import java.io.StringWriter;
 import java.io.StringReader;
+import net.geni.www.resources.rspec.ext.sdx._1.SDXContent;
 
 /**
  *
@@ -51,17 +52,47 @@ public class Rspecv3Test {
         JAXBElement<RSpecContents> jaxbRspec = null;
         StitchContent stitchObj = null;
         JAXBElement<StitchContent> jaxbRspec2 = null;
+        SDXContent sdxObj = null;
+        JAXBElement<SDXContent> jaxbRspec3 = null;
         try {
             StringReader reader = new StringReader(rspecXml);
             JAXBContext jc = JAXBContext.newInstance("net.geni.www.resources.rspec._3");
             Unmarshaller unm = jc.createUnmarshaller();
             jaxbRspec = (JAXBElement<RSpecContents>) unm.unmarshal(reader);
             rspecV3Obj = jaxbRspec.getValue();
-            LinkContents link = (LinkContents)((JAXBElement)rspecV3Obj.getAnyOrNodeOrLink().get(3)).getValue();
-            String vlantag = AggregateUtils.getAnyAttrString(link.getOtherAttributes(),"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/", "vlantag");
-            JAXBContext payloadContext = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_1");
-            jaxbRspec2 = (JAXBElement<StitchContent>)payloadContext.createUnmarshaller().unmarshal((org.w3c.dom.Node) rspecV3Obj.getAnyOrNodeOrLink().get(4));
-            stitchObj = jaxbRspec2.getValue();
+            
+            Iterator itr = rspecV3Obj.getAnyOrNodeOrLink().iterator();
+            while (itr.hasNext()) {
+                Object obj = itr.next();
+                if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
+                    String elemName = ((JAXBElement)obj).getName().getLocalPart();
+                    if (elemName.equalsIgnoreCase("node")) {
+                        NodeContents node = (NodeContents)((JAXBElement)obj).getValue();
+                    } else if (elemName.equalsIgnoreCase("link")) {
+                        LinkContents link = (LinkContents)((JAXBElement)obj).getValue();
+                        String vlantag = AggregateUtils.getAnyAttrString(link.getOtherAttributes(),"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/", "vlantag");                        
+                    }
+                } else if (obj.getClass().getName().contains("ElementNSImpl")) {
+                    String elemName = AggregateUtils.getAnyName(obj);
+                    if (elemName.equalsIgnoreCase("stitching")) {
+                        try {
+                            JAXBContext payloadContext = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_1");
+                            jaxbRspec2 = (JAXBElement<StitchContent>)payloadContext.createUnmarshaller().unmarshal((org.w3c.dom.Node)obj);
+                            stitchObj = jaxbRspec2.getValue();
+                        } catch (Exception e) {
+                            throw new AggregateException("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
+                        }
+                    } else if (elemName.equalsIgnoreCase("sdx")) {
+                        try {
+                            JAXBContext payloadContext = JAXBContext.newInstance("net.geni.www.resources.rspec.ext.sdx._1");
+                            jaxbRspec3 = (JAXBElement<SDXContent>)payloadContext.createUnmarshaller().unmarshal((org.w3c.dom.Node)obj);
+                            sdxObj = jaxbRspec3.getValue();
+                        } catch (Exception e) {
+                            throw new AggregateException("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
+                        }
+                    }
+                }
+            }
         } catch (Exception e) {
             System.err.println("Error in unmarshling GENI RSpec v3 contents: " + e.getMessage());
             System.exit(-1);

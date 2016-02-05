@@ -60,36 +60,6 @@
         /**
          * Auto generated method signature
          * 
-                                    * @param updateSlice
-             * @throws AggregateFaultMessage : 
-         */
-
-        
-                public net.geni.aggregate.services.api.UpdateSliceResponse UpdateSlice
-                (
-                  net.geni.aggregate.services.api.UpdateSlice updateSlice
-                 )
-            throws AggregateFaultMessage;
-        
-         
-        /**
-         * Auto generated method signature
-         * 
-                                    * @param stopSlice
-             * @throws AggregateFaultMessage : 
-         */
-
-        
-                public net.geni.aggregate.services.api.StopSliceResponse StopSlice
-                (
-                  net.geni.aggregate.services.api.StopSlice stopSlice
-                 )
-            throws AggregateFaultMessage;
-        
-         
-        /**
-         * Auto generated method signature
-         * 
                                     * @param deleteSliceNetwork
              * @throws AggregateFaultMessage : 
          */
@@ -98,21 +68,6 @@
                 public net.geni.aggregate.services.api.DeleteSliceNetworkResponse DeleteSliceNetwork
                 (
                   net.geni.aggregate.services.api.DeleteSliceNetwork deleteSliceNetwork
-                 )
-            throws AggregateFaultMessage;
-        
-         
-        /**
-         * Auto generated method signature
-         * 
-                                    * @param querySlice
-             * @throws AggregateFaultMessage : 
-         */
-
-        
-                public net.geni.aggregate.services.api.QuerySliceResponse QuerySlice
-                (
-                  net.geni.aggregate.services.api.QuerySlice querySlice
                  )
             throws AggregateFaultMessage;
         
@@ -173,66 +128,6 @@
                 public net.geni.aggregate.services.api.ListNodesResponse ListNodes
                 (
                   net.geni.aggregate.services.api.ListNodes listNodes
-                 )
-            throws AggregateFaultMessage;
-        
-         
-        /**
-         * Auto generated method signature
-         * 
-                                    * @param startSlice
-             * @throws AggregateFaultMessage : 
-         */
-
-        
-                public net.geni.aggregate.services.api.StartSliceResponse StartSlice
-                (
-                  net.geni.aggregate.services.api.StartSlice startSlice
-                 )
-            throws AggregateFaultMessage;
-        
-         
-        /**
-         * Auto generated method signature
-         * 
-                                    * @param createSlice
-             * @throws AggregateFaultMessage : 
-         */
-
-        
-                public net.geni.aggregate.services.api.CreateSliceResponse CreateSlice
-                (
-                  net.geni.aggregate.services.api.CreateSlice createSlice
-                 )
-            throws AggregateFaultMessage;
-        
-         
-        /**
-         * Auto generated method signature
-         * 
-                                    * @param listSlices
-             * @throws AggregateFaultMessage : 
-         */
-
-        
-                public net.geni.aggregate.services.api.ListSlicesResponse ListSlices
-                (
-                  net.geni.aggregate.services.api.ListSlices listSlices
-                 )
-            throws AggregateFaultMessage;
-        
-         
-        /**
-         * Auto generated method signature
-         * 
-                                    * @param deleteSlice
-             * @throws AggregateFaultMessage : 
-         */
-
-        
-                public net.geni.aggregate.services.api.DeleteSliceResponse DeleteSlice
-                (
-                  net.geni.aggregate.services.api.DeleteSlice deleteSlice
                  )
             throws AggregateFaultMessage;
         

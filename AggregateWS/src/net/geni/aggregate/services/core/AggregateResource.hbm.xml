@@ -4,7 +4,7 @@
   <class name="net.geni.aggregate.services.core.AggregateResource" table="resources">
     <meta attribute="scope-class">public abstract</meta>
     <id column="id" name="id">
-      <generator class="increment"></generator>
+      <generator class="increment"/>
     </id>
     <property column="type" name="type"/>
     <property column="rspecId" name="rspecId"/>
@@ -29,22 +29,6 @@
       <property column="attachedLinks" name="attachedLinkUrns"/>
       <property column="peerInterfaces" name="peerInterfaces"/>
     </joined-subclass>
-    <joined-subclass name="net.geni.aggregate.services.core.AggregateSlice" table="slices">
-      <key column="id"/>
-      <property column="sliceId" name="sliceId"/>
-      <property column="sliceName" name="sliceName"/>
-      <property column="url" name="url"/>
-      <property column="description" name="description"/>
-      <property column="users" name="users"/>
-      <property column="nodes" name="nodes"/>
-      <property column="creatorId" name="creatorId"/>
-      <property column="createdTime" name="createdTime"/>
-      <property column="expiredTime" name="expiredTime"/>
-      <property name="addedSlice" not-null="true" >
-        <column sql-type="BOOLEAN" not-null="true" name="addedSlice" />
-      </property>
-      <property column="status" name="status"/>
-    </joined-subclass>
     <joined-subclass name="net.geni.aggregate.services.core.AggregateP2PVlan" table="p2pvlans">
       <key column="id"/>
       <property column="vlanTag" name="vtag"/>
@@ -59,6 +43,12 @@
       <property column="bandwidth" name="bandwidth"/>
       <property column="globalReservationId" name="gri"/>
       <property column="status" name="status"/>
+    </joined-subclass>
+    <joined-subclass name="net.geni.aggregate.services.core.AggregateSdxSlivers" table="sdx_slivers">
+      <key column="id"/>
+      <property column="sliceName" name="sliceName"/>
+      <property column="requestJson" name="requestJson"/>
+      <property column="manifestJson" name="manifestJson"/>
     </joined-subclass>
     <joined-subclass name="net.geni.aggregate.services.core.AggregateExternalResource" table="ext_resources">
       <key column="id"/>

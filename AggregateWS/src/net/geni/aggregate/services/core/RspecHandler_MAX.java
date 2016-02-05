@@ -615,29 +615,6 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
                     }
                 }
                 rspecMan +=  "</computeNode>";
-            } else if (rc.getType().equalsIgnoreCase("computeSlice")) {
-                AggregateSlice as = (AggregateSlice)rc;
-                rspecMan = rspecMan + "<computeSlice id=\""+as.getSliceName()+"\">";
-                rspecMan = rspecMan + "<node_ids>"+as.getNodes()+"</node_ids>";
-                rspecMan = rspecMan + "<user_ids>"+as.getUsers()+"</user_ids>";
-                rspecMan = rspecMan + "<expires>"+Long.toString(as.getExpiredTime())+"</expires>";
-                rspecMan +=  "</computeSlice>";
-                String[] nodes = as.getNodes().split("[,\\s]");
-                for (String nodeId: nodes) {
-                    if (nodeId.isEmpty())
-                        continue;
-                    AggregateNode an = AggregateState.getAggregateNodes().getByNodeId(Integer.valueOf(nodeId));
-                    if (an != null) {
-                        boolean found = false;
-                        for (AggregateResource rc1: rspec.getResources()) {
-                            if ((rc1.getType().equalsIgnoreCase("computeNode") || rc1.getType().equalsIgnoreCase("planetlabNodeSliver"))
-                                    && ((AggregateNode)rc1).getNodeId() == Integer.valueOf(nodeId))
-                                found = true;
-                        }
-                        if (!found)
-                            rspec.getResources().add(an);
-                    }
-                }
             } else if (rc.getType().equalsIgnoreCase("externalResource")) {
                 AggregateExternalResource er = (AggregateExternalResource)rc;
                 rspecMan = rspecMan + "<externalResource id=\""+er.getUrn()+"\" type=\""+er.getSubType()+"\">";

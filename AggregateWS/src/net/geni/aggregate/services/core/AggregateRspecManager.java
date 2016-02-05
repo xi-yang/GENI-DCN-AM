@@ -100,17 +100,12 @@ public class AggregateRspecManager extends Thread{
             if (session.isOpen()) session.close();
         }
 
-        List<AggregateSlice> slices = AggregateState.getAggregateSlices().getAll();
         List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
         List<AggregateExternalResource> ERs = AggregateState.getAggregateExtResources().getAll();
 
         synchronized(rspecThreads) {
             for (AggregateRspec aggrRspec: aggrRspecs) {
-                //reload computeSlices
-               for (AggregateSlice slice: slices) {
-                    if (slice.getRspecId() == aggrRspec.getId())
-                        aggrRspec.getResources().add(slice);
-                }
+                //@TODO: reload sdxSlivers
                 //reload p2pVlans
                 for (AggregateP2PVlan p2pvlan: p2pvlans) {
                     if (p2pvlan.getRspecId() == aggrRspec.getId())
@@ -170,28 +165,7 @@ public class AggregateRspecManager extends Thread{
         for (int n = 0; n < rspec.getResources().size(); n++) {
             AggregateResource rc = rspec.getResources().get(n);
             // scan compute (plc) slices 
-            if (rc.getType().equalsIgnoreCase("computeSlice")) {
-                AggregateSlice as = (AggregateSlice)rc;
-                String[] nodes = as.getNodes().split("[,\\s]");
-                for (String nodeId: nodes) {
-                    if (nodeId.isEmpty())
-                        continue;
-                    AggregateNode an = AggregateState.getAggregateNodes().getByNodeId(Integer.valueOf(nodeId));
-                    if (an != null) {
-                        boolean haveAdded = false;
-                        for (AggregateResource rc1: rspec.getResources()) {
-                            if ((rc1.getType().equalsIgnoreCase("computeNode") || rc1.getType().equalsIgnoreCase("planetlabNodeSliver"))
-                                    && ((AggregateNode)rc1).getNodeId() == Integer.valueOf(nodeId))
-                                haveAdded = true;
-                        }
-                        if (!haveAdded) {
-                            AggregateNode an2 = an.duplicate();
-                            an2.setClientId("instance-of-node"+nodeId);
-                            an2.setType("planetlabNodeSliver");
-                            rspec.getResources().add(an2);
-                        }
-                    }
-                }
+            if (rc.getType().equalsIgnoreCase("sdxSliver")) {
             }
         }
         for (int i = 0; i < rspec.getResources().size(); i++) {

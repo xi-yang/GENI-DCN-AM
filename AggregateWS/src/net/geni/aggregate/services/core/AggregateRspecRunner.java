@@ -88,22 +88,6 @@ public class AggregateRspecRunner extends Thread {
                 return;
             }
 
-            //log.info("SLICE-STARTING ");
-            rspec.setStatus("SLICE-STARTING");
-            manager.updateRspec(rspec);
-            try {
-                this.createSlice();
-            } catch (AggregateException e) {
-                log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
-                e.printStackTrace();
-                rspec.setStatus("SLICE-FAILED");
-                manager.updateRspec(rspec);
-            }
-            if (rspec.getStatus().equalsIgnoreCase("SLICE-FAILED")) {
-                rollback(); //revert
-                return;
-            }
-
             //log.info("STITCHING-STARTING");
             rspec.setStatus("STITCHING-STARTING");
             manager.updateRspec(rspec);
@@ -186,70 +170,6 @@ public class AggregateRspecRunner extends Thread {
             this.rollback();
         } else {
             this.terminate();
-        }
-    }
-
-    private void createSlice() throws AggregateException {
-        String nodes = "";
-        List<AggregateResource> resources = rspec.getResources();
-        for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).getType().equalsIgnoreCase("planetlabNodeSliver")
-                    || resources.get(i).getType().equalsIgnoreCase("computeNode")) {
-                AggregateNode node = (AggregateNode) resources.get(i);
-                //verify planetlab capability
-                if (!node.getCapabilities().contains("planetlab")) {
-                    continue;
-                }
-                nodes = nodes + AggregateUtils.getUrnField(node.getUrn(), "node").toLowerCase();
-                if (i < resources.size() - 1) {
-                    nodes += ":";
-                }
-            }
-        }
-        if (nodes.isEmpty()) {
-            rspec.setStatus("SLICE-SKIPPED");
-            return;
-        }
-        //TODO: Regulate the slicename (limit-length, no dashes etc.)
-        String sliceName = AggregateState.getPlcPrefix() + rspec.getRspecName();
-        String url = "http://" + rspec.getAggregateName();
-        String description = "Rspec:" + rspec.getRspecName() + " on aggregate:" + rspec.getAggregateName();
-        AggregateSlice aggrSlice = AggregateState.getAggregateSlices().createSlice(sliceName, url, description,
-                ((rspec.getUsers() == null || rspec.getUsers().isEmpty() || rspec.getUsers().size() == 1) ? AggregateState.getPlcPI() : rspec.getUsers().get(1)),
-                nodes.split(":"), rspec.isAddPlcSlice());
-        if (aggrSlice != null) {
-            aggrSlice.setStatus("CREATED");
-            aggrSlice.setType("computeSlice");
-            aggrSlice.setRspecId(rspec.getId());
-            resources.add(aggrSlice);
-            AggregateState.getAggregateSlices().update(aggrSlice);
-        } else {
-            rspec.setStatus("SLICE-FAILED");
-            throw (new AggregateException("Failed to create slice:" + sliceName));
-        }
-    }
-
-    private void deleteSlice() throws AggregateException {
-        List<AggregateResource> resources = rspec.getResources();
-        for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).getType().equalsIgnoreCase("computeSlice")) {
-                AggregateSlice slice = (AggregateSlice) resources.get(i);
-                log.debug("start - delete slice: " + slice.getSliceName());
-                AggregateState.getAggregateSlices().deleteSlice(slice.getSliceName());
-                log.debug("end - delete slice: " + slice.getSliceName());
-            }
-        }
-    }
-
-    private void modifySlice() throws AggregateException {
-        List<AggregateResource> resources = rspec.getResources();
-        for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).getType().equalsIgnoreCase("computeSlice")) {
-                AggregateSlice slice = (AggregateSlice) resources.get(i);
-                log.debug("start - renew slice: " + slice.getSliceName());
-                AggregateState.getAggregateSlices().modifySlice(slice.getSliceName(), (int) rspec.getEndTime());
-                log.debug("end - renew slice: " + slice.getSliceName());
-            }
         }
     }
 
@@ -350,11 +270,7 @@ public class AggregateRspecRunner extends Thread {
                             + " with AggregateDB."));
                 }
                 if (p2pvlan.getStatus().equalsIgnoreCase("ACTIVE")) {
-                    if (!p2pvlan.hasVlanOnNodes() && !p2pvlan.setVlanOnNodes(true)) {
-                        throw (new AggregateException("P2PVlan:" + p2pvlan.getDescription()
-                                + " failed to add VLAN interface on source or destination node"));
-                    }
-                    p2pvlan.setHasVlanOnNodes(true);
+                    ;
                 } else if (p2pvlan.getStatus().equalsIgnoreCase("RESERVED")) {
                     allActive = false;
                 } else {
@@ -471,17 +387,8 @@ public class AggregateRspecRunner extends Thread {
                     p2pvlan.setRspecId(rspec.getId());
                     String sliceName = AggregateState.getPlcPrefix() + rspec.getRspecName();
                     p2pvlan.setSliceName(sliceName);
-                    AggregateSlice slice = AggregateState.getAggregateSlices().getByName(sliceName);
                     long startTime = rspec.getStartTime();
                     long endTime = rspec.getEndTime();
-                    if (slice != null) {
-                        startTime = System.currentTimeMillis() / 1000;
-                        if (slice.getExpiredTime() >= endTime) {
-                            endTime = slice.getExpiredTime();
-                        } else {//the slice would expire bfore VLAN
-                            throw (new AggregateException("Failed to create stitching P2PVlan for an expired internal slice: " + sliceName));
-                        }
-                    }
                     p2pvlan.setStartTime(startTime);
                     p2pvlan.setEndTime(endTime);
                     p2pvlan.setDescription(rspec.getRspecName() + String.format(" (%s)", p2pvlan.getClientId()));
@@ -494,7 +401,6 @@ public class AggregateRspecRunner extends Thread {
                 }
             }
         }
-        //TODO: provision the stub inerface using PLC SSH client
     }
 
     void deleteStitchingResources() throws AggregateException {
@@ -528,7 +434,6 @@ public class AggregateRspecRunner extends Thread {
     private void renew() {
         log.debug("start - renewing rspec: " + rspec.getRspecName());
         try {
-            this.modifySlice();
             this.modifyP2PVlans();
         } catch (AggregateException e) {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
@@ -543,16 +448,10 @@ public class AggregateRspecRunner extends Thread {
             if (rspec.getStatus().matches("^VLANS.*")) {
                 deleteP2PVlans();
                 deleteStitchingResources();
-                deleteSlice();
                 deleteExternalSliver();
             }
             if (rspec.getStatus().matches("^STITCHING.*")) {
                 deleteStitchingResources();
-                deleteSlice();
-                deleteExternalSliver();
-            }
-            if (rspec.getStatus().matches("^SLICE.*")) {
-                deleteSlice();
                 deleteExternalSliver();
             }
             if (rspec.getStatus().matches("^EXT-SLIVER.*")) {
@@ -571,7 +470,6 @@ public class AggregateRspecRunner extends Thread {
         try {
             deleteP2PVlans();
             deleteStitchingResources();
-            deleteSlice();
             deleteExternalSliver();
         } catch (AggregateException e) {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());

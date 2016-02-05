@@ -22,6 +22,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import net.geni.www.resources.rspec._3.*;
+import net.geni.www.resources.rspec.ext.sdx._1.SDXContent;
+import net.geni.www.resources.rspec.ext.sdx._1.VirtualCloudContent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -41,6 +43,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         aggrRspec.setRequestXml(rspecXml);
         RSpecContents rspecV3Obj = null;
         StitchContent stitchObj = null;
+        SDXContent sdxObj = null;
         try {
             StringReader reader = new StringReader(rspecXml);
             JAXBContext jc = JAXBContext.newInstance("net.geni.www.resources.rspec._3");
@@ -62,14 +65,21 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (elemName.equalsIgnoreCase("stitching")) {
                     try {
                         JAXBContext jc = JAXBContext.newInstance("edu.isi.east.hpn.rspec.ext.stitch._0_1");
-                        JAXBElement<StitchContent> jaxbRspec = (JAXBElement<StitchContent>) jc.createUnmarshaller().unmarshal((Node)obj);
+                        JAXBElement<StitchContent> jaxbRspec = (JAXBElement<StitchContent>) jc.createUnmarshaller().unmarshal((Node) obj);
                         stitchObj = jaxbRspec.getValue();
                     } catch (Exception e) {
-                        throw new AggregateException("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
+                        throw new AggregateException("Error in unmarshling GENI Stitching RSpec extension: " + e.getMessage());
                     }
 
+                } else if (elemName.equalsIgnoreCase("sdx")) {
+                    try {
+                        JAXBContext payloadContext = JAXBContext.newInstance("net.geni.www.resources.rspec.ext.sdx._1");
+                        JAXBElement<SDXContent> jaxbRspec = (JAXBElement<SDXContent>) payloadContext.createUnmarshaller().unmarshal((org.w3c.dom.Node) obj);
+                        sdxObj = jaxbRspec.getValue();
+                    } catch (Exception e) {
+                        throw new AggregateException("Error in unmarshling GENI SDX RSpec extension: " + e.getMessage());
+                    }
                 }
-
             }
         }
         // parse links -- require interfaces created under nodes
@@ -80,6 +90,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     parseAddLink(aggrRspec, (LinkContents)((JAXBElement)obj).getValue());
                 }
             }
+        }
+        // parse GENI SDX Rspec section
+        if (sdxObj != null) {
+            parseSdxResources(aggrRspec, sdxObj);
         }
         // parse GENI Stitching Rspec section
         if (stitchObj != null) {
@@ -374,6 +388,16 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
         }
     }
+    
+    
+    void parseSdxResources(AggregateRspec rspec, SDXContent sdx) throws AggregateException {
+        if (sdx.getVirtualCloud() != null && !sdx.getVirtualCloud().isEmpty()) {
+            for (VirtualCloudContent sdxVc: sdx.getVirtualCloud()) {
+                //@TODO: parse into requestJson
+            }
+        }
+    }
+    
     
     void parseStitchingResources(AggregateRspec rspec, StitchContent stitchingTopology) throws AggregateException {
         // stitching resources == <topology> that contatins one or more <path> elements

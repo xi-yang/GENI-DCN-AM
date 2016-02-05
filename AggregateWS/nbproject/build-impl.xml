@@ -593,6 +593,13 @@ is divided into following sections:
             <arg value="edu.isi.east.hpn.rspec.ext.stitch._0_1"/>
             <arg value="${build.dir}/rspecs/stitch-schema.xsd" />
         </java>
+        <java classname="com.sun.tools.internal.xjc.XJCFacade">
+            <arg value="-d" />
+            <arg value="${src.dir}"/>
+            <arg value="-p" />
+            <arg value="net.geni.www.resources.rspec.ext.sdx._1"/>
+            <arg value="${build.dir}/rspecs/sdx-schema.xsd" />
+        </java>
     </target>
 
     <!--
