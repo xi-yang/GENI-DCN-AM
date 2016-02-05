@@ -44,7 +44,7 @@
       <property column="globalReservationId" name="gri"/>
       <property column="status" name="status"/>
     </joined-subclass>
-    <joined-subclass name="net.geni.aggregate.services.core.AggregateSdxSlivers" table="sdx_slivers">
+    <joined-subclass name="net.geni.aggregate.services.core.AggregateSdxSliver" table="sdx_slivers">
       <key column="id"/>
       <property column="sliceName" name="sliceName"/>
       <property column="requestJson" name="requestJson"/>
