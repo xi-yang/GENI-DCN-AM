@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.geni.net/resources/rspec/ext/sdx/1/"
+    xmlns:SDX="http://www.geni.net/resources/rspec/ext/sdx/1/">
+
+    <xs:annotation>
+      <xs:documentation>
+        This is an example schema for the GENI Software Defined Exchange (SDX) extension.
+      </xs:documentation>
+    </xs:annotation>
+    
+  <!--GENI SDX -->
+  <xs:element name="sdx" type="SDX:SDXContent"/>
+  
+  <xs:complexType name="SDXContent">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:virtual_cloud"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:subnet"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:node"/>
+    </xs:sequence>
+    <xs:attribute use="required" name="lastUpdateTime" type="xs:string"/>
+  </xs:complexType>
+  
+  <!-- VirtualCloud -->
+  <xs:element name="virtual_cloud" type="SDX:VirtualCloudContent"/>
+  
+  <xs:complexType name="VirtualCloudContent">
+    <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="cidr" type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:subnet"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:route"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:gateway"/>
+    </xs:sequence>
+    <xs:attribute name="client_id" use="required" type="xs:string"/>
+    <xs:attribute name="provider_id" use="required" type="xs:string"/>
+  </xs:complexType>
+  
+  <!-- Node -->
+  <xs:element name="node" type="SDX:NodeContent"/>
+  
+  <xs:complexType name="NodeContent">
+    <xs:simpleContent>
+        <xs:extension base="xs:string">
+            <xs:attribute use="optional" name="public" type="xs:boolean"/>
+        </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  
+  <!-- Subnet -->
+  <xs:element name="subnet" type="SDX:SubnetContent"/>
+ 
+  <xs:complexType name="SubnetContent">
+    <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="cidr" type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:node"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:route"/>
+    </xs:sequence>
+    <xs:attribute name="client_id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Gateway -->
+  <xs:element name="gateway" type="SDX:GatewayContent"/>
+
+  <xs:complexType name="GatewayContent">
+    <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="to" type="SDX:AddressContent"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="from" type="SDX:AddressContent"/>
+    </xs:sequence>
+    <xs:attribute name="client_id" use="required" type="xs:string"/>
+    <xs:attribute name="type" use="optional" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Route -->
+  <xs:element name="route" type="SDX:RouteContent"/>
+
+  <xs:complexType name="RouteContent">
+    <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="to" type="SDX:AddressContent"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="from" type="SDX:AddressContent"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="next_hop" type="SDX:AddressContent"/>
+    </xs:sequence>
+    <xs:attribute name="client_id" use="optional" type="xs:string"/>
+    <xs:attribute name="type" use="optional" type="xs:string"/>
+  </xs:complexType>
+
+
+  <!-- AddressContent -->
+  <xs:complexType name="AddressContent">
+    <xs:simpleContent>
+        <xs:extension base="xs:string">
+            <xs:attribute use="optional" name="type" type="xs:string"/>
+        </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  
+</xs:schema>
