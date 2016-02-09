@@ -510,14 +510,17 @@ public class AggregateRspecRunner extends Thread {
             if (rspec.getStatus().matches("^VLANS.*")) {
                 deleteP2PVlans();
                 deleteStitchingResources();
+                deleteSdxSliver();
                 deleteExternalSliver();
             }
             if (rspec.getStatus().matches("^STITCHING.*")) {
                 deleteStitchingResources();
+                deleteSdxSliver();
                 deleteExternalSliver();
             }
             if (rspec.getStatus().matches("^SDX-SLIVER.*")) {
                 deleteSdxSliver();
+                deleteExternalSliver();
             }
             if (rspec.getStatus().matches("^EXT-SLIVER.*")) {
                 deleteExternalSliver();
@@ -535,6 +538,7 @@ public class AggregateRspecRunner extends Thread {
         try {
             deleteP2PVlans();
             deleteStitchingResources();
+            deleteSdxSliver();
             deleteExternalSliver();
         } catch (AggregateException e) {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
