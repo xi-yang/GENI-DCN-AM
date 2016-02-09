@@ -461,7 +461,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                 if (route.getNextHop() != null) {
                                     JSONObject addrJson = new JSONObject();
                                     routeJson.put("next_hop", addrJson);
-                                    if (route.getFrom().getType() != null) {
+                                    if (route.getNextHop().getType() != null) {
                                         addrJson.put("type", route.getNextHop().getType());
                                     }
                                     addrJson.put("value", route.getNextHop().getValue());
@@ -536,7 +536,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                 if (route.getNextHop() != null) {
                                     JSONObject addrJson = new JSONObject();
                                     routeJson.put("next_hop", addrJson);
-                                    if (route.getFrom().getType() != null) {
+                                    if (route.getNextHop().getType() != null) {
                                         addrJson.put("type", route.getNextHop().getType());
                                     }
                                     addrJson.put("value", route.getNextHop().getValue());
