@@ -47,6 +47,7 @@
     <joined-subclass name="net.geni.aggregate.services.core.AggregateSdxSliver" table="sdx_slivers">
       <key column="id"/>
       <property column="sliceName" name="sliceName"/>
+      <property column="serviceUuid" name="serviceUuid"/>
       <property column="requestJson" name="requestJson"/>
       <property column="manifestJson" name="manifestJson"/>
     </joined-subclass>

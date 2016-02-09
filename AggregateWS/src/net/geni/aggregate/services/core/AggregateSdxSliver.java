@@ -11,6 +11,7 @@ package net.geni.aggregate.services.core;
  */
 public class AggregateSdxSliver extends AggregateResource {
     private String sliceName = "";
+    private String serviceUuid = "";
     private String requestJson = "";
     private String manifestJson = "";
     private String status = "";

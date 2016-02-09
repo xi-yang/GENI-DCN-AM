@@ -167,6 +167,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
           AggregateUtils.executeDirectStatement("CREATE TABLE IF NOT EXISTS sdx_slivers ( " +
                     "id int(11) NOT NULL, " +
                     "sliceName varchar(255) NOT NULL, " +
+                    "serviceUuid varchar(255) NOT NULL, " +
                     "requestJson longtext default NULL, " +
                     "manifestJson longtext default NULL, " +
                     "status varchar(255) NOT NULL default '', " +
