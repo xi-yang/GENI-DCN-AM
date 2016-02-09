@@ -66,8 +66,8 @@
 
   <xs:complexType name="GatewayContent">
     <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="to" type="SDX:AddressContent"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="from" type="SDX:AddressContent"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="to" type="SDX:NetworkAddressContent"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="from" type="SDX:NetworkAddressContent"/>
     </xs:sequence>
     <xs:attribute name="client_id" use="required" type="xs:string"/>
     <xs:attribute name="type" use="optional" type="xs:string"/>
@@ -78,17 +78,17 @@
 
   <xs:complexType name="RouteContent">
     <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="1" name="to" type="SDX:AddressContent"/>
-        <xs:element minOccurs="0" maxOccurs="1" name="from" type="SDX:AddressContent"/>
-        <xs:element minOccurs="0" maxOccurs="1" name="next_hop" type="SDX:AddressContent"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="to" type="SDX:NetworkAddressContent"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="from" type="SDX:NetworkAddressContent"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="next_hop" type="SDX:NetworkAddressContent"/>
     </xs:sequence>
     <xs:attribute name="client_id" use="optional" type="xs:string"/>
     <xs:attribute name="type" use="optional" type="xs:string"/>
   </xs:complexType>
 
 
-  <!-- AddressContent -->
-  <xs:complexType name="AddressContent">
+  <!-- NetworkAddressContent -->
+  <xs:complexType name="NetworkAddressContent">
     <xs:simpleContent>
         <xs:extension base="xs:string">
             <xs:attribute use="optional" name="type" type="xs:string"/>
