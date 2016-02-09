@@ -76,6 +76,7 @@ public class AggregateState
     private static AggregateNetworkInterfaces aggregateInterfaces = null;
     private static AggregateP2PVlans aggregateP2PVlans = null;
     private static AggregateExternalResources aggregateExtResources = null;
+    private static AggregateSdxSlivers aggregateSdxSlivers = null;
     private static AggregateUsers aggregateUsers = null;
     
     // Global states
@@ -185,6 +186,7 @@ public class AggregateState
         aggregateInterfaces = new AggregateNetworkInterfaces();
         aggregateP2PVlans = new AggregateP2PVlans();
         aggregateExtResources = new AggregateExternalResources();
+        aggregateSdxSlivers = new AggregateSdxSlivers();
         aggregateUsers = new AggregateUsers();
     }
 
@@ -235,6 +237,10 @@ public class AggregateState
 
     public static AggregateP2PVlans getAggregateP2PVlans() {
         return aggregateP2PVlans;
+    }
+
+    public static AggregateSdxSlivers getAggregateSdxSlivers() {
+        return aggregateSdxSlivers;
     }
 
     public static AggregateExternalResources getAggregateExtResources() {

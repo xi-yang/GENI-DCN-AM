@@ -46,6 +46,27 @@ public class AggregateSdxSlivers {
         return true;
     }
 
+    public synchronized boolean delete(AggregateSdxSliver sliver) {
+        synchronized(this) {
+            if (sliver == null) {
+                return false;
+            }
+            try {
+                session = HibernateUtil.getSessionFactory().openSession();
+                tx = session.beginTransaction();
+                session.delete(sliver);
+                tx.commit();
+                } catch (Exception e) {
+                    tx.rollback();
+                    e.printStackTrace();
+                    return false;
+                } finally {
+                    if (session.isOpen()) session.close();
+                }
+        }
+        return true;
+    }
+
     public boolean delete(String urn) {
         AggregateSdxSliver s = this.getBySliceName(urn);
         synchronized(this) {

@@ -400,6 +400,7 @@ public class AggregateRspecRunner extends Thread {
                 AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
                 log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
                 //@TODO 
+                AggregateState.getAggregateSdxSlivers().add(sdxSliver);
                 log.debug("end - create SDX sliver: " + sdxSliver.getSliceName());
             }
         }
@@ -412,6 +413,7 @@ public class AggregateRspecRunner extends Thread {
             if (resources.get(i).getType().equalsIgnoreCase("sdxSliver")) {
                 AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
                 log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
+                AggregateState.getAggregateSdxSlivers().delete(sdxSliver);
                 //@TODO
                 log.debug("end - create SDX sliver: " + sdxSliver.getSliceName());
             }
