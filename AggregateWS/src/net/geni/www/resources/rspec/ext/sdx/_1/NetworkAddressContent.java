@@ -16,15 +16,15 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * <p>Java class for NodeReference complex type.
+ * <p>Java class for NetworkAddressContent complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="NodeReference">
+ * &lt;complexType name="NetworkAddressContent">
  *   &lt;simpleContent>
  *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *       &lt;attribute name="public" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/extension>
  *   &lt;/simpleContent>
  * &lt;/complexType>
@@ -33,15 +33,15 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "NodeReference", propOrder = {
+@XmlType(name = "NetworkAddressContent", propOrder = {
     "value"
 })
-public class NodeReference {
+public class NetworkAddressContent {
 
     @XmlValue
     protected String value;
-    @XmlAttribute(name = "public")
-    protected Boolean _public;
+    @XmlAttribute(name = "type")
+    protected String type;
 
     /**
      * Gets the value of the value property.
@@ -68,27 +68,27 @@ public class NodeReference {
     }
 
     /**
-     * Gets the value of the public property.
+     * Gets the value of the type property.
      * 
      * @return
      *     possible object is
-     *     {@link Boolean }
+     *     {@link String }
      *     
      */
-    public Boolean isPublic() {
-        return _public;
+    public String getType() {
+        return type;
     }
 
     /**
-     * Sets the value of the public property.
+     * Sets the value of the type property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Boolean }
+     *     {@link String }
      *     
      */
-    public void setPublic(Boolean value) {
-        this._public = value;
+    public void setType(String value) {
+        this.type = value;
     }
 
 }

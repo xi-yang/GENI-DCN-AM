@@ -429,6 +429,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                             JSONArray vmArray = new JSONArray();
                             for (NodeReference node: subnet.getNode()) {
                                 vmArray.add(node.getValue());
+                                //@TODO: add referene to AggregateNode
                             }
                             subnetJson.put("instances", vmArray);
                         }
@@ -441,15 +442,29 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                 if (route.getType() != null) {
                                     routeJson.put("type", route.getType());
                                 }
-                                //@TODO: use complex NetworkAddress in additoin to value 
                                 if (route.getTo() != null) {
-                                    routeJson.put("to", route.getTo().getValue());
+                                    JSONObject addrJson = new JSONObject();
+                                    routeJson.put("to", addrJson);
+                                    if (route.getTo().getType() != null) {
+                                        addrJson.put("type", route.getTo().getType());
+                                    }
+                                    addrJson.put("value", route.getTo().getValue());
                                 }
                                 if (route.getFrom() != null) {
-                                    routeJson.put("from", route.getFrom().getValue());
+                                    JSONObject addrJson = new JSONObject();
+                                    routeJson.put("from", addrJson);
+                                    if (route.getFrom().getType() != null) {
+                                        addrJson.put("type", route.getFrom().getType());
+                                    }
+                                    addrJson.put("value", route.getTo().getValue());
                                 }
                                 if (route.getNextHop() != null) {
-                                    routeJson.put("nextHop", route.getNextHop().getValue());
+                                    JSONObject addrJson = new JSONObject();
+                                    routeJson.put("next_hop", addrJson);
+                                    if (route.getFrom().getType() != null) {
+                                        addrJson.put("type", route.getNextHop().getType());
+                                    }
+                                    addrJson.put("value", route.getNextHop().getValue());
                                 }
                             }
                         }
@@ -468,10 +483,28 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                             gatewayJson.put("type", gateway.getType());
                         }
                         if (gateway.getTo() != null && !gateway.getTo().isEmpty()) {
-                            //@TODO
+                            JSONArray toAddrArray = new JSONArray();
+                            gatewayJson.put("to", toAddrArray);
+                            for (NetworkAddressContent addr: gateway.getTo()) {
+                                JSONObject addrJson = new JSONObject();
+                                toAddrArray.add(addrJson);
+                                if (addr.getType() != null) {
+                                    addrJson.put("type", addr.getType());
+                                }
+                                addrJson.put("value", addr.getValue());
+                            }
                         }
                         if (gateway.getFrom() != null && !gateway.getFrom().isEmpty()) {
-                            //@TODO
+                            JSONArray toAddrArray = new JSONArray();
+                            gatewayJson.put("from", toAddrArray);
+                            for (NetworkAddressContent addr: gateway.getTo()) {
+                                JSONObject addrJson = new JSONObject();
+                                toAddrArray.add(addrJson);
+                                if (addr.getType() != null) {
+                                    addrJson.put("type", addr.getType());
+                                }
+                                addrJson.put("value", addr.getValue());
+                            }
                         }
                     }
                 }
@@ -484,16 +517,30 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         if (route.getType() != null) {
                             routeJson.put("type", route.getType());
                         }
-                        //@TODO: use complex NetworkAddress in additoin to value 
-                        if (route.getTo() != null) {
-                            routeJson.put("to", route.getTo().getValue());
-                        }
-                        if (route.getFrom() != null) {
-                            routeJson.put("from", route.getFrom().getValue());
-                        }
-                        if (route.getNextHop() != null) {
-                            routeJson.put("nextHop", route.getNextHop().getValue());
-                        }
+                                if (route.getTo() != null) {
+                                    JSONObject addrJson = new JSONObject();
+                                    routeJson.put("to", addrJson);
+                                    if (route.getTo().getType() != null) {
+                                        addrJson.put("type", route.getTo().getType());
+                                    }
+                                    addrJson.put("value", route.getTo().getValue());
+                                }
+                                if (route.getFrom() != null) {
+                                    JSONObject addrJson = new JSONObject();
+                                    routeJson.put("from", addrJson);
+                                    if (route.getFrom().getType() != null) {
+                                        addrJson.put("type", route.getFrom().getType());
+                                    }
+                                    addrJson.put("value", route.getTo().getValue());
+                                }
+                                if (route.getNextHop() != null) {
+                                    JSONObject addrJson = new JSONObject();
+                                    routeJson.put("next_hop", addrJson);
+                                    if (route.getFrom().getType() != null) {
+                                        addrJson.put("type", route.getNextHop().getType());
+                                    }
+                                    addrJson.put("value", route.getNextHop().getValue());
+                                }
                     }
                 }
             }
