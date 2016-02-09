@@ -23,20 +23,6 @@
                 <policy-subject identifier="binding:soap12/operation:ListCapabilities" />
                 <policy-subject identifier="binding:soap11/operation:ListNodes" />
                 <policy-subject identifier="binding:soap12/operation:ListNodes" />
-                <policy-subject identifier="binding:soap11/operation:ListSlices" />
-                <policy-subject identifier="binding:soap12/operation:ListSlices" />
-                <policy-subject identifier="binding:soap11/operation:CreateSlice" />
-                <policy-subject identifier="binding:soap12/operation:CreateSlice" />
-                <policy-subject identifier="binding:soap12/operation:DeleteSlice" />
-                <policy-subject identifier="binding:soap11/operation:DeleteSlice" />
-                <policy-subject identifier="binding:soap11/operation:UpdateSlice" />
-                <policy-subject identifier="binding:soap12/operation:UpdateSlice" />
-                <policy-subject identifier="binding:soap11/operation:StartSlice" />
-                <policy-subject identifier="binding:soap12/operation:StartSlice" />
-                <policy-subject identifier="binding:soap11/operation:StopSlice" />
-                <policy-subject identifier="binding:soap12/operation:StopSlice" />
-                <policy-subject identifier="binding:soap11/operation:QuerySlice" />
-                <policy-subject identifier="binding:soap12/operation:QuerySlice" />
                 <policy-subject identifier="binding:soap11/operation:CreateSliceVlan" />
                 <policy-subject identifier="binding:soap12/operation:CreateSliceVlan" />
                 <policy-subject identifier="binding:soap11/operation:DeleteSliceVlan" />
@@ -122,20 +108,6 @@
                 <policy-subject identifier="binding:soap12/operation:ListCapabilities/in" />
                 <policy-subject identifier="binding:soap11/operation:ListNodes/in" />
                 <policy-subject identifier="binding:soap12/operation:ListNodes/in" />
-                <policy-subject identifier="binding:soap11/operation:ListSlices/in" />
-                <policy-subject identifier="binding:soap12/operation:ListSlices/in" />
-                <policy-subject identifier="binding:soap11/operation:CreateSlice/in" />
-                <policy-subject identifier="binding:soap12/operation:CreateSlice/in" />
-                <policy-subject identifier="binding:soap12/operation:DeleteSlice/in" />
-                <policy-subject identifier="binding:soap11/operation:DeleteSlice/in" />
-                <policy-subject identifier="binding:soap11/operation:UpdateSlice/in" />
-                <policy-subject identifier="binding:soap12/operation:UpdateSlice/in" />
-                <policy-subject identifier="binding:soap11/operation:StartSlice/in" />
-                <policy-subject identifier="binding:soap12/operation:StartSlice/in" />
-                <policy-subject identifier="binding:soap11/operation:StopSlice/in" />
-                <policy-subject identifier="binding:soap12/operation:StopSlice/in" />
-                <policy-subject identifier="binding:soap11/operation:QuerySlice/in" />
-                <policy-subject identifier="binding:soap12/operation:QuerySlice/in" />
                 <policy-subject identifier="binding:soap11/operation:CreateSliceVlan/in" />
                 <policy-subject identifier="binding:soap12/operation:CreateSliceVlan/in" />
                 <policy-subject identifier="binding:soap11/operation:DeleteSliceVlan/in" />
@@ -173,20 +145,6 @@
             </wsp:Policy>
         </wsp:PolicyAttachment>
 
-        <operation name="UpdateSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
-            <module ref="rampart" />
-            <actionMapping>UpdateSlice</actionMapping>
-            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/UpdateSliceResponse</outputActionMapping>
-            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/UpdateSlice/Fault/AggregateException</faultActionMapping>
-            <faultActionMapping faultName="AggregateFaultMessage">urn:UpdateSliceAggregateFaultMessage</faultActionMapping>
-        </operation>
-        <operation name="StopSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
-            <module ref="rampart" />
-            <actionMapping>StopSlice</actionMapping>
-            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/StopSliceResponse</outputActionMapping>
-            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/StopSlice/Fault/AggregateException</faultActionMapping>
-            <faultActionMapping faultName="AggregateFaultMessage">urn:StopSliceAggregateFaultMessage</faultActionMapping>
-        </operation>
         <operation name="RenewSliceNetwork" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <module ref="rampart" />
             <actionMapping>RenewSliceNetwork</actionMapping>
@@ -200,13 +158,6 @@
             <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/DeleteSliceNetworkResponse</outputActionMapping>
             <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/DeleteSliceNetwork/Fault/AggregateException</faultActionMapping>
             <faultActionMapping faultName="AggregateFaultMessage">urn:DeleteSliceNetworkAggregateFaultMessage</faultActionMapping>
-        </operation>
-        <operation name="QuerySlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
-            <module ref="rampart" />
-            <actionMapping>QuerySlice</actionMapping>
-            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/QuerySliceResponse</outputActionMapping>
-            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/QuerySlice/Fault/AggregateException</faultActionMapping>
-            <faultActionMapping faultName="AggregateFaultMessage">urn:QuerySliceAggregateFaultMessage</faultActionMapping>
         </operation>
         <operation name="GetResourceTopology" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <module ref="rampart" />
@@ -249,34 +200,6 @@
             <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/ListNodesResponse</outputActionMapping>
             <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/ListNodes/Fault/AggregateException</faultActionMapping>
             <faultActionMapping faultName="AggregateFaultMessage">urn:ListNodesAggregateFaultMessage</faultActionMapping>
-        </operation>
-        <operation name="StartSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
-            <module ref="rampart" />
-            <actionMapping>StartSlice</actionMapping>
-            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/StartSliceResponse</outputActionMapping>
-            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/StartSlice/Fault/AggregateException</faultActionMapping>
-            <faultActionMapping faultName="AggregateFaultMessage">urn:StartSliceAggregateFaultMessage</faultActionMapping>
-        </operation>
-        <operation name="CreateSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
-            <module ref="rampart" />
-            <actionMapping>CreateSlice</actionMapping>
-            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/CreateSliceResponse</outputActionMapping>
-            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/CreateSlice/Fault/AggregateException</faultActionMapping>
-            <faultActionMapping faultName="AggregateFaultMessage">urn:CreateSliceAggregateFaultMessage</faultActionMapping>
-        </operation>
-        <operation name="ListSlices" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
-            <module ref="rampart" />
-            <actionMapping>ListSlices</actionMapping>
-            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/ListSlicesResponse</outputActionMapping>
-            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/ListSlices/Fault/AggregateException</faultActionMapping>
-            <faultActionMapping faultName="AggregateFaultMessage">urn:ListSlicesAggregateFaultMessage</faultActionMapping>
-        </operation>
-        <operation name="DeleteSlice" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
-            <module ref="rampart" />
-            <actionMapping>DeleteSlice</actionMapping>
-            <outputActionMapping>http://aggregate.geni.net/services/api/AggregateGENIPortType/DeleteSliceResponse</outputActionMapping>
-            <faultActionMapping faultName="AggregateException">http://aggregate.geni.net/services/api/AggregateGENIPortType/DeleteSlice/Fault/AggregateException</faultActionMapping>
-            <faultActionMapping faultName="AggregateFaultMessage">urn:DeleteSliceAggregateFaultMessage</faultActionMapping>
         </operation>
         <operation name="ListCapabilities" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://aggregate.geni.net/services/api/">
             <module ref="rampart" />

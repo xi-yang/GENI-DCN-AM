@@ -87,6 +87,21 @@ public class AggregateRspecRunner extends Thread {
                 rollback(); //revert
                 return;
             }
+            
+            rspec.setStatus("SDX-SLIVER-STARTING");
+            manager.updateRspec(rspec);
+            try {
+                this.createSdxSliver();
+            } catch (AggregateException e) {
+                log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
+                e.printStackTrace();
+                rspec.setStatus("SDX-SLIVER-FAILED");
+                manager.updateRspec(rspec);
+            }
+            if (rspec.getStatus().equalsIgnoreCase("SDX-SLIVER-FAILED")) {
+                rollback(); //revert
+                return;
+            }
 
             //log.info("STITCHING-STARTING");
             rspec.setStatus("STITCHING-STARTING");
@@ -147,6 +162,19 @@ public class AggregateRspecRunner extends Thread {
             }
 
             if (goRun && goPoll) {
+                // poll sdx slivers
+                try {
+                    this.pollSdxSlivers();
+                    manager.updateRspec(rspec);
+                } catch (AggregateException e) {
+                    log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
+                    e.printStackTrace();
+                    //rollback();
+                    rspec.setStatus("SDX-FAILED");
+                    manager.updateRspec(rspec);
+                    break;
+                }
+                // poll vlan circuits
                 try {
                     this.pollP2PVlans();
                     if (rspec.getStatus().equalsIgnoreCase("VLANS-ACTIVE")) {
@@ -364,6 +392,37 @@ public class AggregateRspecRunner extends Thread {
         }
     }
 
+    //@TODO:
+    private void createSdxSliver() throws AggregateException {
+        List<AggregateResource> resources = rspec.getResources();
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getType().equalsIgnoreCase("sdxSliver")) {
+                AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
+                log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
+                //@TODO 
+                log.debug("end - create SDX sliver: " + sdxSliver.getSliceName());
+            }
+        }
+    }
+    
+    //@TODO:
+    private void deleteSdxSliver() throws AggregateException {
+        List<AggregateResource> resources = rspec.getResources();
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getType().equalsIgnoreCase("sdxSliver")) {
+                AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
+                log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
+                //@TODO
+                log.debug("end - create SDX sliver: " + sdxSliver.getSliceName());
+            }
+        }
+    }
+    
+    //@TODO:
+    private void pollSdxSlivers() throws AggregateException {
+        rspec.setStatus("SDX-READY");
+    }
+    
     void createStitchingResources() throws AggregateException {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
@@ -453,6 +512,9 @@ public class AggregateRspecRunner extends Thread {
             if (rspec.getStatus().matches("^STITCHING.*")) {
                 deleteStitchingResources();
                 deleteExternalSliver();
+            }
+            if (rspec.getStatus().matches("^SDX-SLIVER.*")) {
+                deleteSdxSliver();
             }
             if (rspec.getStatus().matches("^EXT-SLIVER.*")) {
                 deleteExternalSliver();

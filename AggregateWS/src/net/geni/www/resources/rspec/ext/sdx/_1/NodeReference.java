@@ -16,15 +16,15 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * <p>Java class for AddressContent complex type.
+ * <p>Java class for NodeReference complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="AddressContent">
+ * &lt;complexType name="NodeReference">
  *   &lt;simpleContent>
  *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="public" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/extension>
  *   &lt;/simpleContent>
  * &lt;/complexType>
@@ -33,15 +33,15 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AddressContent", propOrder = {
+@XmlType(name = "NodeReference", propOrder = {
     "value"
 })
-public class AddressContent {
+public class NodeReference {
 
     @XmlValue
     protected String value;
-    @XmlAttribute(name = "type")
-    protected String type;
+    @XmlAttribute(name = "public")
+    protected Boolean _public;
 
     /**
      * Gets the value of the value property.
@@ -68,27 +68,27 @@ public class AddressContent {
     }
 
     /**
-     * Gets the value of the type property.
+     * Gets the value of the public property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Boolean }
      *     
      */
-    public String getType() {
-        return type;
+    public Boolean isPublic() {
+        return _public;
     }
 
     /**
-     * Sets the value of the type property.
+     * Sets the value of the public property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Boolean }
      *     
      */
-    public void setType(String value) {
-        this.type = value;
+    public void setPublic(Boolean value) {
+        this._public = value;
     }
 
 }

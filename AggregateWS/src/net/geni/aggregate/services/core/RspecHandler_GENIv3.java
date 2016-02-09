@@ -21,9 +21,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.json.simple.JSONObject;
 import net.geni.www.resources.rspec._3.*;
-import net.geni.www.resources.rspec.ext.sdx._1.SDXContent;
-import net.geni.www.resources.rspec.ext.sdx._1.VirtualCloudContent;
+import net.geni.www.resources.rspec.ext.sdx._1.*;
+import org.json.simple.JSONArray;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -391,13 +392,119 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
     
     
     void parseSdxResources(AggregateRspec rspec, SDXContent sdx) throws AggregateException {
+        AggregateSdxSliver sdxSliver = new AggregateSdxSliver();
+        JSONObject reqJson = new JSONObject();
         if (sdx.getVirtualCloud() != null && !sdx.getVirtualCloud().isEmpty()) {
+            JSONArray vpcArray = new JSONArray();
+            reqJson.put("virtual_clouds", vpcArray);
             for (VirtualCloudContent sdxVc: sdx.getVirtualCloud()) {
-                //@TODO: parse into requestJson
+                JSONObject vpcJson = new JSONObject();
+                vpcArray.add(vpcJson);
+                vpcJson.put("type", "internal");
+                if (sdxVc.getClientId() != null) {
+                    vpcJson.put("name", sdxVc.getClientId());
+                }
+                if (sdxVc.getCidr() != null) {
+                    vpcJson.put("cidr", sdxVc.getCidr());
+                }
+                if (sdxVc.getProviderId() != null) {
+                    vpcJson.put("parent", sdxVc.getProviderId());
+                }
+                if (sdxVc.getProviderId() != null) {
+                    vpcJson.put("parent", sdxVc.getProviderId());
+                }
+                if (sdxVc.getSubnet() != null && !sdxVc.getSubnet().isEmpty()) {
+                    JSONArray subnetArray = new JSONArray();
+                    vpcJson.put("subnets", subnetArray);
+                    for (SubnetContent subnet: sdxVc.getSubnet()) {
+                        JSONObject subnetJson = new JSONObject();
+                        subnetArray.add(subnetJson);
+                        if (subnet.getClientId() != null) {
+                            subnetJson.put("name", subnet.getClientId());
+                        }
+                        if (subnet.getCidr() != null) {
+                            subnetJson.put("cidr", subnet.getCidr());
+                        }
+                        if (subnet.getNode() != null && !subnet.getNode().isEmpty()) {
+                            JSONArray vmArray = new JSONArray();
+                            for (NodeReference node: subnet.getNode()) {
+                                vmArray.add(node.getValue());
+                            }
+                            subnetJson.put("instances", vmArray);
+                        }
+                        if (subnet.getRoute() != null & !subnet.getRoute().isEmpty()) {
+                            JSONArray routeArray = new JSONArray();
+                            subnetJson.put("routes", routeArray);
+                            for (RouteContent route: sdxVc.getRoute()) {
+                                JSONObject routeJson = new JSONObject();
+                                routeArray.add(routeJson);
+                                if (route.getType() != null) {
+                                    routeJson.put("type", route.getType());
+                                }
+                                //@TODO: use complex NetworkAddress in additoin to value 
+                                if (route.getTo() != null) {
+                                    routeJson.put("to", route.getTo().getValue());
+                                }
+                                if (route.getFrom() != null) {
+                                    routeJson.put("from", route.getFrom().getValue());
+                                }
+                                if (route.getNextHop() != null) {
+                                    routeJson.put("nextHop", route.getNextHop().getValue());
+                                }
+                            }
+                        }
+                    }
+                }
+                if (sdxVc.getGateway() != null && !sdxVc.getGateway().isEmpty()) {
+                    JSONArray gatewayArray = new JSONArray();
+                    vpcJson.put("gateways", gatewayArray);
+                    for (GatewayContent gateway: sdxVc.getGateway()) {
+                        JSONObject gatewayJson = new JSONObject();
+                        gatewayArray.add(gatewayJson);
+                        if (gateway.getClientId() != null) {
+                            gatewayJson.put("name", gateway.getClientId());
+                        }
+                        if (gateway.getType() != null) {
+                            gatewayJson.put("type", gateway.getType());
+                        }
+                        if (gateway.getTo() != null && !gateway.getTo().isEmpty()) {
+                            //@TODO
+                        }
+                        if (gateway.getFrom() != null && !gateway.getFrom().isEmpty()) {
+                            //@TODO
+                        }
+                    }
+                }
+                if (sdxVc.getRoute() != null && !sdxVc.getRoute().isEmpty()) {
+                    JSONArray routeArray = new JSONArray();
+                    vpcJson.put("routes", routeArray);
+                    for (RouteContent route: sdxVc.getRoute()) {
+                        JSONObject routeJson = new JSONObject();
+                        routeArray.add(routeJson);
+                        if (route.getType() != null) {
+                            routeJson.put("type", route.getType());
+                        }
+                        //@TODO: use complex NetworkAddress in additoin to value 
+                        if (route.getTo() != null) {
+                            routeJson.put("to", route.getTo().getValue());
+                        }
+                        if (route.getFrom() != null) {
+                            routeJson.put("from", route.getFrom().getValue());
+                        }
+                        if (route.getNextHop() != null) {
+                            routeJson.put("nextHop", route.getNextHop().getValue());
+                        }
+                    }
+                }
             }
         }
+        sdxSliver.setType("sdxSliver");
+        sdxSliver.setRspecId(rspec.getId());
+        sdxSliver.setSliceName(rspec.getRspecName());
+        sdxSliver.setManifestJson("");
+        sdxSliver.setStatus("INIT");
+        rspec.getResources().add(sdxSliver);
     }
-    
     
     void parseStitchingResources(AggregateRspec rspec, StitchContent stitchingTopology) throws AggregateException {
         // stitching resources == <topology> that contatins one or more <path> elements

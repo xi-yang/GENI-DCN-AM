@@ -145,7 +145,7 @@ public class AggregateSdxSlivers {
         return null;
     }
 
-    public synchronized void pollExternalResources() {
+    public synchronized void pollSdxSlivers() {
         List<AggregateSdxSliver> allSlivers = this.getAll();
         if (allSlivers == null || allSlivers.isEmpty())
             return;
