@@ -40,7 +40,7 @@ public class AggregateSdxSlivers {
                    if (session.isOpen()) session.close();
                 }
             } else {
-                throw new IllegalArgumentException("all the fields in the ExternalResource object must be specified");
+                throw new IllegalArgumentException("all the fields in the AggregateSdxSliver object must be specified");
             }
         }
         return true;

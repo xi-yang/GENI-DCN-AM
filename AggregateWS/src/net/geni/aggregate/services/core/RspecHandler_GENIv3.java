@@ -547,7 +547,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
         sdxSliver.setType("sdxSliver");
         sdxSliver.setRspecId(rspec.getId());
-        sdxSliver.setSliceName(rspec.getRspecName());
         sdxSliver.setManifestJson("");
         sdxSliver.setStatus("INIT");
         rspec.getResources().add(sdxSliver);
