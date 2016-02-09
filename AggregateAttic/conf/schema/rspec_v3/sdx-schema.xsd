@@ -39,9 +39,9 @@
   </xs:complexType>
   
   <!-- Node -->
-  <xs:element name="node" type="SDX:NodeContent"/>
+  <xs:element name="node" type="SDX:NodeReference"/>
   
-  <xs:complexType name="NodeContent">
+  <xs:complexType name="NodeReference">
     <xs:simpleContent>
         <xs:extension base="xs:string">
             <xs:attribute use="optional" name="public" type="xs:boolean"/>
