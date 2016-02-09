@@ -61,7 +61,9 @@ public class AggregateSdxSliver extends AggregateResource {
     //@TODO: call VersaStack Client to create, delete and query
     public String createSliver() {
         String status = "SUCCESSFUL";
-
+        //@ get baseURL, username and password from properties
+        AggregateRESTClient restClient = new AggregateRESTClient();
+        
         return status;
     }
 

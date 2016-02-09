@@ -67,8 +67,8 @@ public class AggregateSdxSlivers {
         return true;
     }
 
-    public boolean delete(String urn) {
-        AggregateSdxSliver s = this.getBySliceName(urn);
+    public boolean delete(String uuid) {
+        AggregateSdxSliver s = this.getByServiceUuid(uuid);
         synchronized(this) {
             try {
                 session = HibernateUtil.getSessionFactory().openSession();
@@ -129,12 +129,12 @@ public class AggregateSdxSlivers {
         return null;
     }
 
-    public AggregateSdxSliver getBySliceName(String urn) {
+    public AggregateSdxSliver getByServiceUuid(String uuid) {
         synchronized(this) {
             try {
                 session = HibernateUtil.getSessionFactory().openSession();
                 tx = session.beginTransaction();
-                Query q = session.createQuery("from AggregateSdxSliver as sliver where sliver.sliceName='" + urn + "'");
+                Query q = session.createQuery("from AggregateSdxSliver as sliver where sliver.serviceUuid='" + uuid + "'");
                 if (q.list().size() == 0) {
                     return null;
                 }
