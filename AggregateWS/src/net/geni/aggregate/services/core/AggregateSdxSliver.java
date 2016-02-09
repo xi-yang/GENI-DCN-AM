@@ -26,6 +26,14 @@ public class AggregateSdxSliver extends AggregateResource {
         this.sliceName = sliceName;
     }
 
+    public String getServiceUuid() {
+        return serviceUuid;
+    }
+
+    public void setServiceUuid(String serviceUuid) {
+        this.serviceUuid = serviceUuid;
+    }
+
     public String getRequestJson() {
         return requestJson;
     }
