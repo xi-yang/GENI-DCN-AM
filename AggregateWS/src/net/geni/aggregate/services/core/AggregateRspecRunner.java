@@ -6,6 +6,7 @@ package net.geni.aggregate.services.core;
 
 import java.util.*;
 import org.apache.log4j.*;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -88,17 +89,17 @@ public class AggregateRspecRunner extends Thread {
                 return;
             }
             
-            rspec.setStatus("SDX-SLIVER-STARTING");
+            rspec.setStatus("SDX-STARTING");
             manager.updateRspec(rspec);
             try {
-                this.createSdxSliver();
+                this.createSdxSlivers();
             } catch (AggregateException e) {
                 log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());
                 e.printStackTrace();
-                rspec.setStatus("SDX-SLIVER-FAILED");
+                rspec.setStatus("SDX-FAILED");
                 manager.updateRspec(rspec);
             }
-            if (rspec.getStatus().equalsIgnoreCase("SDX-SLIVER-FAILED")) {
+            if (rspec.getStatus().equalsIgnoreCase("SDX-FAILED")) {
                 rollback(); //revert
                 return;
             }
@@ -392,38 +393,79 @@ public class AggregateRspecRunner extends Thread {
         }
     }
 
-    //@TODO:
-    private void createSdxSliver() throws AggregateException {
+    private void createSdxSlivers() throws AggregateException {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("sdxSliver")) {
                 AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
                 sdxSliver.setSliceName(rspec.getRspecName());
                 log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
-                //@TODO 
+                String status = sdxSliver.createSliver();
                 AggregateState.getAggregateSdxSlivers().add(sdxSliver);
                 log.debug("end - create SDX sliver: " + sdxSliver.getSliceName());
             }
         }
     }
     
-    //@TODO:
-    private void deleteSdxSliver() throws AggregateException {
+    private void deleteSdxSlivers() throws AggregateException {
         List<AggregateResource> resources = rspec.getResources();
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("sdxSliver")) {
                 AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
                 log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
+                // always both cancel and delete ?
+                String status = sdxSliver.cancelSliver();
+                if (status.equals("CANCELLED")) {
+                    sdxSliver.deleteSliver();
+                }
                 AggregateState.getAggregateSdxSlivers().delete(sdxSliver);
-                //@TODO
                 log.debug("end - create SDX sliver: " + sdxSliver.getSliceName());
             }
         }
     }
     
-    //@TODO:
     private void pollSdxSlivers() throws AggregateException {
-        rspec.setStatus("SDX-READY");
+        boolean hasSliver = false;
+        boolean allActive = true;
+        boolean allCancelled = true;
+       List<AggregateResource> resources = rspec.getResources();
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getType().equalsIgnoreCase("sdxSliver")) {
+                AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
+                log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
+                hasSliver = true;
+                String statusJson = sdxSliver.querySliver(false);
+                JSONObject jsonObj = AggregateUtils.parseJsonString(statusJson);
+                if (jsonObj == null || !jsonObj.containsKey("status")) {
+                    throw new AggregateException(String.format("failed to query SDX Sliver for '%s' with service UUID=%s", sdxSliver.getSliceName(), sdxSliver.getServiceUuid()));
+                }
+                String status = (String) jsonObj.get("status");
+                sdxSliver.setStatus(status);
+                if (status.equals("FAILED")) {
+                    throw new AggregateException(String.format("failed to create SDX Sliver for '%s' with service UUID=%s", sdxSliver.getSliceName(), sdxSliver.getServiceUuid()));
+                } else if (status.equals("READY")) {
+                    statusJson = sdxSliver.querySliver(true);
+                    sdxSliver.setManifestJson(statusJson);
+                    allCancelled = false;
+                } else if (status.equals("CANCELLED")) {
+                   allActive = false;
+                } else {
+                    allActive = false;
+                    allCancelled = false;
+               }
+                AggregateState.getAggregateSdxSlivers().update(sdxSliver);
+                log.debug("end - create SDX sliver: " + sdxSliver.getSliceName());
+            }
+        }
+        if (hasSliver) {
+            if (allActive) {
+                rspec.setStatus("SDX-ACTIVE");
+            } else if (allCancelled) {
+                rspec.setStatus("SDX-CANCELLED");
+            } else {
+                rspec.setStatus("SDX-INSETUP");
+            }
+        }
     }
     
     void createStitchingResources() throws AggregateException {
@@ -510,16 +552,16 @@ public class AggregateRspecRunner extends Thread {
             if (rspec.getStatus().matches("^VLANS.*")) {
                 deleteP2PVlans();
                 deleteStitchingResources();
-                deleteSdxSliver();
+                deleteSdxSlivers();
                 deleteExternalSliver();
             }
             if (rspec.getStatus().matches("^STITCHING.*")) {
                 deleteStitchingResources();
-                deleteSdxSliver();
+                deleteSdxSlivers();
                 deleteExternalSliver();
             }
             if (rspec.getStatus().matches("^SDX-SLIVER.*")) {
-                deleteSdxSliver();
+                deleteSdxSlivers();
                 deleteExternalSliver();
             }
             if (rspec.getStatus().matches("^EXT-SLIVER.*")) {
@@ -538,7 +580,7 @@ public class AggregateRspecRunner extends Thread {
         try {
             deleteP2PVlans();
             deleteStitchingResources();
-            deleteSdxSliver();
+            deleteSdxSlivers();
             deleteExternalSliver();
         } catch (AggregateException e) {
             log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ") Exception:" + e.getMessage());

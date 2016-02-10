@@ -5,6 +5,11 @@
 
 package net.geni.aggregate.services.core;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.simple.JSONObject;
+
 /**
  *
  * @author Xi Yang
@@ -58,25 +63,83 @@ public class AggregateSdxSliver extends AggregateResource {
         this.status = status;
     }
 
-    //@TODO: call VersaStack Client to create, delete and query
-    public String createSliver() {
-        String status = "SUCCESSFUL";
-        //@ get baseURL, username and password from properties
-        AggregateRESTClient restClient = new AggregateRESTClient();
-        
-        return status;
+    private AggregateRESTClient getRestClient() {
+        AggregateRESTClient restClient = new AggregateRESTClient(AggregateState.getSdxApiUrl(), AggregateState.getSdxApiUser(), AggregateState.getSdxApiPass());
+        return restClient;
     }
 
-    public String deleteSliver() {
-        String status = "SUCCESSFUL";
-
-        return status;
+    private JSONObject generateRestData() {
+        JSONObject reqJson = new JSONObject();
+        //$$ add ServiceTags as Array including users='u1,u2,u3', slice_id='slice_urn', client_id=''
+        //$$ add ServiceType as the service bean method name
+        //$$ add ServiceData as requestJson
+        //$$ add CreationTime
+        return reqJson;
     }
 
-    public String querySliver() {
-        String status = "UNKNOWN";
-
-        return status;
+    public String createSliver() throws AggregateException {
+       AggregateRESTClient restClient = this.getRestClient();
+        JSONObject restData = generateRestData();
+        try {
+            String response[] = restClient.executeHttpMethod("POST", AggregateState.getSdxApiUrl()+"service", restData.toJSONString());
+            if (!response[0].equals("200")) {
+                throw new AggregateException("AggregateSdxSliver.createSliver POST returns code "+response[0]);
+            }
+            this.setServiceUuid(response[2]);
+        } catch (IOException ex) {
+            throw new AggregateException(ex);
+        }
+        return "INSETUP";
     }
 
+    public String cancelSliver() throws AggregateException {
+       String serviceUUID = this.getServiceUuid();
+        if (serviceUUID == null || serviceUUID.isEmpty()) {
+            throw new AggregateException("AggregateSdxSliver.cancelSliver encoutners null/empty service UUID");
+        }
+        AggregateRESTClient restClient = this.getRestClient();
+        try {
+            String response[] = restClient.executeHttpMethod("PUT", AggregateState.getSdxApiUrl()+"service/"+serviceUUID+"/cancel", null);
+            if (!response[0].equals("200")) {
+                throw new AggregateException("AggregateSdxSliver.cancelSliver PUT returns code "+response[0]);
+            }
+       } catch (IOException ex) {
+            throw new AggregateException(ex);
+        }
+        return "CANCELLED";
+    }
+
+    public String deleteSliver() throws AggregateException {
+        String serviceUUID = this.getServiceUuid();
+        if (serviceUUID == null || serviceUUID.isEmpty()) {
+            throw new AggregateException("AggregateSdxSliver.deleteSliver encoutners null/empty service UUID");
+        }
+        AggregateRESTClient restClient = this.getRestClient();
+        try {
+            String response[] = restClient.executeHttpMethod("DELETE", AggregateState.getSdxApiUrl()+"service/"+serviceUUID, null);
+            if (!response[0].equals("200")) {
+                throw new AggregateException("AggregateSdxSliver.deleteSliver DELETE returns code "+response[0]);
+            }
+       } catch (IOException ex) {
+            throw new AggregateException(ex);
+        }
+        return "DELETED";
+    }
+
+    public String querySliver(boolean detailed) throws AggregateException {
+       String serviceUUID = this.getServiceUuid();
+        if (serviceUUID == null || serviceUUID.isEmpty()) {
+            throw new AggregateException("AggregateSdxSliver.querySliver encoutners null/empty service UUID");
+        }
+        AggregateRESTClient restClient = this.getRestClient();
+        try {
+            String response[] = restClient.executeHttpMethod("GET", AggregateState.getSdxApiUrl()+"service/"+serviceUUID+(detailed?"/manifest":"/status"), null);
+            if (!response[0].equals("200")) {
+                throw new AggregateException("AggregateSdxSliver.querySliver GET returns code "+response[0]);
+            }
+            return response[2];
+       } catch (IOException ex) {
+            throw new AggregateException(ex);
+        }
+    }
 }

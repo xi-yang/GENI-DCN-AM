@@ -47,6 +47,10 @@ public class AggregateState
     private static String idcVerifyEndpoints = "";
     private static String nsiDir = "";
     private static String nsaUrl = "";
+    
+    private static String sdxApiUrl = "";
+    private static String sdxApiUser = "";
+    private static String sdxApiPass = "";
 
     private static String plcURL = "";
     private static String plcPI = "";
@@ -136,6 +140,10 @@ public class AggregateState
         
         nsiDir = aggregateProps.getProperty("aggregate.nsi.client_dir", "/usr/local/geni-aggregate/AggregateAttic/conf/oscars_nsi2");
         nsaUrl = aggregateProps.getProperty("aggregate.nsi.server_url", "https://idc.maxgigapop.net:8500/nsi-v2/ConnectionServiceProvider");
+
+        sdxApiUrl = aggregateProps.getProperty("aggregate.sdx.api_urlbase", "http://127.0.0.1:8080/VersaStack-web/restapi/");
+        sdxApiUser = aggregateProps.getProperty("aggregate.sdx.api_username", "");
+        sdxApiPass = aggregateProps.getProperty("aggregate.sdx.api_password", "");
 
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         log.info("aggregate.plc.url set to " + plcURL);
@@ -357,6 +365,18 @@ public class AggregateState
 
     public static String getNsaUrl() {
         return nsaUrl;
+    }
+
+    public static String getSdxApiUrl() {
+        return sdxApiUrl;
+    }
+
+    public static String getSdxApiUser() {
+        return sdxApiUser;
+    }
+
+    public static String getSdxApiPass() {
+        return sdxApiPass;
     }
     
     public static String getPlcURL() {

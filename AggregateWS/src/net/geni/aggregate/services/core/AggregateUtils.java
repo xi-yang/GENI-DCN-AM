@@ -14,6 +14,9 @@ import net.geni.aggregate.services.api.AggregateFaultMessageExt;
 import org.apache.xerces.dom.ElementNSImpl;
 import org.w3c.dom.Node;
 import javax.xml.namespace.QName;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -395,5 +398,15 @@ public class AggregateUtils
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date dt = new Date(t*1000);
         return df.format(dt);
+    }
+    
+    public static JSONObject parseJsonString(String str) {
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject jsonObj = (JSONObject) parser.parse(str);
+            return jsonObj;
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }
