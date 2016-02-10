@@ -135,5 +135,16 @@ public class AggregateNetworkInterfaces {
         }
         return null;
     }
+    
+    public synchronized List<AggregateNetworkInterface> lookupByNode(AggregateNode node) {
+        List<AggregateNetworkInterface> retList = new ArrayList<AggregateNetworkInterface>();
+        List<AggregateNetworkInterface> infs = getAll();
+        for (AggregateNetworkInterface inf: infs) {
+            if (inf.getParentNode().getId() == node.getId()) {
+                retList.add(inf);
+            }
+        }
+        return retList;
+    }
 
 }

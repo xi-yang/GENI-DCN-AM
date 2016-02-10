@@ -131,11 +131,12 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String urn = node.getComponentId(); //$$$$ TODO: convert URN format ?
         String amUrn = node.getComponentManagerId();
         
+        AggregateNode newNode = null;
         AggregateNode aggrNode= AggregateState.getAggregateNodes().getByUrn(urn);
         if (aggrNode == null) {
-            // TODO: log and return -- not an exception
-            log.debug("unknown node:"+urn+"  -- can be safely ignored only if this node belong to external aggregate");
-            return;
+            aggrNode = new AggregateNode();
+            aggrNode.setUrn(urn);
+            newNode = aggrNode;
         }
 
         // sub-elements: interface etc.
@@ -148,8 +149,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     myNetIfs.add(netIf);
                 } else if (elemName.equalsIgnoreCase("hardware_type")) {
                     HardwareTypeContents hdc = (HardwareTypeContents)((JAXBElement)obj).getValue();
-                    //type = hdc.getName();
-                }
+                    aggrNode.setType("computeNode:hardware_type="+hdc.getName());
+               } else if (elemName.equalsIgnoreCase("sliver_type")) {
+                    NodeContents.SliverType stc = (NodeContents.SliverType)((JAXBElement)obj).getValue();
+                    aggrNode.setType("computeNode:sliver_type="+stc.getName());
+               }
             }
             // optional:
             if (obj.getClass().getName().contains("ElementNSImpl")) {
@@ -162,9 +166,13 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
         }
 
-        AggregateNode newNode = aggrNode.duplicate();
+        if (newNode == null) {
+            newNode = aggrNode.duplicate();
+        }
         newNode.setClientId(clientId);
-        aggrNode.setType("planetlabNodeSliver"); // plab node only
+        if (aggrNode.getType() == null || aggrNode.getType().isEmpty()) {
+            aggrNode.setType("computeNode"); 
+        }
         newNode.setRspecId(rspec.getId()); //rspec entry has been created in db
         rspec.getResources().add(newNode);
         for (AggregateNetworkInterface netIf: myNetIfs)
@@ -410,9 +418,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (sdxVc.getProviderId() != null) {
                     vpcJson.put("parent", sdxVc.getProviderId());
                 }
-                if (sdxVc.getProviderId() != null) {
-                    vpcJson.put("parent", sdxVc.getProviderId());
-                }
                 if (sdxVc.getSubnet() != null && !sdxVc.getSubnet().isEmpty()) {
                     JSONArray subnetArray = new JSONArray();
                     vpcJson.put("subnets", subnetArray);
@@ -428,10 +433,38 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         if (subnet.getNode() != null && !subnet.getNode().isEmpty()) {
                             JSONArray vmArray = new JSONArray();
                             for (NodeReference node: subnet.getNode()) {
-                                vmArray.add(node.getValue());
-                                //@TODO: add referene to AggregateNode
+                                String clientId = node.getValue();
+                                for (AggregateResource res: rspec.getResources()) {
+                                    if ((res.getType().equals("computeNode:sliver_type=aws_ec2") 
+                                                || res.getType().equals("computeNode:sliver_type=openstack")) 
+                                            && res.getClientId() != null && clientId.equals(res.getClientId())) {
+                                        AggregateNode aggrNode = (AggregateNode)res;
+                                        JSONObject vmJson = new JSONObject();
+                                        vmArray.add(vmJson);
+                                        vmJson.put("name", clientId);
+                                        vmJson.put("urn", aggrNode.getUrn());
+                                        vmJson.put("type", aggrNode.getType().substring("computeNode:sliver_type=".length()));
+                                        List<AggregateNetworkInterface> aggrIfs = AggregateState.getAggregateInterfaces().lookupByNode(aggrNode);
+                                        if (!aggrIfs.isEmpty()) {
+                                            JSONArray vifArray = new JSONArray();
+                                            vmJson.put("interfaces", vifArray);
+                                            for (AggregateNetworkInterface vif: aggrIfs) {
+                                                JSONObject vifJson = new JSONObject();
+                                                vifArray.add(vifJson);
+                                                vifJson.put("name", vif.getClientId());
+                                                vifJson.put("urn", vif.getUrn());
+                                                vifJson.put("device", vif.getDeviceName());
+                                                vifJson.put("type", vif.getDeviceType());
+                                                vifJson.put("capacity", vif.getCapacity());
+                                                vifJson.put("address", vif.getIpAddress());
+                                                // mac_address ?
+                                            }
+                                        }
+                                        //@TODO: batch ... (add to AggregateResource ?)
+                                    }
+                                }
                             }
-                            subnetJson.put("instances", vmArray);
+                            subnetJson.put("virtual_machines", vmArray);
                         }
                         if (subnet.getRoute() != null & !subnet.getRoute().isEmpty()) {
                             JSONArray routeArray = new JSONArray();
@@ -729,7 +762,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 + " http://hpn.east.isi.edu/rspec/ext/stitch/0.1/ http://hpn.east.isi.edu/rspec/ext/stitch/0.1/stitch-schema.xsd\">";
         for (int n = 0; n < rspec.getResources().size(); n++) {
             AggregateResource rc = rspec.getResources().get(n);
-            if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
+            if (rc.getType().equalsIgnoreCase("computeNode") || rc.getType().startsWith("computeNode")) {
                 AggregateNode an = (AggregateNode) rc;
                 rspecMan = rspecMan + "<node component_id=\"" + an.getUrn() + "\" component_manager_id=\""
                         + rspec.getAggregateName() + "\" exclusive=\"true\">";

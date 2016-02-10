@@ -180,7 +180,7 @@ public class AggregateRspecManager extends Thread{
                     if (aif != null) {
                         for (int n = 0; n < rspec.getResources().size(); n++) {
                             rc = rspec.getResources().get(n);
-                            if (rc.getType().equalsIgnoreCase("planetlabNodeSliver") 
+                            if (rc.getType().startsWith("computeNode") 
                                     && AggregateUtils.getUrnField(((AggregateNode)rc).getUrn(), "node").equals(
                                             AggregateUtils.getUrnField(aif.getUrn(), "node"))) {
                                 aif1 = aif.duplicate();
@@ -198,7 +198,7 @@ public class AggregateRspecManager extends Thread{
                     if (aif != null) {
                         for (int n = 0; n < rspec.getResources().size(); n++) {
                             rc = rspec.getResources().get(n);
-                            if (rc.getType().equalsIgnoreCase("planetlabNodeSliver") 
+                            if (rc.getType().startsWith("computeNode") 
                                     && AggregateUtils.getUrnField(((AggregateNode)rc).getUrn(), "node").equals(
                                             AggregateUtils.getUrnField(aif.getUrn(), "node"))) {
                                 aif2 = aif.duplicate();

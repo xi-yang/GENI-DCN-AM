@@ -186,7 +186,7 @@ public class AggregateRspec implements java.io.Serializable {
         log.debug("Rspec startTime=" + Integer.toString((int)this.startTime)+" endTime="+Integer.toString((int)this.endTime));
         for (AggregateResource rc: resources) {
             log.debug("Resource: " + rc.getType());
-            if (rc.getType().equalsIgnoreCase("planetlabNodeSliver")) {
+            if (rc.getType().startsWith("computeNode")) {
                 log.debug("   >>" + ((AggregateNode)rc).getDescription());
             } else if (rc.getType().equalsIgnoreCase("networkInterface")) {
                 log.debug("   >>>>" + ((AggregateNetworkInterface)rc).getUrn());
