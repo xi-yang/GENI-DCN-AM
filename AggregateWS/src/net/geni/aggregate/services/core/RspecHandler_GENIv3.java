@@ -610,8 +610,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     dstLink = nextHop.getLink();
             }
             if (dstLink == null) {
-                throw new AggregateException("RspecHandler_GENIv3::parseStitchingResources stitching <path id=\"" 
-                        + path.getId() + "\"> missing destination <hop> element for current segment.");                
+                // allow for dangled stitching path (open end) - skip - a use case for SDX
+                continue;
+                //throw new AggregateException("RspecHandler_GENIv3::parseStitchingResources stitching <path id=\"" 
+                //        + path.getId() + "\"> missing destination <hop> element for current segment.");                
             }
             String source = srcLink.getId();
             AggregateNetworkInterface netIf1 = AggregateState.getAggregateInterfaces().getByUrn(srcLink.getId());
