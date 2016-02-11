@@ -214,19 +214,20 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
 
         // extract deviceName from urn (assume last field after colon)
-        int last = -1;
-        int index = 0;
-        while (index != -1) {
-            index = urn.indexOf(":", index+1);
-            if (index != -1)
-                last = index;
-        }
-        if (last != -1) {
-            deviceName = urn.substring(last+1);
-        } else {
-            throw new AggregateException("malformed network interface field in component_id urn: " + urn);
-        }
-        
+        if (urn != null) {
+            int last = -1;
+            int index = 0;
+            while (index != -1) {
+                index = urn.indexOf(":", index+1);
+                if (index != -1)
+                    last = index;
+            }
+            if (last != -1) {
+                deviceName = urn.substring(last+1);
+            } else {
+                throw new AggregateException("malformed network interface field in component_id urn: " + urn);
+            }
+        }        
         // AggregateNetworkInterface(s) will be further processed to create P2PVlans
         AggregateNetworkInterface aggrNetIf = new AggregateNetworkInterface(urn);
         aggrNetIf.setClientId(clientId);
