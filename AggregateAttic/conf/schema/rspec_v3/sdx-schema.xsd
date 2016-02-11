@@ -22,6 +22,8 @@
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:node"/>
     </xs:sequence>
     <xs:attribute use="required" name="lastUpdateTime" type="xs:string"/>
+    <xs:attribute use="required" name="component_manager_id" type="xs:string"/>
+    <xs:attribute use="optional" name="component_id" type="xs:string"/>
   </xs:complexType>
   
   <!-- VirtualCloud -->
