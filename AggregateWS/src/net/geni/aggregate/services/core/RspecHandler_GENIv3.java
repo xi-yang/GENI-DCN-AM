@@ -435,7 +435,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                             JSONArray vmArray = new JSONArray();
                             for (NodeReference node: subnet.getNode()) {
                                 String clientId = node.getValue();
-                                for (AggregateResource res: rspec.getResources()) {
+                                Iterator itn = rspec.getResources().iterator();
+                                while (itn.hasNext()) {
+                                    AggregateResource res = (AggregateResource)itn.next();
                                     if ((res.getType().equals("computeNode:sliver_type=aws_ec2") 
                                                 || res.getType().equals("computeNode:sliver_type=openstack")) 
                                             && res.getClientId() != null && clientId.equals(res.getClientId())) {
@@ -446,25 +448,35 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                         if (aggrNode.getUrn() != null && !aggrNode.getUrn().isEmpty())
                                             vmJson.put("urn", aggrNode.getUrn());
                                         vmJson.put("type", aggrNode.getType().substring("computeNode:sliver_type=".length()));
-                                        List<AggregateNetworkInterface> aggrIfs = AggregateState.getAggregateInterfaces().lookupByNode(aggrNode);
-                                        if (!aggrIfs.isEmpty()) {
-                                            JSONArray vifArray = new JSONArray();
-                                            vmJson.put("interfaces", vifArray);
-                                            for (AggregateNetworkInterface vif: aggrIfs) {
-                                                JSONObject vifJson = new JSONObject();
-                                                vifArray.add(vifJson);
-                                                vifJson.put("name", vif.getClientId());
-                                                if (vif.getUrn() != null && !vif.getUrn().isEmpty())
-                                                    vifJson.put("urn", vif.getUrn());
-                                                if (vif.getDeviceName() != null && !vif.getDeviceName().isEmpty())
-                                                    vifJson.put("device", vif.getDeviceName());
-                                                if (vif.getDeviceType() != null && !vif.getDeviceType().isEmpty())
-                                                    vifJson.put("type", vif.getDeviceType());
-                                                if (vif.getCapacity() != null && !vif.getCapacity().isEmpty())
-                                                    vifJson.put("capacity", vif.getCapacity());
-                                                if (vif.getIpAddress() != null && !vif.getIpAddress().isEmpty())
-                                                    vifJson.put("address", vif.getIpAddress());
-                                                // mac_address ?
+                                        JSONArray vifArray = null;
+                                        Iterator itnif = rspec.getResources().iterator();
+                                        while (itnif.hasNext()) {
+                                            AggregateResource res2 = (AggregateResource)itnif.next();
+                                            if (res2.getType().equals("networkInterface") && ((AggregateNetworkInterface) res2).getParentNode() == aggrNode) {
+                                                if (vifArray == null) {
+                                                    vifArray = new JSONArray();
+                                                    vmJson.put("interfaces", vifArray);
+                                                }
+                                                AggregateNetworkInterface vif = (AggregateNetworkInterface) res2;
+                                                    JSONObject vifJson = new JSONObject();
+                                                    vifArray.add(vifJson);
+                                                    vifJson.put("name", vif.getClientId());
+                                                    if (vif.getUrn() != null && !vif.getUrn().isEmpty()) {
+                                                        vifJson.put("urn", vif.getUrn());
+                                                    }
+                                                    if (vif.getDeviceName() != null && !vif.getDeviceName().isEmpty()) {
+                                                        vifJson.put("device", vif.getDeviceName());
+                                                    }
+                                                    if (vif.getDeviceType() != null && !vif.getDeviceType().isEmpty()) {
+                                                        vifJson.put("type", vif.getDeviceType());
+                                                    }
+                                                    if (vif.getCapacity() != null && !vif.getCapacity().isEmpty()) {
+                                                        vifJson.put("capacity", vif.getCapacity());
+                                                    }
+                                                    if (vif.getIpAddress() != null && !vif.getIpAddress().isEmpty()) {
+                                                        vifJson.put("address", vif.getIpAddress());
+                                                    }
+                                                    // mac_address ?
                                             }
                                         }
                                         //@TODO: batch ... (add to AggregateResource ?)
