@@ -560,7 +560,7 @@ public class AggregateRspecRunner extends Thread {
                 deleteSdxSlivers();
                 deleteExternalSliver();
             }
-            if (rspec.getStatus().matches("^SDX-SLIVER.*")) {
+            if (rspec.getStatus().matches("^SDX.*")) {
                 deleteSdxSlivers();
                 deleteExternalSliver();
             }

@@ -140,7 +140,9 @@ public class AggregateNetworkInterfaces {
         List<AggregateNetworkInterface> retList = new ArrayList<AggregateNetworkInterface>();
         List<AggregateNetworkInterface> infs = getAll();
         for (AggregateNetworkInterface inf: infs) {
-            if (inf.getParentNode().getId() == node.getId()) {
+            if (inf.getParentNode().getId() == node.getId() || 
+                    (inf.getParentNode().getClientId() != null && node.getClientId() != null && inf.getParentNode().getClientId().equals(node.getClientId()))
+                    ) {
                 retList.add(inf);
             }
         }

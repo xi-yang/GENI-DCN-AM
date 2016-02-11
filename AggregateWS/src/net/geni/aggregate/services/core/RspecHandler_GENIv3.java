@@ -443,7 +443,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                         JSONObject vmJson = new JSONObject();
                                         vmArray.add(vmJson);
                                         vmJson.put("name", clientId);
-                                        vmJson.put("urn", aggrNode.getUrn());
+                                        if (aggrNode.getUrn() != null && !aggrNode.getUrn().isEmpty())
+                                            vmJson.put("urn", aggrNode.getUrn());
                                         vmJson.put("type", aggrNode.getType().substring("computeNode:sliver_type=".length()));
                                         List<AggregateNetworkInterface> aggrIfs = AggregateState.getAggregateInterfaces().lookupByNode(aggrNode);
                                         if (!aggrIfs.isEmpty()) {
@@ -453,11 +454,16 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                                 JSONObject vifJson = new JSONObject();
                                                 vifArray.add(vifJson);
                                                 vifJson.put("name", vif.getClientId());
-                                                vifJson.put("urn", vif.getUrn());
-                                                vifJson.put("device", vif.getDeviceName());
-                                                vifJson.put("type", vif.getDeviceType());
-                                                vifJson.put("capacity", vif.getCapacity());
-                                                vifJson.put("address", vif.getIpAddress());
+                                                if (vif.getUrn() != null && !vif.getUrn().isEmpty())
+                                                    vifJson.put("urn", vif.getUrn());
+                                                if (vif.getDeviceName() != null && !vif.getDeviceName().isEmpty())
+                                                    vifJson.put("device", vif.getDeviceName());
+                                                if (vif.getDeviceType() != null && !vif.getDeviceType().isEmpty())
+                                                    vifJson.put("type", vif.getDeviceType());
+                                                if (vif.getCapacity() != null && !vif.getCapacity().isEmpty())
+                                                    vifJson.put("capacity", vif.getCapacity());
+                                                if (vif.getIpAddress() != null && !vif.getIpAddress().isEmpty())
+                                                    vifJson.put("address", vif.getIpAddress());
                                                 // mac_address ?
                                             }
                                         }
