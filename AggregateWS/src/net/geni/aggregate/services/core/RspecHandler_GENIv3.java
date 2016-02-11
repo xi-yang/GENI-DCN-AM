@@ -264,7 +264,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     if (netIf == null) {
                         log.debug("interface_ref:'" + netIfClientId + "' cannot be found -- can be safely ignored only if it is a stitching reference or link to external aggregate");
                         externalUrns.add(netIfClientId);
-                    } else {
+                    } else if (!netIf.getLinks().isEmpty() || netIf.getUrn() != null) {
                         netIfs.add(netIf);
                     }
                 } else if (elemName.equalsIgnoreCase("property")) {
