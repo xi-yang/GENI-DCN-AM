@@ -401,7 +401,7 @@ public class AggregateRspecRunner extends Thread {
                 sdxSliver.setSliceName(rspec.getRspecName());
                 sdxSliver.setSliceUser(rspec.getGeniUser());
                 log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
-                //String status = sdxSliver.createSliver();
+                String status = sdxSliver.createSliver();
                 AggregateState.getAggregateSdxSlivers().add(sdxSliver);
                 log.debug("end - create SDX sliver: " + sdxSliver.getSliceName());
             }
@@ -414,11 +414,11 @@ public class AggregateRspecRunner extends Thread {
             if (resources.get(i).getType().equalsIgnoreCase("sdxSliver")) {
                 AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
                 log.debug("start - delete SDX sliver: " + sdxSliver.getSliceName());
-                // always both cancel and delete ?
-                //String status = sdxSliver.cancelSliver();
-                //if (status.equals("CANCELLED")) {
-                //    sdxSliver.deleteSliver();
-                //}
+                //?? always both cancel and delete ?
+                String status = sdxSliver.cancelSliver();
+                if (status.equals("CANCELLED")) {
+                    sdxSliver.deleteSliver();
+                }
                 AggregateState.getAggregateSdxSlivers().delete(sdxSliver);
                 log.debug("end - delete SDX sliver: " + sdxSliver.getSliceName());
             }
