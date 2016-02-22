@@ -399,6 +399,7 @@ public class AggregateRspecRunner extends Thread {
             if (resources.get(i).getType().equalsIgnoreCase("sdxSliver")) {
                 AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
                 sdxSliver.setSliceName(rspec.getRspecName());
+                sdxSliver.setSliceUser(rspec.getGeniUser());
                 log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
                 //String status = sdxSliver.createSliver();
                 AggregateState.getAggregateSdxSlivers().add(sdxSliver);

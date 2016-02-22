@@ -16,6 +16,7 @@ import org.json.simple.JSONObject;
  */
 public class AggregateSdxSliver extends AggregateResource {
     private String sliceName = "";
+    private String sliceUser = "";
     private String serviceUuid = "";
     private String requestJson = "";
     private String manifestJson = "";
@@ -29,6 +30,14 @@ public class AggregateSdxSliver extends AggregateResource {
 
     public void setSliceName(String sliceName) {
         this.sliceName = sliceName;
+    }
+
+    public String getSliceUser() {
+        return sliceUser;
+    }
+
+    public void setSliceUser(String sliceUser) {
+        this.sliceUser = sliceUser;
     }
 
     public String getServiceUuid() {
@@ -68,12 +77,16 @@ public class AggregateSdxSliver extends AggregateResource {
         return restClient;
     }
 
-    private JSONObject generateRestData() {
+    private JSONObject generateRestData() throws AggregateException {
+        JSONObject jsonData = AggregateUtils.parseJsonString(this.requestJson);
+        if (jsonData == null) {
+            throw new AggregateException("AggregateSdxSliver.generateRestData() cannot parse requst JSON: \n"+this.requestJson);
+        }
         JSONObject reqJson = new JSONObject();
-        //$$ add ServiceTags as Array including users='u1,u2,u3', slice_id='slice_urn', client_id=''
-        //$$ add ServiceType as the service bean method name
-        //$$ add ServiceData as requestJson
-        //$$ add CreationTime
+        reqJson.put("user", this.sliceUser);
+        reqJson.put("type", "netcreate");
+        reqJson.put("data", jsonData);
+        //$$ TODO: add creationTime, client Tags
         return reqJson;
     }
 
