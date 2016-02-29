@@ -435,20 +435,16 @@ public class AggregateRspecRunner extends Thread {
                 AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
                 log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
                 hasSliver = true;
-                String statusJson = sdxSliver.querySliver(false);
-                JSONObject jsonObj = AggregateUtils.parseJsonString(statusJson);
-                if (jsonObj == null || !jsonObj.containsKey("status")) {
-                    throw new AggregateException(String.format("failed to query SDX Sliver for '%s' with service UUID=%s", sdxSliver.getSliceName(), sdxSliver.getServiceUuid()));
-                }
-                String status = (String) jsonObj.get("status");
+                String status = sdxSliver.querySliver(false);
                 sdxSliver.setStatus(status);
-                if (status.equals("FAILED")) {
+                if (status.contains("FAILED")) {
                     throw new AggregateException(String.format("failed to create SDX Sliver for '%s' with service UUID=%s", sdxSliver.getSliceName(), sdxSliver.getServiceUuid()));
-                } else if (status.equals("READY")) {
-                    statusJson = sdxSliver.querySliver(true);
-                    sdxSliver.setManifestJson(statusJson);
+                } else if (status.equals("Creation - READY")) {
+                    //@TODO: getManifest for SDX sliver
+                    //String statusJson = sdxSliver.querySliver(true);
+                    //sdxSliver.setManifestJson(statusJson);
                     allCancelled = false;
-                } else if (status.equals("CANCELLED")) {
+                } else if (status.equals("Cancellation - READY")) {
                    allActive = false;
                 } else {
                     allActive = false;
