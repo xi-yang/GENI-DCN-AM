@@ -130,7 +130,7 @@ public class AggregateSdxSliver extends AggregateResource {
         }
         AggregateRESTClient restClient = this.getRestClient();
         try {
-            String response[] = restClient.executeHttpMethod("DELETE", AggregateState.getSdxApiUrl()+"service/"+serviceUUID, null);
+            String response[] = restClient.executeHttpMethod("PUT", AggregateState.getSdxApiUrl()+"service/"+serviceUUID+"/delete", null);
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.deleteSliver DELETE returns code "+response[0]);
             }

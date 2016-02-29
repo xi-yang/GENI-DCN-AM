@@ -178,7 +178,7 @@ public class AggregateRspecRunner extends Thread {
                 // poll vlan circuits
                 try {
                     this.pollP2PVlans();
-                    if (rspec.getStatus().equalsIgnoreCase("VLANS-ACTIVE")) {
+                    if (rspec.getStatus().contains("ACTIVE")) {
                         String manifestXml = AggregateState.getRspecHandler().generateRspecManifest(rspec);
                         rspec.setManifestXml(manifestXml);
                         rspec.setStatus("WORKING");
@@ -433,7 +433,7 @@ public class AggregateRspecRunner extends Thread {
         for (int i = 0; i < resources.size(); i++) {
             if (resources.get(i).getType().equalsIgnoreCase("sdxSliver")) {
                 AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
-                log.debug("start - create SDX sliver: " + sdxSliver.getSliceName());
+                log.debug("start - query SDX sliver: " + sdxSliver.getSliceName());
                 hasSliver = true;
                 String status = sdxSliver.querySliver(false);
                 sdxSliver.setStatus(status);
@@ -451,7 +451,7 @@ public class AggregateRspecRunner extends Thread {
                     allCancelled = false;
                }
                 AggregateState.getAggregateSdxSlivers().update(sdxSliver);
-                log.debug("end - create SDX sliver: " + sdxSliver.getSliceName());
+                log.debug("end - query SDX sliver: " + sdxSliver.getSliceName());
             }
         }
         if (hasSliver) {
