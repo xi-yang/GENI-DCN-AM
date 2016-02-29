@@ -4,8 +4,10 @@
  */
 package net.geni.aggregate.services.core;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.commons.codec.binary.Base64;
@@ -75,8 +77,15 @@ public class AggregateRESTClient {
         log.debug(String.format("Sending %s request to URL : %s", method, url));
         String responseCode[] = new String[3];
         responseCode[0] = Integer.toString(conn.getResponseCode());
-        responseCode[1] = conn.getHeaderField("Location");
-        responseCode[2] = conn.getResponseMessage();
+        responseCode[1] = conn.getResponseMessage();
+        StringBuilder responseStr;
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        responseStr = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            responseStr.append(inputLine);
+        }
+        responseCode[2] = responseStr.toString();
         log.debug(String.format("Response Code : %s", responseCode[0]));
         return responseCode;
     }

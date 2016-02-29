@@ -83,7 +83,8 @@ public class AggregateSdxSliver extends AggregateResource {
             throw new AggregateException("AggregateSdxSliver.generateRestData() cannot parse requst JSON: \n"+this.requestJson);
         }
         JSONObject reqJson = new JSONObject();
-        reqJson.put("user", this.sliceUser);
+        //reqJson.put("user", this.sliceUser);
+        reqJson.put("user", "admin"); //@Hack for now
         reqJson.put("type", "netcreate");
         reqJson.put("data", jsonData);
         //$$ TODO: add creationTime, client Tags
