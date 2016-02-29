@@ -488,7 +488,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         if (subnet.getRoute() != null & !subnet.getRoute().isEmpty()) {
                             JSONArray routeArray = new JSONArray();
                             subnetJson.put("routes", routeArray);
-                            for (RouteContent route: sdxVc.getRoute()) {
+                            for (RouteContent route: subnet.getRoute()) {
                                 JSONObject routeJson = new JSONObject();
                                 routeArray.add(routeJson);
                                 if (route.getType() != null) {
