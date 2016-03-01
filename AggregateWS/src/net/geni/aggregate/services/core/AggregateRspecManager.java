@@ -473,6 +473,7 @@ public class AggregateRspecManager extends Thread{
                 if (aggrRspec.getRspecName().equalsIgnoreCase(rspecName)) {
                     log.info("start - delete defunct rspec");
                     try {
+                        //@TODO SDX deletion special handling?
                         aggrRspec.getResources().clear();
                         aggrRspec.setDeleted(true);
                         session = HibernateUtil.getSessionFactory().openSession();
