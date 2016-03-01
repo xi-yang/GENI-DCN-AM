@@ -151,8 +151,8 @@ public class AggregateRspec implements java.io.Serializable {
             hm.put("geniUser", geniUser);
         }
         for (AggregateResource rc: resources) {
-            if (rc.getType().equalsIgnoreCase("sdxsliver")) {
-                //@TODO: hm.put("sliceStatus", slice.getStatus());
+            if (rc.getType().equalsIgnoreCase("sdxSliver")) {
+                hm.put("sliceStatus", ((AggregateSdxSliver)rc).getStatus());
             } else if (rc.getType().equalsIgnoreCase("p2pVlan")) {
                 AggregateP2PVlan p2pvlan = (AggregateP2PVlan)rc;
                 Vector<VlanReservationResultType> vlanResults = (Vector<VlanReservationResultType>)hm.get("vlanResults");

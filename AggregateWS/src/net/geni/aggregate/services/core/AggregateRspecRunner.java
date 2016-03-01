@@ -416,9 +416,9 @@ public class AggregateRspecRunner extends Thread {
                 log.debug("start - delete SDX sliver: " + sdxSliver.getSliceName());
                 //?? always both cancel and delete ?
                 String status = sdxSliver.cancelSliver();
-                if (status.equals("CANCELLED")) {
-                    sdxSliver.deleteSliver();
-                }
+                //if (status.equals("CANCELLED")) {
+                //    sdxSliver.deleteSliver();
+                //}
                 AggregateState.getAggregateSdxSlivers().delete(sdxSliver);
                 log.debug("end - delete SDX sliver: " + sdxSliver.getSliceName());
             }
