@@ -37,6 +37,7 @@
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:gateway"/>
     </xs:sequence>
     <xs:attribute name="client_id" use="required" type="xs:string"/>
+    <xs:attribute name="type" use="required" type="xs:string"/>
     <xs:attribute name="provider_id" use="required" type="xs:string"/>
   </xs:complexType>
   
@@ -44,11 +45,14 @@
   <xs:element name="node" type="SDX:NodeReference"/>
   
   <xs:complexType name="NodeReference">
-    <xs:simpleContent>
-        <xs:extension base="xs:string">
-            <xs:attribute use="optional" name="public" type="xs:boolean"/>
-        </xs:extension>
-    </xs:simpleContent>
+    <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:route"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:ceph_rbd"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:quagga_bgp"/>
+    </xs:sequence>
+    <xs:attribute name="client_id" use="required" type="xs:string"/>
+    <xs:attribute name="type" use="required" type="xs:string"/>
+    <xs:attribute name="host" use="optional" type="xs:string"/>
   </xs:complexType>
   
   <!-- Subnet -->
@@ -86,6 +90,33 @@
     </xs:sequence>
     <xs:attribute name="client_id" use="optional" type="xs:string"/>
     <xs:attribute name="type" use="optional" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- CephRBD -->
+  <xs:element name="ceph_rbd" type="SDX:CephRbdContent"/>
+
+  <xs:complexType name="CephRbdContent">
+    <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="1" name="disk_gb" type="xs:string"/>
+        <xs:element minOccurs="1" maxOccurs="1" name="mount_point" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- CephRBD -->
+  <xs:element name="quagga_bgp" type="SDX:QuaggaBgpContent"/>
+
+  <xs:complexType name="QuaggaBgpContent">
+    <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="network" type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="neighbor" type="SDX:BgpNeighborContent"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="BgpNeighborContent">
+    <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="1" name="remote_asn" type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="bgp_authkey" type="xs:string"/>
+    </xs:sequence>
   </xs:complexType>
 
 
