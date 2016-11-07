@@ -6,8 +6,7 @@
 package net.geni.aggregate.services.core;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.*;
 import org.json.simple.JSONObject;
 
 /**
@@ -15,6 +14,9 @@ import org.json.simple.JSONObject;
  * @author Xi Yang
  */
 public class AggregateSdxSliver extends AggregateResource {
+    //Logger
+    public static Logger log = org.apache.log4j.Logger.getLogger("net.geni.aggregate");
+
     private String sliceName = "";
     private String sliceUser = "";
     private String serviceUuid = "";
@@ -95,7 +97,8 @@ public class AggregateSdxSliver extends AggregateResource {
        AggregateRESTClient restClient = this.getRestClient();
         JSONObject restData = generateRestData();
         try {
-            String response[] = restClient.executeHttpMethod("POST", AggregateState.getSdxApiUrl()+"service", restData.toJSONString());
+            log.info("AggregateSdxSliver.createSliver sending: "+restData);
+            String response[] = restClient.executeHttpMethod("POST", AggregateState.getSdxApiUrl()+"/service", restData.toJSONString());
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.createSliver POST returns code "+response[0]);
             }
@@ -113,7 +116,7 @@ public class AggregateSdxSliver extends AggregateResource {
         }
         AggregateRESTClient restClient = this.getRestClient();
         try {
-            String response[] = restClient.executeHttpMethod("PUT", AggregateState.getSdxApiUrl()+"service/"+serviceUUID+"/cancel", null);
+            String response[] = restClient.executeHttpMethod("PUT", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/cancel", null);
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.cancelSliver PUT returns code "+response[0]);
             }
@@ -130,7 +133,7 @@ public class AggregateSdxSliver extends AggregateResource {
         }
         AggregateRESTClient restClient = this.getRestClient();
         try {
-            String response[] = restClient.executeHttpMethod("PUT", AggregateState.getSdxApiUrl()+"service/"+serviceUUID+"/delete", null);
+            String response[] = restClient.executeHttpMethod("PUT", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/delete", null);
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.deleteSliver DELETE returns code "+response[0]);
             }
@@ -147,7 +150,7 @@ public class AggregateSdxSliver extends AggregateResource {
         }
         AggregateRESTClient restClient = this.getRestClient();
         try {
-            String response[] = restClient.executeHttpMethod("GET", AggregateState.getSdxApiUrl()+"service/"+serviceUUID+(detailed?"/manifest":"/status"), null);
+            String response[] = restClient.executeHttpMethod("GET", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+(detailed?"/manifest":"/status"), null);
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.querySliver GET returns code "+response[0]);
             }
