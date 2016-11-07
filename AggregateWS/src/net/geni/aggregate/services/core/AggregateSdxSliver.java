@@ -150,7 +150,12 @@ public class AggregateSdxSliver extends AggregateResource {
         }
         AggregateRESTClient restClient = this.getRestClient();
         try {
-            String response[] = restClient.executeHttpMethod("GET", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+(detailed?"/manifest":"/status"), null);
+            String response[] = null; 
+            if (detailed) {
+                response = restClient.executeHttpMethod("GET", AggregateState.getSdxApiUrl()+"/manifest/"+serviceUUID, null);
+            } else {
+                response = restClient.executeHttpMethod("GET", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/status", null);                
+            }
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.querySliver GET returns code "+response[0]);
             }
