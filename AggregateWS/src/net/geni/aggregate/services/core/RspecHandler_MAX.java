@@ -275,7 +275,7 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
         AggregateNetworkInterface aggrNetIf = new AggregateNetworkInterface(netIfId);
         aggrNetIf.setDeviceType(deviceType);
         aggrNetIf.setDeviceName(deviceName);
-        aggrNetIf.setIpAddress(ipAddress);
+        aggrNetIf.setAddress(ipAddress);
         aggrNetIf.setVlanTag(vlanTag);
         aggrNetIf.setCapacity(capacity);
         aggrNetIf.setLinks(linkUrns);
@@ -433,7 +433,7 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
                         : AggregateUtils.getIDCQualifiedUrn(netIf1.getLinks().get(0));
                 stitchingP2PVlan.setSource(source);
                 stitchingP2PVlan.setSrcInterface(netIf1.getDeviceName());
-                stitchingP2PVlan.setSrcIpAndMask(netIf1.getIpAddress());
+                stitchingP2PVlan.setSrcIpAndMask(netIf1.getAddress());
                 stitchingP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity()));
                 if (!netIf1.getVlanTag().isEmpty())
                     stitchingP2PVlan.setVtag(netIf1.getVlanTag());
@@ -443,7 +443,7 @@ public class RspecHandler_MAX implements AggregateRspecHandler {
                         : AggregateUtils.getIDCQualifiedUrn(netIf2.getLinks().get(0));
                 stitchingP2PVlan.setDestination(destination);
                 stitchingP2PVlan.setDstInterface(netIf2.getDeviceName());
-                stitchingP2PVlan.setDstIpAndMask(netIf2.getIpAddress());
+                stitchingP2PVlan.setDstIpAndMask(netIf2.getAddress());
                 if (netIf1 == null) {
                     stitchingP2PVlan.setBandwidth(AggregateUtils.convertBandwdithToMbps(netIf1.getCapacity()));
                     if (!netIf2.getVlanTag().isEmpty()) {

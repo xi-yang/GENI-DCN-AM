@@ -24,7 +24,7 @@
       <property column="deviceType" name="deviceType"/>
       <property column="deviceName" name="deviceName"/>
       <property column="capacity" name="capacity"/>
-      <property column="ipAddress" name="ipAddress"/>
+      <property column="address" name="address"/>
       <property column="vlanRanges" name="vlanTag"/>
       <property column="attachedLinks" name="attachedLinkUrns"/>
       <property column="peerInterfaces" name="peerInterfaces"/>

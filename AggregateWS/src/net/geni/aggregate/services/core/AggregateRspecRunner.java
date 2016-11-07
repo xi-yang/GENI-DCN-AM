@@ -245,8 +245,8 @@ public class AggregateRspecRunner extends Thread {
                             }
                             AggregateP2PVlan p2pvlan = AggregateState.getAggregateP2PVlans().createVlan(
                                     AggregateState.getPlcPrefix() + rspec.getRspecName(), //sliceName
-                                    source, netIf1.getDeviceName(), netIf1.getIpAddress(),
-                                    destination, netIf2.getDeviceName(), netIf2.getIpAddress(),
+                                    source, netIf1.getDeviceName(), netIf1.getAddress(),
+                                    destination, netIf2.getDeviceName(), netIf2.getAddress(),
                                     vtag, bandwidth, description, startTime, endTime, hmRet);
                             log.debug("start - create vlan: " + description + " return status: " + hmRet);
                             if (p2pvlan == null) {

@@ -130,7 +130,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "deviceType varchar(255) NOT NULL, " +
                     "deviceName varchar(255) NOT NULL, " +
                     "capacity varchar(255) NOT NULL, " +
-                    "ipAddress varchar(255) NOT NULL, " +
+                    "address varchar(255) NOT NULL, " +
                     "vlanRanges  text NOT NULL, " +
                     "attachedLinks  text NOT NULL, " +
                     "peerInterfaces  text NOT NULL, " +

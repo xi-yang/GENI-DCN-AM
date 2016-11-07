@@ -15,7 +15,7 @@ public class AggregateNetworkInterface extends AggregateResource {
     String urn = "";
     String deviceType = "";
     String deviceName = "";
-    String ipAddress = "";
+    String address = "";
     String vlanTag = "";
     String capacity = "";
     ArrayList<String> attachedLinkUrns = null;
@@ -55,12 +55,12 @@ public class AggregateNetworkInterface extends AggregateResource {
         this.urn = urn;
     }
 
-    public String getIpAddress() {
-        return ipAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getVlanTag() {
@@ -188,7 +188,7 @@ public class AggregateNetworkInterface extends AggregateResource {
         ai.setCapacity(capacity);
         ai.setDeviceType(deviceType);
         ai.setDeviceName(deviceName);
-        ai.setIpAddress(ipAddress);
+        ai.setAddress(address);
         ai.setParentNode(parentNode);
         ai.setPnid(pnid);
         ai.setVlanTag(vlanTag);

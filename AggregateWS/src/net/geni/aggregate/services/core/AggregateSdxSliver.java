@@ -86,8 +86,8 @@ public class AggregateSdxSliver extends AggregateResource {
         //reqJson.put("user", this.sliceUser);
         reqJson.put("user", "admin"); //@Hack for now
         reqJson.put("type", "netcreate");
+        reqJson.put("alias", this.sliceName);
         reqJson.put("data", jsonData);
-        //$$ TODO: add creationTime, client Tags
         return reqJson;
     }
 

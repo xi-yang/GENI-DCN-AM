@@ -162,7 +162,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     address = AggregateUtils.getAnyText(obj);
                 } else if (elemName.equalsIgnoreCase("description")) {
                     descr = AggregateUtils.getAnyText(obj);
-                }
+                } 
             }
         }
 
@@ -184,7 +184,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         String urn = iface.getComponentId(); //netIfId
         String deviceType = "Ethernet";
         String deviceName = "";
-        String ipAddress = "";
+        String address = "";
         String vlanTag = "";
         String capacity = "";
         String clientId = iface.getClientId();
@@ -194,13 +194,19 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 String elemName = ((JAXBElement)obj).getName().getLocalPart();
                 if (elemName.equalsIgnoreCase("ip")) {
                     IpContents ipc = (IpContents)((JAXBElement)obj).getValue();
-                    ipAddress = ipc.getAddress();
+                    address = "ipv4+"+ipc.getAddress();
                     if (ipc.getNetmask() != null) {
-                        ipAddress += "/";
-                        ipAddress += ipc.getNetmask();
+                        address += "/";
+                        address += ipc.getNetmask();
                     }
                     // assume type="ipv4"
                 }
+            }
+            if (iface.getMacAddress() != null && !iface.getMacAddress().isEmpty()) {
+                if (!address.isEmpty()) {
+                    address += ",";
+                }
+                address += "mac+" + iface.getMacAddress();
             }
             // optional:
             if (obj.getClass().getName().contains("ElementNSImpl")) {
@@ -209,12 +215,15 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     linkUrns.add(AggregateUtils.getAnyText(obj));
                 } else if (elemName.equalsIgnoreCase("vlantag")) {
                     vlanTag = AggregateUtils.getAnyText(obj);
-                } 
+                } else if (elemName.equalsIgnoreCase("gateway")) {
+                    deviceType = "SRIOV";
+                    deviceName = AggregateUtils.getAnyText(obj);
+                }
             }
         }
 
         // extract deviceName from urn (assume last field after colon)
-        if (urn != null) {
+        if (urn != null && deviceName.isEmpty()) {
             int last = -1;
             int index = 0;
             while (index != -1) {
@@ -233,7 +242,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         aggrNetIf.setClientId(clientId);
         aggrNetIf.setDeviceType(deviceType);
         aggrNetIf.setDeviceName(deviceName);
-        aggrNetIf.setIpAddress(ipAddress);
+        aggrNetIf.setAddress(address);
         aggrNetIf.setVlanTag(vlanTag); // To be overidden by parseAddLink if empty
         aggrNetIf.setCapacity(capacity); // To be overidden by parseAddLink if empty
         aggrNetIf.setLinks(linkUrns);
@@ -384,11 +393,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 explicitP2PVlan.setVtag(vlanTag);
                 if (hasSourceIf) {
                     explicitP2PVlan.setSrcInterface(netIfs.get(0).getDeviceName());
-                    explicitP2PVlan.setSrcIpAndMask(netIfs.get(0).getIpAddress());
+                    explicitP2PVlan.setSrcIpAndMask(netIfs.get(0).getAddress());
                 }
                 if (hasDestIf) {
                     explicitP2PVlan.setDstInterface(netIfs.get(0).getDeviceName());
-                    explicitP2PVlan.setDstIpAndMask(netIfs.get(0).getIpAddress());
+                    explicitP2PVlan.setDstIpAndMask(netIfs.get(0).getAddress());
                 }
                 // no device and IP needed if neither end is attached to node netIf
                 explicitP2PVlan.setStitchingResourceId("geni-implicit-stitching");
@@ -409,7 +418,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             for (VirtualCloudContent sdxVc: sdx.getVirtualCloud()) {
                 JSONObject vpcJson = new JSONObject();
                 vpcArray.add(vpcJson);
-                vpcJson.put("type", "internal");
+                vpcJson.put("type", sdxVc.getType()); //'aws' or 'openstack'
                 if (sdxVc.getClientId() != null) {
                     vpcJson.put("name", sdxVc.getClientId());
                 }
@@ -434,20 +443,21 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         if (subnet.getNode() != null && !subnet.getNode().isEmpty()) {
                             JSONArray vmArray = new JSONArray();
                             for (NodeReference node: subnet.getNode()) {
-                                String clientId = node.getValue();
+                                String clientId = node.getClientId();
                                 Iterator itn = rspec.getResources().iterator();
                                 while (itn.hasNext()) {
                                     AggregateResource res = (AggregateResource)itn.next();
-                                    if ((res.getType().equals("computeNode:sliver_type=aws_ec2") 
-                                                || res.getType().equals("computeNode:sliver_type=openstack")) 
+                                    if (res.getType().startsWith("computeNode:sliver_type=") 
+                                            && (res.getType().contains("instance+") || res.getType().contains("flavor+"))
                                             && res.getClientId() != null && clientId.equals(res.getClientId())) {
                                         AggregateNode aggrNode = (AggregateNode)res;
                                         JSONObject vmJson = new JSONObject();
                                         vmArray.add(vmJson);
                                         vmJson.put("name", clientId);
-                                        if (aggrNode.getUrn() != null && !aggrNode.getUrn().isEmpty())
-                                            vmJson.put("urn", aggrNode.getUrn());
                                         vmJson.put("type", aggrNode.getType().substring("computeNode:sliver_type=".length()));
+                                        if (node.getHost() != null && !node.getHost().isEmpty()) {
+                                            vmJson.put("host", node.getHost());
+                                        }
                                         JSONArray vifArray = null;
                                         Iterator itnif = rspec.getResources().iterator();
                                         while (itnif.hasNext()) {
@@ -461,25 +471,24 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                                     JSONObject vifJson = new JSONObject();
                                                     vifArray.add(vifJson);
                                                     vifJson.put("name", vif.getClientId());
-                                                    if (vif.getUrn() != null && !vif.getUrn().isEmpty()) {
-                                                        vifJson.put("urn", vif.getUrn());
-                                                    }
-                                                    if (vif.getDeviceName() != null && !vif.getDeviceName().isEmpty()) {
-                                                        vifJson.put("device", vif.getDeviceName());
-                                                    }
                                                     if (vif.getDeviceType() != null && !vif.getDeviceType().isEmpty()) {
                                                         vifJson.put("type", vif.getDeviceType());
                                                     }
-                                                    if (vif.getCapacity() != null && !vif.getCapacity().isEmpty()) {
-                                                        vifJson.put("capacity", vif.getCapacity());
+                                                    if (vif.getDeviceName() != null && !vif.getDeviceName().isEmpty() 
+                                                            && vif.getDeviceType().equalsIgnoreCase("SRIOV")) {
+                                                        vifJson.put("gateway", vif.getDeviceName());
                                                     }
-                                                    if (vif.getIpAddress() != null && !vif.getIpAddress().isEmpty()) {
-                                                        vifJson.put("address", vif.getIpAddress());
-                                                    }
-                                                    // mac_address ?
+                                                    if (vif.getAddress() != null && !vif.getAddress().isEmpty()) {
+                                                        vifJson.put("address", vif.getAddress());
+                                                    } // mac_address is packed into ipAddress as well
                                             }
                                         }
-                                        //@TODO: batch ... (add to AggregateResource ?)
+                                        //@TODO: handle node level routes
+                                        node.getRoute();
+                                        //@TODO: handle ceph_rbd
+                                        node.getCephRbd();
+                                        //@TODO: handel quagga_bgp
+                                        node.getQuaggaBgp();
                                     }
                                 }
                             }
@@ -711,7 +720,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 netIf1 = lookupInterfaceByStitchingResourceId(rspec, path.getId());
                 if (netIf1 != null) {
                     stitchingP2PVlan.setSrcInterface(netIf1.getDeviceName());
-                    stitchingP2PVlan.setSrcIpAndMask(netIf1.getIpAddress());
+                    stitchingP2PVlan.setSrcIpAndMask(netIf1.getAddress());
                     if (stitchingP2PVlan.getVtag().isEmpty() && netIf1.getVlanTag() != null)
                         stitchingP2PVlan.setVtag(netIf1.getVlanTag());
                 }
@@ -720,7 +729,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 netIf2 = lookupInterfaceByStitchingResourceId(rspec, path.getId());
                 if (netIf2 != null) {
                     stitchingP2PVlan.setDstInterface(netIf2.getDeviceName());
-                    stitchingP2PVlan.setDstIpAndMask(netIf2.getIpAddress());
+                    stitchingP2PVlan.setDstIpAndMask(netIf2.getAddress());
                     if (stitchingP2PVlan.getVtag().isEmpty() && netIf2.getVlanTag() != null)
                         stitchingP2PVlan.setVtag(netIf2.getVlanTag());
                     else if (netIf2.getVlanTag() != null && !netIf2.getVlanTag().isEmpty())
@@ -800,9 +809,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     if (ai.getParentNode() == an) // || AggregateUtils.getUrnField(ai.getUrn(), "node").equalsIgnoreCase(AggregateUtils.getUrnField(an.getUrn(), "node"))) {
                     {
                         rspecMan = rspecMan + "<interface component_id=\"" + ai.getUrn() + "\">";
-                        if (!ai.getIpAddress().isEmpty()) {
-                            rspecMan = rspecMan + "<ip address=\"" + ai.getIpAddress().split("/")[0]
-                                    + "\" netmask=\"" + ai.getIpAddress().split("/")[1] + "\" type=\"ipv4\"/>";
+                        if (!ai.getAddress().isEmpty()) {
+                            rspecMan = rspecMan + "<ip address=\"" + ai.getAddress().split("/")[0]
+                                    + "\" netmask=\"" + ai.getAddress().split("/")[1] + "\" type=\"ipv4\"/>";
                         }
                         rspecMan += "</interface>";
                     }
