@@ -414,7 +414,7 @@ public class AggregateRspecRunner extends Thread {
             if (resources.get(i).getType().equalsIgnoreCase("sdxSliver")) {
                 AggregateSdxSliver sdxSliver = (AggregateSdxSliver) resources.get(i);
                 log.debug("start - delete SDX sliver: " + sdxSliver.getSliceName());
-                sdxSliver.setStatus("Cancellation - INIT");
+                sdxSliver.setStatus("Cancel - INIT");
                 AggregateState.getAggregateSdxSlivers().update(sdxSliver);
                 //?? always both cancel and delete ?
                 String status = sdxSliver.cancelSliver();
@@ -440,6 +440,7 @@ public class AggregateRspecRunner extends Thread {
                 String status = sdxSliver.querySliver(false);
                 sdxSliver.setStatus(status);
                 if (status.contains("FAILED")) {
+                    AggregateState.getAggregateSdxSlivers().update(sdxSliver);
                     throw new AggregateException(String.format("failed to create SDX Sliver for '%s' with service UUID=%s", sdxSliver.getSliceName(), sdxSliver.getServiceUuid()));
                 } else if (status.equals("Create - READY")) {
                     //@TODO: getManifest for SDX sliver
