@@ -57,7 +57,7 @@ public class AggregateRESTClient {
     }
     
     public String[] executeHttpMethod(String username, String password,  String method, String url, String body) throws IOException {
-        String methods[] = method.split("-");
+        String methods[] = method.split("/");
         method = methods[0];
         String type = (methods.length > 1 ? methods[1] : "json");
         URL urlObj = new URL(url);
