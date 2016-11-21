@@ -57,6 +57,9 @@ public class AggregateRESTClient {
     }
     
     public String[] executeHttpMethod(String username, String password,  String method, String url, String body) throws IOException {
+        String methods[] = method.split("-");
+        method = methods[0];
+        String type = (methods.length > 1 ? methods[1] : "json");
         URL urlObj = new URL(url);
         HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
         conn.setRequestMethod(method);
@@ -66,8 +69,8 @@ public class AggregateRESTClient {
             String stringEncoded = new String(encoded);
             conn.setRequestProperty("Authorization", "Basic " + stringEncoded);
         }
-        conn.setRequestProperty("Content-type", "application/json");
-        conn.setRequestProperty("Accept", "application/json");
+        conn.setRequestProperty("Content-type", "application/"+type);
+        conn.setRequestProperty("Accept", "application/"+type);
         if (body != null && !body.isEmpty()) {
             conn.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(conn.getOutputStream());

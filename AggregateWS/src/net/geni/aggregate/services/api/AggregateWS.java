@@ -169,7 +169,7 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "sliceName varchar(255) NOT NULL, " +
                     "serviceUuid varchar(255) NOT NULL, " +
                     "requestJson longtext default NULL, " +
-                    "manifestJson longtext default NULL, " +
+                    "manifest longtext default NULL, " +
                     "status varchar(255) NOT NULL default '', " +
                     "PRIMARY KEY (id)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=latin1");

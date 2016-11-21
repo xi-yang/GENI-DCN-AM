@@ -558,12 +558,21 @@ public class AggregateRspecManager extends Thread{
                     len++;
                 }
             }
-            //get nework topology
+            //get network topology
             if (scope.equalsIgnoreCase("all") || scope.contains("network")) {
                 networkTopology = AggregateState.getStitchTopoRunner().getStitchXml();
                 if (networkTopology != null && !networkTopology.isEmpty()) {
                     len++;
                 }
+            }
+            //get SDX topology
+            if ((scope.equalsIgnoreCase("all") || scope.contains("sdx")) && !AggregateState.getSdxApiUrl().isEmpty()) {
+                if (networkTopology != null && networkTopology.isEmpty()) {
+                    len++;
+                }
+                //@TODO add sdx 
+                //resolve sdx manifest template
+                //append to networkTopology
             }
             //collect results
             if (len > 0 ) {

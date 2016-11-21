@@ -49,7 +49,7 @@
       <property column="sliceName" name="sliceName"/>
       <property column="serviceUuid" name="serviceUuid"/>
       <property column="requestJson" name="requestJson"/>
-      <property column="manifestJson" name="manifestJson"/>
+      <property column="manifest" name="manifest"/>
     </joined-subclass>
     <joined-subclass name="net.geni.aggregate.services.core.AggregateExternalResource" table="ext_resources">
       <key column="id"/>

@@ -443,9 +443,8 @@ public class AggregateRspecRunner extends Thread {
                     AggregateState.getAggregateSdxSlivers().update(sdxSliver);
                     throw new AggregateException(String.format("failed to create SDX Sliver for '%s' with service UUID=%s", sdxSliver.getSliceName(), sdxSliver.getServiceUuid()));
                 } else if (status.equals("Create - READY")) {
-                    //@TODO: getManifest for SDX sliver
-                    //String statusJson = sdxSliver.querySliver(true);
-                    //sdxSliver.setManifestJson(statusJson);
+                    String manifestXml = sdxSliver.querySliver(true);
+                    sdxSliver.setManifest(manifestXml);
                     allCancelled = false;
                 } else if (status.equals("Cancel - READY")) {
                    allActive = false;

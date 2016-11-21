@@ -197,12 +197,13 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     address = "ipv4+"+ipc.getAddress();
                     if (ipc.getNetmask() != null) {
                         address += "/";
+                        //@TODO convert netmask into prefix format
                         address += ipc.getNetmask();
                     }
                     // assume type="ipv4"
                 }
             }
-            if (iface.getMacAddress() != null && !iface.getMacAddress().isEmpty()) {
+            if (iface.getMacAddress() != null && !iface.getMacAddress().isEmpty() && !address.contains("mac+")) {
                 if (!address.isEmpty()) {
                     address += ",";
                 }
@@ -480,7 +481,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                                     }
                                                     if (vif.getAddress() != null && !vif.getAddress().isEmpty()) {
                                                         vifJson.put("address", vif.getAddress());
-                                                    } // mac_address is packed into ipAddress as well
+                                                    }
                                             }
                                         }
                                         //@TODO: handle node level routes
@@ -609,7 +610,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         sdxSliver.setType("sdxSliver");
         sdxSliver.setRspecId(rspec.getId());
         sdxSliver.setRequestJson(reqJson.toJSONString());
-        sdxSliver.setManifestJson("");
+        sdxSliver.setManifest("");
         sdxSliver.setStatus("INIT");
         rspec.getResources().add(sdxSliver);
     }
@@ -817,7 +818,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     }
                 }
                 rspecMan += "</node>";
-            }
+            } 
         }
         rspecMan +=  "</rspec>";
         return rspecMan;
@@ -873,6 +874,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         JAXBElement<StitchContent> jaxbStitch = null;
         StitchContent stitchObj = null;
         Object stitchObjToRemove = null;
+        Object sdxObjToRemove = null;
         for (Object obj: rspecV3Obj.getAnyOrNodeOrLink()) {
             if (obj.getClass().getName().equalsIgnoreCase("javax.xml.bind.JAXBElement")) {
                 String elemName = ((JAXBElement)obj).getName().getLocalPart();
@@ -893,6 +895,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     } catch (Exception e) {
                         throw new AggregateException("RspecHandler_GENIv3.generateRspecManifest error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
                     }
+                } else if (elemName.equalsIgnoreCase("sdx")) {
+                    sdxObjToRemove = obj;
                 }
             }
         }
@@ -1013,7 +1017,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                             l2scObj.setVlanTranslation(Boolean.TRUE);
                         }
                 }
-            }            
+            }
         }
         rspecXml = this.marshallJaxbToString(jaxbRspec, "net.geni.www.resources.rspec._3");
         rspecXml = rspecXml.replaceFirst("xmlns=", " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
@@ -1023,6 +1027,18 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             stitchXml = stitchXml.replaceFirst("xmlns=", " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                 + "xsi:schemaLocation=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/ http://hpn.east.isi.edu/rspec/ext/stitch/0.1/stitch-schema.xsd\" xmlns=");
             rspecXml = rspecXml.replaceFirst("</rspec>", stitchXml+"</rspec>");
+        }
+
+        if (sdxObjToRemove != null) {
+            rspecV3Obj.getAnyOrNodeOrLink().remove(sdxObjToRemove);
+            for (int x = 0; x < rspec.getResources().size(); x++) {
+                if (rspec.getResources().get(x).getType().equalsIgnoreCase("sdxSliver")) {
+                    AggregateSdxSliver sdx = (AggregateSdxSliver)rspec.getResources().get(x);
+                    if (sdx.getStatus().equals("WORKING")) {
+                        rspecXml += sdx.getManifest();
+                    }
+                }
+            }
         }
         return rspecXml;
     }

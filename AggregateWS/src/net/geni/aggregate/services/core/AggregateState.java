@@ -141,7 +141,7 @@ public class AggregateState
         nsiDir = aggregateProps.getProperty("aggregate.nsi.client_dir", "/usr/local/geni-aggregate/AggregateAttic/conf/oscars_nsi2");
         nsaUrl = aggregateProps.getProperty("aggregate.nsi.server_url", "https://idc.maxgigapop.net:8500/nsi-v2/ConnectionServiceProvider");
 
-        sdxApiUrl = aggregateProps.getProperty("aggregate.sdx.api_urlbase", "http://127.0.0.1:8080/VersaStack-web/restapi/");
+        sdxApiUrl = aggregateProps.getProperty("aggregate.sdx.api_urlbase", "");
         sdxApiUser = aggregateProps.getProperty("aggregate.sdx.api_username", "");
         sdxApiPass = aggregateProps.getProperty("aggregate.sdx.api_password", "");
 

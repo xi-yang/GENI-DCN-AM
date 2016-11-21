@@ -21,7 +21,7 @@ public class AggregateSdxSliver extends AggregateResource {
     private String sliceUser = "";
     private String serviceUuid = "";
     private String requestJson = "";
-    private String manifestJson = "";
+    private String manifest = "";
     private String status = "";
 
     public AggregateSdxSliver() {}
@@ -58,12 +58,12 @@ public class AggregateSdxSliver extends AggregateResource {
         this.requestJson = requestJson;
     }
 
-    public String getManifestJson() {
-        return manifestJson;
+    public String getManifest() {
+        return manifest;
     }
 
-    public void setManifestJson(String manifestJson) {
-        this.manifestJson = manifestJson;
+    public void setManifest(String manifest) {
+        this.manifest = manifest;
     }
 
     public String getStatus() {
@@ -103,7 +103,7 @@ public class AggregateSdxSliver extends AggregateResource {
                 throw new AggregateException("AggregateSdxSliver.createSliver POST returns "+response);
             }
             this.setServiceUuid(response[2]);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             throw new AggregateException(ex);
         }
         return "INSETUP";
@@ -120,7 +120,7 @@ public class AggregateSdxSliver extends AggregateResource {
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.cancelSliver PUT returns "+response);
             }
-       } catch (IOException ex) {
+       } catch (Exception ex) {
             throw new AggregateException(ex);
         }
         return "CANCELLED";
@@ -137,7 +137,7 @@ public class AggregateSdxSliver extends AggregateResource {
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.deleteSliver DELETE returns "+response);
             }
-       } catch (IOException ex) {
+       } catch (Exception ex) {
             throw new AggregateException(ex);
         }
         return "DELETED";
@@ -154,13 +154,13 @@ public class AggregateSdxSliver extends AggregateResource {
             if (detailed) {
                 response = restClient.executeHttpMethod("GET", AggregateState.getSdxApiUrl()+"/manifest/"+serviceUUID, null);
             } else {
-                response = restClient.executeHttpMethod("GET", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/status", null);                
+                response = restClient.executeHttpMethod("GET-XML", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/status", null);                
             }
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.querySliver GET returns "+response);
             }
             return response[2];
-       } catch (IOException ex) {
+       } catch (Exception ex) {
             throw new AggregateException(ex);
         }
     }
