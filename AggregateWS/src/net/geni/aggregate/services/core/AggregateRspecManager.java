@@ -593,28 +593,27 @@ public class AggregateRspecManager extends Thread{
                 }
             }
         } else {
-                Vector<AggregateRspec> retRspecs = new Vector<AggregateRspec>();
-                synchronized(rspecThreads) {
-                    for (String name: rspecNames) {
-                        for (AggregateRspec rspec: aggrRspecs) {
-                            if (rspec.getRspecName().equalsIgnoreCase(name) && rspec.getResources().size() > 0) {
-                                retRspecs.add(rspec);
-                            }
+            Vector<AggregateRspec> retRspecs = new Vector<AggregateRspec>();
+            synchronized (rspecThreads) {
+                for (String name : rspecNames) {
+                    for (AggregateRspec rspec : aggrRspecs) {
+                        if (rspec.getRspecName().equalsIgnoreCase(name) && rspec.getResources().size() > 0) {
+                            retRspecs.add(rspec);
                         }
                     }
                 }
-                len = retRspecs.size();
-                statements = new String[len];
-                for (int i = 0; i < len; i++) {
-                    if (retRspecs.get(i).getStatus().equalsIgnoreCase("WORKING")) {
-                        statements[i] = retRspecs.get(i).getManifestXml();
-                    }
-                    else {
-                        statements[i] = AggregateState.getRspecHandler().generateRspecManifest(retRspecs.get(i));
-                        retRspecs.get(i).setManifestXml(statements[i]);
-                        this.updateRspec(retRspecs.get(i));
-                    }
-                }
+            }
+            len = retRspecs.size();
+            statements = new String[len];
+            for (int i = 0; i < len; i++) {
+                //@TODO: do this *after* first time generateRspecManifest out of WORKING status
+                //if (retRspecs.get(i).getStatus().equalsIgnoreCase("WORKING")) {
+                //    statements[i] = retRspecs.get(i).getManifestXml();
+                //}
+                statements[i] = AggregateState.getRspecHandler().generateRspecManifest(retRspecs.get(i));
+                retRspecs.get(i).setManifestXml(statements[i]);
+                this.updateRspec(retRspecs.get(i));
+            }
         }
 
         if (len == 0) {

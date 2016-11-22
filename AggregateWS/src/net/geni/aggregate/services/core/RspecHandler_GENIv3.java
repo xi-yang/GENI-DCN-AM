@@ -1034,8 +1034,8 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             for (int x = 0; x < rspec.getResources().size(); x++) {
                 if (rspec.getResources().get(x).getType().equalsIgnoreCase("sdxSliver")) {
                     AggregateSdxSliver sdx = (AggregateSdxSliver)rspec.getResources().get(x);
-                    if (sdx.getStatus().equals("WORKING")) {
-                        rspecXml += sdx.getManifest();
+                    if (rspec.getStatus().equals("WORKING")) {
+                        rspecXml += ("<sdx xmlns=\"http://www.geni.net/resources/rspec/ext/sdx/1/\">" + sdx.getManifest() + "</sdx>");
                     }
                 }
             }
