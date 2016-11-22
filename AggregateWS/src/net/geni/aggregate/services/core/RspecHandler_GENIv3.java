@@ -903,7 +903,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         if (stitchObjToRemove != null) {
             rspecV3Obj.getAnyOrNodeOrLink().remove(stitchObjToRemove);
         }
-
+        if (sdxObjToRemove != null) {
+            rspecV3Obj.getAnyOrNodeOrLink().remove(sdxObjToRemove);
+        }
+        
         ArrayList<AggregateP2PVlan> ppvLinks = new ArrayList<AggregateP2PVlan>();
         ArrayList<AggregateP2PVlan> ppvStitches = new ArrayList<AggregateP2PVlan>();
 
@@ -1030,12 +1033,12 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
 
         if (sdxObjToRemove != null) {
-            rspecV3Obj.getAnyOrNodeOrLink().remove(sdxObjToRemove);
             for (int x = 0; x < rspec.getResources().size(); x++) {
                 if (rspec.getResources().get(x).getType().equalsIgnoreCase("sdxSliver")) {
                     AggregateSdxSliver sdx = (AggregateSdxSliver)rspec.getResources().get(x);
                     if (rspec.getStatus().equals("WORKING")) {
-                        rspecXml += ("<sdx xmlns=\"http://www.geni.net/resources/rspec/ext/sdx/1/\">" + sdx.getManifest() + "</sdx>");
+                        String sdxXml = ("<sdx xmlns=\"http://www.geni.net/resources/rspec/ext/sdx/1/\">" + sdx.getManifest() + "</sdx>");
+                        rspecXml = rspecXml.replaceFirst("</rspec>", sdxXml+"</rspec>");
                     }
                 }
             }
