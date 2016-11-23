@@ -102,10 +102,10 @@ public class AggregateRspecManager extends Thread{
 
         List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
         List<AggregateExternalResource> ERs = AggregateState.getAggregateExtResources().getAll();
+        List<AggregateSdxSliver> SDXs = AggregateState.getAggregateSdxSlivers().getAll();
 
         synchronized(rspecThreads) {
             for (AggregateRspec aggrRspec: aggrRspecs) {
-                //@TODO: reload sdxSlivers
                 //reload p2pVlans
                 for (AggregateP2PVlan p2pvlan: p2pvlans) {
                     if (p2pvlan.getRspecId() == aggrRspec.getId())
@@ -115,6 +115,11 @@ public class AggregateRspecManager extends Thread{
                 for (AggregateExternalResource ER: ERs) {
                     if (ER.getRspecId() == aggrRspec.getId())
                         aggrRspec.getResources().add(ER);
+                }
+                //reload sdxSlivers
+                for (AggregateSdxSliver sdx: SDXs) {
+                    if (sdx.getRspecId() == aggrRspec.getId())
+                        aggrRspec.getResources().add(sdx);
                 }
                 //reconstruct nodes and interfaces
                 recalibrateRspecResources(aggrRspec);
@@ -164,7 +169,7 @@ public class AggregateRspecManager extends Thread{
         }
         for (int n = 0; n < rspec.getResources().size(); n++) {
             AggregateResource rc = rspec.getResources().get(n);
-            // scan compute (plc) slices 
+            // scan sdx slivers slices ?
             if (rc.getType().equalsIgnoreCase("sdxSliver")) {
             }
         }
