@@ -56,7 +56,7 @@
   </xs:complexType>
   
   <!-- Subnet -->
-  <xs:element name="subnet" type="SDX:SubnetContent"/>
+  <xs:element name="subnets" type="SDX:SubnetContent"/>
  
   <xs:complexType name="SubnetContent">
     <xs:sequence>

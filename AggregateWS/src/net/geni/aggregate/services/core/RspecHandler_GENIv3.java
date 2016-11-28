@@ -413,10 +413,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
     void parseSdxResources(AggregateRspec rspec, SDXContent sdx) throws AggregateException {
         AggregateSdxSliver sdxSliver = new AggregateSdxSliver();
         JSONObject reqJson = new JSONObject();
-        if (sdx.getVirtualCloud() != null && !sdx.getVirtualCloud().isEmpty()) {
+        if (sdx.getVirtualClouds() != null && !sdx.getVirtualClouds().isEmpty()) {
             JSONArray vpcArray = new JSONArray();
             reqJson.put("virtual_clouds", vpcArray);
-            for (VirtualCloudContent sdxVc: sdx.getVirtualCloud()) {
+            for (VirtualCloudContent sdxVc: sdx.getVirtualClouds()) {
                 JSONObject vpcJson = new JSONObject();
                 vpcArray.add(vpcJson);
                 vpcJson.put("type", sdxVc.getType()); //'aws' or 'openstack'
@@ -429,10 +429,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                 if (sdxVc.getProviderId() != null) {
                     vpcJson.put("parent", sdxVc.getProviderId());
                 }
-                if (sdxVc.getSubnet() != null && !sdxVc.getSubnet().isEmpty()) {
+                if (sdxVc.getSubnets() != null && !sdxVc.getSubnets().isEmpty()) {
                     JSONArray subnetArray = new JSONArray();
                     vpcJson.put("subnets", subnetArray);
-                    for (SubnetContent subnet: sdxVc.getSubnet()) {
+                    for (SubnetContent subnet: sdxVc.getSubnets()) {
                         JSONObject subnetJson = new JSONObject();
                         subnetArray.add(subnetJson);
                         if (subnet.getClientId() != null) {
@@ -441,9 +441,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         if (subnet.getCidr() != null) {
                             subnetJson.put("cidr", subnet.getCidr());
                         }
-                        if (subnet.getNode() != null && !subnet.getNode().isEmpty()) {
+                        if (subnet.getVirtualMachines()!= null && !subnet.getVirtualMachines().isEmpty()) {
                             JSONArray vmArray = new JSONArray();
-                            for (NodeReference node: subnet.getNode()) {
+                            for (VirtualMachine node: subnet.getVirtualMachines()) {
                                 String clientId = node.getClientId();
                                 Iterator itn = rspec.getResources().iterator();
                                 while (itn.hasNext()) {
@@ -485,7 +485,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                             }
                                         }
                                         //@TODO: handle node level routes
-                                        node.getRoute();
+                                        node.getRoutes();
                                         //@TODO: handle ceph_rbd
                                         node.getCephRbd();
                                         //@TODO: handel quagga_bgp
@@ -495,10 +495,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                             }
                             subnetJson.put("virtual_machines", vmArray);
                         }
-                        if (subnet.getRoute() != null & !subnet.getRoute().isEmpty()) {
+                        if (subnet.getRoutes() != null & !subnet.getRoutes().isEmpty()) {
                             JSONArray routeArray = new JSONArray();
                             subnetJson.put("routes", routeArray);
-                            for (RouteContent route: subnet.getRoute()) {
+                            for (RouteContent route: subnet.getRoutes()) {
                                 JSONObject routeJson = new JSONObject();
                                 routeArray.add(routeJson);
                                 if (route.getType() != null) {
@@ -532,10 +532,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         }
                     }
                 }
-                if (sdxVc.getGateway() != null && !sdxVc.getGateway().isEmpty()) {
+                if (sdxVc.getGateways() != null && !sdxVc.getGateways().isEmpty()) {
                     JSONArray gatewayArray = new JSONArray();
                     vpcJson.put("gateways", gatewayArray);
-                    for (GatewayContent gateway: sdxVc.getGateway()) {
+                    for (GatewayContent gateway: sdxVc.getGateways()) {
                         JSONObject gatewayJson = new JSONObject();
                         gatewayArray.add(gatewayJson);
                         if (gateway.getClientId() != null) {
@@ -570,10 +570,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                         }
                     }
                 }
-                if (sdxVc.getRoute() != null && !sdxVc.getRoute().isEmpty()) {
+                if (sdxVc.getRoutes() != null && !sdxVc.getRoutes().isEmpty()) {
                     JSONArray routeArray = new JSONArray();
                     vpcJson.put("routes", routeArray);
-                    for (RouteContent route: sdxVc.getRoute()) {
+                    for (RouteContent route: sdxVc.getRoutes()) {
                         JSONObject routeJson = new JSONObject();
                         routeArray.add(routeJson);
                         if (route.getType() != null) {
