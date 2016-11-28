@@ -611,7 +611,11 @@ public class AggregateRspecManager extends Thread{
             len = retRspecs.size();
             statements = new String[len];
             for (int i = 0; i < len; i++) {
-                if (!retRspecs.get(i).getManifestXml().isEmpty()) {
+                if (retRspecs.get(i).getManifestXml() == null || retRspecs.get(i).getManifestXml().isEmpty()) {
+                    statements[i] = AggregateState.getRspecHandler().generateRspecManifest(retRspecs.get(i));
+                    retRspecs.get(i).setManifestXml(statements[i]);
+                    this.updateRspec(retRspecs.get(i));
+                } else {
                     statements[i] = retRspecs.get(i).getManifestXml();
                 }
             }
