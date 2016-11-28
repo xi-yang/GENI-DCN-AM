@@ -17,9 +17,9 @@
   
   <xs:complexType name="SDXContent">
     <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:virtual_cloud"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:subnet"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:node"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:virtual_clouds"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:subnets"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:virtual_machines"/>
     </xs:sequence>
     <xs:attribute use="required" name="lastUpdateTime" type="xs:string"/>
     <xs:attribute use="required" name="component_manager_id" type="xs:string"/>
@@ -27,14 +27,14 @@
   </xs:complexType>
   
   <!-- VirtualCloud -->
-  <xs:element name="virtual_cloud" type="SDX:VirtualCloudContent"/>
+  <xs:element name="virtual_clouds" type="SDX:VirtualCloudContent"/>
   
   <xs:complexType name="VirtualCloudContent">
     <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" name="cidr" type="xs:string"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:subnet"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:route"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:gateway"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:subnets"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:routes"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:gateways"/>
     </xs:sequence>
     <xs:attribute name="client_id" use="required" type="xs:string"/>
     <xs:attribute name="type" use="required" type="xs:string"/>
@@ -42,11 +42,11 @@
   </xs:complexType>
   
   <!-- Node -->
-  <xs:element name="node" type="SDX:NodeReference"/>
+  <xs:element name="virtual_machines" type="SDX:VirtualMachine"/>
   
-  <xs:complexType name="NodeReference">
+  <xs:complexType name="VirtualMachine">
     <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:route"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:routes"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:ceph_rbd"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:quagga_bgp"/>
     </xs:sequence>
@@ -61,14 +61,14 @@
   <xs:complexType name="SubnetContent">
     <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" name="cidr" type="xs:string"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:node"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:route"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:virtual_machines"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:routes"/>
     </xs:sequence>
     <xs:attribute name="client_id" use="required" type="xs:string"/>
   </xs:complexType>
 
   <!-- Gateway -->
-  <xs:element name="gateway" type="SDX:GatewayContent"/>
+  <xs:element name="gateways" type="SDX:GatewayContent"/>
 
   <xs:complexType name="GatewayContent">
     <xs:sequence>
@@ -80,7 +80,7 @@
   </xs:complexType>
 
   <!-- Route -->
-  <xs:element name="route" type="SDX:RouteContent"/>
+  <xs:element name="routes" type="SDX:RouteContent"/>
 
   <xs:complexType name="RouteContent">
     <xs:sequence>
@@ -97,7 +97,7 @@
 
   <xs:complexType name="CephRbdContent">
     <xs:sequence>
-        <xs:element minOccurs="1" maxOccurs="1" name="disk_gb" type="xs:string"/>
+        <xs:element minOccurs="1" maxOccurs="1" name="size_gb" type="xs:string"/>
         <xs:element minOccurs="1" maxOccurs="1" name="mount_point" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
