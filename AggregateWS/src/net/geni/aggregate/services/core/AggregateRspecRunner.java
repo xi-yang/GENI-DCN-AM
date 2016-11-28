@@ -190,7 +190,7 @@ public class AggregateRspecRunner extends Thread {
                     manager.updateRspec(rspec);
                     break;
                 }
-                if (rspec.getStatus().equals("WORKING") && rspec.getManifestXml().isEmpty()) {
+                if (rspec.getStatus().equals("WORKING") && rspec.getManifestXml() == null) {
                     try {
                         String manifestXml = AggregateState.getRspecHandler().generateRspecManifest(rspec);
                         rspec.setManifestXml(manifestXml);

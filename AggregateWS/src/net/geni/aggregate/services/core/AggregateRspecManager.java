@@ -613,6 +613,8 @@ public class AggregateRspecManager extends Thread{
             for (int i = 0; i < len; i++) {
                 if (retRspecs.get(i).getManifestXml() != null && !retRspecs.get(i).getManifestXml().isEmpty()) {
                     statements[i] = retRspecs.get(i).getManifestXml();
+                } else {
+                    statements[i] = "<rspec/>";
                 }
             }
         }
