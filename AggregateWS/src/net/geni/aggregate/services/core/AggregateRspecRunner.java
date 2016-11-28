@@ -179,8 +179,6 @@ public class AggregateRspecRunner extends Thread {
                 try {
                     this.pollP2PVlans();
                     if (rspec.getStatus().contains("ACTIVE")) {
-                        String manifestXml = AggregateState.getRspecHandler().generateRspecManifest(rspec);
-                        rspec.setManifestXml(manifestXml);
                         rspec.setStatus("WORKING");
                         manager.updateRspec(rspec);
                     }
@@ -191,6 +189,14 @@ public class AggregateRspecRunner extends Thread {
                     rspec.setStatus("VLANS-FAILED");
                     manager.updateRspec(rspec);
                     break;
+                }
+                if (rspec.getStatus().equals("WORKING") && rspec.getManifestXml().isEmpty()) {
+                    try {
+                        String manifestXml = AggregateState.getRspecHandler().generateRspecManifest(rspec);
+                        rspec.setManifestXml(manifestXml);
+                    } catch (AggregateException e) {
+                        log.error("AggregateRspecRunner (rsepcName=" + rspec.getRspecName() + ")::generateRspecManifest Exception:" + e.getMessage());
+                    }
                 }
             }
         }
