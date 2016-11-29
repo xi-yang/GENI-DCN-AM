@@ -625,11 +625,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                             }
                         }
                         if (gateway.getFrom() != null && !gateway.getFrom().isEmpty()) {
-                            JSONArray toAddrArray = new JSONArray();
-                            gatewayJson.put("from", toAddrArray);
-                            for (NetworkAddressContent addr: gateway.getTo()) {
+                            JSONArray fromAddrArray = new JSONArray();
+                            gatewayJson.put("from", fromAddrArray);
+                            for (NetworkAddressContent addr: gateway.getFrom()) {
                                 JSONObject addrJson = new JSONObject();
-                                toAddrArray.add(addrJson);
+                                fromAddrArray.add(addrJson);
                                 if (addr.getType() != null) {
                                     addrJson.put("type", addr.getType());
                                 }
