@@ -484,12 +484,80 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                                     }
                                             }
                                         }
-                                        //@TODO: handle node level routes
-                                        node.getRoutes();
-                                        //@TODO: handle ceph_rbd
-                                        node.getCephRbd();
-                                        //@TODO: handel quagga_bgp
-                                        node.getQuaggaBgp();
+                                        // handle VM level routes
+                                        if (node.getRoutes() != null && !node.getRoutes().isEmpty()) {
+                                        JSONArray routeArray = new JSONArray();
+                                        vmJson.put("routes", routeArray);
+                                        for (RouteContent route : node.getRoutes()) {
+                                            JSONObject routeJson = new JSONObject();
+                                            routeArray.add(routeJson);
+                                            if (route.getType() != null) {
+                                                routeJson.put("type", route.getType());
+                                            }
+                                            if (route.getTo() != null) {
+                                                JSONObject addrJson = new JSONObject();
+                                                routeJson.put("to", addrJson);
+                                                if (route.getTo().getType() != null) {
+                                                    addrJson.put("type", route.getTo().getType());
+                                                }
+                                                addrJson.put("value", route.getTo().getValue());
+                                            }
+                                            if (route.getFrom() != null) {
+                                                JSONObject addrJson = new JSONObject();
+                                                routeJson.put("from", addrJson);
+                                                if (route.getFrom().getType() != null) {
+                                                    addrJson.put("type", route.getFrom().getType());
+                                                }
+                                                addrJson.put("value", route.getTo().getValue());
+                                            }
+                                            if (route.getNextHop() != null) {
+                                                JSONObject addrJson = new JSONObject();
+                                                routeJson.put("next_hop", addrJson);
+                                                if (route.getNextHop().getType() != null) {
+                                                    addrJson.put("type", route.getNextHop().getType());
+                                                }
+                                                addrJson.put("value", route.getNextHop().getValue());
+                                            }
+                                        }        
+                                        }
+                                        // handle ceph_rbd
+                                        if (node.getCephRbd() != null && !node.getCephRbd().isEmpty()) {
+                                        JSONArray rbdArray = new JSONArray();
+                                        vmJson.put("ceph_rbd", rbdArray);
+                                        for (CephRbdContent cephRbd: node.getCephRbd()) {
+                                            JSONObject rbdJson = new JSONObject();
+                                            rbdArray.add(rbdJson);
+                                            if (cephRbd.getSizeGb() != null) {
+                                                rbdJson.put("disk_gb", cephRbd.getSizeGb());
+                                            }
+                                            if (cephRbd.getMountPoint() != null) {
+                                                rbdJson.put("mount_point", cephRbd.getMountPoint());
+                                            }
+                                        }
+                                        }
+                                        // handel quagga_bgp
+                                        if (node.getQuaggaBgp() != null && !node.getQuaggaBgp().isEmpty()) {
+                                            QuaggaBgpContent quaggaBgp = node.getQuaggaBgp().get(0);
+                                            JSONObject bgpJson = new JSONObject();
+                                            vmJson.put("quagga_bgp", bgpJson);
+                                            if (quaggaBgp.getNeighbor() != null && !quaggaBgp.getNeighbor().isEmpty()) {
+                                                JSONArray neighborArray = new JSONArray();
+                                                bgpJson.put("neighbors", neighborArray);
+                                                for (BgpNeighborContent neighbor: quaggaBgp.getNeighbor()) {
+                                                    JSONObject neighborJson = new JSONObject();
+                                                    neighborArray.add(neighborJson);
+                                                    neighborJson.put("remote_asn", neighbor.getRemoteAsn());
+                                                    neighborJson.put("bgp_authkey", neighbor.getBgpAuthkey());
+                                                }
+                                            }
+                                            if (quaggaBgp.getNetwork()!= null && !quaggaBgp.getNetwork().isEmpty()) {
+                                                JSONArray networkArray = new JSONArray();
+                                                bgpJson.put("networks", networkArray);
+                                                for (String network: quaggaBgp.getNetwork()) {
+                                                    networkArray.add(network);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
