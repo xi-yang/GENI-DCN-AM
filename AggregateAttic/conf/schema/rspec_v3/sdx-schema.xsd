@@ -107,8 +107,8 @@
 
   <xs:complexType name="QuaggaBgpContent">
     <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="network" type="xs:string"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="neighbor" type="SDX:BgpNeighborContent"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="networks" type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="neighbors" type="SDX:BgpNeighborContent"/>
     </xs:sequence>
   </xs:complexType>
 

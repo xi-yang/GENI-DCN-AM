@@ -540,20 +540,20 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                             QuaggaBgpContent quaggaBgp = node.getQuaggaBgp().get(0);
                                             JSONObject bgpJson = new JSONObject();
                                             vmJson.put("quagga_bgp", bgpJson);
-                                            if (quaggaBgp.getNeighbor() != null && !quaggaBgp.getNeighbor().isEmpty()) {
+                                            if (quaggaBgp.getNeighbors() != null && !quaggaBgp.getNeighbors().isEmpty()) {
                                                 JSONArray neighborArray = new JSONArray();
                                                 bgpJson.put("neighbors", neighborArray);
-                                                for (BgpNeighborContent neighbor: quaggaBgp.getNeighbor()) {
+                                                for (BgpNeighborContent neighbor: quaggaBgp.getNeighbors()) {
                                                     JSONObject neighborJson = new JSONObject();
                                                     neighborArray.add(neighborJson);
                                                     neighborJson.put("remote_asn", neighbor.getRemoteAsn());
                                                     neighborJson.put("bgp_authkey", neighbor.getBgpAuthkey());
                                                 }
                                             }
-                                            if (quaggaBgp.getNetwork()!= null && !quaggaBgp.getNetwork().isEmpty()) {
+                                            if (quaggaBgp.getNetworks()!= null && !quaggaBgp.getNetworks().isEmpty()) {
                                                 JSONArray networkArray = new JSONArray();
                                                 bgpJson.put("networks", networkArray);
-                                                for (String network: quaggaBgp.getNetwork()) {
+                                                for (String network: quaggaBgp.getNetworks()) {
                                                     networkArray.add(network);
                                                 }
                                             }
