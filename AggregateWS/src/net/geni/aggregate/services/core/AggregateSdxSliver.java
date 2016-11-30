@@ -82,7 +82,7 @@ public class AggregateSdxSliver extends AggregateResource {
 
     private String probeServiceType(JSONObject jsonData) {
         try {
-            JSONArray jsonArrVC = (JSONArray)((JSONObject)jsonData.get("data")).get("virtual_clouds");
+            JSONArray jsonArrVC = (JSONArray)jsonData.get("virtual_clouds");
             if (jsonArrVC.size() == 2) {
                 return "hybridcloud";
             } else if (jsonArrVC.size() == 1) {
