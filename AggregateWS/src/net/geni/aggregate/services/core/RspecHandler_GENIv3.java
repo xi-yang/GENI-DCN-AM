@@ -521,10 +521,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                         }        
                                         }
                                         // handle ceph_rbd
-                                        if (node.getCephRbd() != null && !node.getCephRbd().isEmpty()) {
+                                        if (node.getCephRbds() != null && !node.getCephRbds().isEmpty()) {
                                         JSONArray rbdArray = new JSONArray();
                                         vmJson.put("ceph_rbd", rbdArray);
-                                        for (CephRbdContent cephRbd: node.getCephRbd()) {
+                                        for (CephRbdContent cephRbd: node.getCephRbds()) {
                                             JSONObject rbdJson = new JSONObject();
                                             rbdArray.add(rbdJson);
                                             if (cephRbd.getSizeGb() != null) {

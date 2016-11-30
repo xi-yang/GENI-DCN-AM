@@ -47,7 +47,7 @@
   <xs:complexType name="VirtualMachine">
     <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:routes"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:ceph_rbd"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:ceph_rbds"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:quagga_bgp"/>
     </xs:sequence>
     <xs:attribute name="client_id" use="required" type="xs:string"/>
@@ -93,7 +93,7 @@
   </xs:complexType>
 
   <!-- CephRBD -->
-  <xs:element name="ceph_rbd" type="SDX:CephRbdContent"/>
+  <xs:element name="ceph_rbds" type="SDX:CephRbdContent"/>
 
   <xs:complexType name="CephRbdContent">
     <xs:sequence>
