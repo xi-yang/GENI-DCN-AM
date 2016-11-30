@@ -508,7 +508,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                                 if (route.getFrom().getType() != null) {
                                                     addrJson.put("type", route.getFrom().getType());
                                                 }
-                                                addrJson.put("value", route.getTo().getValue());
+                                                addrJson.put("value", route.getFrom().getValue());
                                             }
                                             if (route.getNextHop() != null) {
                                                 JSONObject addrJson = new JSONObject();
@@ -586,7 +586,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                     if (route.getFrom().getType() != null) {
                                         addrJson.put("type", route.getFrom().getType());
                                     }
-                                    addrJson.put("value", route.getTo().getValue());
+                                    addrJson.put("value", route.getFrom().getValue());
                                 }
                                 if (route.getNextHop() != null) {
                                     JSONObject addrJson = new JSONObject();
@@ -661,7 +661,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                     if (route.getFrom().getType() != null) {
                                         addrJson.put("type", route.getFrom().getType());
                                     }
-                                    addrJson.put("value", route.getTo().getValue());
+                                    addrJson.put("value", route.getFrom().getValue());
                                 }
                                 if (route.getNextHop() != null) {
                                     JSONObject addrJson = new JSONObject();
