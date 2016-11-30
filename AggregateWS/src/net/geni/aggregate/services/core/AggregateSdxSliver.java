@@ -7,6 +7,7 @@ package net.geni.aggregate.services.core;
 
 import java.io.IOException;
 import org.apache.log4j.*;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -79,15 +80,34 @@ public class AggregateSdxSliver extends AggregateResource {
         return restClient;
     }
 
+    private String probeServiceType(JSONObject jsonData) {
+        try {
+            JSONArray jsonArrVC = (JSONArray)((JSONObject)jsonData.get("data")).get("virtual_clouds");
+            if (jsonArrVC.size() == 2) {
+                return "hybridcloud";
+            } else if (jsonArrVC.size() == 1) {
+                return "netcreate";
+            } else {
+                return "";
+            }
+        } catch (Exception e) {
+            return "";
+        }
+    }
+            
     private JSONObject generateRestData() throws AggregateException {
         JSONObject jsonData = AggregateUtils.parseJsonString(this.requestJson);
         if (jsonData == null) {
             throw new AggregateException("AggregateSdxSliver.generateRestData() cannot parse requst JSON: \n"+this.requestJson);
         }
+        String serviceType = this.probeServiceType(jsonData);
+        if (serviceType.isEmpty()) {
+            throw new AggregateException("AggregateSdxSliver.generateRestData() cannot tell service type for JSON: \n"+this.requestJson);
+        }
         JSONObject reqJson = new JSONObject();
         //reqJson.put("user", this.sliceUser);
-        reqJson.put("user", "admin"); //@Hack for now
-        reqJson.put("type", "netcreate");
+        reqJson.put("user", "admin"); //@TODO: user name mapping
+        reqJson.put("type", serviceType); 
         reqJson.put("alias", this.sliceName);
         reqJson.put("data", jsonData);
         return reqJson;
