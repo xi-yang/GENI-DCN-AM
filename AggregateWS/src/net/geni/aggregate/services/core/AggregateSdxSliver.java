@@ -76,7 +76,12 @@ public class AggregateSdxSliver extends AggregateResource {
     }
 
     private AggregateRESTClient getRestClient() {
-        AggregateRESTClient restClient = new AggregateRESTClient(AggregateState.getSdxApiUrl(), AggregateState.getSdxApiUser(), AggregateState.getSdxApiPass());
+        AggregateRESTClient restClient = new AggregateRESTClient(AggregateState.getSdxApiUrl(), 
+                AggregateState.getSdxApiUser(), AggregateState.getSdxApiPass());
+        // set trustStore
+        restClient.setTrustStore(AggregateState.getSdxTrustStore());
+        // set tokenUrl
+        restClient.setTrustStore(AggregateState.getSdxTokenUrl());
         return restClient;
     }
 
@@ -118,7 +123,7 @@ public class AggregateSdxSliver extends AggregateResource {
         JSONObject restData = generateRestData();
         try {
             log.info("AggregateSdxSliver.createSliver sending: "+restData);
-            String response[] = restClient.executeHttpMethod("POST", AggregateState.getSdxApiUrl()+"/service", restData.toJSONString());
+            String response[] = restClient.executeHttpBearerMethod("POST", AggregateState.getSdxApiUrl()+"/service", restData.toJSONString());
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.createSliver POST returns "+response);
             }
@@ -136,7 +141,7 @@ public class AggregateSdxSliver extends AggregateResource {
         }
         AggregateRESTClient restClient = this.getRestClient();
         try {
-            String response[] = restClient.executeHttpMethod("PUT", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/cancel", null);
+            String response[] = restClient.executeHttpBearerMethod("PUT", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/cancel", null);
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.cancelSliver PUT returns "+response);
             }
@@ -153,7 +158,7 @@ public class AggregateSdxSliver extends AggregateResource {
         }
         AggregateRESTClient restClient = this.getRestClient();
         try {
-            String response[] = restClient.executeHttpMethod("PUT", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/delete", null);
+            String response[] = restClient.executeHttpBearerMethod("PUT", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/delete", null);
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.deleteSliver DELETE returns "+response);
             }
@@ -172,9 +177,9 @@ public class AggregateSdxSliver extends AggregateResource {
         try {
             String response[] = null; 
             if (detailed) {
-                response = restClient.executeHttpMethod("GET/xml", AggregateState.getSdxApiUrl()+"/manifest/"+serviceUUID, null);
+                response = restClient.executeHttpBearerMethod("GET/xml", AggregateState.getSdxApiUrl()+"/manifest/"+serviceUUID, null);
             } else {
-                response = restClient.executeHttpMethod("GET", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/status", null);                
+                response = restClient.executeHttpBearerMethod("GET", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/status", null);                
             }
             if (!response[0].equals("200")) {
                 throw new AggregateException("AggregateSdxSliver.querySliver GET returns "+response);

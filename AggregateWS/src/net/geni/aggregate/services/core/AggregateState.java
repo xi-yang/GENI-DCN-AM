@@ -51,6 +51,8 @@ public class AggregateState
     private static String sdxApiUrl = "";
     private static String sdxApiUser = "";
     private static String sdxApiPass = "";
+    private static String sdxTrustStore = "";
+    private static String sdxTokenUrl = "";
 
     private static String plcURL = "";
     private static String plcPI = "";
@@ -144,6 +146,8 @@ public class AggregateState
         sdxApiUrl = aggregateProps.getProperty("aggregate.sdx.api_urlbase", "");
         sdxApiUser = aggregateProps.getProperty("aggregate.sdx.api_username", "");
         sdxApiPass = aggregateProps.getProperty("aggregate.sdx.api_password", "");
+        sdxTrustStore = aggregateProps.getProperty("aggregate.sdx.truststore", "");
+        sdxTokenUrl = aggregateProps.getProperty("aggregate.sdx.tokenurl", "/token");
 
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         log.info("aggregate.plc.url set to " + plcURL);
@@ -377,6 +381,14 @@ public class AggregateState
 
     public static String getSdxApiPass() {
         return sdxApiPass;
+    }
+
+    public static String getSdxTrustStore() {
+        return sdxTrustStore;
+    }
+
+    public static String getSdxTokenUrl() {
+        return sdxTokenUrl;
     }
     
     public static String getPlcURL() {
