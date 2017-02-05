@@ -11,9 +11,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
 import javax.net.ssl.HttpsURLConnection;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -21,17 +25,17 @@ import org.apache.log4j.Logger;
  */
 public class AggregateRESTClient {
     private String baseUrl = null;
-    private String authCred = null;
+    private String username = null;
+    private String password = null;
     private String trustStore = null;
-    private String tokenUrl = null;
+    private String authServer = null;
 
     private Logger log = Logger.getLogger(AggregateRESTClient.class);
 
     public AggregateRESTClient(String baseUrl, String username, String password) {
         this.baseUrl = baseUrl;
-        if (username != null && password != null && !username.isEmpty()) {
-            authCred = username + ":" + password;
-        }
+        this.username = username;
+        this.password = password;
     }
 
     public AggregateRESTClient() {
@@ -45,14 +49,6 @@ public class AggregateRESTClient {
         this.baseUrl = baseUrl;
     }
 
-    public String getAuthCred() {
-        return authCred;
-    }
-
-    public void setAuthCred(String authCred) {
-        this.authCred = authCred;
-    }
-    
     public String getTrustStore() {
         return trustStore;
     }
@@ -61,19 +57,16 @@ public class AggregateRESTClient {
         this.trustStore = trustStore;
     }
 
-    public String getTokenUrl() {
-        return tokenUrl;
+    public String getAuthServer() {
+        return authServer;
     }
 
-    public void setTokenUrl(String tokenUrl) {
-        if (baseUrl != null && !baseUrl.isEmpty() && !tokenUrl.startsWith("http")) {
-            tokenUrl = baseUrl + tokenUrl;
-        }
-        this.tokenUrl = tokenUrl;
+    public void setAuthServer(String authServer) {
+        this.authServer = authServer;
     }
     
     //@TODO: add (a) SSL truststore path (default = null) (b) authServerPath (for getting Bearer token, default = null) (turn user, password into authString)
-    public String[] executeHttpMethod(String method, String url, String body, String trustStore, String bearerToken) throws IOException {
+    public String[] executeHttpMethod(String method, String url, String body, String trustStore, String authServer) throws IOException {
         String methods[] = method.split("/");
         method = methods[0];
         String type = (methods.length > 1 ? methods[1] : "json");
@@ -81,15 +74,52 @@ public class AggregateRESTClient {
         URLConnection conn = urlObj.openConnection();
         if (url.startsWith("https:")) {
             ((HttpsURLConnection) conn).setRequestMethod(method);
-            System.setProperty("javax.net.ssl.trustStore", trustStore);
-            System.setProperty("javax.net.ssl.trustStoreType", "jks");
         } else {
             ((HttpURLConnection) conn).setRequestMethod(method);
         }
-        if (bearerToken != null && !bearerToken.isEmpty()) {
+        if (trustStore != null && !trustStore.isEmpty()) {
+            System.setProperty("javax.net.ssl.trustStore", trustStore);
+            System.setProperty("javax.net.ssl.trustStoreType", "jks");
+        }
+        if (authServer != null && !authServer.isEmpty()) {
+            URL urlObjAuth = new URL(url);
+            // assume https for authentication server
+            HttpsURLConnection authConn = (HttpsURLConnection) urlObjAuth.openConnection();
+            authConn.setRequestMethod("POST");
+            authConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+            String authBody = "username=xyang&password=MAX123!&client_id=curl&client_secret=f130ce4d-cdec-42d1-b9a4-93a2818f884b";
+            authConn.setDoOutput(true);
+            try {
+                DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+                wr.writeBytes(authBody);
+                wr.flush();
+            } catch (Exception ex) {
+                return null; // throw ?
+            }
+            StringBuilder responseStr = null;
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                responseStr = new StringBuilder();
+                while ((inputLine = in.readLine()) != null) {
+                    responseStr.append(inputLine);
+                }
+            } catch (Exception ex) {
+                return null; // throw ?
+            }
+            JSONObject responseJSON = new JSONObject();
+            try {
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse(responseStr.toString());
+                responseJSON = (JSONObject) obj;
+
+            } catch (ParseException ex) {
+                return null; // throw ?
+            }
+            String bearerToken = (String) responseJSON.get("access_token");
             conn.setRequestProperty("Authorization", "Bear " + bearerToken);
-        } else {
-            String userPassword = authCred;
+        } else if (username != null && !username.isEmpty()) {
+            String userPassword = username + ":" + password;
             byte[] encoded = Base64.encodeBase64(userPassword.getBytes());
             String stringEncoded = new String(encoded);
             conn.setRequestProperty("Authorization", "Basic " + stringEncoded);
@@ -129,11 +159,6 @@ public class AggregateRESTClient {
         if (baseUrl != null && !baseUrl.isEmpty() && !url.startsWith("http")) {
             url = baseUrl + url;
         }
-        String[] response = this.executeHttpMethod("GET", tokenUrl, "");
-        if (!response[0].equals("200")) {
-            return response;
-        }
-        String bearerToken = response[2];
-        return this.executeHttpMethod(method, url, body, trustStore, bearerToken);
+        return this.executeHttpMethod(method, url, body, trustStore, authServer);
     }
 }

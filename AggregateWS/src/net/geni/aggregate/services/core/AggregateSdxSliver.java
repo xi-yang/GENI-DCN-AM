@@ -81,7 +81,7 @@ public class AggregateSdxSliver extends AggregateResource {
         // set trustStore
         restClient.setTrustStore(AggregateState.getSdxTrustStore());
         // set tokenUrl
-        restClient.setTrustStore(AggregateState.getSdxTokenUrl());
+        restClient.setAuthServer(AggregateState.getSdxTokenUrl());
         return restClient;
     }
 
