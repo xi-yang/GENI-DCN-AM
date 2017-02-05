@@ -19,6 +19,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 /**
  *
  * @author xyang
@@ -65,8 +72,8 @@ public class AggregateRESTClient {
         this.authServer = authServer;
     }
     
-    //@TODO: add (a) SSL truststore path (default = null) (b) authServerPath (for getting Bearer token, default = null) (turn user, password into authString)
     public String[] executeHttpMethod(String method, String url, String body, String trustStore, String authServer) throws IOException {
+        this.prepareSSL();
         String methods[] = method.split("/");
         method = methods[0];
         String type = (methods.length > 1 ? methods[1] : "json");
@@ -77,47 +84,48 @@ public class AggregateRESTClient {
         } else {
             ((HttpURLConnection) conn).setRequestMethod(method);
         }
-        if (trustStore != null && !trustStore.isEmpty()) {
-            System.setProperty("javax.net.ssl.trustStore", trustStore);
-            System.setProperty("javax.net.ssl.trustStoreType", "jks");
-        }
         if (authServer != null && !authServer.isEmpty()) {
-            URL urlObjAuth = new URL(url);
+            this.prepareSSL();
+            URL urlObjAuth = new URL(authServer);
             // assume https for authentication server
             HttpsURLConnection authConn = (HttpsURLConnection) urlObjAuth.openConnection();
             authConn.setRequestMethod("POST");
-            authConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
-            String authBody = "username=xyang&password=MAX123!&client_id=curl&client_secret=f130ce4d-cdec-42d1-b9a4-93a2818f884b";
+            //authConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+            String authBody = "";
             authConn.setDoOutput(true);
             try {
-                DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+                DataOutputStream wr = new DataOutputStream(authConn.getOutputStream());
                 wr.writeBytes(authBody);
                 wr.flush();
             } catch (Exception ex) {
+                log.error("Error writing to authServer"+authConn.toString()+":"+ex);
                 return null; // throw ?
             }
             StringBuilder responseStr = null;
             try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(authConn.getInputStream()));
                 String inputLine;
                 responseStr = new StringBuilder();
                 while ((inputLine = in.readLine()) != null) {
                     responseStr.append(inputLine);
                 }
             } catch (Exception ex) {
+                log.error("Error reading from authServer"+ex);
                 return null; // throw ?
             }
+            log.info("Return from authServer"+responseStr);
             JSONObject responseJSON = new JSONObject();
             try {
                 JSONParser parser = new JSONParser();
                 Object obj = parser.parse(responseStr.toString());
                 responseJSON = (JSONObject) obj;
-
             } catch (ParseException ex) {
+                log.error("Error parsing json"+responseStr.toString());
                 return null; // throw ?
             }
             String bearerToken = (String) responseJSON.get("access_token");
-            conn.setRequestProperty("Authorization", "Bear " + bearerToken);
+            log.info("Got token from authServer"+bearerToken);
+            conn.setRequestProperty("Authorization", "Bearer " + bearerToken);
         } else if (username != null && !username.isEmpty()) {
             String userPassword = username + ":" + password;
             byte[] encoded = Base64.encodeBase64(userPassword.getBytes());
@@ -161,4 +169,33 @@ public class AggregateRESTClient {
         }
         return this.executeHttpMethod(method, url, body, trustStore, authServer);
     }
+
+    private void prepareSSL() {
+        TrustManager trustAllCerts[] = new TrustManager[]{
+            new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+            }
+        };
+
+        // Install the all-trusting trust manager
+        try {
+            SSLContext sc = SSLContext.getInstance("TLSv1");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (Exception e) {
+            log.error("prepareSSL error:"+e);
+        }
+    }
+
 }
+
