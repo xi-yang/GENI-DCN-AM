@@ -78,7 +78,7 @@ public class AggregateRESTClient {
     }
     
     public String[] executeHttpMethod(String method, String url, String body, String trustStore, String authServer) throws IOException {
-        this.prepareSSL();
+        this.prepareTrustStore();
         String methods[] = method.split("/");
         method = methods[0];
         String type = (methods.length > 1 ? methods[1] : "json");

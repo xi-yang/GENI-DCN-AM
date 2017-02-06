@@ -145,7 +145,7 @@ public class AggregateState
         sdxApiUrl = aggregateProps.getProperty("aggregate.sdx.api_urlbase", "");
         sdxCredential = aggregateProps.getProperty("aggregate.sdx.credential", "");
         sdxTrustStore = aggregateProps.getProperty("aggregate.sdx.truststore", "");
-        sdxAuthServer = aggregateProps.getProperty("aggregate.sdx.authServer", "");
+        sdxAuthServer = aggregateProps.getProperty("aggregate.sdx.authserver", "");
 
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         log.info("aggregate.plc.url set to " + plcURL);
