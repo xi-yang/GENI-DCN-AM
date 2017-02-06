@@ -77,11 +77,9 @@ public class AggregateSdxSliver extends AggregateResource {
 
     private AggregateRESTClient getRestClient() {
         AggregateRESTClient restClient = new AggregateRESTClient(AggregateState.getSdxApiUrl(), 
-                AggregateState.getSdxApiUser(), AggregateState.getSdxApiPass());
-        // set trustStore
+                AggregateState.getSdxCredential());
         restClient.setTrustStore(AggregateState.getSdxTrustStore());
-        // set tokenUrl
-        restClient.setAuthServer(AggregateState.getSdxTokenUrl());
+        restClient.setAuthServer(AggregateState.getSdxAuthServer());
         return restClient;
     }
 

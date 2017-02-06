@@ -49,10 +49,9 @@ public class AggregateState
     private static String nsaUrl = "";
     
     private static String sdxApiUrl = "";
-    private static String sdxApiUser = "";
-    private static String sdxApiPass = "";
+    private static String sdxCredential = "";
     private static String sdxTrustStore = "";
-    private static String sdxTokenUrl = "";
+    private static String sdxAuthServer = "";
 
     private static String plcURL = "";
     private static String plcPI = "";
@@ -144,10 +143,9 @@ public class AggregateState
         nsaUrl = aggregateProps.getProperty("aggregate.nsi.server_url", "https://idc.maxgigapop.net:8500/nsi-v2/ConnectionServiceProvider");
 
         sdxApiUrl = aggregateProps.getProperty("aggregate.sdx.api_urlbase", "");
-        sdxApiUser = aggregateProps.getProperty("aggregate.sdx.api_username", "");
-        sdxApiPass = aggregateProps.getProperty("aggregate.sdx.api_password", "");
+        sdxCredential = aggregateProps.getProperty("aggregate.sdx.credential", "");
         sdxTrustStore = aggregateProps.getProperty("aggregate.sdx.truststore", "");
-        sdxTokenUrl = aggregateProps.getProperty("aggregate.sdx.tokenurl", "/token");
+        sdxAuthServer = aggregateProps.getProperty("aggregate.sdx.authServer", "");
 
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         log.info("aggregate.plc.url set to " + plcURL);
@@ -375,20 +373,16 @@ public class AggregateState
         return sdxApiUrl;
     }
 
-    public static String getSdxApiUser() {
-        return sdxApiUser;
-    }
-
-    public static String getSdxApiPass() {
-        return sdxApiPass;
+    public static String getSdxCredential() {
+        return sdxCredential;
     }
 
     public static String getSdxTrustStore() {
         return sdxTrustStore;
     }
 
-    public static String getSdxTokenUrl() {
-        return sdxTokenUrl;
+    public static String getSdxAuthServer() {
+        return sdxAuthServer;
     }
     
     public static String getPlcURL() {
