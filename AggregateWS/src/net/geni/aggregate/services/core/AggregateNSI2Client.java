@@ -222,7 +222,7 @@ public class AggregateNSI2Client {
      */
     private String nsiReserve(String options) 
         throws Exception {
-    	String reserveCmd = String.format("java -Done-jar.main.class=net.es.oscars.nsibridge.client.cli.ReserveCLIClient -Djava.net.preferIPv4Stack=true -jar %s/nsibridge.one-jar.jar -f %s/client-bus-ssl.xml  -u %s %s",
+    	String reserveCmd = String.format("java -Done-jar.main.class=net.es.oscars.nsibridge.client.cli.ReserveCLIClient -Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1 -jar %s/nsibridge.one-jar.jar -f %s/client-bus-ssl.xml  -u %s %s",
                 this.nsiDir, this.nsiDir, this.nsaUrl, options);
     	String response = this.executeShellCommand(reserveCmd);
     	if (response.isEmpty() || response.contains("Error") || response.contains("Exception"))
@@ -241,7 +241,7 @@ public class AggregateNSI2Client {
      */
     private String nsiUpdate(String connId, String operation, boolean queryAfter)
         throws Exception {
-    	String updateCmd = String.format("java -Done-jar.main.class=net.es.oscars.nsibridge.client.cli.SimpleCLIClient -Djava.net.preferIPv4Stack=true -jar %s/nsibridge.one-jar.jar -f %s/client-bus-ssl.xml  -u %s -i %s -o %s",
+    	String updateCmd = String.format("java -Done-jar.main.class=net.es.oscars.nsibridge.client.cli.SimpleCLIClient -Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1 -jar %s/nsibridge.one-jar.jar -f %s/client-bus-ssl.xml  -u %s -i %s -o %s",
                 this.nsiDir, this.nsiDir, this.nsaUrl, connId, operation);
     	String response = this.executeShellCommand(updateCmd);
     	if (response.contains("Error") || response.contains("Exception"))
@@ -256,7 +256,7 @@ public class AggregateNSI2Client {
      */
     private String nsiQuery(String connId) 
         throws Exception {
-    	String queryCmd = String.format("java -Done-jar.main.class=net.es.oscars.nsibridge.client.cli.QueryCLIClient -Djava.net.preferIPv4Stack=true -jar %s/nsibridge.one-jar.jar -f %s/client-bus-ssl.xml  -u %s -i %s",
+    	String queryCmd = String.format("java -Done-jar.main.class=net.es.oscars.nsibridge.client.cli.QueryCLIClient -Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1 -jar %s/nsibridge.one-jar.jar -f %s/client-bus-ssl.xml  -u %s -i %s",
                 this.nsiDir, this.nsiDir, this.nsaUrl, connId);
     	String response = this.executeShellCommand(queryCmd);
         log.info("queryNSI reuturns: " + response);
@@ -288,7 +288,7 @@ public class AggregateNSI2Client {
     
     private String nsiQueryRaw(String connId) 
         throws Exception {
-    	String queryCmd = String.format("java -Done-jar.main.class=net.es.oscars.nsibridge.client.cli.QueryCLIClient -Djava.net.preferIPv4Stack=true -jar %s/nsibridge.one-jar.jar -f %s/client-bus-ssl.xml  -u %s -i %s",
+    	String queryCmd = String.format("java -Done-jar.main.class=net.es.oscars.nsibridge.client.cli.QueryCLIClient -Djava.net.preferIPv4Stack=true -Dhttps.protocols=TLSv1 -jar %s/nsibridge.one-jar.jar -f %s/client-bus-ssl.xml  -u %s -i %s",
                 this.nsiDir, this.nsiDir, this.nsaUrl, connId);
     	String response = this.executeShellCommand(queryCmd);
     	if (response.isEmpty() || response.contains("Exception"))
