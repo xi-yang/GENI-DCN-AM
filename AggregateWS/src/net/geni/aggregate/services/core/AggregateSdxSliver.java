@@ -108,8 +108,8 @@ public class AggregateSdxSliver extends AggregateResource {
             throw new AggregateException("AggregateSdxSliver.generateRestData() cannot tell service type for JSON: \n"+this.requestJson);
         }
         JSONObject reqJson = new JSONObject();
-        //reqJson.put("user", this.sliceUser);
-        reqJson.put("user", "admin"); //@TODO: user name mapping
+        //reqJson.put("username", this.sliceUser);
+        reqJson.put("username", "admin"); //@TODO: user name mapping
         reqJson.put("type", serviceType); 
         reqJson.put("alias", this.sliceName);
         reqJson.put("data", jsonData);
