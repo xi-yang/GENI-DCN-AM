@@ -535,7 +535,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                             }
                                         }
                                         }
-                                        // handel quagga_bgp
+                                        // handle quagga_bgp
                                         if (node.getQuaggaBgp() != null && !node.getQuaggaBgp().isEmpty()) {
                                             QuaggaBgpContent quaggaBgp = node.getQuaggaBgp().get(0);
                                             JSONObject bgpJson = new JSONObject();
@@ -556,6 +556,27 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                                 for (String network: quaggaBgp.getNetworks()) {
                                                     networkArray.add(network);
                                                 }
+                                            }
+                                        }
+                                        // handle globus_connect service
+                                        if (node.getGlobusConnect() != null && !node.getGlobusConnect().isEmpty()) {
+                                            GlobusConnectContent globusContent = node.getGlobusConnect().get(0);
+                                            JSONObject globusJson = new JSONObject();
+                                            vmJson.put("globus_connect", globusJson);
+                                            if (globusContent.getUsername() != null) {
+                                                globusJson.put("username", globusContent.getUsername());
+                                            }
+                                            if (globusContent.getPassword()!= null) {
+                                                globusJson.put("password", globusContent.getPassword());
+                                            }
+                                            if (globusContent.getShortName()!= null) {
+                                                globusJson.put("short_name", globusContent.getShortName());
+                                            }
+                                            if (globusContent.getDataInterface()!= null) {
+                                                globusJson.put("data_interface", globusContent.getDataInterface());
+                                            }
+                                            if (globusContent.getDefaultDirectory()!= null) {
+                                                globusJson.put("default_directory", globusContent.getDefaultDirectory());
                                             }
                                         }
                                     }
