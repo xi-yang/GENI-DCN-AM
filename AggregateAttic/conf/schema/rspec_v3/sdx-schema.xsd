@@ -49,6 +49,7 @@
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:routes"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:ceph_rbds"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:quagga_bgp"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:globus_connect"/>
     </xs:sequence>
     <xs:attribute name="client_id" use="required" type="xs:string"/>
     <xs:attribute name="type" use="required" type="xs:string"/>
@@ -102,7 +103,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <!-- CephRBD -->
+  <!-- QuaggaBGP -->
   <xs:element name="quagga_bgp" type="SDX:QuaggaBgpContent"/>
 
   <xs:complexType name="QuaggaBgpContent">
@@ -119,6 +120,18 @@
     </xs:sequence>
   </xs:complexType>
 
+  <!-- GlobusConnectService -->
+  <xs:element name="globus_connect" type="SDX:GlobusConnectContent"/>
+
+  <xs:complexType name="GlobusConnectContent">
+    <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="1" name="username" type="xs:string"/>
+        <xs:element minOccurs="1" maxOccurs="1" name="password" type="xs:string"/>
+        <xs:element minOccurs="1" maxOccurs="1" name="short_name" type="xs:string"/>
+        <xs:element minOccurs="1" maxOccurs="1" name="data_interface" type="xs:string"/>
+        <xs:element minOccurs="1" maxOccurs="1" name="default_directory" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
 
   <!-- NetworkAddressContent -->
   <xs:complexType name="NetworkAddressContent">
