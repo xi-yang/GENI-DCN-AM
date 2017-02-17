@@ -107,7 +107,7 @@ public class AggregateRESTClient {
             while ((inputLine = in.readLine()) != null) {
                 responseStr.append(inputLine);
             }
-            log.info("Return from authServer" + responseStr);
+            //log.info("Return from authServer" + responseStr);
             JSONObject responseJSON = new JSONObject();
             try {
                 JSONParser parser = new JSONParser();
@@ -118,8 +118,10 @@ public class AggregateRESTClient {
                 throw (new IOException(ex));
             }
             String bearerToken = (String) responseJSON.get("access_token");
-            log.info("Got token from authServer"+bearerToken);
+            //log.info("Got token from authServer"+bearerToken);
             conn.setRequestProperty("Authorization", "Bearer " + bearerToken);
+            String refreshToken = (String) responseJSON.get("refresh_token");
+            conn.setRequestProperty("Refresh",  refreshToken);
         } else if (credential != null && !credential.isEmpty()) {
             byte[] encoded = Base64.encodeBase64(credential.getBytes());
             String stringEncoded = new String(encoded);
