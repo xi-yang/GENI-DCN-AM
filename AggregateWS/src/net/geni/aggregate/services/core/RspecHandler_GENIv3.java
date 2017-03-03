@@ -103,7 +103,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
 
         long now = System.currentTimeMillis()/1000;
         XMLGregorianCalendar xgcExpires = rspecV3Obj.getExpires();
-        long expires = now + 3600*24; // default = 1 day
+        long expires = now + 3600*24*10; // default = 10 day
         if (xgcExpires != null) {
             Date dateExpires = xgcExpires.toGregorianCalendar().getTime();
             expires = dateExpires.getTime()/1000;
