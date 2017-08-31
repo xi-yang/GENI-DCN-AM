@@ -34,7 +34,16 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
 
     public String generateStitchingXml()
             throws AggregateException {
-        String xml = "";
+        String xml = String.format("<stitching lastUpdateTime=\"%s\" xmlns=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/\">\n", "@20130112:09:30:21");
+        xml += String.format("<aggregate id=\"urn:publicid:IDN+%s+authority+am\" url=\"%s\">\n", "@AM-ID", "@AM-URL");
+        xml += "<aggregatetype>corsa</aggregatetype>\n"
+                + " <stitchingmode>tree</stitchingmode>\n"
+                + " <scheduledservices>false</scheduledservices>\n"
+                + " <negotiatedservices>false</negotiatedservices>\n"
+                + " <lifetime id=\"1\">\n"
+                + String.format("   <start type=\"ISO-8601\">%s</start>\n", "@2013-01-12T21:30:53Z") 
+                + String.format("   <end type=\"ISO-8601\"></end>\n", "@2013-12-31T00:00:00Z")
+                + " </lifetime>";
         try {
             // get bridge info
             String[] response = executeHttpMethod("GET", url, null);
@@ -43,20 +52,43 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
             }
             JSONObject jsonRet = AggregateUtils.parseJsonString(response[2]);
             String nodeName = jsonRet.get("switch").toString();
-            //$$ node uri = aggregateURI + "+node+"+nodeName
+            xml += String.format("<node id=\"urn:publicid:IDN+%s+node+%s\">\n", "@AM-ID", nodeName);
             if (jsonRet.containsKey("neighbors")) {
-                JSONArray jsonNeighbors = (JSONArray)jsonRet.get("neighbors");
-                for (Object obj: jsonNeighbors) {
+                JSONArray jsonNeighbors = (JSONArray) jsonRet.get("neighbors");
+                for (Object obj : jsonNeighbors) {
                     JSONObject jsonPort = (JSONObject)obj;
-                    // get portName
+                    // get portName - bandwidth etc. metrics are placeholders
                     String portName = jsonPort.get("physical-port").toString();
-                    // get port VLAN range //@TODO: reformat?
+                    xml += String.format("<port id=\"urn:publicid:IDN+%s+stitchport+%s:%s\">\n", "@AM-ID", nodeName, portName);
+                    xml += "    <capacity>10000000</capacity>\n"
+                            + "    <maximumReservableCapacity>10000000</maximumReservableCapacity>\n"
+                            + "    <minimumReservableCapacity>1</minimumReservableCapacity>\n"
+                            + "    <granularity>1</granularity>";
+                    //@TODO: reformat vlan range string?
                     String vlanRange = jsonPort.get("vlans").toString();
-                    //$$ port uri =  nodeURI + "+stitchport+"+nodeName:portName
-                    //$$ interface uri =  nodeURI + "+interface+"+pnodeName:ortName
-                    //$$ add ISCD L2SC with default bandwidth and VLAN range 
+                    xml += String.format("<link id=\"urn:publicid:IDN+%s+interface+%s:%s\">\n", "@AM-ID", nodeName, portName);
+                    xml += String.format("      <remoteLinkId>urn:publicid:IDN+%s+interface+*:*:*</remoteLinkId>\n", "@AM-ID")
+                            + "      <trafficEngineeringMetric>10</trafficEngineeringMetric>\n"
+                            + "      <capacity>10000000</capacity>\n"
+                            + "      <maximumReservableCapacity>10000000</maximumReservableCapacity>\n"
+                            + "      <minimumReservableCapacity>1</minimumReservableCapacity>\n"
+                            + "      <granularity>1</granularity>\n"
+                            + "      <switchingCapabilityDescriptor>\n"
+                            + "        <switchingcapType>l2sc</switchingcapType>\n"
+                            + "        <encodingType>ethernet</encodingType>\n"
+                            + "        <switchingCapabilitySpecificInfo>\n"
+                            + "          <switchingCapabilitySpecificInfo_L2sc>\n"
+                            + "           <interfaceMTU>9000</interfaceMTU>\n"
+                            + String.format("           <vlanRangeAvailability>%s</vlanRangeAvailability>\n", vlanRange)
+                            + "           <vlanTranslation>false</vlanTranslation>\n"
+                            + "          </switchingCapabilitySpecificInfo_L2sc>\n"
+                            + "        </switchingCapabilitySpecificInfo>\n"
+                            + "      </switchingCapabilityDescriptor>\n";
+                    xml += "</link>";
+                    xml += "</port>\n";
                 }
             }
+            //$$ bridges
             if (jsonRet.containsKey("bridges")) {
                 JSONArray jsonBridges = (JSONArray)jsonRet.get("bridges");
                 for (Object obj: jsonBridges) {
@@ -65,9 +97,11 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
                     //$$ update stitch interface bandwidth and VLAN range ??
                 }
             }
+            xml += "</node>\n";
         } catch (IOException ex) {
             throw new AggregateException("Failed to get info of switch from:"+ url +" due to:" +ex);
         }
+        xml += "</stitching>";
         return xml;
     }
 
