@@ -106,6 +106,8 @@
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:string"/>
       <xs:attribute name="direction" use="optional" type="xs:string"/>
+      <xs:attribute name="controller" use="optional" type="xs:string"/>
+      <xs:attribute name="dpid" use="optional" type="xs:string"/>
   </xs:complexType>
   
   <xs:complexType name="HopContent">

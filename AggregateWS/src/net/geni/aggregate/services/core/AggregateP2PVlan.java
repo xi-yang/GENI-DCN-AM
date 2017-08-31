@@ -19,6 +19,8 @@ import net.es.oscars.PropHandler;
 
 import net.geni.aggregate.services.api.VlanReservationDescriptorType;
 import net.geni.aggregate.services.api.VlanReservationResultType;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -28,6 +30,8 @@ public class AggregateP2PVlan extends AggregateResource {
 
     //IDCAPIClient
     AggregateIDCClient apiClient = null;
+    //SDXCorsaClient
+    AggregateSdxCorsaClient sdxCorsaClient = null;
     //Reservation parameters
     String gri = "";
     String sliceName = "";
@@ -39,6 +43,8 @@ public class AggregateP2PVlan extends AggregateResource {
     String dstIpAndMask = "";
     String vtag = "";
     float bandwidth = 0;
+    String controllerUrl = "";
+    String datapathId = "";
     String description = "";
     long startTime = 0;
     long endTime = 0;
@@ -215,12 +221,49 @@ public class AggregateP2PVlan extends AggregateResource {
         this.stitchingResourceId = stitchingResourceId;
     }
 
+    public String getControllerUrl() {
+        return controllerUrl;
+    }
+
+    public void setControllerUrl(String controllerUrl) {
+        this.controllerUrl = controllerUrl;
+    }
+
+    public String getDatapathId() {
+        return datapathId;
+    }
+
+    public void setDatapathId(String datapathId) {
+        this.datapathId = datapathId;
+    }
+
     /**
      * setup p2p vlan
      * @param
      * @return
      */
     public String setupVlan() {
+        // poke AggregateState to get SDX stitching type
+        if (AggregateState.getSdxStitchType().equals("corsa-overlay")) {
+            sdxCorsaClient = AggregateSdxCorsaClient.getClient();
+            gri = sliceName + "-"+ UUID.randomUUID();
+            try {
+                //@TODO: lookup controller info based on stitchingResourceId (==> stitching path id == link client_id)
+                // <link>
+                // <controller id="" url="tcp:80.70.60.50:6633"/>
+                //  <datapath id="1234566"/> 
+                // </link>
+                String controllerUrl = "";
+                String datapathId = "";
+                status = sdxCorsaClient.createBridge(gri, controllerUrl, datapathId, source, destination, vtag, bandwidth);
+            } catch (AggregateException ex) {
+                errMessage = "Failed to create bridge:"+gri+" -- "+ex.getMessage();
+                log.error(errMessage);
+                status = "FAILED";
+            }
+            return status;
+        }
+        // default => IDC Client
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         else if (!gri.equals("")) {
@@ -265,6 +308,20 @@ public class AggregateP2PVlan extends AggregateResource {
      * @return
      */
      public String modifyVlan() {
+        // poke AggregateState to get SDX stitching type
+        if (AggregateState.getSdxStitchType().equals("corsa-overlay")) {
+            sdxCorsaClient = AggregateSdxCorsaClient.getClient();
+            try {
+                String controllerUrl = "";
+                String datapathId = "";
+                status = sdxCorsaClient.modifyBridge(gri, controllerUrl, datapathId, source, destination, vtag, bandwidth);
+            } catch (AggregateException ex) {
+                errMessage = "Failed to modify bridge ("+gri+"): "+ex.getMessage();
+                status = "FAILED";
+            }
+            return status;
+        }
+        // default => IDC Client
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         try {
@@ -302,6 +359,18 @@ public class AggregateP2PVlan extends AggregateResource {
      * @return
      */
      public String teardownVlan() {
+        // poke AggregateState to get SDX stitching type
+        if (AggregateState.getSdxStitchType().equals("corsa-overlay")) {
+            sdxCorsaClient = AggregateSdxCorsaClient.getClient();
+            try {
+                status = sdxCorsaClient.deleteBridge(gri);
+            } catch (AggregateException ex) {
+                errMessage = "Failed to delete bridge ("+gri+"): "+ex.getMessage();
+                status = "FAILED";
+            }
+            return status;
+        }
+        // default => IDC Client
         if (apiClient == null)
             apiClient = AggregateIDCClient.getIDCClient();
         try {
@@ -357,48 +426,76 @@ public class AggregateP2PVlan extends AggregateResource {
     }
 
      public VlanReservationResultType queryVlan() {
-        if (apiClient == null)
-            apiClient = AggregateIDCClient.getIDCClient();
-        boolean finishedQuery = false;
-        try {
-            HashMap hmRet = apiClient.queryReservation(gri);
-            if (hmRet.get("status") != null) {
-                status = hmRet.get("status").toString();
+        // poke AggregateState to get SDX stitching type
+        if (AggregateState.getSdxStitchType().equals("corsa-overlay")) {
+            sdxCorsaClient = AggregateSdxCorsaClient.getClient();
+            try {
+                JSONObject jsonRet = sdxCorsaClient.queryBridge(gri);
+                // fetch params from jsonRet
+                if (jsonRet.containsKey("status")) {
+                    status = jsonRet.get("status").toString();
+                }
+                if (jsonRet.containsKey("neighbors")) {
+                    vtag = "";
+                    JSONArray jsonNeighbors = (JSONArray)jsonRet.get("neighbors");
+                    for (Object obj: jsonNeighbors) {
+                        JSONObject jsonNeighbor = (JSONObject)obj;
+                        if (jsonNeighbor.containsKey("vlan")) {
+                            if (vtag.isEmpty()) {
+                                vtag = jsonNeighbor.get("vlan").toString();
+                            } else {
+                                vtag += ":"+jsonNeighbor.get("vlan").toString();
+                            }
+                        }
+                    }
+                }
+            } catch (AggregateException ex) {
+                errMessage = "Failed to query bridge ("+gri+"): "+ex.getMessage();
+                status = "FAILED";
             }
-            if (hmRet.get("vlanTag") != null) {
-                vtag = hmRet.get("vlanTag").toString();
-            }
-            if (hmRet.get("errMessage") != null) {
-                errMessage = hmRet.get("errMessage").toString();
-            }
-            if (status.equals("unknown")) {
-                status = "UNKNOWN";
-                if (errMessage.isEmpty()) {
-                    errMessage = "VLAN circuit in unknown status";
+        } else {  // default => IDC Client
+            if (apiClient == null)
+                apiClient = AggregateIDCClient.getIDCClient();
+            boolean finishedQuery = false;
+            try {
+                HashMap hmRet = apiClient.queryReservation(gri);
+                if (hmRet.get("status") != null) {
+                    status = hmRet.get("status").toString();
+                }
+                if (hmRet.get("vlanTag") != null) {
+                    vtag = hmRet.get("vlanTag").toString();
+                }
+                if (hmRet.get("errMessage") != null) {
+                    errMessage = hmRet.get("errMessage").toString();
+                }
+                if (status.equals("unknown")) {
+                    status = "UNKNOWN";
+                    if (errMessage.isEmpty()) {
+                        errMessage = "VLAN circuit in unknown status";
+                    }
+                }
+                finishedQuery = true;
+            } catch (AxisFault e) {
+                if (errMessage.isEmpty())
+                    errMessage = "AxisFault from queryReservation: " +e.getMessage();
+            } catch (AAAFaultMessage e) {
+                if (errMessage.isEmpty())
+                    errMessage = "AAAFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
+            } catch (BSSFaultMessage e) {
+                if (errMessage.isEmpty())
+                    errMessage = "BSSFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
+            } catch (java.rmi.RemoteException e) {
+                if (errMessage.isEmpty())
+                    errMessage = "RemoteException returned from queryReservation: " +e.getMessage();
+            } catch (Exception e) {
+                if (errMessage.isEmpty())
+                    errMessage = "OSCARSStub threw exception in queryReservation: " +e.getMessage();
+            } finally {
+                if (!finishedQuery) {
+                    status = "UNKNOWN"; // Allow for second chance to correct query result.
                 }
             }
-            finishedQuery = true;
-        } catch (AxisFault e) {
-            if (errMessage.isEmpty())
-                errMessage = "AxisFault from queryReservation: " +e.getMessage();
-        } catch (AAAFaultMessage e) {
-            if (errMessage.isEmpty())
-                errMessage = "AAAFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
-        } catch (BSSFaultMessage e) {
-            if (errMessage.isEmpty())
-                errMessage = "BSSFaultMessage from queryReservation: " +e.getFaultMessage().getMsg();
-        } catch (java.rmi.RemoteException e) {
-            if (errMessage.isEmpty())
-                errMessage = "RemoteException returned from queryReservation: " +e.getMessage();
-        } catch (Exception e) {
-            if (errMessage.isEmpty())
-                errMessage = "OSCARSStub threw exception in queryReservation: " +e.getMessage();
-        } finally {
-            if (!finishedQuery) {
-                status = "UNKNOWN"; // Allow for second chance to correct query result.
-            }
         }
-
         return getVlanResvResult();
      }
 }

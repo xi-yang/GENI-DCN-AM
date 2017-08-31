@@ -52,7 +52,7 @@ public class AggregateState
     private static String sdxCredential = "";
     private static String sdxTrustStore = "";
     private static String sdxAuthServer = "";
-
+    private static String sdxStitchType = "";
     private static String plcURL = "";
     private static String plcPI = "";
     private static String plcPassword = "";
@@ -146,7 +146,8 @@ public class AggregateState
         sdxCredential = aggregateProps.getProperty("aggregate.sdx.credential", "");
         sdxTrustStore = aggregateProps.getProperty("aggregate.sdx.truststore", "");
         sdxAuthServer = aggregateProps.getProperty("aggregate.sdx.authserver", "");
-
+        sdxStitchType = aggregateProps.getProperty("aggregate.sdx.stitchtype", "");
+        
         plcURL = aggregateProps.getProperty("aggregate.plc.url", "https://max-myplc.dragon.maxgigapop.net/PLCAPI/");
         log.info("aggregate.plc.url set to " + plcURL);
         plcPI = aggregateProps.getProperty("aggregate.plc.pi", "xyang@east.isi.edu");
@@ -383,6 +384,10 @@ public class AggregateState
 
     public static String getSdxAuthServer() {
         return sdxAuthServer;
+    }
+
+    public static String getSdxStitchType() {
+        return sdxStitchType;
     }
     
     public static String getPlcURL() {

@@ -161,6 +161,12 @@ public class AggregateStitchTopologyRunner extends Thread {
                     lastModified = topoFile.lastModified();
                     loadStitchTopologyFile();
                 }
+            } else if (AggregateState.getSdxStitchType().equals("corsa-overlay")) {
+                try {
+                    this.stitchXml = AggregateSdxCorsaClient.getClient().generateStitchingXml();
+                } catch (AggregateException ex) {
+                    log.error("failed to retrieve stitch topology from Corsa switch: " + ex);
+                }
             }
 
             updateOpsMonPsql();

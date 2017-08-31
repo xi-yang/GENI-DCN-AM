@@ -39,6 +39,8 @@
       <property column="dstInterface" name="dstInterface"/>
       <property column="srcIpAndMask" name="srcIpAndMask"/>
       <property column="dstIpAndMask" name="dstIpAndMask"/>
+      <property column="controllerUrl" name="controllerUrl"/>
+      <property column="datapathId" name="datapathId"/>
       <property column="description" name="description"/>
       <property column="bandwidth" name="bandwidth"/>
       <property column="globalReservationId" name="gri"/>

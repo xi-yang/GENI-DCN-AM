@@ -153,6 +153,8 @@ public class AggregateWS implements AggregateGENISkeletonInterface
                     "dstInterface varchar(255) NOT NULL default '', " +
                     "srcIpAndMask varchar(255) NOT NULL default '', " +
                     "dstIpANdMask varchar(255) NOT NULL default '', " +
+                    "controllerUrl varchar(255) NOT NULL default '', " +
+                    "datapathId varchar(255) NOT NULL default '', " +
                     "bandwidth float NOT NULL, " +
                     "globalReservationId varchar(255) NOT NULL default '', " +
                     "status varchar(255) NOT NULL default '', " +
