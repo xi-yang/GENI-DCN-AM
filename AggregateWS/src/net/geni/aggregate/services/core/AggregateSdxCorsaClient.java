@@ -29,7 +29,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
     }
 
     public static AggregateSdxCorsaClient getClient() {
-        return getClient(AggregateState.getIdcURL());
+        return getClient(AggregateState.getSdxApiUrl());
     }
 
     public String generateStitchingXml()
