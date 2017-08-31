@@ -248,13 +248,13 @@ public class AggregateP2PVlan extends AggregateResource {
             sdxCorsaClient = AggregateSdxCorsaClient.getClient();
             gri = sliceName + "-"+ UUID.randomUUID();
             try {
-                //@TODO: lookup controller info based on stitchingResourceId (==> stitching path id == link client_id)
-                // <link>
-                // <controller id="" url="tcp:80.70.60.50:6633"/>
-                //  <datapath id="1234566"/> 
-                // </link>
-                String controllerUrl = "";
-                String datapathId = "";
+                if (controllerUrl == null || controllerUrl.isEmpty()) {
+                    throw new AggregateException("Failed to modify bridge without controllerUrl.");
+                }
+                if (datapathId == null || datapathId.isEmpty()) {
+                    throw new AggregateException("Failed to modify bridge without datapathId.");
+                    //@TODO: auto generate a random dpid
+                }
                 status = sdxCorsaClient.createBridge(gri, controllerUrl, datapathId, source, destination, vtag, bandwidth);
             } catch (AggregateException ex) {
                 errMessage = "Failed to create bridge:"+gri+" -- "+ex.getMessage();
@@ -312,8 +312,13 @@ public class AggregateP2PVlan extends AggregateResource {
         if (AggregateState.getSdxStitchType().equals("corsa-overlay")) {
             sdxCorsaClient = AggregateSdxCorsaClient.getClient();
             try {
-                String controllerUrl = "";
-                String datapathId = "";
+                if (controllerUrl == null || controllerUrl.isEmpty()) {
+                    throw new AggregateException("Failed to modify bridge without controllerUrl.");
+                }
+                if (datapathId == null || datapathId.isEmpty()) {
+                    throw new AggregateException("Failed to modify bridge without datapathId.");
+                    //@TODO: auto generate a random dpid
+                }
                 status = sdxCorsaClient.modifyBridge(gri, controllerUrl, datapathId, source, destination, vtag, bandwidth);
             } catch (AggregateException ex) {
                 errMessage = "Failed to modify bridge ("+gri+"): "+ex.getMessage();
