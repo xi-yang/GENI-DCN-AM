@@ -66,9 +66,12 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
                             + "    <maximumReservableCapacity>10000000</maximumReservableCapacity>\n"
                             + "    <minimumReservableCapacity>1</minimumReservableCapacity>\n"
                             + "    <granularity>1</granularity>";
-                    //@TODO: reformat vlan range string?
                     String vlanRange = jsonPort.get("vlans").toString();
-                    vlanRange = vlanRange.substring(1, vlanRange.length()-1);
+                    if (vlanRange.length() > 2) {
+                        vlanRange = vlanRange.substring(1, vlanRange.length()-1);
+                    } else {
+                        vlanRange = "";
+                    }
                     xml += String.format("<link id=\"urn:publicid:IDN+%s+interface+%s:%s\">\n", "@AM-ID", nodeName, portName);
                     xml += String.format("      <remoteLinkId>urn:publicid:IDN+%s+interface+*:*:*</remoteLinkId>\n", "@AM-ID")
                             + "      <trafficEngineeringMetric>10</trafficEngineeringMetric>\n"
