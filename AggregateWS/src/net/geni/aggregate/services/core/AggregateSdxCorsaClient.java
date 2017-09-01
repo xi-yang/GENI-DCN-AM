@@ -18,9 +18,11 @@ import org.json.simple.JSONObject;
  */
 public class AggregateSdxCorsaClient extends AggregateRESTClient {
 
+    private org.apache.log4j.Logger log;
     String url = null;
 
     AggregateSdxCorsaClient(String url) {
+        log = org.apache.log4j.Logger.getLogger(this.getClass());
         this.url = url;
     }
 
@@ -43,7 +45,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
                 + " <lifetime id=\"1\">\n"
                 + String.format("   <start type=\"ISO-8601\">%s</start>\n", "@2013-01-12T21:30:53Z") 
                 + String.format("   <end type=\"ISO-8601\"></end>\n", "@2013-12-31T00:00:00Z")
-                + " </lifetime>";
+                + " </lifetime>\n";
         try {
             // get bridge info
             String[] response = executeHttpMethod("GET", url, null);
@@ -84,7 +86,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
                             + "          </switchingCapabilitySpecificInfo_L2sc>\n"
                             + "        </switchingCapabilitySpecificInfo>\n"
                             + "      </switchingCapabilityDescriptor>\n";
-                    xml += "</link>";
+                    xml += "</link>\n";
                     xml += "</port>\n";
                 }
             }
@@ -101,6 +103,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         } catch (IOException ex) {
             throw new AggregateException("Failed to get info of switch from:"+ url +" due to:" +ex);
         }
+        xml += "</aggregate>";
         xml += "</stitching>";
         return xml;
     }

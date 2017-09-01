@@ -168,9 +168,11 @@ public class AggregateStitchTopologyRunner extends Thread {
                     log.error("failed to retrieve stitch topology from Corsa switch: " + ex);
                 }
             }
-
-            updateOpsMonPsql();
-
+            
+            if (AggregateState.getOpsMonBaseUrl() != null && !AggregateState.getOpsMonBaseUrl().isEmpty()) {
+                updateOpsMonPsql();
+            }
+            
             //starting calibrate endpoints VLAN range at 5th minute
             if (minutes % 60 == 5) {
                 //$$ poll topology from OSCARS, parse, compare and calibrate
@@ -192,7 +194,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 return;
             }
             String baseUrl = AggregateState.getOpsMonBaseUrl();
-            String measRefUrl = AggregateState.getOpsMonDataUrl();
+                String measRefUrl = AggregateState.getOpsMonDataUrl();
             String sql = "BEGIN WORK;\n";
             sql += "LOCK TABLE ops_opsconfig IN EXCLUSIVE MODE;\n";
             sql += "LOCK TABLE ops_aggregate IN EXCLUSIVE MODE;\n";
