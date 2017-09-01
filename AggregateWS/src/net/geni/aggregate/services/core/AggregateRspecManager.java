@@ -587,6 +587,24 @@ public class AggregateRspecManager extends Thread{
                         statements[0] = computeResource;
                     } else {
                         statements[0] = networkTopology;
+                        if (!statements[0].contains("</rspec>")) {
+                            Date dateNow = new Date();
+                            GregorianCalendar c = new GregorianCalendar();
+                            c.setTimeInMillis(dateNow.getTime());
+                            c.add(Calendar.DAY_OF_MONTH, 60);
+                            XMLGregorianCalendar xgcExpires = null;
+                            try {
+                                xgcExpires = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+                            } catch (Exception e) {
+                                throw new AggregateException("RspecHandler_GENIv3.generateAdvertisementRspec error: " + e.getMessage());
+                            }
+                            statements[0] = "<rspec type=\"advertisement\" expires=\"" + xgcExpires.toString()
+                                    + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                                    + " xmlns=\"http://www.geni.net/resources/rspec/3\" xmlns:stitch=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/\""
+                                    + " xsi:schemaLocation=\"http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/ad.xsd"
+                                    + " http://hpn.east.isi.edu/rspec/ext/stitch/0.1/ http://hpn.east.isi.edu/rspec/ext/stitch/0.1/stitch-schema.xsd\">"
+                                    + statements[0] + "</rspec>";
+                        }
                     }
                 } else {
                     statements[0] = computeResource;
