@@ -36,7 +36,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
 
     public String generateStitchingXml()
             throws AggregateException {
-        String xml = String.format("<stitching lastUpdateTime=\"%s\" xmlns=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/\">\n", "@20130112:09:30:21");
+        String xml = String.format("\n<stitching lastUpdateTime=\"%s\" xmlns=\"http://hpn.east.isi.edu/rspec/ext/stitch/0.1/\">\n", "@20130112:09:30:21");
         xml += String.format("<aggregate id=\"urn:publicid:IDN+%s+authority+am\" url=\"%s\">\n", "@AM-ID", "@AM-URL");
         xml += "<aggregatetype>corsa</aggregatetype>\n"
                 + " <stitchingmode>tree</stitchingmode>\n"
@@ -68,6 +68,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
                             + "    <granularity>1</granularity>";
                     //@TODO: reformat vlan range string?
                     String vlanRange = jsonPort.get("vlans").toString();
+                    vlanRange = vlanRange.substring(1, vlanRange.length()-1);
                     xml += String.format("<link id=\"urn:publicid:IDN+%s+interface+%s:%s\">\n", "@AM-ID", nodeName, portName);
                     xml += String.format("      <remoteLinkId>urn:publicid:IDN+%s+interface+*:*:*</remoteLinkId>\n", "@AM-ID")
                             + "      <trafficEngineeringMetric>10</trafficEngineeringMetric>\n"
@@ -103,8 +104,8 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         } catch (IOException ex) {
             throw new AggregateException("Failed to get info of switch from:"+ url +" due to:" +ex);
         }
-        xml += "</aggregate>";
-        xml += "</stitching>";
+        xml += "</aggregate>\n";
+        xml += "</stitching>\n";
         return xml;
     }
 
