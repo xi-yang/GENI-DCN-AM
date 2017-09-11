@@ -139,7 +139,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         // compose bridge data
         JSONObject jsonData = new JSONObject();
         jsonData.put("name", bridgeID);
-        String[] controllerUrlParts = controller.split(":");
+        String[] controllerUrlParts = controller.split("[/:]");
         if (controllerUrlParts.length <2) {
             throw new AggregateException("Failed to create bridge:"+ bridgeID + " due to invalid controller URL:"+controller);
         }
@@ -150,6 +150,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         jsonData.put("dpid", Long.parseLong(dpid));
         try {
             // create bridge call
+            log.info("creating bridge: " + jsonData.toJSONString());
             super.executeHttpBearerMethod("POST", url+"/bridges", jsonData.toJSONString());
         } catch (IOException ex) {
             throw new AggregateException(ex);
