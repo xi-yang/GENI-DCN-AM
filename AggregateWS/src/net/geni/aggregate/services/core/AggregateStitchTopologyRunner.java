@@ -97,14 +97,6 @@ public class AggregateStitchTopologyRunner extends Thread {
                 log.warn("loadStitchTopology caught IOException: " + e.getMessage());
                 return;
             }
-            try {
-                this.stitchObj = new JAXBHelper<StitchContent>(StitchContent.class).partialUnmarshal(stitchXml);
-                if (this.stitchObj == null || this.stitchObj.getAggregate().size() == 0) {
-                    log.warn(String.format("malformed stitch topology file '%s' - make sure there is xmlns property in <stitching>"));
-                }
-            } catch (Exception e) {
-                log.warn("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
-            }
         }
     }
 
@@ -168,11 +160,18 @@ public class AggregateStitchTopologyRunner extends Thread {
                     log.error("failed to retrieve stitch topology from Corsa switch: " + ex);
                 }
             }
-            
+            try {
+                this.stitchObj = new JAXBHelper<StitchContent>(StitchContent.class).partialUnmarshal(stitchXml);
+                if (this.stitchObj == null || this.stitchObj.getAggregate().size() == 0) {
+                    log.warn(String.format("malformed stitch topology file '%s' - make sure there is xmlns property in <stitching>"));
+                }
+            } catch (Exception e) {
+                log.warn("Error in unmarshling GEBI Stitching RSpec extension: " + e.getMessage());
+            }
             if (AggregateState.getOpsMonBaseUrl() != null && !AggregateState.getOpsMonBaseUrl().isEmpty()) {
                 updateOpsMonPsql();
             }
-            
+
             //starting calibrate endpoints VLAN range at 5th minute
             if (minutes % 60 == 5) {
                 //$$ poll topology from OSCARS, parse, compare and calibrate
@@ -194,7 +193,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 return;
             }
             String baseUrl = AggregateState.getOpsMonBaseUrl();
-                String measRefUrl = AggregateState.getOpsMonDataUrl();
+            String measRefUrl = AggregateState.getOpsMonDataUrl();
             String sql = "BEGIN WORK;\n";
             sql += "LOCK TABLE ops_opsconfig IN EXCLUSIVE MODE;\n";
             sql += "LOCK TABLE ops_aggregate IN EXCLUSIVE MODE;\n";
@@ -309,9 +308,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                     sql += String.format("INSERT INTO ops_aggregate_resource VALUES ('%s', '%s', '%s', '%s');\n",
                             nodeId, aggrId, nodeUrn, baseUrl + "info/node/" + nodeId);
                     for (PortContent port : node.getPort()) {
-                            //$$ add "insert ops_interface" row
+                        //$$ add "insert ops_interface" row
                         // INSERT INTO ops_interface VALUES ('', '', '', '', 0, null, null, '', 0, null);
-                            /*
+                        /*
                          * $schema      => "http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#"
                          * id           => convert from urn (aggr_id.interface_id) 
                          * selfRef      => http://host:port/info/interface/id 
@@ -346,7 +345,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                                     String fields[] = remoteInterfaceUrn.split("\\+");
                                     String remoteIfId = fields[1] + ":" + fields[fields.length - 1];
                                     sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '%s', '%s', '%s', %d, 'stub', %d, null);\n",
-                                        remoteIfId, baseUrl + "info/interface/" + remoteIfId, remoteInterfaceUrn, ts * 1000, Long.parseLong(link.getCapacity()));
+                                            remoteIfId, baseUrl + "info/interface/" + remoteIfId, remoteInterfaceUrn, ts * 1000, Long.parseLong(link.getCapacity()));
                                 }
                             }
                             linkInterfaceUrnMap.put(linkUrn, ifUrn);
@@ -356,11 +355,11 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
                 // safeguard code against wildcard remoteLinkId
                 sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '*:*:*', 'https://geni-am.net.internet2.edu/info/interface/*:*:*', 'urn:publicid:IDN+*+interface+*:*', %d, 'stub', 0, null);\n",
-                    ts * 1000);
+                        ts * 1000);
                 sql += String.format("INSERT INTO ops_interface VALUES ('http://www.gpolab.bbn.com/monitoring/schema/20140828/interface#', '%s:*:*', 'https://geni-am.net.internet2.edu/info/interface/%s:*:*', 'urn:publicid:IDN+%s+interface+*:*', %d, 'stub', 0, null);\n",
-                    aggrId, aggrId, aggrId, ts * 1000);
+                        aggrId, aggrId, aggrId, ts * 1000);
             }
-            
+
             // insert VLAN circuit slivers
             List<AggregateP2PVlan> p2pvlans = AggregateState.getAggregateP2PVlans().getAll();
             List<AggregateRspec> rspecs = AggregateState.getRspecManager().getAggrRspecs();
@@ -383,9 +382,9 @@ public class AggregateStitchTopologyRunner extends Thread {
                 if (p2pvlan.getStartTime() == 0) {
                     continue;
                 }
-                    //$$ add "insert VLAN" row(s)
+                //$$ add "insert VLAN" row(s)
                 // INSERT INTO ops_sliver
-                    /*
+                /*
                  $schema        => "http://www.gpolab.bbn.com/monitoring/schema/20140828/sliver#"
                  id             => sliverId
                  selfRef        => http://host:port/info/sliver/id
@@ -402,8 +401,8 @@ public class AggregateStitchTopologyRunner extends Thread {
                  node_id        => null
                  link_id        => linkId
                  */
-                    // INSERT INTO ops_link VALUES ('', '', '', '', 0, 0, '', '', '');
-                    /*
+                // INSERT INTO ops_link VALUES ('', '', '', '', 0, 0, '', '', '');
+                /*
                  $schema      => "http://www.gpolab.bbn.com/monitoring/schema/20140828/link#"
                  id           => convert from urn (aggr_id/gri) 
                  selfRef      => http://host:port/info/link/id 
@@ -412,7 +411,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                  ts           => startTime convert to epoch
                  */
                 // INSERT INTO ops_interfacevlan VALUES ('', '', '', '', 0, 0, '', '');
-                    /*
+                /*
                  $schema      => "http://www.gpolab.bbn.com/monitoring/schema/20140828/interfacevlan#"
                  id           => convert from urn (aggr_id/interface_id/vlan_id) 
                  selfRef      => http://host:port/info/interfacevlan/id 
@@ -495,7 +494,7 @@ public class AggregateStitchTopologyRunner extends Thread {
                 }
                 remoteIfUrn = remoteLinkUrnMap.get(ifLinkUrn);
                 fields = remoteIfUrn.split("\\+");
-                remoteIfId = fields[1] + ":"  + fields[fields.length - 1];
+                remoteIfId = fields[1] + ":" + fields[fields.length - 1];
                 ifUrn = linkInterfaceUrnMap.get(ifLinkUrn);
                 //ifUrn = ifUrn.replace("/", "_");
                 aggrId = AggregateUtils.getUrnField(p2pvlan.getDestination(), "domain");
