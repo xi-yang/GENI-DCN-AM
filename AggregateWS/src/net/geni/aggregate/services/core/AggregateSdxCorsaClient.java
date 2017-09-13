@@ -162,7 +162,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
                 JSONParser parser = new JSONParser();
                 Object obj = parser.parse(response[2]);
                 JSONObject responseJSON = (JSONObject) obj;
-                bridgeID = (String)responseJSON.get("bridge");
+                bridgeID = (String)responseJSON.keySet().iterator().next();
             } catch (ParseException ex) {
                 log.error("Error parsing json: "+response[2]);
                 throw (new IOException(ex));
@@ -177,6 +177,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         jsonData.put("dstvlan", Integer.parseInt(srcVtag));
         try {
             // create tunnel call
+            log.debug("creating tunnel: " + jsonData.toJSONString());
             super.executeHttpMethod("POST", url+"/bridges/"+bridgeID+"/tunnels", jsonData.toJSONString());
         } catch (IOException ex) {
             throw new AggregateException("Failed to create bridge:"+ bridgeID + " due to:"+ex);
