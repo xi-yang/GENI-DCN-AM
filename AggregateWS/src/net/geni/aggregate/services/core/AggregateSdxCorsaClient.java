@@ -173,22 +173,11 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         // compose tunnel data for srcPort
         jsonData = new JSONObject();
         jsonData.put("dstname", "vlan-"+srcVtag);
-        jsonData.put("physport", srcPort);
+        jsonData.put("physport", Integer.parseInt(srcPort));
         jsonData.put("dstvlan", Integer.parseInt(srcVtag));
         try {
             // create tunnel call
             log.debug("creating tunnel: " + jsonData.toJSONString());
-            super.executeHttpMethod("POST", url+"/bridges/"+bridgeID+"/tunnels", jsonData.toJSONString());
-        } catch (IOException ex) {
-            throw new AggregateException("Failed to create bridge:"+ bridgeID + " due to:"+ex);
-        }
-        // compose tunnel data for srcPort
-        jsonData = new JSONObject();
-        jsonData.put("dstname", "vlan-"+srcVtag);
-        jsonData.put("physport", srcPort);
-        jsonData.put("dstvlan", Integer.parseInt(srcVtag));
-        try {
-            // create tunnel call
             super.executeHttpMethod("POST", url+"/bridges/"+bridgeID+"/tunnels", jsonData.toJSONString());
         } catch (IOException ex) {
             throw new AggregateException("Failed to create tunnel vlan-"+srcVtag+" on port-"+srcPort+" on bridge:"+ bridgeID +ex);
@@ -196,10 +185,11 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         // compose tunnel data for dstPort
         jsonData = new JSONObject();
         jsonData.put("dstname", "vlan-"+dstVtag);
-        jsonData.put("physport", dstPort);
+        jsonData.put("physport", Integer.parseInt(dstPort));
         jsonData.put("dstvlan", Integer.parseInt(dstVtag));
         try {
             // create tunnel call
+            log.debug("creating tunnel: " + jsonData.toJSONString());
             super.executeHttpMethod("POST", url+"/bridges/"+bridgeID+"/tunnels", jsonData.toJSONString());
         } catch (IOException ex) {
             throw new AggregateException("Failed to create tunnel vlan-"+dstVtag+" on port-"+dstPort+" on bridge:"+ bridgeID +ex);
