@@ -172,7 +172,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         }
         // compose tunnel data for srcPort
         jsonData = new JSONObject();
-        jsonData.put("dstname", "vlan-"+srcVtag);
+        jsonData.put("dstname", "vlan-"+srcPort+"-"+srcVtag);
         jsonData.put("physport", Integer.parseInt(srcPort));
         jsonData.put("dstvlan", Integer.parseInt(srcVtag));
         try {
@@ -184,7 +184,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         }
         // compose tunnel data for dstPort
         jsonData = new JSONObject();
-        jsonData.put("dstname", "vlan-"+dstVtag);
+        jsonData.put("dstname", "vlan-"+dstPort+"-"+dstVtag);
         jsonData.put("physport", Integer.parseInt(dstPort));
         jsonData.put("dstvlan", Integer.parseInt(dstVtag));
         try {
