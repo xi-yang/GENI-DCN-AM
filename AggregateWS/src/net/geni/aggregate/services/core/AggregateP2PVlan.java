@@ -246,7 +246,6 @@ public class AggregateP2PVlan extends AggregateResource {
         // poke AggregateState to get SDX stitching type
         if (AggregateState.getSdxStitchType().equals("corsa-overlay")) {
             sdxCorsaClient = AggregateSdxCorsaClient.getClient();
-            gri = sliceName + "-"+ UUID.randomUUID();
             try {
                 if (controllerUrl == null || controllerUrl.isEmpty()) {
                     throw new AggregateException("Failed to modify bridge without controllerUrl.");
@@ -255,10 +254,10 @@ public class AggregateP2PVlan extends AggregateResource {
                     throw new AggregateException("Failed to modify bridge without datapathId.");
                     //@TODO: auto generate a random dpid
                 }
-                status = sdxCorsaClient.createBridge(gri, controllerUrl, datapathId, source, destination, vtag, bandwidth);
+                gri = sdxCorsaClient.createBridge(sliceName + ":"+ UUID.randomUUID(), controllerUrl, datapathId, source, destination, vtag, bandwidth);
+                status = "ACTIVE";
             } catch (AggregateException ex) {
-                errMessage = "Failed to create bridge:"+gri+" -- "+ex.getMessage();
-                log.error(errMessage);
+                log.error(ex.getMessage());
                 status = "FAILED";
             }
             return status;
@@ -319,7 +318,8 @@ public class AggregateP2PVlan extends AggregateResource {
                     throw new AggregateException("Failed to modify bridge without datapathId.");
                     //@TODO: auto generate a random dpid
                 }
-                status = sdxCorsaClient.modifyBridge(gri, controllerUrl, datapathId, source, destination, vtag, bandwidth);
+                gri = sdxCorsaClient.modifyBridge(gri, controllerUrl, datapathId, source, destination, vtag, bandwidth);
+                status = "ACTIVE";
             } catch (AggregateException ex) {
                 errMessage = "Failed to modify bridge ("+gri+"): "+ex.getMessage();
                 status = "FAILED";

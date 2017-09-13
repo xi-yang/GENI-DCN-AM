@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -119,7 +121,7 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
 
     // port URI in form of  urn:publicid:IDN+aggregate_id+stitchport+switch_id:port_id
     // link URI in form of  urn:publicid:IDN+aggregate_id+interface+switch_id:port_id
-    public String createBridge(String bridgeID, String controller, String dpid, String src, String dst, String vtag, float bw)
+    public String createBridge(String bridgeUrn, String controller, String dpid, String src, String dst, String vtag, float bw)
             throws AggregateException {
         String srcVtag = vtag;
         String dstVtag = vtag;
@@ -138,20 +140,33 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         } 
         // compose bridge data
         JSONObject jsonData = new JSONObject();
-        jsonData.put("name", bridgeID);
+        jsonData.put("urn", bridgeUrn);
         String[] controllerUrlParts = controller.split("[/:]");
         if (controllerUrlParts.length <2) {
-            throw new AggregateException("Failed to create bridge:"+ bridgeID + " due to invalid controller URL:"+controller);
+            throw new AggregateException("Failed to create bridge for "+ bridgeUrn + " due to invalid controller URL:"+controller);
         }
         String controllerAddr = controllerUrlParts[controllerUrlParts.length -2];
         String controllerPort = controllerUrlParts[controllerUrlParts.length -1];
         jsonData.put("controller_addr", controllerAddr);
         jsonData.put("controller_port", Integer.parseInt(controllerPort));
         jsonData.put("dpid", Long.parseLong(dpid));
+        String bridgeID = null;
         try {
             // create bridge call
-            log.info("creating bridge: " + jsonData.toJSONString());
-            super.executeHttpBearerMethod("POST", url+"/bridges", jsonData.toJSONString());
+            log.debug("creating bridge: " + jsonData.toJSONString());
+            String[] response = super.executeHttpBearerMethod("POST", url+"/bridges", jsonData.toJSONString());
+            if (!response[0].equals("200")) {
+                throw new AggregateException("HTTP reponse: " + response);
+            }
+            try {
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse(response[2]);
+                JSONObject responseJSON = (JSONObject) obj;
+                bridgeID = (String)responseJSON.get("bridge");
+            } catch (ParseException ex) {
+                log.error("Error parsing json: "+response[2]);
+                throw (new IOException(ex));
+            }
         } catch (IOException ex) {
             throw new AggregateException(ex);
         }
@@ -188,10 +203,12 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         } catch (IOException ex) {
             throw new AggregateException("Failed to create tunnel vlan-"+dstVtag+" on port-"+dstPort+" on bridge:"+ bridgeID +ex);
         }
-        return "ACTIVE";
+        return bridgeID+" "+bridgeUrn;
     }
 
-    public String deleteBridge(String bridgeID) throws AggregateException {
+    public String deleteBridge(String gri) throws AggregateException {
+        String[] griParts = gri.split(" ");
+        String bridgeID = griParts[0];
         // delete bridge call
         try {
             // create bridge call
@@ -202,13 +219,18 @@ public class AggregateSdxCorsaClient extends AggregateRESTClient {
         return "DELETED";
     }
 
-    public String modifyBridge(String bridgeID, String controller, String dpid, String src, String dst, String vtag, float bw)
+    public String modifyBridge(String gri, String controller, String dpid, String src, String dst, String vtag, float bw)
             throws AggregateException {
+        String[] griParts = gri.split(" ");
+        String bridgeID = griParts[0];
+        String bridgeUrn = griParts[1];
         deleteBridge(bridgeID);
-        return createBridge(bridgeID, controller, dpid, src, dst, vtag, bw);
+        return createBridge(bridgeUrn, controller, dpid, src, dst, vtag, bw);
     }
 
-    public JSONObject queryBridge(String bridgeID) throws AggregateException {
+    public JSONObject queryBridge(String gri) throws AggregateException {
+        String[] griParts = gri.split(" ");
+        String bridgeID = griParts[0];
         try {
             // get bridge info
             String[] response = super.executeHttpMethod("GET", url+"/bridges/"+bridgeID, null);
