@@ -440,16 +440,16 @@ public class AggregateP2PVlan extends AggregateResource {
                 if (jsonRet.containsKey("status")) {
                     status = jsonRet.get("status").toString();
                 }
-                if (jsonRet.containsKey("neighbors")) {
+                if (jsonRet.containsKey("tunnels")) {
                     vtag = "";
-                    JSONArray jsonNeighbors = (JSONArray)jsonRet.get("neighbors");
-                    for (Object obj: jsonNeighbors) {
-                        JSONObject jsonNeighbor = (JSONObject)obj;
-                        if (jsonNeighbor.containsKey("vlan")) {
+                    JSONArray jsonTunnels = (JSONArray)jsonRet.get("tunnels");
+                    for (Object obj: jsonTunnels) {
+                        JSONObject jsonTunnel = (JSONObject)obj;
+                        if (jsonTunnel.containsKey("vlan")) {
                             if (vtag.isEmpty()) {
-                                vtag = jsonNeighbor.get("vlan").toString();
+                                vtag = jsonTunnel.get("vlan").toString();
                             } else {
-                                vtag += ":"+jsonNeighbor.get("vlan").toString();
+                                vtag += ":"+jsonTunnel.get("vlan").toString();
                             }
                         }
                     }
