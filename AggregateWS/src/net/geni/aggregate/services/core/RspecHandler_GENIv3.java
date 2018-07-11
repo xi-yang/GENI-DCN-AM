@@ -108,7 +108,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             Date dateExpires = xgcExpires.toGregorianCalendar().getTime();
             expires = dateExpires.getTime()/1000;
             if (expires - now < 4*60) // duration must be at least 4 minutes
-                expires = now + 3600*24; // default = 1 day
+                expires = now + 3600*24*10; // default = 10 day
         }
         aggrRspec.setStartTime(now);
         aggrRspec.setEndTime(expires);
@@ -289,6 +289,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             // optional:
             if (obj.getClass().getName().contains("ElementNSImpl")) {
                 String elemName = AggregateUtils.getAnyName(obj);
+                // 'external_urn' is replaced by using the source_id and dest_id in <property>
             }
         }
         for (AggregateNetworkInterface netIf: netIfs) { 
@@ -710,8 +711,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
         }
         boolean hasLocalPath = false;
         for (PathContent path: stitchingTopology.getPath()) {
-            String controllerUrl = path.getController();
-            String datapathId = path.getDpid();
             List<HopContent> localHops = getAggregateLocalHops(path);
             // privision edge-to-edge -- skip explicit path hops in between (if any) 
             if (localHops.size() == 0) {
@@ -829,12 +828,6 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
             }
             if (stitchingP2PVlan.getVtag().isEmpty()) {
                 stitchingP2PVlan.setVtag("any");
-            }
-            if (controllerUrl != null) {
-                stitchingP2PVlan.setControllerUrl(controllerUrl);
-            }
-            if (datapathId != null) {
-                stitchingP2PVlan.setDatapathId(datapathId);
             }
             stitchingP2PVlan.setStitchingResourceId(path.getId());
             stitchingP2PVlan.setClientId(path.getId());
