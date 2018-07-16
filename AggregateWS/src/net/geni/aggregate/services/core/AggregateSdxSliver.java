@@ -115,6 +115,9 @@ public class AggregateSdxSliver extends AggregateResource {
             reqJson.put("service", serviceType); 
             reqJson.put("alias", this.sliceName);
             reqJson.put("data", jsonData);
+        } else {
+            reqJson.put("username", "admin"); //@TODO: user name mapping
+            reqJson.put("alias", this.sliceName);
         }
         return reqJson;
     }
