@@ -413,13 +413,9 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
     void parseSdxResources(AggregateRspec rspec, SDXContent sdx) throws AggregateException {
         AggregateSdxSliver sdxSliver = new AggregateSdxSliver();
         String reqJsonStr = null;
-        if (sdx.getJsonIntent() != null && !sdx.getJsonIntent().isEmpty()) {
-            reqJsonStr = AggregateUtils.extractCdata(sdx.getJsonIntent());
-            if (reqJsonStr == null) {
-                throw new AggregateException("RspecHandler_GENIv3::parseSdxResources 'json_intent' does not contain valid JSON data in CDATA format.");
-            }
-        }
-        if (sdx.getVirtualClouds() != null && !sdx.getVirtualClouds().isEmpty()) {
+        if (sdx.getJsonIntent() != null) {
+            reqJsonStr = sdx.getJsonIntent() ;
+        } else if (sdx.getVirtualClouds() != null && !sdx.getVirtualClouds().isEmpty()) {
             JSONObject reqJson = new JSONObject();
             JSONArray vpcArray = new JSONArray();
             reqJson.put("virtual_clouds", vpcArray);
