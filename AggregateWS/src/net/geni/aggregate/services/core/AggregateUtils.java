@@ -409,4 +409,14 @@ public class AggregateUtils
             return null;
         }
     }
+    
+    public static String extractCdata(String val) {
+        int start = val.indexOf("<![CDATA[") + "<![CDATA[".length();
+        int end = val.indexOf("]]>") - 1;
+        if (start >= 0 && end > start) {
+            return val.substring(start, end);
+        } else {
+            return null;
+        }
+    }
 }

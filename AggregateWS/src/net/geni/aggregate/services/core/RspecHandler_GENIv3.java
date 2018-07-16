@@ -411,8 +411,15 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
     
     void parseSdxResources(AggregateRspec rspec, SDXContent sdx) throws AggregateException {
         AggregateSdxSliver sdxSliver = new AggregateSdxSliver();
-        JSONObject reqJson = new JSONObject();
+        String reqJsonStr = null;
+        if (sdx.getJsonIntent() != null && !sdx.getJsonIntent().isEmpty()) {
+            reqJsonStr = AggregateUtils.extractCdata(sdx.getJsonIntent());
+            if (reqJsonStr == null) {
+                throw new AggregateException("RspecHandler_GENIv3::parseSdxResources 'json_intent' does not contain valid JSON data in CDATA format.");
+            }
+        }
         if (sdx.getVirtualClouds() != null && !sdx.getVirtualClouds().isEmpty()) {
+            JSONObject reqJson = new JSONObject();
             JSONArray vpcArray = new JSONArray();
             reqJson.put("virtual_clouds", vpcArray);
             for (VirtualCloudContent sdxVc: sdx.getVirtualClouds()) {
@@ -447,51 +454,69 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                 Iterator itn = rspec.getResources().iterator();
                                 while (itn.hasNext()) {
                                     AggregateResource res = (AggregateResource)itn.next();
-                                    if (res.getType().startsWith("computeNode:sliver_type=") 
-                                            && (res.getType().contains("instance+") || res.getType().contains("flavor+"))
+                                    if (res.getType() != null && !res.getType().isEmpty()
                                             && res.getClientId() != null && clientId.equals(res.getClientId())) {
                                         AggregateNode aggrNode = (AggregateNode)res;
                                         JSONObject vmJson = new JSONObject();
                                         vmArray.add(vmJson);
                                         vmJson.put("name", clientId);
-                                        vmJson.put("type", aggrNode.getType().substring("computeNode:sliver_type=".length()));
+                                        String[] vmTypeOpts = res.getType().split(",");
+                                        for (String vmTypeOpt: vmTypeOpts) {
+                                            String[] optVal = vmTypeOpt.split("\\+");
+                                            if (optVal.length != 2) {
+                                                continue;
+                                            }
+                                            if (optVal[0].startsWith("flavor") || optVal[0].startsWith("instance")) {
+                                                vmJson.put("flavor", optVal[1]);
+                                            } else if (optVal[0].startsWith("image")) {
+                                                vmJson.put("image", optVal[1]);
+                                            }
+                                        }
                                         if (node.getHost() != null && !node.getHost().isEmpty()) {
                                             vmJson.put("host", node.getHost());
                                         }
                                         JSONArray vifArray = null;
                                         Iterator itnif = rspec.getResources().iterator();
                                         while (itnif.hasNext()) {
-                                            AggregateResource res2 = (AggregateResource)itnif.next();
+                                            AggregateResource res2 = (AggregateResource) itnif.next();
                                             if (res2.getType().equals("networkInterface") && ((AggregateNetworkInterface) res2).getParentNode() == aggrNode) {
                                                 if (vifArray == null) {
                                                     vifArray = new JSONArray();
                                                     vmJson.put("interfaces", vifArray);
                                                 }
                                                 AggregateNetworkInterface vif = (AggregateNetworkInterface) res2;
-                                                    JSONObject vifJson = new JSONObject();
-                                                    vifArray.add(vifJson);
-                                                    vifJson.put("name", vif.getClientId());
-                                                    if (vif.getDeviceType() != null && !vif.getDeviceType().isEmpty()) {
-                                                        vifJson.put("type", vif.getDeviceType());
-                                                    }
-                                                    if (vif.getDeviceName() != null && !vif.getDeviceName().isEmpty() 
-                                                            && vif.getDeviceType().equalsIgnoreCase("SRIOV")) {
-                                                        vifJson.put("gateway", vif.getDeviceName());
-                                                    }
-                                                    if (vif.getAddress() != null && !vif.getAddress().isEmpty()) {
-                                                        vifJson.put("address", vif.getAddress());
-                                                    }
+                                                JSONObject vifJson = new JSONObject();
+                                                vifArray.add(vifJson);
+                                                vifJson.put("name", vif.getClientId());
+                                                if (vif.getDeviceType() != null && !vif.getDeviceType().isEmpty()) {
+                                                    vifJson.put("type", vif.getDeviceType());
+                                                }
+                                                if (vif.getDeviceName() != null && !vif.getDeviceName().isEmpty()
+                                                        && vif.getDeviceType().equalsIgnoreCase("SRIOV")) {
+                                                    vifJson.put("gateway", vif.getDeviceName());
+                                                }
+                                                if (vif.getAddress() != null && !vif.getAddress().isEmpty()) {
+                                                    vifJson.put("address", vif.getAddress()); //@TODO: mac_address + ip_address
+                                                }
                                             }
+                                        }
+                                        if (!vmJson.containsKey("interfaces")) {
+                                            vifArray = new JSONArray();
+                                            vmJson.put("interfaces", vifArray);
+                                            JSONObject vifJson = new JSONObject();
+                                            vifArray.add(vifJson);
+                                            vifJson.put("public", "true");
+                                            vifJson.put("type", "Ethernet");
                                         }
                                         // handle VM level routes
                                         if (node.getRoutes() != null && !node.getRoutes().isEmpty()) {
-                                        JSONArray routeArray = new JSONArray();
-                                        vmJson.put("routes", routeArray);
-                                        for (RouteContent route : node.getRoutes()) {
-                                            JSONObject routeJson = new JSONObject();
-                                            routeArray.add(routeJson);
-                                            if (route.getType() != null) {
-                                                routeJson.put("type", route.getType());
+                                            JSONArray routeArray = new JSONArray();
+                                            vmJson.put("routes", routeArray);
+                                            for (RouteContent route : node.getRoutes()) {
+                                                JSONObject routeJson = new JSONObject();
+                                                routeArray.add(routeJson);
+                                                if (route.getType() != null) {
+                                                    routeJson.put("type", route.getType());
                                             }
                                             if (route.getTo() != null) {
                                                 JSONObject addrJson = new JSONObject();
@@ -519,10 +544,10 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                             }
                                         }        
                                         }
-                                        // handle ceph_rbd
+                                        // handle ceph_rbds
                                         if (node.getCephRbds() != null && !node.getCephRbds().isEmpty()) {
                                         JSONArray rbdArray = new JSONArray();
-                                        vmJson.put("ceph_rbd", rbdArray);
+                                        vmJson.put("ceph_rbds", rbdArray);
                                         for (CephRbdContent cephRbd: node.getCephRbds()) {
                                             JSONObject rbdJson = new JSONObject();
                                             rbdArray.add(rbdJson);
@@ -581,7 +606,7 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                                     }
                                 }
                             }
-                            subnetJson.put("virtual_machines", vmArray);
+                            subnetJson.put("vms", vmArray);
                         }
                         if (subnet.getRoutes() != null & !subnet.getRoutes().isEmpty()) {
                             JSONArray routeArray = new JSONArray();
@@ -694,10 +719,11 @@ public class RspecHandler_GENIv3 implements AggregateRspecHandler {
                     }
                 }
             }
+            reqJsonStr = reqJson.toJSONString();
         }
         sdxSliver.setType("sdxSliver");
         sdxSliver.setRspecId(rspec.getId());
-        sdxSliver.setRequestJson(reqJson.toJSONString());
+        sdxSliver.setRequestJson(reqJsonStr);
         sdxSliver.setManifest("");
         sdxSliver.setStatus("INIT");
         rspec.getResources().add(sdxSliver);

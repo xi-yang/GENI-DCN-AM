@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xs:schema 
+<xs:schema
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     elementFormDefault="qualified"
     targetNamespace="http://www.geni.net/resources/rspec/ext/sdx/1/"
@@ -11,24 +11,25 @@
         This is an example schema for the GENI Software Defined Exchange (SDX) extension.
       </xs:documentation>
     </xs:annotation>
-    
+
   <!--GENI SDX -->
   <xs:element name="sdx" type="SDX:SDXContent"/>
-  
+
   <xs:complexType name="SDXContent">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:virtual_clouds"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:subnets"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:virtual_machines"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="json_intent" type="xs:string"/>
     </xs:sequence>
     <xs:attribute use="required" name="lastUpdateTime" type="xs:string"/>
     <xs:attribute use="required" name="component_manager_id" type="xs:string"/>
     <xs:attribute use="optional" name="component_id" type="xs:string"/>
   </xs:complexType>
-  
+
   <!-- VirtualCloud -->
   <xs:element name="virtual_clouds" type="SDX:VirtualCloudContent"/>
-  
+
   <xs:complexType name="VirtualCloudContent">
     <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" name="cidr" type="xs:string"/>
@@ -40,10 +41,10 @@
     <xs:attribute name="type" use="required" type="xs:string"/>
     <xs:attribute name="provider_id" use="required" type="xs:string"/>
   </xs:complexType>
-  
+
   <!-- Node -->
   <xs:element name="virtual_machines" type="SDX:VirtualMachine"/>
-  
+
   <xs:complexType name="VirtualMachine">
     <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="SDX:routes"/>
@@ -55,10 +56,10 @@
     <xs:attribute name="type" use="required" type="xs:string"/>
     <xs:attribute name="host" use="optional" type="xs:string"/>
   </xs:complexType>
-  
+
   <!-- Subnet -->
   <xs:element name="subnets" type="SDX:SubnetContent"/>
- 
+
   <xs:complexType name="SubnetContent">
     <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" name="cidr" type="xs:string"/>
@@ -141,5 +142,5 @@
         </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
-  
+
 </xs:schema>
