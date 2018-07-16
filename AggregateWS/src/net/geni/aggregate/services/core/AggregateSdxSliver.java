@@ -103,16 +103,19 @@ public class AggregateSdxSliver extends AggregateResource {
         if (jsonData == null) {
             throw new AggregateException("AggregateSdxSliver.generateRestData() cannot parse requst JSON: \n"+this.requestJson);
         }
-        String serviceType = this.probeServiceType(jsonData);
-        if (serviceType.isEmpty()) {
-            throw new AggregateException("AggregateSdxSliver.generateRestData() cannot tell service type for JSON: \n"+this.requestJson);
+        JSONObject reqJson = jsonData;
+        if (!jsonData.containsKey("service")) {
+            String serviceType = this.probeServiceType(jsonData);
+            if (serviceType.isEmpty()) {
+                throw new AggregateException("AggregateSdxSliver.generateRestData() cannot tell service type for JSON: \n"+this.requestJson);
+            }
+            reqJson = new JSONObject();
+            //reqJson.put("username", this.sliceUser);
+            reqJson.put("username", "admin"); //@TODO: user name mapping
+            reqJson.put("service", serviceType); 
+            reqJson.put("alias", this.sliceName);
+            reqJson.put("data", jsonData);
         }
-        JSONObject reqJson = new JSONObject();
-        //reqJson.put("username", this.sliceUser);
-        reqJson.put("username", "admin"); //@TODO: user name mapping
-        reqJson.put("service", serviceType); 
-        reqJson.put("alias", this.sliceName);
-        reqJson.put("data", jsonData);
         return reqJson;
     }
 
