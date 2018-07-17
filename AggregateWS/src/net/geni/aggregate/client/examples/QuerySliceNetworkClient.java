@@ -53,21 +53,24 @@ public class QuerySliceNetworkClient extends ExampleClient {
         System.out.println("============ QuerySliceNetworkResponse Response =========== ");
         System.out.println("\t Slice Status => " + response.getSliceStatus());
         System.out.println("\t Expires => " + response.getExpires());
-        System.out.println("\t = P2P VLANs =");
         VlanReservationResultType[] vlanResultList = response.getVlanResvResult();
-        for (VlanReservationResultType vlanResult: vlanResultList) {
-            System.out.println("\t  GRI => " + vlanResult.getGlobalReservationId());
-            System.out.println("\t  Status => " + vlanResult.getStatus());
-            System.out.println("\t  Message => " + vlanResult.getMessage());
-            System.out.println("\t\t VLAN_ID => " + vlanResult.getReservation().getVlan());
-            System.out.println("\t\t Source => " + vlanResult.getReservation().getSourceNode());
-            System.out.println("\t\t Interface => " + vlanResult.getReservation().getSrcInterface());
-            System.out.println("\t\t Destination => " + vlanResult.getReservation().getDestinationNode());
-            System.out.println("\t\t Interface => " + vlanResult.getReservation().getDstInterface());
-            System.out.println("\t\t Bandwidth => " + vlanResult.getReservation().getBandwidth());
-            System.out.println("\t\t Description => " + vlanResult.getReservation().getDescription());
+        if (vlanResultList != null) {
+            System.out.println("\t = P2P VLANs =");
+            for (VlanReservationResultType vlanResult : vlanResultList) {
+                System.out.println("\t  GRI => " + vlanResult.getGlobalReservationId());
+                System.out.println("\t  Status => " + vlanResult.getStatus());
+                System.out.println("\t  Message => " + vlanResult.getMessage());
+                System.out.println("\t\t VLAN_ID => " + vlanResult.getReservation().getVlan());
+                System.out.println("\t\t Source => " + vlanResult.getReservation().getSourceNode());
+                System.out.println("\t\t Interface => " + vlanResult.getReservation().getSrcInterface());
+                System.out.println("\t\t Destination => " + vlanResult.getReservation().getDestinationNode());
+                System.out.println("\t\t Interface => " + vlanResult.getReservation().getDstInterface());
+                System.out.println("\t\t Bandwidth => " + vlanResult.getReservation().getBandwidth());
+                System.out.println("\t\t Description => " + vlanResult.getReservation().getDescription());
+            }
         }
-        if (response.getExternalResourceStatus() != null && response.getExternalResourceStatus().length > 0)
+        if (response.getExternalResourceStatus() != null && response.getExternalResourceStatus().length > 0) {
             System.out.println("\t = ExternalResource Status =\n\t  " + response.getExternalResourceStatus()[0]);
+        }
     }
 }

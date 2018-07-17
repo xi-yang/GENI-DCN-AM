@@ -129,7 +129,7 @@ public class AggregateSdxSliver extends AggregateResource {
             log.info("AggregateSdxSliver.createSliver sending: "+restData);
             String response[] = restClient.executeHttpBearerMethod("POST", AggregateState.getSdxApiUrl()+"/service", restData.toJSONString());
             if (!response[0].equals("200")) {
-                throw new AggregateException("AggregateSdxSliver.createSliver POST returns "+response);
+                throw new AggregateException("AggregateSdxSliver.createSliver POST returns "+response.toString());
             }
             this.setServiceUuid(response[2]);
         } catch (Exception ex) {
@@ -147,7 +147,7 @@ public class AggregateSdxSliver extends AggregateResource {
         try {
             String response[] = restClient.executeHttpBearerMethod("PUT", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/cancel", null);
             if (!response[0].equals("200")) {
-                throw new AggregateException("AggregateSdxSliver.cancelSliver PUT returns "+response);
+                throw new AggregateException("AggregateSdxSliver.cancelSliver PUT returns "+response.toString());
             }
        } catch (Exception ex) {
             throw new AggregateException(ex);
@@ -164,7 +164,7 @@ public class AggregateSdxSliver extends AggregateResource {
         try {
             String response[] = restClient.executeHttpBearerMethod("PUT", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/delete", null);
             if (!response[0].equals("200")) {
-                throw new AggregateException("AggregateSdxSliver.deleteSliver DELETE returns "+response);
+                throw new AggregateException("AggregateSdxSliver.deleteSliver DELETE returns "+response.toString());
             }
        } catch (Exception ex) {
             throw new AggregateException(ex);
@@ -186,7 +186,7 @@ public class AggregateSdxSliver extends AggregateResource {
                 response = restClient.executeHttpBearerMethod("GET", AggregateState.getSdxApiUrl()+"/service/"+serviceUUID+"/status", null);                
             }
             if (!response[0].equals("200")) {
-                throw new AggregateException("AggregateSdxSliver.querySliver GET returns "+response);
+                throw new AggregateException("AggregateSdxSliver.querySliver GET returns "+response.toString());
             }
             return response[2];
        } catch (Exception ex) {
